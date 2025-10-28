@@ -8,13 +8,39 @@ import '../../../Model/OpenWorkOrderReportModel.dart';
 class OpenWorkOrderService {
   final String baseUrl = '$Api_url/api/work-order/open-work-orders';
 
-  Future<List<WorkOrderReportData>> fetchOpenWorkOrders() async {
+  Future<List<WorkOrderReportData>> fetchOpenWorkOrders({
+    String? fromDate,
+    String? toDate,
+    String? status,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     String url = '$baseUrl/$adminid';
+
+    // Add query parameters if provided
+    Map<String, String> queryParams = {};
+    if (fromDate != null) queryParams['selectedDate'] = fromDate;
+    if (toDate != null) queryParams['selectedToDate'] = toDate;
+    if (status != null) queryParams['status'] = status;
+    queryParams['caseInsensitive'] = 'true';
+
+    if (queryParams.isNotEmpty) {
+      url += '?' +
+          queryParams.entries
+              .map((e) =>
+                  '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+              .join('&');
+    }
+
+    // Print the final API URL for debugging
+    print('=== API CALL DEBUG (STAFF) ===');
+    print('Final URL: $url');
+    print('Query Params: $queryParams');
+    print('Headers: authorization: CRM $token, id: CRM $id');
+    print('===============================');
 
     try {
       final response = await http.get(Uri.parse(url), headers: {

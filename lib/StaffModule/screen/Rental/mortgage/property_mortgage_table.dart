@@ -199,29 +199,29 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
           if (searchValue.isNotEmpty) {
             final searchLower = searchValue.toLowerCase();
             matchesSearch = (mortgage['bank_name']
-                        ?.toString()
-                        .toLowerCase()
-                        .contains(searchLower) ??
-                    false) ||
+                ?.toString()
+                .toLowerCase()
+                .contains(searchLower) ??
+                false) ||
                 (mortgage['mortgage_no']
-                        ?.toString()
-                        .toLowerCase()
-                        .contains(searchLower) ??
+                    ?.toString()
+                    .toLowerCase()
+                    .contains(searchLower) ??
                     false) ||
                 (mortgage['loan_amount']
-                        ?.toString()
-                        .toLowerCase()
-                        .contains(searchLower) ??
+                    ?.toString()
+                    .toLowerCase()
+                    .contains(searchLower) ??
                     false) ||
                 (mortgage['borrower_first_name']
-                        ?.toString()
-                        .toLowerCase()
-                        .contains(searchLower) ??
+                    ?.toString()
+                    .toLowerCase()
+                    .contains(searchLower) ??
                     false) ||
                 (mortgage['borrower_last_name']
-                        ?.toString()
-                        .toLowerCase()
-                        .contains(searchLower) ??
+                    ?.toString()
+                    .toLowerCase()
+                    .contains(searchLower) ??
                     false);
           }
 
@@ -443,7 +443,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 22,
+                          MediaQuery.of(context).size.width < 500 ? 16 : 22,
                         ),
                       ),
                     ),
@@ -499,431 +499,431 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
         // Content Section
         _isLoading
             ? Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.black,
-                  size: 50.0,
-                ),
-              )
+          child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 50.0,
+          ),
+        )
             : _filteredMortgages.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No mortgages found for this property',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Try adjusting your search or add a new mortgage',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        _buildHeaders(),
-                        const SizedBox(height: 10),
-                        Container(
-                          child: Column(
-                            children:
-                                currentPageData.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              bool isExpanded = expandedIndex == index;
-                              Map<String, dynamic> mortgage = entry.value;
+            ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.inbox_outlined,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No mortgages found for this property',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Try adjusting your search or add a new mortgage',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        )
+            : SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              _buildHeaders(),
+              const SizedBox(height: 10),
+              Container(
+                child: Column(
+                  children:
+                  currentPageData.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    bool isExpanded = expandedIndex == index;
+                    Map<String, dynamic> mortgage = entry.value;
 
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: index % 2 != 0
-                                      ? const Color(0xFFF4F8FF)
-                                      : Colors.white,
-                                  border: Border.all(
-                                      color: const Color(0xFFDBE0E5)),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  if (expandedIndex == index) {
-                                                    expandedIndex = null;
-                                                  } else {
-                                                    expandedIndex = index;
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 5, right: 5),
-                                                padding: !isExpanded
-                                                    ? const EdgeInsets.only(
-                                                        bottom: 10)
-                                                    : const EdgeInsets.only(
-                                                        top: 10),
-                                                child: FaIcon(
-                                                  isExpanded
-                                                      ? FontAwesomeIcons.sortUp
-                                                      : FontAwesomeIcons
-                                                          .sortDown,
-                                                  size: 20,
-                                                  color:
-                                                      const Color(0xFF1E3A8A),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text.rich(
-                                                    TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              '${mortgage['borrower_first_name'] ?? 'N/A'} ${mortgage['borrower_last_name'] ?? 'N/A'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 50, right: 5),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 6),
-                                                decoration: BoxDecoration(
-                                                  color: _getStatusColor(
-                                                          mortgage['status'])
-                                                      .withOpacity(0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                    color: _getStatusColor(
-                                                        mortgage['status']),
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    (mortgage['status'] ??
-                                                            'unknown')
-                                                        .toString()
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                      color: _getStatusColor(
-                                                          mortgage['status']),
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 10,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: index % 2 != 0
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(
+                            color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (expandedIndex == index) {
+                                          expandedIndex = null;
+                                        } else {
+                                          expandedIndex = index;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 5, right: 5),
+                                      padding: !isExpanded
+                                          ? const EdgeInsets.only(
+                                          bottom: 10)
+                                          : const EdgeInsets.only(
+                                          top: 10),
+                                      child: FaIcon(
+                                        isExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons
+                                            .sortDown,
+                                        size: 20,
+                                        color:
+                                        const Color(0xFF1E3A8A),
                                       ),
                                     ),
-                                    if (isExpanded)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 2.0),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 2),
-                                        child: SingleChildScrollView(
-                                          child: Column(
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (expandedIndex ==
+                                                index) {
+                                              expandedIndex = null;
+                                            } else {
+                                              expandedIndex = index;
+                                            }
+                                          });
+                                        },
+                                        child: Text.rich(
+                                          TextSpan(
                                             children: [
-                                              Row(
-                                                children: [
-                                                  FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 40,
-                                                    color: Colors.transparent,
-                                                  ),
-                                                  Flexible(
-                                                    child: Table(
-                                                      columnWidths: const {
-                                                        0: FlexColumnWidth(),
-                                                        1: FlexColumnWidth(),
-                                                      },
-                                                      children: [
-                                                        _buildTableRow(
-                                                          'Loan Amount:',
-                                                          _getDisplayValue(
-                                                              _formatCurrency(
-                                                                  mortgage[
-                                                                      'loan_amount'])),
-                                                          'Interest Rate:',
-                                                          _getDisplayValue(
-                                                              '${mortgage['interest_rate'] ?? 0}%'),
-                                                        ),
-                                                        _buildTableRow(
-                                                          'Mortgage#',
-                                                          _getDisplayValue(
-                                                              mortgage[
-                                                                  'mortgage_no']),
-                                                          '',
-                                                          _getDisplayValue(''),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                ],
+                                              TextSpan(
+                                                text:
+                                                '${mortgage['borrower_first_name'] ?? 'N/A'} ${mortgage['borrower_last_name'] ?? 'N/A'}',
+                                                style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  fontSize: 13,
+                                                ),
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _deleteMortgage(
-                                                            mortgage['_id']),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        color:
-                                                            Colors.red.shade50,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
-                                                            size: 15,
-                                                            color: Colors.red,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _editMortgage(mortgage),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        color: Colors
-                                                            .green.shade50,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .edit,
-                                                            size: 15,
-                                                            color: Colors.green,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _viewMortgage(mortgage),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .grey.shade200,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .eye,
-                                                            size: 15,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 15),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 15),
                                             ],
                                           ),
                                         ),
                                       ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Pagination Controls
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(width: 10),
-                                Material(
-                                  elevation: 3,
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
                                     ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value: itemsPerPage,
-                                        items: itemsPerPageOptions
-                                            .map((int value) {
-                                          return DropdownMenuItem<int>(
-                                            value: value,
-                                            child: Text(value.toString()),
-                                          );
-                                        }).toList(),
-                                        onChanged: _filteredMortgages.length >
-                                                itemsPerPageOptions.first
-                                            ? (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage = 0;
-                                                });
-                                              }
-                                            : null,
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          left: 36, right: 5),
+                                      padding:
+                                      const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(
+                                            mortgage['status'])
+                                            .withOpacity(0.1),
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: _getStatusColor(
+                                              mortgage['status']),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          (mortgage['status'] ??
+                                              'unknown')
+                                              .toString()
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                            color: _getStatusColor(
+                                                mortgage['status']),
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 11,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.circleChevronLeft,
-                                    color: currentPage == 0
-                                        ? Colors.grey
-                                        : const Color(0xFF1E3A8A),
-                                  ),
-                                  onPressed: currentPage == 0
-                                      ? null
-                                      : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
+                          ),
+                          if (isExpanded)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 2.0),
+                              margin:
+                              const EdgeInsets.only(bottom: 2),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        FaIcon(
+                                          isExpanded
+                                              ? FontAwesomeIcons
+                                              .sortUp
+                                              : FontAwesomeIcons
+                                              .sortDown,
+                                          size: 40,
+                                          color: Colors.transparent,
+                                        ),
+                                        Flexible(
+                                          child: Table(
+                                            columnWidths: const {
+                                              0: FlexColumnWidth(),
+                                              1: FlexColumnWidth(),
+                                            },
+                                            children: [
+                                              _buildTableRow(
+                                                'Loan Amount:',
+                                                _getDisplayValue(
+                                                    _formatCurrency(
+                                                        mortgage[
+                                                        'loan_amount'])),
+                                                'Interest Rate:',
+                                                _getDisplayValue(
+                                                    '${mortgage['interest_rate'] ?? 0}%'),
+                                              ),
+                                              _buildTableRow(
+                                                'Mortgage#',
+                                                _getDisplayValue(
+                                                    mortgage[
+                                                    'mortgage_no']),
+                                                '',
+                                                _getDisplayValue(''),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.end,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () =>
+                                              _deleteMortgage(
+                                                  mortgage['_id']),
+                                          child: Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(8),
+                                              color:
+                                              Colors.red.shade50,
+                                            ),
+                                            child: const Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons
+                                                      .trashCan,
+                                                  size: 15,
+                                                  color: Colors.red,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        GestureDetector(
+                                          onTap: () =>
+                                              _editMortgage(mortgage),
+                                          child: Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(8),
+                                              color: Colors
+                                                  .green.shade50,
+                                            ),
+                                            child: const Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons
+                                                      .edit,
+                                                  size: 15,
+                                                  color: Colors.green,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        GestureDetector(
+                                          onTap: () =>
+                                              _viewMortgage(mortgage),
+                                          child: Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              color: Colors
+                                                  .grey.shade200,
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(8),
+                                            ),
+                                            child: const Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons
+                                                      .eye,
+                                                  size: 15,
+                                                  color: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 15),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 15),
+                                  ],
                                 ),
-                                Text('Page ${currentPage + 1} of $totalPages'),
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.circleChevronRight,
-                                    color: currentPage < totalPages - 1
-                                        ? const Color(0xFF1E3A8A)
-                                        : Colors.grey,
-                                  ),
-                                  onPressed: currentPage < totalPages - 1
-                                      ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
-                                      : null,
-                                ),
-                              ],
+                              ),
                             ),
-                          ],
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Pagination Controls
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      Material(
+                        elevation: 3,
+                        child: Container(
+                          height: 40,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                              value: itemsPerPage,
+                              items: itemsPerPageOptions
+                                  .map((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Text(value.toString()),
+                                );
+                              }).toList(),
+                              onChanged: _filteredMortgages.length >
+                                  itemsPerPageOptions.first
+                                  ? (newValue) {
+                                setState(() {
+                                  itemsPerPage = newValue!;
+                                  currentPage = 0;
+                                });
+                              }
+                                  : null,
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: FaIcon(
+                          FontAwesomeIcons.circleChevronLeft,
+                          color: currentPage == 0
+                              ? Colors.grey
+                              : const Color(0xFF1E3A8A),
+                        ),
+                        onPressed: currentPage == 0
+                            ? null
+                            : () {
+                          setState(() {
+                            currentPage--;
+                          });
+                        },
+                      ),
+                      Text('Page ${currentPage + 1} of $totalPages'),
+                      IconButton(
+                        icon: FaIcon(
+                          FontAwesomeIcons.circleChevronRight,
+                          color: currentPage < totalPages - 1
+                              ? const Color(0xFF1E3A8A)
+                              : Colors.grey,
+                        ),
+                        onPressed: currentPage < totalPages - 1
+                            ? () {
+                          setState(() {
+                            currentPage++;
+                          });
+                        }
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -936,9 +936,9 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
         backgroundColor: Colors.white,
         drawer: widget.showDrawer
             ? CustomDrawer(
-                currentpage: "Mortgage",
-                dropdown: true,
-              )
+          currentpage: "Mortgage",
+          dropdown: true,
+        )
             : null,
         body: _buildContent(),
       );

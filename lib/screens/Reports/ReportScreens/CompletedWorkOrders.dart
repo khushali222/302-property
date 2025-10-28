@@ -1,8 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,13 +13,11 @@ import 'package:three_zero_two_property/Model/profile.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/CompletedWorkData.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -51,8 +49,10 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
         _connectivityResult = result;
       });
     });
+
+    // Set today's date in the fields and fetch today's data
+    _setTodayDateAndFetch();
     checkInternet();
-    _fetchCompletedWorkOrders();
   }
 
   void checkInternet() async {
@@ -63,10 +63,143 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     });
   }
 
-  void _fetchCompletedWorkOrders() {
+  void _setTodayDateAndFetch() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    String todayDisplayFormat = dateProvider.formatCurrentDate(todayApiFormat);
+
+    // Set today's date in the fields
+    fromDate.text = todayDisplayFormat;
+    toDate.text = todayDisplayFormat;
+
+    // Set default date range to "Today"
+    daterange = "Today";
+
+    // Fetch today's data
+    _fetchCompletedWorkOrders(
+      fromDate: todayApiFormat,
+      toDate: todayApiFormat,
+      status: null,
+    );
+  }
+
+  void _fetchCompletedWorkOrders(
+      {String? fromDate, String? toDate, String? status}) {
     setState(() {
-      _futureReport = CompletedWorkOrderService().fetchCompletedWorkOrders();
+      _futureReport = CompletedWorkOrderService().fetchCompletedWorkOrders(
+        fromDate: fromDate,
+        toDate: toDate,
+        status: status,
+      );
     });
+  }
+
+  void _runReport() {
+    // Always set today's date if fields are empty
+    if (fromDate.text.isEmpty || toDate.text.isEmpty) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      fromDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+      toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+    }
+
+    // Convert display dates to API format
+    String apiFromDate = _convertToApiFormat(fromDate.text);
+    String apiToDate = _convertToApiFormat(toDate.text);
+
+    // Get status parameter
+    String? statusParam = statusType == 'All' ? null : statusType;
+
+    // Print API parameters for debugging
+    print('=== API DEBUG INFO (COMPLETED) ===');
+    print('From Date (Display): ${fromDate.text}');
+    print('To Date (Display): ${toDate.text}');
+    print('From Date (API): $apiFromDate');
+    print('To Date (API): $apiToDate');
+    print('Status: $statusParam');
+    print('Status Type: $statusType');
+    print('==================================');
+
+    // Fetch data with filters
+    _fetchCompletedWorkOrders(
+      fromDate: apiFromDate,
+      toDate: apiToDate,
+      status: statusParam,
+    );
+  }
+
+  String _convertToApiFormat(String displayDate) {
+    try {
+      // Assuming displayDate is in MM/dd/yyyy format, convert to yyyy-MM-dd
+      final date = DateFormat('MM/dd/yyyy').parse(displayDate);
+      return DateFormat('yyyy-MM-dd').format(date);
+    } catch (e) {
+      // If parsing fails, return the original string
+      return displayDate;
+    }
+  }
+
+  // Date picker methods
+  Future<void> _pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
+  }
+
+  Future<void> _endDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
   }
 
   Widget _buildDataCell(String text) {
@@ -105,6 +238,14 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
   bool _sortAscending = true;
   String searchvalue = "";
   String? selectedValue;
+
+  // Filter variables
+  TextEditingController fromDate = TextEditingController();
+  TextEditingController toDate = TextEditingController();
+  String? daterange;
+  String? statusType;
+  bool customdate = false;
+  DateTime? _selectedDate;
 
   List<CompletedWorkData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
@@ -459,6 +600,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderPdf(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -473,7 +615,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     pdf.addPage(
       pw.MultiPage(
@@ -560,7 +703,9 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             ],
             data: workOrderData.map((workOrder) {
               return [
-                formatDate(workOrder.date ?? ''),
+                workOrder.date != null
+                    ? dateProvider.formatCurrentDate(workOrder.date!)
+                    : '',
                 workOrder.rentalAddress ?? '',
                 workOrder.workSubject ?? '',
                 workOrder.workPerformed ?? '',
@@ -600,6 +745,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderExcel(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -631,8 +777,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       String formattedDate;
       try {
         formattedDate = workOrder.date != null
-            ? DateFormat('yyyy-MM-dd')
-                .format(DateFormat('yyyy-MM-dd').parse(workOrder.date!))
+            ? dateProvider.formatCurrentDate(workOrder.date!)
             : 'Invalid Date';
       } catch (e) {
         formattedDate = 'Invalid Date';
@@ -671,13 +816,16 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderCsv(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     List<List<dynamic>> rows = [
       ['Date', 'Address', 'Work', 'Performed']
     ];
 
     for (var workOrder in workOrderData) {
       rows.add([
-        workOrder.date ?? '',
+        workOrder.date != null
+            ? dateProvider.formatCurrentDate(workOrder.date!)
+            : '',
         workOrder.rentalAddress ?? '',
         workOrder.workSubject ?? '',
         workOrder.workPerformed ?? '',
@@ -737,6 +885,414 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                         width: double.infinity,
                         title: "Completed Work Orders",
                       ),
+                    ),
+                  ),
+                  // Filter Section
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                    ),
+                    child: Column(
+                      children: [
+                        // Date Range and Status Dropdowns Side by Side
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              'Date Range',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'Today',
+                                          child: Text('Today'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Week',
+                                          child: Text('This Week'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Month',
+                                          child: Text('This Month'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Year',
+                                          child: Text('This Year'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Custom',
+                                          child: Text('Custom'),
+                                        ),
+                                      ],
+                                      value: daterange,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          daterange = value;
+                                          if (value == "Today") {
+                                            customdate = false;
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String todayApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(DateTime.now());
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                          } else if (value == "This Week") {
+                                            DateTime now = DateTime.now();
+                                            customdate = false;
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String weekStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    now.subtract(Duration(
+                                                        days:
+                                                            now.weekday - 1)));
+                                            String weekEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    now.add(Duration(
+                                                        days: DateTime
+                                                                .daysPerWeek -
+                                                            now.weekday)));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekEndApiFormat);
+                                          } else if (value == "This Month") {
+                                            customdate = false;
+                                            DateTime now = DateTime.now();
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String monthStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month, 1));
+                                            String monthEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month + 1, 0));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthEndApiFormat);
+                                          } else if (value == "This Year") {
+                                            customdate = false;
+                                            DateTime now = DateTime.now();
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String yearStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year, 1, 1));
+                                            String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year, 12, 31));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearEndApiFormat);
+                                          } else if (value == "Custom") {
+                                            customdate = true;
+                                          }
+                                          if (value != "Custom" &&
+                                              customdate == true) {
+                                            customdate = false;
+                                            fromDate.text = "";
+                                            toDate.text = "";
+                                          }
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // From Date and To Date fields with theme
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF8A95A8),
+                                      colorScheme: ColorScheme.light(
+                                        primary: Color(0xFF8A95A8),
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: fromDate,
+                                      onTap: customdate
+                                          ? () {
+                                              _pickDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "From",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: blueColor,
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: toDate,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      onTap: customdate
+                                          ? () {
+                                              _endDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "To",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Run Report Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+
+                              Expanded(
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              'Status',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'All Statuses',
+                                          child: Text('All Statuses'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Closed',
+                                          child: Text('Closed'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Completed',
+                                          child: Text('Completed'),
+                                        ),
+                                      ],
+                                      value: statusType,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          statusType = value;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                          MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8),
+                                  ),
+                                  onPressed: () {
+                                    _runReport();
+                                  },
+                                  child: const Text(
+                                    'Run Report',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const SizedBox(height: 15),
+                      ],
                     ),
                   ),
                   // if (MediaQuery.of(context).size.width < 500)
@@ -832,50 +1388,51 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                       : 0,
                                 ),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    // Search Box expands to available space
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5.0, vertical: 5),
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 48
-                                                : 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    // // Search Box expands to available space
+                                    // Expanded(
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 5.0, vertical: 5),
+                                    //     child: Material(
+                                    //       elevation: 3,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(8),
+                                    //       child: Container(
+                                    //         padding: const EdgeInsets.symmetric(
+                                    //             horizontal: 10),
+                                    //         height: MediaQuery.of(context)
+                                    //                     .size
+                                    //                     .width <
+                                    //                 500
+                                    //             ? 48
+                                    //             : 50,
+                                    //         decoration: BoxDecoration(
+                                    //           color: Colors.white,
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(8),
+                                    //           border: Border.all(
+                                    //               color:
+                                    //                   const Color(0xFF8A95A8)),
+                                    //         ),
+                                    //         child: TextField(
+                                    //           onChanged: (value) {
+                                    //             setState(() {
+                                    //               searchvalue = value;
+                                    //             });
+                                    //           },
+                                    //           decoration: const InputDecoration(
+                                    //             border: InputBorder.none,
+                                    //             hintText: "Search here...",
+                                    //             hintStyle: TextStyle(
+                                    //                 color: Color(0xFF8A95A8)),
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
 
                                     // Button takes only the space it needs
                                     Padding(
@@ -921,7 +1478,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              SizedBox(height: 8),
                               _buildHeaders(),
                               SizedBox(height: 20),
                               Padding(

@@ -71,35 +71,35 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 padding: const EdgeInsets.all(25.0),
                 child: _brandLogoBase64 != null
                     ? Container(
-                        // color: Colors.blue,
-                        child: Image.memory(
-                          base64Decode(_brandLogoBase64!),
-                          //  height: 100,
-                          // width: 100,
-                        ),
-                      )
+                  // color: Colors.blue,
+                  child: Image.memory(
+                    base64Decode(_brandLogoBase64!),
+                    //  height: 100,
+                    // width: 100,
+                  ),
+                )
                     : Image.asset(
-                        "assets/images/logo.png",
-                        // height: 100,
-                      ),
+                  "assets/images/logo.png",
+                  // height: 100,
+                ),
               ),
               // const SizedBox(height: 5),
               buildListTile(
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                        "assets/images/tenants/dashboard1.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                      )
+                  "assets/images/tenants/dashboard1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                )
                     : SvgPicture.asset(
-                        "assets/images/tenants/dashboard.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                        color: blueColor,
-                      ),
+                  "assets/images/tenants/dashboard.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                  color: blueColor,
+                ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -192,18 +192,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                   widget.currentpage == "Upcoming Renewal"
                       ? SvgPicture.asset(
-                          "assets/images/upcoming white.svg",
-                          fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
-                        )
+                    "assets/images/upcoming white.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                  )
                       : SvgPicture.asset(
-                          "assets/images/upcoming renewal.svg",
-                          fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
-                          color: blueColor,
-                        ),
+                    "assets/images/upcoming renewal.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                    color: blueColor,
+                  ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 20,
@@ -314,7 +314,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FontAwesomeIcons.userClock,
                   size: 20,
                   color:
-                      widget.currentpage == "Staff" ? Colors.white : blueColor,
+                  widget.currentpage == "Staff" ? Colors.white : blueColor,
                 ),
                 "Staff",
                 widget.currentpage == "Staff",
@@ -335,92 +335,5 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
       ),
     );
-
-    /*return Drawer(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Image.asset("assets/images/logo.png"),
-            ),
-            const SizedBox(height: 40),
-            buildListTile(
-              context,
-              SvgPicture.asset(
-                "assets/images/tenants/dashboard.svg",
-                fit: BoxFit.cover,
-                height: 20,
-                width: 20,
-              ),
-              "Dashboard",
-              widget.currentpage == "Dashboard",
-            ),
-            buildListTile(
-              context,
-              SvgPicture.asset(
-                "assets/images/tenants/Admin.svg",
-                fit: BoxFit.cover,
-                height: 20,
-                width: 20,
-              ),
-              "Profile",
-              widget.currentpage == "Profile",
-            ),
-
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/Property.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                ),
-                "Properties",
-                widget.currentpage == "Properties",
-              ),
-
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/Financial.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                ),
-                "Financial",
-                widget.currentpage == "Financial",
-              ),
-
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/Work.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                ),
-                "Work Order",
-                widget.currentpage == "Work Order",
-              ),
-
-              buildListTile(
-                context,
-                SvgPicture.asset(
-                  "assets/images/tenants/tenantdoc1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                ),
-                "Documents",
-                widget.currentpage == "Documents",
-              ),
-          ],
-        ),
-      ),
-    );*/
   }
 }

@@ -427,36 +427,36 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
             }),
         body: _connectivityResult != ConnectivityResult.none
             ? loading
-                ? const Center(
-                    child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 50.0,
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Welcome message
+            ? const Center(
+          child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 50.0,
+          ),
+        )
+            : SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome message
 
-                        const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-                        // Main information cards
-                        _buildInfoCards(context, permissions),
+              // Main information cards
+              _buildInfoCards(context, permissions),
 
-                        const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                        // Recent Transactions
-                        _buildRecentTransactions(),
+              // Recent Transactions
+              _buildRecentTransactions(),
 
-                        const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                        // Scheduled and Recurring Payments
-                        _buildScheduledPayments(),
-                      ],
-                    ),
-                  )
+              // Scheduled and Recurring Payments
+              _buildScheduledPayments(),
+            ],
+          ),
+        )
             : _buildNoInternetView(),
       ),
     );
@@ -706,73 +706,73 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                 .take(3)
                 .map(
                   (transaction) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(8),
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2196F3).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.payment,
+                        color: Color(0xFF2196F3),
+                        size: 20,
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            transaction['tenant_name'] ?? 'Unknown',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.payment,
-                            color: Color(0xFF2196F3),
-                            size: 20,
+                          const SizedBox(height: 4),
+                          Text(
+                            "${transaction['payment_type'] ?? 'Payment'} - ${transaction['date'] ?? ''}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                transaction['tenant_name'] ?? 'Unknown',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                          if (transaction['responseText'] != null)
+                            Text(
+                              transaction['responseText'],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: transaction['state'] == 'settling'
+                                    ? Colors.orange
+                                    : Colors.green,
+                                fontWeight: FontWeight.w500,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "${transaction['payment_type'] ?? 'Payment'} - ${transaction['date'] ?? ''}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              if (transaction['responseText'] != null)
-                                Text(
-                                  transaction['responseText'],
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: transaction['state'] == 'settling'
-                                        ? Colors.orange
-                                        : Colors.green,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          "\$${(transaction['total_amount'] ?? 0).toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
+                    Text(
+                      "\$${(transaction['total_amount'] ?? 0).toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
                 .toList(),
         ],
       ),
@@ -822,15 +822,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Center(
-                    child: const Text(
-                      "Schedule a Payment",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                  child: const Text(
+                    "Schedule a Payment",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -880,83 +877,83 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
             ...upcomingPayments
                 .map(
                   (payment) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(8),
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2196F3).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.home,
+                        color: Color(0xFF2196F3),
+                        size: 20,
+                      ),
                     ),
-                    child: Row(
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            payment['tenant_name'] ?? 'Unknown',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Due Date - ${payment['date'] ?? ''}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                            color: const Color(0xFF9C27B0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
-                            Icons.home,
-                            color: Color(0xFF2196F3),
-                            size: 20,
+                          child: Text(
+                            payment['payment_type'] ?? 'Payment',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF9C27B0),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                payment['tenant_name'] ?? 'Unknown',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Due Date - ${payment['date'] ?? ''}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 8),
+                        Text(
+                          "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF9C27B0).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                payment['payment_type'] ?? 'Payment',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF9C27B0),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),
-                  ),
-                )
+                  ],
+                ),
+              ),
+            )
                 .toList(),
         ],
       ),

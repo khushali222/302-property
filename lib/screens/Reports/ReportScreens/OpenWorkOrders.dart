@@ -1,8 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,12 +12,10 @@ import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -36,7 +34,6 @@ class OpenWorkOrders extends StatefulWidget {
 }
 
 class _OpenWorkOrdersState extends State<OpenWorkOrders> {
-  final _formKey = GlobalKey<FormState>();
   Future<List<WorkOrderReportData>>? _futureReport;
   ConnectivityResult? _connectivityResult;
 
@@ -50,8 +47,30 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
         _connectivityResult = result;
       });
     });
-    _fetchOpenWorkOrders();
+
+    // Set today's date in the fields and fetch today's data
+    _setTodayDateAndFetch();
     checkInternet();
+  }
+
+  void _setTodayDateAndFetch() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    String todayDisplayFormat = dateProvider.formatCurrentDate(todayApiFormat);
+
+    // Set today's date in the fields
+    fromDate.text = todayDisplayFormat;
+    toDate.text = todayDisplayFormat;
+
+    // Set default date range to "Today"
+    daterange = "Today";
+
+    // Fetch today's data
+    _fetchOpenWorkOrders(
+      fromDate: todayApiFormat,
+      toDate: todayApiFormat,
+      status: null,
+    );
   }
 
   void checkInternet() async {
@@ -62,10 +81,123 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     });
   }
 
-  void _fetchOpenWorkOrders() {
+  void _fetchOpenWorkOrders(
+      {String? fromDate, String? toDate, String? status}) {
     setState(() {
-      _futureReport = OpenWorkOrderService().fetchOpenWorkOrders();
+      _futureReport = OpenWorkOrderService().fetchOpenWorkOrders(
+        fromDate: fromDate,
+        toDate: toDate,
+        status: status,
+      );
     });
+  }
+
+  void _runReport() {
+    // Always set today's date if fields are empty
+    if (fromDate.text.isEmpty || toDate.text.isEmpty) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      fromDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+      toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+    }
+
+    // Convert display dates to API format
+    String apiFromDate = _convertToApiFormat(fromDate.text);
+    String apiToDate = _convertToApiFormat(toDate.text);
+
+    // Get status parameter
+    String? statusParam = statusType == 'All Statuses' ? null : statusType;
+
+    // Print API parameters for debugging
+    print('=== API DEBUG INFO ===');
+    print('From Date (Display): ${fromDate.text}');
+    print('To Date (Display): ${toDate.text}');
+    print('From Date (API): $apiFromDate');
+    print('To Date (API): $apiToDate');
+    print('Status: $statusParam');
+    print('Status Type: $statusType');
+    print('======================');
+
+    // Fetch data with filters
+    _fetchOpenWorkOrders(
+      fromDate: apiFromDate,
+      toDate: apiToDate,
+      status: statusParam,
+    );
+  }
+
+  String _convertToApiFormat(String displayDate) {
+    try {
+      // Assuming displayDate is in MM/dd/yyyy format, convert to yyyy-MM-dd
+      final date = DateFormat('MM/dd/yyyy').parse(displayDate);
+      return DateFormat('yyyy-MM-dd').format(date);
+    } catch (e) {
+      // If parsing fails, return the original string
+      return displayDate;
+    }
+  }
+
+  // Date picker methods
+  Future<void> _pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
+  }
+
+  Future<void> _endDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
   }
 
   Widget _buildDataCell(String text) {
@@ -104,6 +236,14 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   bool _sortAscending = true;
   String searchvalue = "";
   String? selectedValue;
+
+  // Filter variables
+  TextEditingController fromDate = TextEditingController();
+  TextEditingController toDate = TextEditingController();
+  String? daterange;
+  String? statusType;
+  bool customdate = false;
+  DateTime? _selectedDate;
 
   List<WorkOrderReportData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
@@ -203,7 +343,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 10 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
           color: blueColor,
@@ -266,7 +408,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               ),
                             )
                           : Padding(
-                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              padding:
+                                  const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
@@ -312,7 +455,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               ),
                             )
                           : Padding(
-                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              padding:
+                                  const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
@@ -358,7 +502,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               ),
                             )
                           : Padding(
-                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              padding:
+                                  const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
@@ -451,6 +596,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
   Future<void> generateWorkOrderPdf(
       List<WorkOrderReportData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -465,7 +611,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     pdf.addPage(
       pw.MultiPage(
@@ -552,7 +699,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             ],
             data: workOrderData.map((workOrder) {
               return [
-                formatDate(workOrder.date ?? ''),
+                workOrder.date != null
+                    ? dateProvider.formatCurrentDate(workOrder.date!)
+                    : '',
                 workOrder.rentalAddress ?? '',
                 workOrder.workSubject ?? '',
                 workOrder.workPerformed ?? '',
@@ -592,6 +741,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
   Future<void> generateWorkOrderExcel(
       List<WorkOrderReportData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -623,8 +773,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       String formattedDate;
       try {
         formattedDate = workOrder.date != null
-            ? DateFormat('yyyy-MM-dd')
-                .format(DateFormat('yyyy-MM-dd').parse(workOrder.date!))
+            ? dateProvider.formatCurrentDate(workOrder.date!)
             : 'Invalid Date';
       } catch (e) {
         formattedDate = 'Invalid Date';
@@ -664,13 +813,16 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
   Future<void> generateWorkOrderCsv(
       List<WorkOrderReportData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     List<List<dynamic>> rows = [
       ['Date', 'Address', 'Work', 'Performed']
     ];
 
     for (var workOrder in workOrderData) {
       rows.add([
-        workOrder.date ?? '',
+        workOrder.date != null
+            ? dateProvider.formatCurrentDate(workOrder.date!)
+            : '',
         workOrder.rentalAddress ?? '',
         workOrder.workSubject ?? '',
         workOrder.workPerformed ?? '',
@@ -705,7 +857,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer: CustomDrawer(
@@ -721,632 +872,1080 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
                       child: titleBar(
                         width: double.infinity,
                         title: "Open Work Order",
                       ),
                     ),
                   ),
-                  // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 10.0,
-                        right: 10.0,
-                      ),
-                      child: FutureBuilder<List<WorkOrderReportData>>(
-                        future: _futureReport,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ColabShimmerLoadingWidget(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
+                  // Filter Section
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                    ),
+                    child: Column(
+                      children: [
+                        // Date Range and Status Dropdowns Side by Side
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              'Date Range',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'Today',
+                                          child: Text('Today'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Week',
+                                          child: Text('This Week'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Month',
+                                          child: Text('This Month'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Year',
+                                          child: Text('This Year'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Custom',
+                                          child: Text('Custom'),
+                                        ),
+                                      ],
+                                      value: daterange,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          daterange = value;
+                                          if (value == "Today") {
+                                            customdate = false;
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String todayApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(DateTime.now());
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                          } else if (value == "This Week") {
+                                            DateTime now = DateTime.now();
+                                            customdate = false;
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String weekStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    now.subtract(Duration(
+                                                        days:
+                                                            now.weekday - 1)));
+                                            String weekEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    now.add(Duration(
+                                                        days: DateTime
+                                                                .daysPerWeek -
+                                                            now.weekday)));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekEndApiFormat);
+                                          } else if (value == "This Month") {
+                                            customdate = false;
+                                            DateTime now = DateTime.now();
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String monthStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month, 1));
+                                            String monthEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month + 1, 0));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthEndApiFormat);
+                                          } else if (value == "This Year") {
+                                            customdate = false;
+                                            DateTime now = DateTime.now();
+                                            final dateProvider =
+                                                Provider.of<DateProvider>(
+                                                    context,
+                                                    listen: false);
+                                            String yearStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year, 1, 1));
+                                            String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year, 12, 31));
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearEndApiFormat);
+                                          } else if (value == "Custom") {
+                                            customdate = true;
+                                          }
+                                          if (value != "Custom" &&
+                                              customdate == true) {
+                                            customdate = false;
+                                            fromDate.text = "";
+                                            toDate.text = "";
+                                          }
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
                                     ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
+                                  ),
                                 ),
                               ),
-                            );
-                          }
 
-                          var data = snapshot.data!;
-
-                          // Apply filtering based on selectedValue and searchvalue
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            data = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    (workOrder.workSubject ?? '')
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (workOrder.rentalAddress ?? '')
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            data = snapshot.data!
-                                .where((workOrder) =>
-                                    workOrder.workSubject == selectedValue)
-                                .toList();
-                          }
-
-                          // Sort data if necessary
-                          sortData(data);
-
-                          // Pagination logic
-                          final totalPages =
-                              (data.length / itemsPerPage).ceil();
-                          final currentPageData = data
-                              .skip(currentPage * itemsPerPage)
-                              .take(itemsPerPage)
-                              .toList();
-
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                // Padding(
-                                //   padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
-                                //   child: Expanded(
-                                //     flex: 0,
-                                //     child: Padding(
-                                //       padding: const EdgeInsets.only(
-                                //         left: 5.0,
-                                //         right: 5.0,
-                                //       ),
-                                //       child: Row(
-                                //         mainAxisAlignment:
-                                //             MainAxisAlignment.spaceBetween,
-                                //         children: [
-                                //           Material(
-                                //             elevation: 3,
-                                //             borderRadius:
-                                //                 BorderRadius.circular(8),
-                                //             child: Container(
-                                //               padding: const EdgeInsets.symmetric(
-                                //                   horizontal: 10),
-                                //               // height: 40,
-                                //               height: MediaQuery.of(context)
-                                //                           .size
-                                //                           .width <
-                                //                       500
-                                //                   ? 48
-                                //                   : 50,
-                                //               width: MediaQuery.of(context)
-                                //                           .size
-                                //                           .width <
-                                //                       500
-                                //                   ? MediaQuery.of(context)
-                                //                           .size
-                                //                           .width *
-                                //                       .53
-                                //                   : MediaQuery.of(context)
-                                //                           .size
-                                //                           .width *
-                                //                       .4,
-                                //               decoration: BoxDecoration(
-                                //                 color: Colors.white,
-                                //                 borderRadius:
-                                //                     BorderRadius.circular(8),
-                                //                 border: Border.all(
-                                //                     color:
-                                //                         const Color(0xFF8A95A8)),
-                                //               ),
-                                //               child: TextField(
-                                //                 onChanged: (value) {
-                                //                   setState(() {
-                                //                     searchvalue = value;
-                                //                   });
-                                //                 },
-                                //                 decoration: const InputDecoration(
-                                //                   border: InputBorder.none,
-                                //                   hintText: "Search here...",
-                                //                   hintStyle: TextStyle(
-                                //                       color: Color(0xFF8A95A8)),
-                                //                   // contentPadding: EdgeInsets.all(10),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //           ),
-                                //           ElevatedButton(
-                                //             style: ElevatedButton.styleFrom(
-                                //               backgroundColor: blueColor,
-                                //             ),
-                                //             onPressed: () {},
-                                //             child: PopupMenuButton<String>(
-                                //               onSelected: (value) async {
-                                //                 // Add your export logic here based on the selected value
-                                //                 if (value == 'PDF') {
-                                //                   print('pdf');
-                                //                   generateWorkOrderPdf(data);
-                                //                   // Export as PDF
-                                //                 } else if (value == 'XLSX') {
-                                //                   print('XLSX');
-                                //                   generateWorkOrderExcel(data);
-                                //                   // Export as XLSX
-                                //                 } else if (value == 'CSV') {
-                                //                   print('CSV');
-                                //                   generateWorkOrderCsv(data);
-                                //                   // Export as CSV
-                                //                 }
-                                //               },
-                                //               itemBuilder:
-                                //                   (BuildContext context) =>
-                                //                       <PopupMenuEntry<String>>[
-                                //                 const PopupMenuItem<String>(
-                                //                   value: 'PDF',
-                                //                   child: Text('PDF'),
-                                //                 ),
-                                //                 const PopupMenuItem<String>(
-                                //                   value: 'XLSX',
-                                //                   child: Text('XLSX'),
-                                //                 ),
-                                //                 const PopupMenuItem<String>(
-                                //                   value: 'CSV',
-                                //                   child: Text('CSV'),
-                                //                 ),
-                                //               ],
-                                //               child: Row(
-                                //                 mainAxisSize: MainAxisSize.min,
-                                //                 children: [
-                                //                   Text('Export'),
-                                //                   Icon(Icons.arrow_drop_down),
-                                //                 ],
-                                //               ),
-                                //             ),
-                                //           )
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: MediaQuery.of(context).size.width > 500 ? 10 : 0,
-                                    right: MediaQuery.of(context).size.width > 500 ? 10 : 0,
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // From Date and To Date fields with theme
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      // Search box expands
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                          child: Material(
-                                            elevation: 3,
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                                              height: MediaQuery.of(context).size.width < 500 ? 48 : 50,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(8),
-                                                border: Border.all(color: const Color(0xFF8A95A8)),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF8A95A8),
+                                      colorScheme: ColorScheme.light(
+                                        primary: Color(0xFF8A95A8),
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: fromDate,
+                                      onTap: customdate
+                                          ? () {
+                                              _pickDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black),
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "From",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: blueColor,
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: toDate,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black),
+                                      onTap: customdate
+                                          ? () {
+                                              _endDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "To",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Run Report Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+
+                              Expanded(
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              'Status',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
                                               ),
-                                              child: TextField(
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    searchvalue = value;
-                                                  });
-                                                },
-                                                decoration: const InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText: "Search here...",
-                                                  hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                                ),
-                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'All Statuses',
+                                          child: Text('All Statuses'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'New',
+                                          child: Text('New'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'In Progress',
+                                          child: Text('In Progress'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'On Hold',
+                                          child: Text('On Hold'),
+                                        ),
+                                      ],
+                                      value: statusType,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          statusType = value;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                          MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                  ),
+                                  onPressed: () {
+                                    _runReport();
+                                  },
+                                  child: const Text(
+                                    'Run Report',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                    ),
+                    child: FutureBuilder<List<WorkOrderReportData>>(
+                      future: _futureReport,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ColabShimmerLoadingWidget(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        var data = snapshot.data!;
+
+                        // Apply filtering based on selectedValue and searchvalue
+                        if (selectedValue == null && searchvalue.isEmpty) {
+                          data = snapshot.data!;
+                        } else if (selectedValue == "All") {
+                          data = snapshot.data!;
+                        } else if (searchvalue.isNotEmpty) {
+                          data = snapshot.data!
+                              .where((workOrder) =>
+                                  (workOrder.workSubject ?? '')
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase()) ||
+                                  (workOrder.rentalAddress ?? '')
+                                      .toLowerCase()
+                                      .contains(searchvalue.toLowerCase()))
+                              .toList();
+                        } else {
+                          data = snapshot.data!
+                              .where((workOrder) =>
+                                  workOrder.workSubject == selectedValue)
+                              .toList();
+                        }
+
+                        // Sort data if necessary
+                        sortData(data);
+
+                        // Pagination logic
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              // SizedBox(
+                              //   height: 8,
+                              // ),
+                              // Padding(
+                              //   padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+                              //   child: Expanded(
+                              //     flex: 0,
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.only(
+                              //         left: 5.0,
+                              //         right: 5.0,
+                              //       ),
+                              //       child: Row(
+                              //         mainAxisAlignment:
+                              //             MainAxisAlignment.spaceBetween,
+                              //         children: [
+                              //           Material(
+                              //             elevation: 3,
+                              //             borderRadius:
+                              //                 BorderRadius.circular(8),
+                              //             child: Container(
+                              //               padding: const EdgeInsets.symmetric(
+                              //                   horizontal: 10),
+                              //               // height: 40,
+                              //               height: MediaQuery.of(context)
+                              //                           .size
+                              //                           .width <
+                              //                       500
+                              //                   ? 48
+                              //                   : 50,
+                              //               width: MediaQuery.of(context)
+                              //                           .size
+                              //                           .width <
+                              //                       500
+                              //                   ? MediaQuery.of(context)
+                              //                           .size
+                              //                           .width *
+                              //                       .53
+                              //                   : MediaQuery.of(context)
+                              //                           .size
+                              //                           .width *
+                              //                       .4,
+                              //               decoration: BoxDecoration(
+                              //                 color: Colors.white,
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(8),
+                              //                 border: Border.all(
+                              //                     color:
+                              //                         const Color(0xFF8A95A8)),
+                              //               ),
+                              //               child: TextField(
+                              //                 onChanged: (value) {
+                              //                   setState(() {
+                              //                     searchvalue = value;
+                              //                   });
+                              //                 },
+                              //                 decoration: const InputDecoration(
+                              //                   border: InputBorder.none,
+                              //                   hintText: "Search here...",
+                              //                   hintStyle: TextStyle(
+                              //                       color: Color(0xFF8A95A8)),
+                              //                   // contentPadding: EdgeInsets.all(10),
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //           ElevatedButton(
+                              //             style: ElevatedButton.styleFrom(
+                              //               backgroundColor: blueColor,
+                              //             ),
+                              //             onPressed: () {},
+                              //             child: PopupMenuButton<String>(
+                              //               onSelected: (value) async {
+                              //                 // Add your export logic here based on the selected value
+                              //                 if (value == 'PDF') {
+                              //                   print('pdf');
+                              //                   generateWorkOrderPdf(data);
+                              //                   // Export as PDF
+                              //                 } else if (value == 'XLSX') {
+                              //                   print('XLSX');
+                              //                   generateWorkOrderExcel(data);
+                              //                   // Export as XLSX
+                              //                 } else if (value == 'CSV') {
+                              //                   print('CSV');
+                              //                   generateWorkOrderCsv(data);
+                              //                   // Export as CSV
+                              //                 }
+                              //               },
+                              //               itemBuilder:
+                              //                   (BuildContext context) =>
+                              //                       <PopupMenuEntry<String>>[
+                              //                 const PopupMenuItem<String>(
+                              //                   value: 'PDF',
+                              //                   child: Text('PDF'),
+                              //                 ),
+                              //                 const PopupMenuItem<String>(
+                              //                   value: 'XLSX',
+                              //                   child: Text('XLSX'),
+                              //                 ),
+                              //                 const PopupMenuItem<String>(
+                              //                   value: 'CSV',
+                              //                   child: Text('CSV'),
+                              //                 ),
+                              //               ],
+                              //               child: Row(
+                              //                 mainAxisSize: MainAxisSize.min,
+                              //                 children: [
+                              //                   Text('Export'),
+                              //                   Icon(Icons.arrow_drop_down),
+                              //                 ],
+                              //               ),
+                              //             ),
+                              //           )
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 10
+                                      : 0,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 10
+                                      : 0,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // // Search box expands
+                                    // Expanded(
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 5.0),
+                                    //     child: Material(
+                                    //       elevation: 3,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(8),
+                                    //       child: Container(
+                                    //         padding: const EdgeInsets.symmetric(
+                                    //             horizontal: 10),
+                                    //         height: MediaQuery.of(context)
+                                    //                     .size
+                                    //                     .width <
+                                    //                 500
+                                    //             ? 48
+                                    //             : 50,
+                                    //         decoration: BoxDecoration(
+                                    //           color: Colors.white,
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(8),
+                                    //           border: Border.all(
+                                    //               color:
+                                    //                   const Color(0xFF8A95A8)),
+                                    //         ),
+                                    //         child: TextField(
+                                    //           onChanged: (value) {
+                                    //             setState(() {
+                                    //               searchvalue = value;
+                                    //             });
+                                    //           },
+                                    //           decoration: const InputDecoration(
+                                    //             border: InputBorder.none,
+                                    //             hintText: "Search here...",
+                                    //             hintStyle: TextStyle(
+                                    //                 color: Color(0xFF8A95A8)),
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    // Export button takes only required space
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            if (value == 'PDF') {
+                                              generateWorkOrderPdf(data);
+                                            } else if (value == 'XLSX') {
+                                              generateWorkOrderExcel(data);
+                                            } else if (value == 'CSV') {
+                                              generateWorkOrderCsv(data);
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF')),
+                                            const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX')),
+                                            const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV')),
+                                          ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
                                           ),
                                         ),
                                       ),
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                                      // Export button takes only required space
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor,
+                              SizedBox(height: 8),
+                              _buildHeaders(),
+                              SizedBox(height: 15),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(color: blueColor)),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      WorkOrderReportData workOrder =
+                                          entry.value;
+
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? Colors.white
+                                              : blueColor.withOpacity(0.09),
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  152, 162, 179, .5)),
+                                        ),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: blueColor),
+                                        // ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 5),
+                                                        padding: !isExpanded
+                                                            ? EdgeInsets.only(
+                                                                bottom: 10)
+                                                            : EdgeInsets.only(
+                                                                top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '   ${workOrder.date == null ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${workOrder.rentalAddress ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${workOrder.workSubject ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    // SizedBox(
+                                                    //     width: MediaQuery.of(context)
+                                                    //             .size
+                                                    //             .width *
+                                                    //         .08),
+                                                    // Expanded(
+                                                    //   child: Text(
+                                                    //     // '${widget.data.createdAt}',
+                                                    //     '${lease.status}',
+                                                    //     style: TextStyle(
+                                                    //       color: blueColor,
+                                                    //       fontWeight: FontWeight.bold,
+                                                    //       fontSize: 13,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Description:  ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${workOrder.workPerformed ?? '-'}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Note: ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${workOrder.vendorNotes}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width: 40,
+                                                            child: Column(
+                                                              children: [],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
                                           ),
-                                          onPressed: () {},
-                                          child: PopupMenuButton<String>(
-                                            onSelected: (value) async {
-                                              if (value == 'PDF') {
-                                                generateWorkOrderPdf(data);
-                                              } else if (value == 'XLSX') {
-                                                generateWorkOrderExcel(data);
-                                              } else if (value == 'CSV') {
-                                                generateWorkOrderCsv(data);
-                                              }
-                                            },
-                                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(value: 'PDF', child: Text('PDF')),
-                                              const PopupMenuItem<String>(value: 'XLSX', child: Text('XLSX')),
-                                              const PopupMenuItem<String>(value: 'CSV', child: Text('CSV')),
-                                            ],
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text('Export'),
-                                                Icon(Icons.arrow_drop_down),
-                                              ],
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
                                             ),
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-
-                                SizedBox(height: 15),
-                                _buildHeaders(),
-                                SizedBox(height: 15),
-                                Padding(
-                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(color: blueColor)),
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded = expandedIndex == index;
-                                        WorkOrderReportData workOrder =
-                                            entry.value;
-
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
-                                            border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
-                                          ),
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin: EdgeInsets.only(
-                                                              left: 5),
-                                                          padding: !isExpanded
-                                                              ? EdgeInsets.only(
-                                                                  bottom: 10)
-                                                              : EdgeInsets.only(
-                                                                  top: 10),
-                                                          child: FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '   ${workOrder.date == null ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .04),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '${workOrder.rentalAddress ?? '-'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .04),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '${workOrder.workSubject ?? '-'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      // SizedBox(
-                                                      //     width: MediaQuery.of(context)
-                                                      //             .size
-                                                      //             .width *
-                                                      //         .08),
-                                                      // Expanded(
-                                                      //   child: Text(
-                                                      //     // '${widget.data.createdAt}',
-                                                      //     '${lease.status}',
-                                                      //     style: TextStyle(
-                                                      //       color: blueColor,
-                                                      //       fontWeight: FontWeight.bold,
-                                                      //       fontSize: 13,
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                                  margin:
-                                                      EdgeInsets.only(bottom: 20),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 50,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Description:  ',
-                                                                          style: TextStyle(
-                                                                              fontWeight:
-                                                                                  FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${workOrder.workPerformed ?? '-'}',
-                                                                          style: TextStyle(
-                                                                              fontWeight:
-                                                                                  FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Note: ',
-                                                                          style: TextStyle(
-                                                                              fontWeight:
-                                                                                  FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${workOrder.vendorNotes}',
-                                                                          style: TextStyle(
-                                                                              fontWeight:
-                                                                                  FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              width: 40,
-                                                              child: Column(
-                                                                children: [],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width > 500)

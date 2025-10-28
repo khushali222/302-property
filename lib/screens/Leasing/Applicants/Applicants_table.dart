@@ -415,7 +415,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = ApplicantRepository().DeleteApplicant(Applicantid: id);
+            await ApplicantRepository().DeleteApplicant(Applicantid: id);
             // Add your delete logic here
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
@@ -463,7 +463,9 @@ class _Applicants_tableState extends State<Applicants_table> {
   }
 
   void handleDelete(Datum applicant) {
-    _showAlert(context, applicant.applicantId!);
+    if (applicant.applicantId != null) {
+      _showAlert(context, applicant.applicantId!);
+    }
     // Handle delete action
     print('Delete ${applicant.applicantId}');
   }
@@ -730,7 +732,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 2,
                           child: Padding(
@@ -822,7 +826,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                       ],
                     ),
                   ),
@@ -969,185 +975,215 @@ class _Applicants_tableState extends State<Applicants_table> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Datum>>(
-                        future: futureApplicantdata,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Datum>>(
+                      future: futureApplicantdata,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (selectedValue == null && searchvalue.isEmpty) {
+                            data = snapshot.data!;
+                          } else if ((selectedValue == null ||
+                                  selectedValue == "All") &&
+                              searchvalue.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (searchvalue.isNotEmpty) {
+                            data = snapshot.data!
+                                .where((applicant) =>
+                                    (applicant.applicantFirstName?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantLastName?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantPhoneNumber
+                                                ?.toLowerCase() ??
+                                            '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantEmail?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.rentalData?.rentalAdress
+                                                ?.toLowerCase() ??
+                                            '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantStatus.isNotEmpty &&
+                                        applicant.applicantStatus.last.status
+                                            .toString()
+                                            .toLowerCase()
+                                            .contains(searchvalue.toLowerCase())))
+                                .toList();
+                          } else {
+                            data = snapshot.data!
+                                .where((applicant) =>
+                                    applicant.applicantStatus.isNotEmpty &&
+                                    applicant.applicantStatus.last.status ==
+                                        selectedValue)
+                                .toList();
+                            // data = snapshot.data!
+                            //     .where((applicant) =>
+                            // applicant.applicantStatus == null ||
+                            //     applicant.applicantStatus.isEmpty)
+                            //     .toList();
+                          }
+                          if (data.isEmpty) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
                               ),
                             );
-                          } else {
-                            var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue.isEmpty) {
-                              data = snapshot.data!;
-                            } else if ((selectedValue == null ||
-                                    selectedValue == "All") &&
-                                searchvalue.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (searchvalue.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((applicant) =>
-                                      applicant.applicantFirstName!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.applicantLastName!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.applicantPhoneNumber!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.applicantEmail!.toLowerCase().contains(
-                                          searchvalue.toLowerCase()) ||
-                                      applicant.rentalData!.rentalAdress!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      (applicant.applicantStatus.isNotEmpty &&
-                                          applicant.applicantStatus.last.status
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains(searchvalue.toLowerCase())))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((applicant) =>
-                                      applicant.applicantStatus.isNotEmpty &&
-                                      applicant.applicantStatus.last.status ==
-                                          selectedValue)
-                                  .toList();
-                              // data = snapshot.data!
-                              //     .where((applicant) =>
-                              // applicant.applicantStatus == null ||
-                              //     applicant.applicantStatus.isEmpty)
-                              //     .toList();
-                            }
-                            if (data.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                            // data = data.reversed.toList();
-                            sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 10),
-                                  _buildHeaders(),
-                                  const SizedBox(height: 20),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(
-                                    //         color:
-                                    //             blueColor)
-                                    // ),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(
-                                    //         color: Color.fromRGBO(
-                                    //             152, 162, 179, .5))),
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Datum applicant = entry.value;
-                                        // print(applicant.propertyaddress);
-                                        return Container(
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(
-                                          //       color: const Color.fromRGBO(
-                                          //           21, 43, 83, 1)),
-                                          // ),
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      InkWell(
+                          }
+                          // data = data.reversed.toList();
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 20),
+                                Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color:
+                                  //             blueColor)
+                                  // ),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Datum applicant = entry.value;
+                                      // print(applicant.propertyaddress);
+                                      return Container(
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(
+                                        //       color: const Color.fromRGBO(
+                                        //           21, 43, 83, 1)),
+                                        // ),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                            left: 5, right: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: InkWell(
                                                         onTap: () {
                                                           setState(() {
                                                             if (expandedIndex ==
@@ -1160,104 +1196,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                             }
                                                           });
                                                         },
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isExpanded
-                                                              ? const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 10)
-                                                              : const EdgeInsets
-                                                                  .only(
-                                                                  top: 10),
-                                                          child: FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (expandedIndex ==
-                                                                  index) {
-                                                                expandedIndex =
-                                                                    null;
-                                                              } else {
-                                                                expandedIndex =
-                                                                    index;
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 0.0),
-                                                            child: Text(
-                                                              '${applicant.applicantFirstName} ${applicant.applicantLastName}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Text(
-                                                          applicant.applicantPhoneNumber ==
-                                                                      null ||
-                                                                  applicant
-                                                                      .applicantPhoneNumber
-                                                                      .isEmpty
-                                                              ? '------'
-                                                              : formatPhoneNumber(
-                                                                  '${applicant.applicantPhoneNumber}'),
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .05),
-                                                      Expanded(
-                                                        flex: 3,
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
                                                                   .only(
-                                                                  left: 15.0),
+                                                                  left: 0.0),
                                                           child: Text(
-                                                            '   ${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.last.status.toString() : 'Undecided'}',
+                                                            '${applicant.applicantFirstName} ${applicant.applicantLastName}',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
@@ -1268,396 +1213,448 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Text(
+                                                        applicant.applicantPhoneNumber ==
+                                                                    null ||
+                                                                applicant
+                                                                    .applicantPhoneNumber
+                                                                    .isEmpty
+                                                            ? '------'
+                                                            : formatPhoneNumber(
+                                                                '${applicant.applicantPhoneNumber}'),
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .05),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 15.0),
+                                                        child: Text(
+                                                          '   ${applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.last.status.toString() : 'Undecided'}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                  ],
                                                 ),
                                               ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 2.0),
-                                                  margin: const EdgeInsets.only(
-                                                      bottom: 2),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 40,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Email : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text: applicant.applicantEmail != null
-                                                                              ? applicant.applicantEmail.toString()
-                                                                              : 'N/A',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey),
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 2),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 40,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Email : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.applicantEmail !=
+                                                                                null
+                                                                            ? applicant.applicantEmail.toString()
+                                                                            : 'N/A',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  SizedBox(
-                                                                    height: 8,
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Property : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text: applicant.propertyaddress != null && applicant.propertyaddress!.isNotEmpty
-                                                                              ? applicant.propertyaddress!.map((addres) => addres.address ?? "N/A").join(",")
-                                                                              : applicant.rentalData != null && applicant.rentalData!.rentalAdress != null
-                                                                                  ? applicant.rentalData!.rentalAdress
-                                                                                  : "N/A",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 8,
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Created On : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text: applicant.createdAt != null
-                                                                              ? dateProvider.formatCurrentDate(applicant.createdAt.toString())
-                                                                              : 'N/A',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                _showDeleteAlert(
-                                                                    context,
-                                                                    applicant
-                                                                        .applicantId
-                                                                        .toString());
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .red
-                                                                        .shade50),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                  ],
                                                                 ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () async {
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditApplicant(
-                                                                              applicant: applicant,
-                                                                              applicantId: applicant.applicantId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    futureApplicantdata =
-                                                                        ApplicantRepository()
-                                                                            .fetchApplicants();
-                                                                  });
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .green
-                                                                        .shade50), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    ),
-                                                                  ],
+                                                                SizedBox(
+                                                                  height: 8,
                                                                 ),
-                                                              ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Property : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.propertyaddress != null &&
+                                                                                applicant.propertyaddress!.isNotEmpty
+                                                                            ? applicant.propertyaddress!.map((addres) => addres.address ?? "N/A").join(",")
+                                                                            : applicant.rentalData?.rentalAdress ?? "N/A",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 8,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Created On : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.createdAt !=
+                                                                                null
+                                                                            ? dateProvider.formatCurrentDate(applicant.createdAt.toString())
+                                                                            : 'N/A',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () async {
-                                                                bool?
-                                                                    refreshNeeded =
-                                                                    await Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => applicant_summery(
-                                                                                  applicant_id: applicant.applicantId,
-                                                                                )));
-
-                                                                if (refreshNeeded ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    futureApplicantdata =
-                                                                        ApplicantRepository()
-                                                                            .fetchApplicants();
-                                                                  });
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade200,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  applicant
+                                                                      .applicantId
+                                                                      .toString());
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
                                                                               8),
-                                                                ),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .eye,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            2),
-                                                                  ],
-                                                                ),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              width: 10,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              var check = await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => EditApplicant(
+                                                                            applicant:
+                                                                                applicant,
+                                                                            applicantId:
+                                                                                applicant.applicantId!,
+                                                                          )));
+                                                              if (check ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureApplicantdata =
+                                                                      ApplicantRepository()
+                                                                          .fetchApplicants();
+                                                                });
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .green
+                                                                      .shade50), // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .green,
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                      ],
-                                                    ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              bool?
+                                                                  refreshNeeded =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => applicant_summery(
+                                                                                applicant_id: applicant.applicantId,
+                                                                              )));
+
+                                                              if (refreshNeeded ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureApplicantdata =
+                                                                      ApplicantRepository()
+                                                                          .fetchApplicants();
+                                                                });
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .eye,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 8,
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
-                                                ),
-                                              ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : const Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? const Color.fromRGBO(
-                                                          21, 43, 83, 1)
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
                                                         setState(() {
-                                                          currentPage++;
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
                                                         });
                                                       }
                                                     : null,
+                                              ),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : const Color.fromRGBO(
+                                                    21, 43, 83, 1),
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? const Color.fromRGBO(
+                                                    21, 43, 83, 1)
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   FutureBuilder<List<Datum>>(
                   //     future: futureApplicantdata,

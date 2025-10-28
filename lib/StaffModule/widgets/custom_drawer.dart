@@ -62,18 +62,18 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                        "assets/images/tenants/dashboard1.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                      )
+                  "assets/images/tenants/dashboard1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                )
                     : SvgPicture.asset(
-                        "assets/images/tenants/dashboard.svg",
-                        fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
-                        color: blueColor,
-                      ),
+                  "assets/images/tenants/dashboard.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                  color: blueColor,
+                ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -151,7 +151,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     ),
                   ],
                   selectedSubtopic:
-                      !widget.dropdown ? null : widget.currentpage,
+                  !widget.dropdown ? null : widget.currentpage,
                 ),
               // Only show Leasing section if staff has leasing-related permissions
               if (permissions != null &&
@@ -190,18 +190,18 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
 
                     widget.currentpage == "Upcoming Renewal"
                         ? SvgPicture.asset(
-                            "assets/images/upcoming white.svg",
-                            fit: BoxFit.cover,
-                            height: 27,
-                            width: 27,
-                          )
+                      "assets/images/upcoming white.svg",
+                      fit: BoxFit.cover,
+                      height: 27,
+                      width: 27,
+                    )
                         : SvgPicture.asset(
-                            "assets/images/upcoming renewal.svg",
-                            fit: BoxFit.cover,
-                            height: 27,
-                            width: 27,
-                            color: blueColor,
-                          ),
+                      "assets/images/upcoming renewal.svg",
+                      fit: BoxFit.cover,
+                      height: 27,
+                      width: 27,
+                      color: blueColor,
+                    ),
                     FaIcon(
                       FontAwesomeIcons.clock,
                       size: 20,
@@ -219,7 +219,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                   ],
                   selectedSubtopic:
-                      !widget.dropdown ? null : widget.currentpage,
+                  !widget.dropdown ? null : widget.currentpage,
                 ),
               // Only show Maintenance section if staff has maintenance-related permissions
               if (permissions != null &&
@@ -257,7 +257,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                   ],
                   selectedSubtopic:
-                      !widget.dropdown ? null : widget.currentpage,
+                  !widget.dropdown ? null : widget.currentpage,
                 ),
               buildDropdownListTile(
                 context,

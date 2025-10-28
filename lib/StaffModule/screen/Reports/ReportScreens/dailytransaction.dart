@@ -309,7 +309,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
       child: Container(
         decoration: BoxDecoration(
           color: blueColor,
@@ -1265,40 +1267,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   String? selectedrenatalownerid;
   bool showTableData = false;
 
-  String _convertToApiFormat(String displayDate) {
-    if (displayDate.isEmpty) return "";
-    try {
-      DateTime? parsedDate;
-
-      // Try to parse the date using common formats
-      List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
-        'yyyy-MM-dd',
-        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
-        'dd/MM/yyyy',
-        'dd-MM-yyyy'
-      ];
-
-      for (String format in dateFormats) {
-        try {
-          parsedDate = DateFormat(format).parse(displayDate);
-          break;
-        } catch (e) {
-          continue;
-        }
-      }
-
-      if (parsedDate != null) {
-        return DateFormat('yyyy-MM-dd').format(parsedDate);
-      } else {
-        return displayDate; // Return original if parsing fails
-      }
-    } catch (e) {
-      return displayDate; // Return original if parsing fails
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1317,7 +1285,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
                       child: titleBar(
                         width: double.infinity,
                         title: "Daily Transaction Report",
@@ -1327,158 +1299,210 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<DailyTransactionReportData>(
-                      future: _futureDailytrnsaction,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ColabShimmerLoadingWidget(),
-                              ],
-                            ),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.data.isEmpty) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .5,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/no_data.jpg",
-                                          height: 200,
-                                          width: 200,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        var data = snapshot.data!.data;
-
-                        // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
-
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                filters(data: data),
-                                const SizedBox(height: 20),
-                                Padding(
-                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
-                                  child: Row(
+                  FutureBuilder<DailyTransactionReportData>(
+                    future: _futureDailytrnsaction,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ColabShimmerLoadingWidget(),
+                            ],
+                          ),
+                        );
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.data.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              Container(
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
-                                        "Grand total ",
+                                        "No Data Available",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: blueColor),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        formatCurrency(snapshot.data?.grandTotal),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: blueColor),
-                                      ),
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      )
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 5),
-                                _buildHeaders(),
-                                const SizedBox(height: 20),
-                                if (showTableData)
-                                  Padding(
-                                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5))),
-                                      child: Column(
-                                        children: currentPageData
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          int rowIndex = entry.key;
-                                          var item = entry.value;
-                                          bool isRowExpanded =
-                                              expandedRowIndex == rowIndex;
-                                          DailyTransactionReport rental =
-                                              entry.value;
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                                          return Container(
-                                            // decoration: BoxDecoration(
-                                            //   border: Border.all(color: blueColor),
-                                            // ),
-                                            decoration: BoxDecoration(
-                                              color: rowIndex % 2 != 0
-                                                  ? Colors.white
-                                                  : blueColor.withOpacity(0.09),
-                                              border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      152, 162, 179, .5)),
-                                            ),
-                                            child: Column(
-                                              children: <Widget>[
-                                                ListTile(
-                                                  contentPadding: EdgeInsets.zero,
-                                                  title: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(2.0),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        GestureDetector(
+                      var data = snapshot.data!.data;
+
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 5),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              filters(data: data),
+                              const SizedBox(height: 20),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Grand total ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: blueColor),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      formatCurrency(snapshot.data?.grandTotal),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: blueColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              _buildHeaders(),
+                              const SizedBox(height: 20),
+                              if (showTableData)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0,
+                                      right: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color.fromRGBO(
+                                                152, 162, 179, .5))),
+                                    child: Column(
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int rowIndex = entry.key;
+                                        var item = entry.value;
+                                        bool isRowExpanded =
+                                            expandedRowIndex == rowIndex;
+                                        DailyTransactionReport rental =
+                                            entry.value;
+
+                                        return Container(
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          decoration: BoxDecoration(
+                                            color: rowIndex % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: const Color.fromRGBO(
+                                                    152, 162, 179, .5)),
+                                          ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedRowIndex ==
+                                                                rowIndex) {
+                                                              expandedRowIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedRowIndex =
+                                                                  rowIndex;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          padding: !isRowExpanded
+                                                              ? const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(
+                                                                  top: 10),
+                                                          child: FaIcon(
+                                                            isRowExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: isRowExpanded
+                                                                ? blueColor
+                                                                : blueColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 4,
+                                                        child: GestureDetector(
                                                           onTap: () {
                                                             setState(() {
                                                               if (expandedRowIndex ==
@@ -1491,583 +1515,540 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                               }
                                                             });
                                                           },
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 5,
-                                                                    right: 5),
-                                                            padding: !isRowExpanded
-                                                                ? const EdgeInsets
-                                                                    .only(
-                                                                    bottom: 10)
-                                                                : const EdgeInsets
-                                                                    .only(
-                                                                    top: 10),
-                                                            child: FaIcon(
-                                                              isRowExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color: isRowExpanded
-                                                                  ? blueColor
-                                                                  : blueColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 4,
-                                                          child: GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedRowIndex ==
-                                                                    rowIndex) {
-                                                                  expandedRowIndex =
-                                                                      null;
-                                                                } else {
-                                                                  expandedRowIndex =
-                                                                      rowIndex;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              dateProvider
-                                                                  .formatCurrentDate(
-                                                                      '${rental.date ?? '-'}'),
-                                                              style: TextStyle(
-                                                                color: blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 2,
-                                                        ),
-                                                        Expanded(
-                                                          flex: 2,
                                                           child: Text(
-                                                            formatCurrency(
-                                                                item.subtotal),
+                                                            dateProvider
+                                                                .formatCurrentDate(
+                                                                    '${rental.date ?? '-'}'),
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 14,
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .07),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Text(
-                                                            ' Record : ${rental.charges?.length ?? '-'} ',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 14,
-                                                            ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 2,
+                                                      ),
+                                                      Expanded(
+                                                        flex: 2,
+                                                        child: Text(
+                                                          formatCurrency(
+                                                              item.subtotal),
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
-                                                        const SizedBox(
-                                                          width: 10,
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .07),
+                                                      Expanded(
+                                                        flex: 2,
+                                                        child: Text(
+                                                          ' Record : ${rental.charges?.length ?? '-'} ',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                if (isRowExpanded)
-                                                  Column(
-                                                    children: [
-                                                      Column(
-                                                        children: item.charges!
-                                                            .asMap()
-                                                            .entries
-                                                            .map((tenantEntry) {
-                                                          int tenantIndex =
-                                                              tenantEntry.key;
-                                                          var tenant =
-                                                              tenantEntry.value;
-                                                          bool isTenantExpanded =
-                                                              expandedTenantIndex[
-                                                                      rowIndex] ==
-                                                                  tenantIndex;
+                                              ),
+                                              if (isRowExpanded)
+                                                Column(
+                                                  children: [
+                                                    Column(
+                                                      children: item.charges!
+                                                          .asMap()
+                                                          .entries
+                                                          .map((tenantEntry) {
+                                                        int tenantIndex =
+                                                            tenantEntry.key;
+                                                        var tenant =
+                                                            tenantEntry.value;
+                                                        bool isTenantExpanded =
+                                                            expandedTenantIndex[
+                                                                    rowIndex] ==
+                                                                tenantIndex;
 
-                                                          return Column(
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        if (expandedTenantIndex[
-                                                                                rowIndex] ==
-                                                                            tenantIndex) {
-                                                                          expandedTenantIndex[rowIndex] =
-                                                                              null;
-                                                                        } else {
-                                                                          expandedTenantIndex[rowIndex] =
-                                                                              tenantIndex;
-                                                                        }
-                                                                      });
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      margin: const EdgeInsets
-                                                                          .only(
-                                                                          left: 5,
-                                                                          right:
-                                                                              5),
-                                                                      padding: !isTenantExpanded
-                                                                          ? const EdgeInsets
-                                                                              .only(
-                                                                              bottom:
-                                                                                  10)
-                                                                          : const EdgeInsets
-                                                                              .only(
-                                                                              top:
-                                                                                  10),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
+                                                        return Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      if (expandedTenantIndex[
+                                                                              rowIndex] ==
+                                                                          tenantIndex) {
+                                                                        expandedTenantIndex[rowIndex] =
+                                                                            null;
+                                                                      } else {
+                                                                        expandedTenantIndex[rowIndex] =
+                                                                            tenantIndex;
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    margin: const EdgeInsets
+                                                                        .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                    padding: !isTenantExpanded
+                                                                        ? const EdgeInsets
                                                                             .only(
-                                                                            left:
+                                                                            bottom:
+                                                                                10)
+                                                                        : const EdgeInsets
+                                                                            .only(
+                                                                            top:
                                                                                 10),
-                                                                        child:
-                                                                            FaIcon(
-                                                                          isTenantExpanded
-                                                                              ? FontAwesomeIcons.sortUp
-                                                                              : FontAwesomeIcons.sortDown,
-                                                                          size:
-                                                                              20,
-                                                                          color: isTenantExpanded
-                                                                              ? blueColor
-                                                                              : blueColor,
-                                                                        ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              10),
+                                                                      child:
+                                                                          FaIcon(
+                                                                        isTenantExpanded
+                                                                            ? FontAwesomeIcons.sortUp
+                                                                            : FontAwesomeIcons.sortDown,
+                                                                        size:
+                                                                            20,
+                                                                        color: isTenantExpanded
+                                                                            ? blueColor
+                                                                            : blueColor,
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  Expanded(
-                                                                      child:
-                                                                          GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        if (expandedTenantIndex[
-                                                                                rowIndex] ==
-                                                                            tenantIndex) {
-                                                                          expandedTenantIndex[rowIndex] =
-                                                                              null;
-                                                                        } else {
-                                                                          expandedTenantIndex[rowIndex] =
-                                                                              tenantIndex;
-                                                                        }
-                                                                      });
-                                                                    },
-                                                                    child: Text(
-                                                                      "${tenant.rentalData!.rentalAddress}",
-                                                                      style: TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                          color:
-                                                                              blueColor),
-                                                                    ),
-                                                                  )),
-                                                                  Expanded(
-                                                                      child: Text(
-                                                                    '${tenant.tenantData?.tenantFirstName} ${tenant.tenantData?.tenantLastName}',
-                                                                    // "${formatDate(tenant.createdAt.toString())}",
+                                                                ),
+                                                                Expanded(
+                                                                    child:
+                                                                        GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      if (expandedTenantIndex[
+                                                                              rowIndex] ==
+                                                                          tenantIndex) {
+                                                                        expandedTenantIndex[rowIndex] =
+                                                                            null;
+                                                                      } else {
+                                                                        expandedTenantIndex[rowIndex] =
+                                                                            tenantIndex;
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  child: Text(
+                                                                    "${tenant.rentalData!.rentalAddress}",
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
                                                                         color:
                                                                             blueColor),
-                                                                  ))
-                                                                ],
-                                                              ),
-                                                              if (isTenantExpanded)
-                                                                Column(
-                                                                  children: [
+                                                                  ),
+                                                                )),
+                                                                Expanded(
+                                                                    child: Text(
+                                                                  '${tenant.tenantData?.tenantFirstName} ${tenant.tenantData?.tenantLastName}',
+                                                                  // "${formatDate(tenant.createdAt.toString())}",
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor),
+                                                                ))
+                                                              ],
+                                                            ),
+                                                            if (isTenantExpanded)
+                                                              Column(
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            20,
+                                                                      ),
+                                                                      Expanded(
+                                                                        child:
+                                                                            Table(
+                                                                          columnWidths: {
+                                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                                            // 1: FlexColumnWidth(),
+                                                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                                                            1: const FlexColumnWidth(),
+                                                                          },
+                                                                          children: [
+                                                                            _buildTableRow(
+                                                                                'Type:',
+                                                                                _getDisplayValue(tenant.paymentType),
+                                                                                'Txn Date:',
+                                                                                _getDisplayValue(dateProvider.formatCurrentDate('${tenant.entry?.first.date}'))),
+                                                                            _buildTableRow(
+                                                                              'Payment Details:',
+                                                                              _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
+                                                                              'Total:',
+                                                                              _getDisplayValue(formatCurrency(tenant.totalAmount)),
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  if (tenant
+                                                                      .entry!
+                                                                      .isNotEmpty)
                                                                     Row(
                                                                       children: [
                                                                         const SizedBox(
                                                                           width:
-                                                                              20,
+                                                                              27,
                                                                         ),
-                                                                        Expanded(
-                                                                          child:
-                                                                              Table(
-                                                                            columnWidths: {
-                                                                              // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                                              // 1: FlexColumnWidth(),
-                                                                              0: const FlexColumnWidth(), // Distribute columns equally
-                                                                              1: const FlexColumnWidth(),
-                                                                            },
+                                                                        Text.rich(
+                                                                          TextSpan(
                                                                             children: [
-                                                                              _buildTableRow(
-                                                                                  'Type:',
-                                                                                  _getDisplayValue(tenant.paymentType),
-                                                                                  'Txn Date:',
-                                                                                  _getDisplayValue(dateProvider.formatCurrentDate('${tenant.entry?.first.date}'))),
-                                                                              _buildTableRow(
-                                                                                'Payment Details:',
-                                                                                _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
-                                                                                'Total:',
-                                                                                _getDisplayValue(formatCurrency(tenant.totalAmount)),
-                                                                              )
+                                                                              TextSpan(
+                                                                                text: 'Details Line : ',
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                              ),
                                                                             ],
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    if (tenant
-                                                                        .entry!
-                                                                        .isNotEmpty)
-                                                                      Row(
+                                                                  if (tenant
+                                                                          .entry!
+                                                                          .isNotEmpty &&
+                                                                      tenant.response !=
+                                                                          "FAILURE")
+                                                                    const SizedBox(
+                                                                      height: 4,
+                                                                    ),
+                                                                  if (tenant
+                                                                          .entry!
+                                                                          .isNotEmpty &&
+                                                                      tenant.response !=
+                                                                          "FAILURE" &&
+                                                                      tenant.isDelete !=
+                                                                          true)
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              15,
+                                                                          top:
+                                                                              0),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
                                                                         children: [
-                                                                          const SizedBox(
-                                                                            width:
-                                                                                27,
+                                                                          FaIcon(
+                                                                            isTenantExpanded
+                                                                                ? FontAwesomeIcons.sortUp
+                                                                                : FontAwesomeIcons.sortDown,
+                                                                            size:
+                                                                                20,
+                                                                            color:
+                                                                                Colors.transparent,
                                                                           ),
-                                                                          Text.rich(
-                                                                            TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: 'Details Line : ',
-                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          Expanded(
+                                                                            flex:
+                                                                                2,
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text.rich(
+                                                                                  TextSpan(
+                                                                                    children: [
+                                                                                      TextSpan(
+                                                                                        text: 'Account : ',
+                                                                                        style: TextStyle(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color: blueColor,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex:
+                                                                                2,
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text.rich(
+                                                                                  TextSpan(
+                                                                                    children: [
+                                                                                      TextSpan(
+                                                                                        text: '  Amount : ',
+                                                                                        style: TextStyle(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color: blueColor,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
                                                                               ],
                                                                             ),
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                    if (tenant
-                                                                            .entry!
-                                                                            .isNotEmpty &&
-                                                                        tenant.response !=
-                                                                            "FAILURE")
-                                                                      const SizedBox(
-                                                                        height: 4,
-                                                                      ),
-                                                                    if (tenant
-                                                                            .entry!
-                                                                            .isNotEmpty &&
-                                                                        tenant.response !=
-                                                                            "FAILURE" &&
-                                                                        tenant.isDelete !=
-                                                                            true)
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                15,
-                                                                            top:
-                                                                                0),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          children: [
-                                                                            FaIcon(
-                                                                              isTenantExpanded
-                                                                                  ? FontAwesomeIcons.sortUp
-                                                                                  : FontAwesomeIcons.sortDown,
-                                                                              size:
-                                                                                  20,
-                                                                              color:
-                                                                                  Colors.transparent,
-                                                                            ),
-                                                                            Expanded(
-                                                                              flex:
-                                                                                  2,
-                                                                              child:
-                                                                                  Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: <Widget>[
-                                                                                  Text.rich(
-                                                                                    TextSpan(
-                                                                                      children: [
-                                                                                        TextSpan(
-                                                                                          text: 'Account : ',
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: blueColor,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
+                                                                    ),
+                                                                  if (tenant
+                                                                          .entry!
+                                                                          .isNotEmpty &&
+                                                                      tenant.response !=
+                                                                          "FAILURE" &&
+                                                                      tenant.isDelete !=
+                                                                          true)
+                                                                    Column(
+                                                                      children: tenant
+                                                                          .entry!
+                                                                          .map(
+                                                                              (entry) {
+                                                                        return Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              left: 15.0,
+                                                                              bottom: 0),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: [
+                                                                              FaIcon(
+                                                                                isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                                                size: 20,
+                                                                                color: Colors.transparent,
                                                                               ),
-                                                                            ),
-                                                                            Expanded(
-                                                                              flex:
-                                                                                  2,
-                                                                              child:
-                                                                                  Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: <Widget>[
-                                                                                  Text.rich(
-                                                                                    TextSpan(
-                                                                                      children: [
-                                                                                        TextSpan(
-                                                                                          text: '  Amount : ',
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: blueColor,
+                                                                              Expanded(
+                                                                                flex: 2,
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Text.rich(
+                                                                                      TextSpan(
+                                                                                        children: [
+                                                                                          TextSpan(
+                                                                                            text: '${entry.account ?? "N/A"}',
+                                                                                            style: TextStyle(
+                                                                                              fontWeight: FontWeight.w700,
+                                                                                              color: grey,
+                                                                                            ),
                                                                                           ),
-                                                                                        ),
-                                                                                      ],
+                                                                                        ],
+                                                                                      ),
                                                                                     ),
-                                                                                  ),
-                                                                                ],
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    if (tenant
-                                                                            .entry!
-                                                                            .isNotEmpty &&
-                                                                        tenant.response !=
-                                                                            "FAILURE" &&
-                                                                        tenant.isDelete !=
-                                                                            true)
-                                                                      Column(
-                                                                        children: tenant
-                                                                            .entry!
-                                                                            .map(
-                                                                                (entry) {
-                                                                          return Padding(
-                                                                            padding: const EdgeInsets
-                                                                                .only(
-                                                                                left: 15.0,
-                                                                                bottom: 0),
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment:
-                                                                                  MainAxisAlignment.start,
-                                                                              children: [
-                                                                                FaIcon(
-                                                                                  isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
-                                                                                  size: 20,
-                                                                                  color: Colors.transparent,
-                                                                                ),
-                                                                                Expanded(
-                                                                                  flex: 2,
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: <Widget>[
-                                                                                      Text.rich(
-                                                                                        TextSpan(
-                                                                                          children: [
-                                                                                            TextSpan(
-                                                                                              text: '${entry.account ?? "N/A"}',
-                                                                                              style: TextStyle(
-                                                                                                fontWeight: FontWeight.w700,
-                                                                                                color: grey,
-                                                                                              ),
+                                                                              const SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex: 2,
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Text.rich(
+                                                                                      TextSpan(
+                                                                                        children: [
+                                                                                          TextSpan(
+                                                                                            text: ' ${formatCurrency(entry.amount)}',
+                                                                                            style: TextStyle(
+                                                                                              fontWeight: FontWeight.w700,
+                                                                                              color: grey,
                                                                                             ),
-                                                                                          ],
-                                                                                        ),
+                                                                                          ),
+                                                                                        ],
                                                                                       ),
-                                                                                    ],
-                                                                                  ),
+                                                                                    ),
+                                                                                    // Add additional fields if needed
+                                                                                  ],
                                                                                 ),
-                                                                                const SizedBox(
-                                                                                  width: 15,
-                                                                                ),
-                                                                                Expanded(
-                                                                                  flex: 2,
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: <Widget>[
-                                                                                      Text.rich(
-                                                                                        TextSpan(
-                                                                                          children: [
-                                                                                            TextSpan(
-                                                                                              text: ' ${formatCurrency(entry.amount)}',
-                                                                                              style: TextStyle(
-                                                                                                fontWeight: FontWeight.w700,
-                                                                                                color: grey,
-                                                                                              ),
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                      // Add additional fields if needed
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          );
-                                                                        }).toList(),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                    ),
+                                                                  if (tenant
+                                                                          .response ==
+                                                                      "FAILURE")
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Failed : Reason(${tenant.reason}) ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                    if (tenant
-                                                                            .response ==
-                                                                        "FAILURE")
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text:
-                                                                                  'Failed : Reason(${tenant.reason}) ',
-                                                                              style:
-                                                                                  TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    if (tenant
-                                                                        .isDelete!)
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                30.0),
-                                                                        child:
-                                                                            Align(
-                                                                          alignment:
-                                                                              Alignment.centerLeft,
-                                                                          child: Text
-                                                                              .rich(
-                                                                            TextSpan(
-                                                                              children: [
-                                                                                TextSpan(
-                                                                                  text: 'Void (Reason :- ${tenant.reason})',
-                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                                ),
-                                                                              ],
-                                                                            ),
+                                                                    ),
+                                                                  if (tenant
+                                                                      .isDelete!)
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              30.0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child: Text
+                                                                            .rich(
+                                                                          TextSpan(
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: 'Void (Reason :- ${tenant.reason})',
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                  ],
-                                                                ),
-                                                              const SizedBox(
-                                                                height: 8,
+                                                                    ),
+                                                                ],
                                                               ),
-                                                              if (item.charges!
-                                                                          .length -
-                                                                      1 !=
-                                                                  tenantIndex)
-                                                                const Divider(
-                                                                  thickness: 2,
-                                                                )
-                                                            ],
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            if (item.charges!
+                                                                        .length -
+                                                                    1 !=
+                                                                tenantIndex)
+                                                              const Divider(
+                                                                thickness: 2,
+                                                              )
+                                                          ],
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
                                     ),
                                   ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
                                 ),
-                              ],
-                            ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
                   /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<DelinquentTenantsData>>(
                 future: _futureDailytrnsaction,
@@ -2857,7 +2838,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
   filters({List<DailyTransactionReport>? data}) {
     return Padding(
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
       child: Column(
         children: [
           const SizedBox(
@@ -2959,24 +2942,25 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               final dateProvider = Provider.of<DateProvider>(
                                   context,
                                   listen: false);
-                              String todayApiFormat =
-                                  DateFormat('yyyy-MM-dd').format(DateTime.now());
-                              fromDate.text =
-                                  dateProvider.formatCurrentDate(todayApiFormat);
-                              toDate.text =
-                                  dateProvider.formatCurrentDate(todayApiFormat);
+                              String todayApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime.now());
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
                             } else if (value == "This Week") {
                               DateTime now = DateTime.now();
                               customdate = false;
                               final dateProvider = Provider.of<DateProvider>(
                                   context,
                                   listen: false);
-                              String weekStartApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(now
-                                      .subtract(Duration(days: now.weekday - 1)));
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now.subtract(
+                                      Duration(days: now.weekday - 1)));
                               String weekEndApiFormat = DateFormat('yyyy-MM-dd')
                                   .format(now.add(Duration(
-                                      days: DateTime.daysPerWeek - now.weekday)));
+                                      days:
+                                          DateTime.daysPerWeek - now.weekday)));
                               fromDate.text = dateProvider
                                   .formatCurrentDate(weekStartApiFormat);
                               toDate.text = dateProvider
@@ -2990,8 +2974,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               String monthStartApiFormat =
                                   DateFormat('yyyy-MM-dd')
                                       .format(DateTime(now.year, now.month, 1));
-                              String monthEndApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(DateTime(now.year, now.month + 1, 0));
+                              String monthEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, now.month + 1, 0));
                               fromDate.text = dateProvider
                                   .formatCurrentDate(monthStartApiFormat);
                               toDate.text = dateProvider
@@ -3002,8 +2987,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               final dateProvider = Provider.of<DateProvider>(
                                   context,
                                   listen: false);
-                              String yearStartApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(DateTime(now.year, 1, 1));
+                              String yearStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, 1, 1));
                               String yearEndApiFormat = DateFormat('yyyy-MM-dd')
                                   .format(DateTime(now.year, 12, 31));
                               fromDate.text = dateProvider
@@ -3247,8 +3233,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               true; // Set to true when the button is pressed
                         });
                         _futureDailytrnsaction = fetchDelinquentTenantsData(
-                            _convertToApiFormat(fromDate.text),
-                            _convertToApiFormat(toDate.text)); // Call the API
+                            formatDate(fromDate.text),
+                            formatDate(toDate.text)); // Call the API
                       },
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,

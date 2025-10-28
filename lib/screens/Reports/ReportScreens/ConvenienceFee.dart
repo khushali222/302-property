@@ -551,7 +551,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
 
 //for pdf
   Future<void> generateAccountTotalReportPdf(
-      List<Data> delinquentTenantsData) async {
+      List<Data> delinquentTenantsData, DateProvider dateProvider) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -669,7 +669,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   'Tenant',
                   'Override Percentage',
                 ],
-                data: _generateTableData(delinquentTenantsData),
+                data: _generateTableData(delinquentTenantsData, dateProvider),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -703,7 +703,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
   }
 
   Future<void> generateAccountTotalReportExcel(
-      List<Data> rentalOwnerReports) async {
+      List<Data> rentalOwnerReports, DateProvider dateProvider) async {
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -766,9 +766,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
 
       sheet.getRangeByIndex(2 + i, 1).setText(
           '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}');
-      sheet
-          .getRangeByIndex(2 + i, 2)
-          .setText(formatDate(workOrder.endDate ?? ""));
+      sheet.getRangeByIndex(2 + i, 2).setText(
+          dateProvider.formatCurrentDate(formatDate(workOrder.endDate ?? "")));
       // sheet.getRangeByIndex(2 + i, 3).setText('${workOrder.tenantData!.first.tenantFirstName}''${workOrder.tenantData!.first.tenantLastName}');
       String tenantInfo = '';
       if (workOrder.tenantData != null && workOrder.tenantData!.isNotEmpty) {
@@ -823,7 +822,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
   }
 
   Future<void> generateAccountTotalReportCsv(
-      List<Data> rentalOwnerReports) async {
+      List<Data> rentalOwnerReports, DateProvider dateProvider) async {
     final List<List<String>> rows = [];
 
     // Define headers for CSV
@@ -842,7 +841,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
         // Get property and lease end date
         final String property =
             '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}';
-        final String leaseEndDate = formatDate(workOrder.endDate ?? "");
+        final String leaseEndDate =
+            dateProvider.formatCurrentDate(formatDate(workOrder.endDate ?? ""));
 
         // Iterate through each tenant
         for (int i = 0; i < workOrder.tenantData!.length; i++) {
@@ -871,7 +871,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
         // If there are no tenants, add a row with N/A for tenant and override percentage
         final List<String> row = [
           '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}',
-          formatDate(workOrder.endDate ?? ""),
+          dateProvider.formatCurrentDate(formatDate(workOrder.endDate ?? "")),
           'N/A',
           'N/A',
         ];
@@ -949,7 +949,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
   //
   //   return tableData;
   // }
-  List<List<dynamic>> _generateTableData(List<Data> rentalOwnerReports) {
+  List<List<dynamic>> _generateTableData(
+      List<Data> rentalOwnerReports, DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
     double total = 0.0;
 
@@ -957,7 +958,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
       // Get property and lease end date
       final String property =
           '${owner.rentalData?.rentalAddress ?? '-'}${(owner.rentalData?.rentalAddress != null && owner.unitData?.rentalUnit != null) ? ' - ' : ''}${owner.unitData?.rentalUnit ?? ''}';
-      final String leaseEndDate = formatDate(owner.endDate ?? "");
+      final String leaseEndDate =
+          dateProvider.formatCurrentDate(formatDate(owner.endDate ?? ""));
 
       // Check if tenantData is not empty
       if (owner.tenantData != null && owner.tenantData!.isNotEmpty) {
@@ -1156,7 +1158,6 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                     title: 'Convenience Fee Override',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
-
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
@@ -2475,15 +2476,17 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                     child: PopupMenuButton<String>(
                       onSelected: (value) async {
                         // Export logic
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
                         if (value == 'PDF' && data != null) {
                           print('pdf');
-                          generateAccountTotalReportPdf(data);
+                          generateAccountTotalReportPdf(data, dateProvider);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
-                          generateAccountTotalReportExcel(data);
+                          generateAccountTotalReportExcel(data, dateProvider);
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
-                          generateAccountTotalReportCsv(data);
+                          generateAccountTotalReportCsv(data, dateProvider);
                         }
                       },
                       itemBuilder: (BuildContext context) =>

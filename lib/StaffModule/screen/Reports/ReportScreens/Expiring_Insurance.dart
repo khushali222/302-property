@@ -79,9 +79,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       oneMonthLater = DateTime(oneMonthLater.year, oneMonthLater.month, 0);
     }
 
-    // Format date strings
-    String todayStr = today.toString().substring(0, 10);
-    String oneMonthLaterStr = oneMonthLater.toString().substring(0, 10);
+    // Format date strings using DateProvider
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String todayStr = dateProvider.formatCurrentDate(today.toString());
+    String oneMonthLaterStr =
+        dateProvider.formatCurrentDate(oneMonthLater.toString());
 
     // Set default values to text controllers
     _fromDateController.text = todayStr;
@@ -163,6 +165,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generatePdf(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -177,7 +180,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     pdf.addPage(
       pw.Page(
@@ -262,9 +266,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   return [
                     lease.insuranceCompany ?? '',
                     lease.policyId ?? '',
-                    formatDate(lease.effectiveDate ?? ''),
-                    formatDate(lease.expirationDate ?? ''),
-                    formatCurrency(lease.liabilityCoverage),
+                    lease.effectiveDate != null
+                        ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+                        : '',
+                    lease.expirationDate != null
+                        ? dateProvider.formatCurrentDate(lease.expirationDate!)
+                        : '',
+                    formatCurrency(lease.liabilityCoverage.toDouble()),
                     lease.tenantDetails != null
                         ? lease.tenantDetails
                             ?.map((tenant) =>
@@ -311,6 +319,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generateExcel(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Create a new Excel document.
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
@@ -348,15 +357,15 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       sheet.getRangeByIndex(2 + i, 2).setText(lease.policyId ?? '');
       sheet.getRangeByIndex(2 + i, 3).setText(
           formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''));
-      sheet
-          .getRangeByIndex(2 + i, 4)
-          .setText(lease.effectiveDate?.substring(0, 10) ?? "");
-      sheet
-          .getRangeByIndex(2 + i, 5)
-          .setText(lease.expirationDate?.substring(0, 10) ?? "");
+      sheet.getRangeByIndex(2 + i, 4).setText(lease.effectiveDate != null
+          ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+          : "");
+      sheet.getRangeByIndex(2 + i, 5).setText(lease.expirationDate != null
+          ? dateProvider.formatCurrentDate(lease.expirationDate!)
+          : "");
       sheet
           .getRangeByIndex(2 + i, 6)
-          .setText(formatCurrency(lease.liabilityCoverage));
+          .setText(formatCurrency(lease.liabilityCoverage.toDouble()));
       String? tenantNames = lease.tenantDetails != null
           ? lease.tenantDetails
               ?.map((tenant) =>
@@ -419,6 +428,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generateCsv(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Request storage permissions
     await requestPermissions();
 
@@ -441,9 +451,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
         lease.insuranceCompany ?? '',
         lease.policyId ?? '',
         formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''),
-        lease.effectiveDate?.substring(0, 10) ?? '',
-        lease.expirationDate?.substring(0, 10) ?? '',
-        formatCurrency(lease.liabilityCoverage),
+        lease.effectiveDate != null
+            ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+            : '',
+        lease.expirationDate != null
+            ? dateProvider.formatCurrentDate(lease.expirationDate!)
+            : '',
+        formatCurrency(lease.liabilityCoverage.toDouble()),
         lease.tenantDetails != null
             ? lease.tenantDetails
                 ?.map((tenant) =>

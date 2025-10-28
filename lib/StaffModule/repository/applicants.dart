@@ -34,6 +34,9 @@ class ApplicantRepository {
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: 'Applicant Added Successfully');
       return jsonDecode(response.body);
+    } else if (response.statusCode == 203) {
+      print('Failed to post data in applicants.dart: ${response.body}');
+      return jsonDecode(response.body);
     } else {
       // Log the response body for debugging
       print('Failed to post data: ${response.body}');
@@ -67,7 +70,6 @@ class ApplicantRepository {
     required String applicantId,
     required Map<String, dynamic> applicantData,
   }) async {
-
     print('id is that :${applicantId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -95,7 +97,6 @@ class ApplicantRepository {
   }
 
   Future<Map<String, dynamic>> DeleteApplicant(
-
       {required String? Applicantid, String? reason}) async {
     print('id is $Applicantid');
     // print('$apiUrl/$id');
@@ -104,15 +105,12 @@ class ApplicantRepository {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final http.Response response = await http.delete(
-      Uri.parse('$Api_url/api/applicant/applicant/$Applicantid'),
-      headers: <String, String>{
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-        body: jsonEncode({
-          "reason":reason
-        })
-    );
+        Uri.parse('$Api_url/api/applicant/applicant/$Applicantid'),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode({"reason": reason}));
     var responseData = json.decode(response.body);
     print(response.body);
     if (responseData["statusCode"] == 200) {

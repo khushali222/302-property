@@ -8,6 +8,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Recurring_Payments_Configuration_model.dart';
@@ -153,6 +155,7 @@ class _Recurring_Payments_Configuration_ReportState
   int totalDisplayData = 0;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         drawer: CustomDrawer(
@@ -324,7 +327,13 @@ class _Recurring_Payments_Configuration_ReportState
                             ),
                             const SizedBox(height: 10),
                             Padding(
-                              padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 23,right:  MediaQuery.of(context).size.width > 500? 25 : 23),
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -348,11 +357,23 @@ class _Recurring_Payments_Configuration_ReportState
                             ),
                             const SizedBox(height: 10),
                             Padding(
-                              padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 16,right:  MediaQuery.of(context).size.width > 500? 25 : 16),
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
                               child: _buildHeaders(),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 16,right:  MediaQuery.of(context).size.width > 500? 25 : 16),
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
                               child: Column(
                                 children: recurringPaymentsConfiguration!.data!
                                     .asMap()
@@ -459,7 +480,7 @@ class _Recurring_Payments_Configuration_ReportState
                                                   Expanded(
                                                     flex: 3,
                                                     child: Text(
-                                                      '  ${payment.endDate ?? '-'}',
+                                                      '  ${payment.endDate != null ? dateProvider.formatCurrentDate(payment.endDate!) : '-'}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -650,7 +671,7 @@ class _Recurring_Payments_Configuration_ReportState
                                                                               2,
                                                                           child:
                                                                               Text(
-                                                                            "Date: ${recurring.date ?? ""}",
+                                                                            "Date: ${recurring.date != null ? dateProvider.formatCurrentDate(DateTime.fromMillisecondsSinceEpoch(recurring.date! * 1000).toString()) : ""}",
                                                                             style:
                                                                                 TextStyle(fontSize: 14, color: blueColor),
                                                                           )),
@@ -697,6 +718,7 @@ class _Recurring_Payments_Configuration_ReportState
   }
 
   Future<void> generateAccountTotalReportPdf() async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -745,7 +767,7 @@ class _Recurring_Payments_Configuration_ReportState
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
+                    'Date : - ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -810,7 +832,8 @@ class _Recurring_Payments_Configuration_ReportState
                   'Account',
                   'Amount'
                 ],
-                data: _generateTableData(recurringPaymentsConfiguration!.data!),
+                data: _generateTableData(
+                    recurringPaymentsConfiguration!.data!, dateProvider),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -844,7 +867,8 @@ class _Recurring_Payments_Configuration_ReportState
     );
   }
 
-  List<List<dynamic>> _generateTableData(List<Data> recurringPayment) {
+  List<List<dynamic>> _generateTableData(
+      List<Data> recurringPayment, DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
 
     for (int i = 0; i < recurringPayment.length; i++) {
@@ -871,7 +895,10 @@ class _Recurring_Payments_Configuration_ReportState
                           fontWeight: pw.FontWeight.bold, fontSize: 10))
                   : pw.Text(''),
               isFirstTenant
-                  ? pw.Text(lease.endDate ?? "",
+                  ? pw.Text(
+                      lease.endDate != null
+                          ? dateProvider.formatCurrentDate(lease.endDate!)
+                          : "",
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 10))
                   : pw.Text(''),
@@ -880,7 +907,10 @@ class _Recurring_Payments_Configuration_ReportState
                       fontWeight: pw.FontWeight.bold, fontSize: 10)),
               pw.Text(
                   tenant.recurrings![0].date != null
-                      ? tenant.recurrings![0].date.toString()
+                      ? dateProvider.formatCurrentDate(
+                          DateTime.fromMillisecondsSinceEpoch(
+                                  tenant.recurrings![0].date! * 1000)
+                              .toString())
                       : "",
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, fontSize: 10)),
@@ -903,7 +933,13 @@ class _Recurring_Payments_Configuration_ReportState
                 "", // Empty property column (avoid repeating address)
                 "", // Empty lease end date column
                 "", // Empty tenant column
-                pw.Text(recurring.date != null ? recurring.date.toString() : "",
+                pw.Text(
+                    recurring.date != null
+                        ? dateProvider.formatCurrentDate(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                    recurring.date! * 1000)
+                                .toString())
+                        : "",
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold, fontSize: 10)),
                 pw.Text(recurring.account ?? "",
@@ -927,6 +963,7 @@ class _Recurring_Payments_Configuration_ReportState
 
   Future<void> generateRecurringPaymentExcel(
       List<Data> recurringPayment) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -986,13 +1023,18 @@ class _Recurring_Payments_Configuration_ReportState
             sheet.getRangeByIndex(rowIndex, 1).setText(isFirstTenant
                 ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                 : '');
-            sheet
-                .getRangeByIndex(rowIndex, 2)
-                .setText(isFirstTenant ? lease.endDate ?? '' : '');
+            sheet.getRangeByIndex(rowIndex, 2).setText(isFirstTenant
+                ? (lease.endDate != null
+                    ? dateProvider.formatCurrentDate(lease.endDate!)
+                    : '')
+                : '');
             sheet.getRangeByIndex(rowIndex, 3).setText(tenant.tenantName ?? '');
             sheet.getRangeByIndex(rowIndex, 4).setText(
                   tenant.recurrings![0].date != null
-                      ? tenant.recurrings![0].date.toString()
+                      ? dateProvider.formatCurrentDate(
+                          DateTime.fromMillisecondsSinceEpoch(
+                                  tenant.recurrings![0].date! * 1000)
+                              .toString())
                       : "",
                 );
             sheet
@@ -1013,7 +1055,12 @@ class _Recurring_Payments_Configuration_ReportState
               sheet.getRangeByIndex(rowIndex, 2).setText('');
               sheet.getRangeByIndex(rowIndex, 3).setText('');
               sheet.getRangeByIndex(rowIndex, 4).setText(
-                    recurring.date != null ? recurring.date.toString() : "",
+                    recurring.date != null
+                        ? dateProvider.formatCurrentDate(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                    recurring.date! * 1000)
+                                .toString())
+                        : "",
                   );
               sheet
                   .getRangeByIndex(rowIndex, 5)
@@ -1029,9 +1076,11 @@ class _Recurring_Payments_Configuration_ReportState
             sheet.getRangeByIndex(rowIndex, 1).setText(k == 0
                 ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                 : '');
-            sheet
-                .getRangeByIndex(rowIndex, 2)
-                .setText(k == 0 ? lease.endDate ?? '' : '');
+            sheet.getRangeByIndex(rowIndex, 2).setText(k == 0
+                ? (lease.endDate != null
+                    ? dateProvider.formatCurrentDate(lease.endDate!)
+                    : '')
+                : '');
             sheet.getRangeByIndex(rowIndex, 3).setText(tenant.tenantName ?? '');
             sheet.getRangeByIndex(rowIndex, 4).setText('');
             sheet.getRangeByIndex(rowIndex, 5).setText('');
@@ -1077,6 +1126,7 @@ class _Recurring_Payments_Configuration_ReportState
   }
 
   Future<void> generateRecurringPaymentCsv(List<Data> recurringPayment) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Define headers for CSV
     final List<String> headers = [
       'Property',
@@ -1110,10 +1160,17 @@ class _Recurring_Payments_Configuration_ReportState
               isFirstTenant
                   ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                   : '',
-              isFirstTenant ? lease.endDate ?? '' : '',
+              isFirstTenant
+                  ? (lease.endDate != null
+                      ? dateProvider.formatCurrentDate(lease.endDate!)
+                      : '')
+                  : '',
               tenant.tenantName ?? '',
               tenant.recurrings![0].date != null
-                  ? tenant.recurrings![0].date.toString()
+                  ? dateProvider.formatCurrentDate(
+                      DateTime.fromMillisecondsSinceEpoch(
+                              tenant.recurrings![0].date! * 1000)
+                          .toString())
                   : "",
               tenant.recurrings![0].account ?? "",
               "\$${tenant.recurrings![0].amount}" ?? 0.0
@@ -1130,7 +1187,12 @@ class _Recurring_Payments_Configuration_ReportState
                 '',
                 '',
                 '',
-                recurring.date != null ? recurring.date.toString() : "",
+                recurring.date != null
+                    ? dateProvider.formatCurrentDate(
+                        DateTime.fromMillisecondsSinceEpoch(
+                                recurring.date! * 1000)
+                            .toString())
+                    : "",
                 recurring.account ?? "",
                 "\$${recurring.amount}" ?? 0.0
               ].map((e) => '"$e"').join(','));
@@ -1143,7 +1205,11 @@ class _Recurring_Payments_Configuration_ReportState
               isFirstTenant
                   ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                   : '',
-              isFirstTenant ? lease.endDate ?? '' : '',
+              isFirstTenant
+                  ? (lease.endDate != null
+                      ? dateProvider.formatCurrentDate(lease.endDate!)
+                      : '')
+                  : '',
               tenant.tenantName ?? '',
               '',
               '',

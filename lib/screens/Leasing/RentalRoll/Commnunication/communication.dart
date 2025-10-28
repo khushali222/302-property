@@ -350,7 +350,7 @@ class _lease_communicationState extends State<lease_communication> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildField("Subject", '${data.subject}', Colors.black),
-                        _buildField("Recipient Email", '${data.to!.first}',
+                        _buildField("Recipient Email", _getSafeEmail(data.to),
                             Colors.black),
                         _buildField("From Email", '${data.from}', Colors.black),
                         _buildField(
@@ -743,6 +743,13 @@ class _lease_communicationState extends State<lease_communication> {
                             ),
                           );
                         } else {
+                          print(
+                              'DEBUG: FutureBuilder - snapshot.data received');
+                          print(
+                              'DEBUG: snapshot.data!.emails: ${snapshot.data!.emails}');
+                          print(
+                              'DEBUG: snapshot.data!.emails length: ${snapshot.data!.emails?.length}');
+
                           var data = snapshot.data!.emails;
                           if (selectedValue == null && searchvalue!.isEmpty) {
                             data = snapshot.data!.emails;
@@ -760,6 +767,9 @@ class _lease_communicationState extends State<lease_communication> {
                                     property.subject == selectedValue)
                                 .toList();
                           }
+
+                          print(
+                              'DEBUG: After filtering, data length: ${data?.length}');
                           if (data!.isEmpty) {
                             return Center(
                               child: Column(
@@ -808,6 +818,23 @@ class _lease_communicationState extends State<lease_communication> {
                                       int index = entry.key;
                                       bool isExpanded = expandedIndex == index;
                                       Emails Propertytype = entry.value;
+
+                                      print(
+                                          'DEBUG: Processing email at index $index');
+                                      print(
+                                          'DEBUG: Propertytype.to: ${Propertytype.to}');
+                                      print(
+                                          'DEBUG: Propertytype.to type: ${Propertytype.to.runtimeType}');
+                                      if (Propertytype.to != null) {
+                                        print(
+                                            'DEBUG: Propertytype.to length: ${Propertytype.to!.length}');
+                                        for (int i = 0;
+                                            i < Propertytype.to!.length;
+                                            i++) {
+                                          print(
+                                              'DEBUG: Propertytype.to[$i]: ${Propertytype.to![i]} (type: ${Propertytype.to![i].runtimeType})');
+                                        }
+                                      }
 
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return Container(
@@ -896,11 +923,8 @@ class _lease_communicationState extends State<lease_communication> {
                                                           });
                                                         },
                                                         child: Text(
-                                                          Propertytype.to
-                                                                      ?.isNotEmpty ==
-                                                                  true
-                                                              ? '${Propertytype.to!.first}'
-                                                              : 'N/A',
+                                                          _getSafeEmail(
+                                                              Propertytype.to),
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1347,5 +1371,32 @@ class _lease_communicationState extends State<lease_communication> {
   String extractText(String htmlString) {
     var document = htmlParser.parse(htmlString);
     return document.body?.text.trim().replaceAll(RegExp(r'\s+'), ' ') ?? '';
+  }
+
+  String _getSafeEmail(List<String?>? emailList) {
+    print('DEBUG: _getSafeEmail called with emailList: $emailList');
+    print('DEBUG: emailList type: ${emailList.runtimeType}');
+
+    if (emailList == null || emailList.isEmpty) {
+      print('DEBUG: emailList is null or empty, returning N/A');
+      return 'N/A';
+    }
+
+    print('DEBUG: emailList length: ${emailList.length}');
+    for (int i = 0; i < emailList.length; i++) {
+      print(
+          'DEBUG: emailList[$i]: ${emailList[i]} (type: ${emailList[i].runtimeType})');
+    }
+
+    // Find the first non-null email
+    for (String? email in emailList) {
+      if (email != null && email.isNotEmpty) {
+        print('DEBUG: Found valid email: $email');
+        return email;
+      }
+    }
+
+    print('DEBUG: No valid email found, returning N/A');
+    return 'N/A';
   }
 }

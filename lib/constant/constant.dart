@@ -9,8 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url =
-    "https://staging.cloudrentalmanager.com/api/images/get-file/";
+String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 //String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
@@ -23,6 +22,44 @@ String Api_url = "https://staging.cloudrentalmanager.com";
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
 
+// formatDate(String dateTime) {
+//   //print(dateTime);
+//   List<String> dateFormats = [
+//     'yyyy-MM-dd',
+//     'yyyy-M-d',
+//     'dd-MM-yyyy',
+//     'd-M-yyyy',
+//     'M/d/yyyy',
+//     'MM/dd/yyyy',
+//     'M/d/yyyy, h:mm:ss a',
+//     'M/d/yyyy, h:mm a' // 05032024 (no separators)
+//   ];
+//
+//   DateTime? parsedDate;
+//
+//   for (String format in dateFormats) {
+//     //  print(dateTime);
+//     try {
+//       parsedDate = DateFormat(format).parse(dateTime);
+//       //  print(parsedDate);
+//       break;
+//     } catch (e) {
+//       continue;
+//     }
+//   }
+//
+//   if (parsedDate == null) {
+//     return dateTime;
+//     //  throw FormatException("Date format not recognized: $dateTime");
+//   }
+//   // print(parsedDate);
+//   return DateFormat('yyyy-MM-dd').format(parsedDate);
+// }
+
+// String formatDate4(String dateTime) {
+//   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);0
+//   return DateFormat('dd-MM-yyyy').format(parsedDate);
+// }
 formatDate(String dateTime) {
   //print(dateTime);
   List<String> dateFormats = [
@@ -33,7 +70,11 @@ formatDate(String dateTime) {
     'M/d/yyyy',
     'MM/dd/yyyy',
     'M/d/yyyy, h:mm:ss a',
-    'M/d/yyyy, h:mm a' // 05032024 (no separators)
+    'M/d/yyyy, h:mm a',
+    'dd/MMMM/yyyy', // e.g. 01/August/2032
+    'd/MMMM/yyyy', // e.g. 1/August/2032
+    'dd/MMM/yyyy', // e.g. 01/Aug/2032
+    'd/MMM/yyyy', // e.g. 1/Aug/2032
   ];
 
   DateTime? parsedDate;
@@ -56,11 +97,6 @@ formatDate(String dateTime) {
   // print(parsedDate);
   return DateFormat('yyyy-MM-dd').format(parsedDate);
 }
-
-// String formatDate4(String dateTime) {
-//   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);0
-//   return DateFormat('dd-MM-yyyy').format(parsedDate);
-// }
 
 String formatDate4(String dateTime) {
   if (dateTime.isEmpty) {

@@ -81,7 +81,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       });
     });
     checkInternet();
-    _scrollController.addListener(_updateArrowVisibility);
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
@@ -112,8 +111,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
   @override
   void dispose() {
-    _scrollController.removeListener(_updateArrowVisibility);
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -149,7 +146,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     //"Documents", // You can add more tabs here
     // "New Tab", ...
   ];
-  final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
   bool isMovedOut = false;
   int _selectedIndex = 0;
@@ -159,35 +155,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-  bool _showLeftArrow = false;
-  bool _showRightArrow = true;
-  void _updateArrowVisibility() {
-    if (!_scrollController.hasClients) return;
-
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final offset = _scrollController.offset;
-
-    setState(() {
-      _showLeftArrow = offset > 0;
-      _showRightArrow = offset < maxScroll;
-    });
-  }
-
-  void _scrollLeft() {
-    _scrollController.animateTo(
-      _scrollController.offset - 250,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-  }
-
-  void _scrollRight() {
-    _scrollController.animateTo(
-      _scrollController.offset + 250,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -285,102 +252,92 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                 ),
                                 const Spacer(),
-                                GestureDetector(
-                                  onTap: () async {
-                                    // Provider.of<SelectedTenantsProvider>(context,
-                                    //     listen: false)
-                                    //     .clearTenant();
-                                    // Provider.of<SelectedCosignersProvider>(context,
-                                    //     listen: false)
-                                    //     .clearCosigner();
-                                    // Provider.of<SelectedApplicantProvider>(context,
-                                    //     listen: false)
-                                    //     .clearApplicant();
-                                    final result = await Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => send_email(
-                                                  lease: snapshot
-                                                      .data!.data!.tenantId!,
-                                                  leaseID: snapshot
-                                                      .data!.data!.leaseId!,
-                                                )));
+                                PopupMenuButton<String>(
+                                  offset: const Offset(5, 40),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  color: Colors.white,
+                                  elevation: 8,
+                                  onSelected: (String value) async {
+                                    if (value == 'edit') {
+                                      // Provider.of<SelectedTenantsProvider>(context,
+                                      //     listen: false)
+                                      //     .clearTenant();
+                                      // Provider.of<SelectedCosignersProvider>(context,
+                                      //     listen: false)
+                                      //     .clearCosigner();
+                                      // Provider.of<SelectedApplicantProvider>(context,
+                                      //     listen: false)
+                                      //     .clearApplicant();
+                                      final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Edit_lease(
+                                                    //lease: lease,
+                                                    leaseId: snapshot
+                                                        .data!.data!.leaseId!,
+                                                  )));
+                                    } else if (value == 'send_mail') {
+                                      // Provider.of<SelectedTenantsProvider>(context,
+                                      //     listen: false)
+                                      //     .clearTenant();
+                                      // Provider.of<SelectedCosignersProvider>(context,
+                                      //     listen: false)
+                                      //     .clearCosigner();
+                                      // Provider.of<SelectedApplicantProvider>(context,
+                                      //     listen: false)
+                                      //     .clearApplicant();
+                                      final result = await Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => send_email(
+                                                    lease: snapshot
+                                                        .data!.data!.tenantId!,
+                                                    leaseID: snapshot
+                                                        .data!.data!.leaseId!,
+                                                  )));
+                                    }
                                   },
-                                  child: Container(
-                                    height: (MediaQuery.of(context).size.width <
-                                            500)
-                                        ? 35
-                                        : MediaQuery.of(context).size.width *
-                                            0.063,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Send Mail",
+                                  itemBuilder: (BuildContext context) => [
+                                    PopupMenuItem<String>(
+                                      value: 'edit',
+                                      height: 40,
+                                      child: const Text(
+                                        'Edit',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 22,
+                                          fontSize: 16,
+                                          color: Colors.black,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    // Provider.of<SelectedTenantsProvider>(context,
-                                    //     listen: false)
-                                    //     .clearTenant();
-                                    // Provider.of<SelectedCosignersProvider>(context,
-                                    //     listen: false)
-                                    //     .clearCosigner();
-                                    // Provider.of<SelectedApplicantProvider>(context,
-                                    //     listen: false)
-                                    //     .clearApplicant();
-                                    final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Edit_lease(
-                                                  //lease: lease,
-                                                  leaseId: snapshot
-                                                      .data!.data!.leaseId!,
-                                                )));
-                                    ;
-                                  },
-                                  child: Container(
-                                    height: (MediaQuery.of(context).size.width <
-                                            500)
-                                        ? 35
-                                        : MediaQuery.of(context).size.width *
-                                            0.063,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Edit",
+                                    PopupMenuItem<String>(
+                                      value: 'send_mail',
+                                      height: 40,
+                                      child: const Text(
+                                        'Send Mail',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 22,
+                                          fontSize: 16,
+                                          color: Colors.black,
                                         ),
+                                      ),
+                                    ),
+                                  ],
+                                  child:
+                                      // transform the icon to 90 degree to the below container
+
+                                      Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.24),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Transform.rotate(
+                                      angle: 3.14 / 2,
+                                      child: Icon(
+                                        Icons.more_vert,
+                                        color: blueColor,
+                                        size: 23,
                                       ),
                                     ),
                                   ),
@@ -438,121 +395,230 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           Container(
                             height: 60,
                             margin: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 15),
-                            child: Stack(
-                              children: [
-                                // Scrollable Tab Bar
-                                Positioned.fill(
-                                  child: SingleChildScrollView(
-                                    controller: _scrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: List.generate(tabTitles.length,
-                                          (index) {
-                                        bool isSelected =
-                                            _selectedIndex == index;
+                                vertical: 5, horizontal: 0),
+                            child:
 
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _selectedIndex = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 10),
-                                            decoration: BoxDecoration(
-                                              // gradient: isSelected
-                                              //     ? LinearGradient(
-                                              //   colors: [Color(0xFF0F172A), Color(0xFF3B82F6)],
-                                              //   begin: Alignment.centerLeft,
-                                              //   end: Alignment.centerRight,
-                                              // )
-                                              //     : null,
-                                              color: isSelected
-                                                  ? blueColor
-                                                  : const Color(
-                                                      0xFFE5E7EB), // light gray
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                // Dropdown Tab Selector
+                                Container(
+                              width: double.infinity,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              // remove the dropdown default border which have underline
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                underline: const SizedBox(),
+                                hint: Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                value: tabTitles[_selectedIndex],
+                                selectedItemBuilder: (BuildContext context) {
+                                  return tabTitles.map((String item) {
+                                    int index = tabTitles.indexOf(item);
+                                    IconData iconData;
+                                    String iconPath = 'assets/icons/$item.png';
+                                    switch (index) {
+                                      case 0: // Summary
+                                        iconData = Icons.menu;
+                                        iconPath = 'assets/icons/summery.png';
+                                        break;
+                                      case 1: // Financial
+                                        iconData = Icons.attach_money;
+                                        iconPath = 'assets/icons/financial.png';
+                                        break;
+                                      case 2: // Tenant
+                                        iconData = Icons.people;
+                                        iconPath = 'assets/icons/tenants.png';
+                                        break;
+                                      case 3: // Communication
+                                        iconData = Icons.chat_bubble_outline;
+                                        iconPath =
+                                            'assets/icons/communication.png';
+                                        break;
+                                      case 4: // Renter's Insurance
+                                        iconData = Icons.shield;
+                                        iconPath = 'assets/icons/renter.png';
+                                        break;
+                                      case 5: // Documents
+                                        iconData = Icons.description;
+                                        iconPath = 'assets/icons/document.png';
+                                        break;
+                                      case 6: // Notes
+                                        iconData = Icons.note;
+                                        iconPath = 'assets/icons/note.png';
+                                        break;
+                                      default:
+                                        iconData = Icons.circle;
+                                        iconPath = 'assets/icons/summary.png';
+                                    }
+
+                                    return Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Image.asset(iconPath,
+                                              width: 20, height: 20),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            item,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: blueColor,
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList();
+                                },
+                                items: tabTitles.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  String item = entry.value;
+                                  // icon data to image which have store in the assets/icons
+                                  String iconPath = 'assets/icons/$item.png';
+                                  IconData iconData;
+                                  switch (index) {
+                                    case 0: // Summary
+                                      iconData = Icons.menu;
+                                      iconPath = 'assets/icons/summery.png';
+                                      break;
+                                    case 1: // Financial
+                                      iconData = Icons.attach_money;
+                                      iconPath = 'assets/icons/financial.png';
+                                      break;
+                                    case 2: // Tenant
+                                      iconData = Icons.people;
+                                      iconPath = 'assets/icons/tenants.png';
+                                      break;
+                                    case 3: // Communication
+                                      iconData = Icons.chat_bubble_outline;
+                                      iconPath =
+                                          'assets/icons/communication.png';
+                                      break;
+                                    case 4: // Renter's Insurance
+                                      iconData = Icons.shield;
+                                      iconPath = 'assets/icons/renter.png';
+                                      break;
+                                    case 5: // Documents
+                                      iconData = Icons.description;
+                                      iconPath = 'assets/icons/document.png';
+                                      break;
+                                    case 6: // Notes
+                                      iconData = Icons.note;
+                                      iconPath = 'assets/icons/note.png';
+                                      break;
+                                    default:
+                                      iconData = Icons.circle;
+                                      iconPath = 'assets/icons/summary.png';
+                                  }
+
+                                  return DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        // color: Colors.green.withOpacity(0.1),
+                                        border: index < tabTitles.length - 1
+                                            ? Border(
+                                                bottom: BorderSide(
+                                                  color: blueColor
+                                                      .withOpacity(0.2),
+                                                  width: 0.5,
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(iconPath,
+                                              width: 20, height: 20),
+                                          const SizedBox(width: 12),
+                                          Expanded(
                                             child: Text(
-                                              tabTitles[index],
+                                              item,
                                               style: TextStyle(
-                                                color: isSelected
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w500,
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }),
+                                          Icon(
+                                            Icons.chevron_right,
+                                            size: 25,
+                                            color: blueColor,
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      _selectedIndex = tabTitles.indexOf(value);
+                                    });
+                                  }
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.grey.shade500!,
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
                                   ),
                                 ),
-
-                                // Left Arrow Overlay
-                                if (_showLeftArrow)
-                                  Positioned(
-                                    left: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      child: GestureDetector(
-                                        onTap: _scrollLeft,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                Color.fromRGBO(16, 24, 40, 0.8),
-                                            //border: Border.all(color: blueColor),
-                                          ),
-                                          child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 5),
-                                              child: const Icon(
-                                                  Icons.arrow_back_ios,
-                                                  size: 14,
-                                                  color: Colors.white)),
-                                        ),
-                                      ),
-                                    ),
+                                iconStyleData: IconStyleData(
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.grey,
                                   ),
-
-                                // Right Arrow Overlay
-                                if (_showRightArrow)
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: GestureDetector(
-                                      onTap: _scrollRight,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                Color.fromRGBO(16, 24, 40, 0.8),
-                                            //  border: Border.all(color: blueColor),
-                                          ),
-                                          child: const Icon(
-                                              Icons.arrow_forward_ios,
-                                              size: 14,
-                                              color: Colors.white),
-                                        ),
-                                      ),
+                                  iconSize: 24,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 380,
+                                  //padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  //  offset: const Offset(0, -5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey.shade500!,
+                                      width: 1,
                                     ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 10,
+                                        offset: const Offset(10, 10),
+                                      ),
+                                    ],
                                   ),
-                              ],
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: MenuItemStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.zero,
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.grey[100]),
+                                ),
+                              ),
                             ),
                           ),
                           _buildTabContent(snapshot.data!, context),
@@ -782,7 +848,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           return Column(
             children: [
               const SizedBox(
-                height: 10,
+                height: 00,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15, right: 15),
@@ -1010,36 +1076,21 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         children: [
                                           Row(
                                             children: [
+                                              Icon(
+                                                Icons.attach_money,
+                                                color: blueColor,
+                                                size: 24,
+                                              ),
                                               const SizedBox(width: 8),
                                               Text(
-                                                "Rent Details",
+                                                "Balance Overview",
                                                 style: TextStyle(
                                                   color: blueColor,
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
-                                              ),
-                                              const Spacer(),
-                                              Container(
-                                                decoration: const BoxDecoration(
-                                                  color: Color.fromRGBO(
-                                                      235,
-                                                      245,
-                                                      255,
-                                                      1), // Background color of the circle
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                    5), // Padding around the icon
-                                                child: Icon(
-                                                  CupertinoIcons
-                                                      .money_dollar, // Home Icon
-                                                  color: Colors.grey
-                                                      .shade600, // Icon color
-                                                  size: 24, // Icon size
-                                                ),
                                               ),
                                             ],
                                           ),
@@ -1048,171 +1099,186 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 0.0),
                                             child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
                                               children: [
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
+                                                const SizedBox(height: 15),
 
-                                                /// Unit
+                                                // Total Balance
                                                 Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 8.0),
                                                   child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                      Flexible(
-                                                        flex: 2,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            const Text(
-                                                              "Balance",
-                                                              style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                            SizedBox(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width -
-                                                                  100,
-                                                              child: Text(
-                                                                '${formatCurrency(leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0)}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade600,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 2,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                      const Text(
+                                                        "Total Balance",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 30),
-                                                      Flexible(
-                                                        flex: 4,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            const Text(
-                                                              "Rent",
-                                                              style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 4),
-                                                            Text(
-                                                              '${formatCurrency(leasesummery.data?.amount?.toDouble())}',
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade600,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 2,
-                                                            ),
-                                                          ],
+                                                      Text(
+                                                        '${formatCurrency(leaseLedger.data != null && leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0) ?? 0.0}',
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
 
-                                                const SizedBox(height: 10),
+                                                const SizedBox(height: 12),
 
-                                                /// Rental Owner & Tenants
+                                                // Monthly Rent
                                                 Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 8.0),
                                                   child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                      /// Rental Owner
+                                                      const Text(
+                                                        "Monthly Rent",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        '${formatCurrency(leasesummery.data?.amount?.toDouble())}',
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
 
-                                                      /// Tenants
-                                                      Flexible(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            const Text(
-                                                              "Due Date",
-                                                              style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 4),
-                                                            Text(
-                                                              "${dateProvider.formatCurrentDate(leasesummery.data!.date!)}",
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade600,
-                                                              ),
-                                                              softWrap: true,
-                                                              maxLines: 3,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ],
+                                                const SizedBox(height: 12),
+
+                                                // Security Deposit
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Text(
+                                                        "Security Deposit",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        '${formatCurrency(leasesummery.data?.amount?.toDouble() ?? 0.0)}',
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 12),
+
+                                                // Late Payments
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Text(
+                                                        "Late Payments (Last 12 Months)",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      const Text(
+                                                        "1",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 12),
+
+                                                // Divider
+                                                Container(
+                                                  height: 1,
+                                                  color: Colors.grey[300],
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
+                                                ),
+
+                                                const SizedBox(height: 12),
+
+                                                // Due Date
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Text(
+                                                        "Due Date",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${dateProvider.formatCurrentDate(leasesummery.data!.date!)}",
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.orange,
                                                         ),
                                                       ),
                                                     ],
@@ -1524,213 +1590,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 //     )
                                                 //   ],
                                                 // )
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    // First Row (Make Payment + Configure Recurring)
-                                                    Row(
-                                                      children: [
-                                                        // Make Payment
-                                                        Expanded(
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          MakePayment(
-                                                                    leaseId: widget
-                                                                        .leaseId,
-                                                                    tenantId:
-                                                                        '${leasesummery.data?.tenantId}',
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              height: 50,
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color:
-                                                                    blueColor,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child:
-                                                                  const Center(
-                                                                child: Text(
-                                                                  'Make Payment',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        // Configure Recurring
-                                                        Expanded(
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .push(
-                                                                MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      RecurringPayment(
-                                                                          leaseData:
-                                                                              leasesummery.data!),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              height: 50,
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .grey),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Configure Recurring',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-
-                                                    // Second Row (Scheduled Charges + Scheduled Payments)
-                                                    Row(
-                                                      children: [
-                                                        // Scheduled Charges
-                                                        Expanded(
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .push(
-                                                                MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      ScheduledChargeTable(
-                                                                          leaseID:
-                                                                              widget.leaseId),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              height: 50,
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .grey),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Scheduled Charges',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        // Scheduled Payments
-                                                        Expanded(
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              // Add your navigation here
-                                                            },
-                                                            child: Container(
-                                                              height: 50,
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .grey),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Scheduled Payments',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                                // Quick Actions Title
                                               ],
                                             ),
                                           ),
@@ -1740,6 +1600,272 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: Colors.grey.shade500),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15,
+                                          right: 15,
+                                          top: 15,
+                                          bottom: 20),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(width: 10),
+                                              Text(
+                                                "Quick Actions",
+                                                style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+
+                                          // Make Payment Button
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MakePayment(
+                                                      leaseId: widget.leaseId,
+                                                      tenantId:
+                                                          '${leasesummery.data?.tenantId}',
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      color: Colors.grey[300]!),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.add,
+                                                        color: Colors.grey[700],
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Text(
+                                                        'Make Payment',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color:
+                                                              Colors.grey[700],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 12),
+
+                                          // Configure Recurring Button
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RecurringPayment(
+                                                      leaseData:
+                                                          leasesummery.data!,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      color: Colors.grey[300]!),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.refresh,
+                                                        color: Colors.grey[700],
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Configure Recurring',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Colors
+                                                                .grey[700],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.green,
+                                                        size: 18,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 12),
+
+                                          // Scheduled Charges Button
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ScheduledChargeTable(
+                                                      leaseID: widget.leaseId,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      color: Colors.grey[300]!),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.calendar_today,
+                                                        color: Colors.grey[700],
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Text(
+                                                        'Scheduled Charges',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color:
+                                                              Colors.grey[700],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 12),
+
+                                          // Scheduled Payments Button
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Add your navigation here
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      color: Colors.grey[300]!),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.attach_money,
+                                                        color: Colors.grey[700],
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Text(
+                                                        'Scheduled Payments',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color:
+                                                              Colors.grey[700],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
                               // Padding(
                               //   padding:
                               //       const EdgeInsets.only(left: 15, right: 15),
