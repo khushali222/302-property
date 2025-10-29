@@ -2446,6 +2446,30 @@ class _Profile_screenState extends State<Profile_screen> {
                               ),
                             ),
                             const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: () async {
+                                _deactivateAccount(context);
+                              },
+                              child: Container(
+                                // button for deactivate Account
+                                alignment: Alignment.centerLeft,
+                                height: 40,
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Deactivate Account",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -2473,6 +2497,40 @@ class _Profile_screenState extends State<Profile_screen> {
                 ],
               ),
             ),
+    );
+  }
+
+  void _deactivateAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Deactivate Account"),
+          content: Text(
+              "Are you sure you want to deactivate your account? It will be deleted within 7 days."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                // clear shared preferences and navigate to login screen
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.clear();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login_Screen()),
+                );
+                // Navigator.of(context).pop();
+              },
+              child: Text("Deactivate"),
+            ),
+          ],
+        );
+      },
     );
   }
 

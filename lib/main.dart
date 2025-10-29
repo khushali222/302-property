@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,20 +7,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/NetworkProvider.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
-
 import 'package:three_zero_two_property/provider/add_property.dart';
 import 'package:three_zero_two_property/provider/color_theme.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/provider/lease_provider.dart';
-
 import 'package:three_zero_two_property/provider/properties_workorders.dart';
 
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/repository/properties_summery.dart';
-import 'package:three_zero_two_property/screens/Dashboard/dashboard_sample.dart';
-import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/SummaryEditApplicant.dart';
 
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
 
@@ -32,9 +27,7 @@ import 'constant/constant.dart';
 import 'provider/edit_applicant.dart';
 import 'package:credit_card_validator/credit_card_validator.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
 import 'provider/notification_provider.dart';
-import 'screens/Dashboard/admin_dashboard_screen.dart';
 // void main() {
 //   runApp(
 //     MultiProvider(providers: [

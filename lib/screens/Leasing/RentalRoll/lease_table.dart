@@ -134,8 +134,8 @@ class _Lease_tableState extends State<Lease_table> {
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
-          ? a.tenantNames!.compareTo(b.tenantNames!)
-          : b.tenantNames!.compareTo(a.tenantNames!));
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.startDate!.compareTo(b.startDate!)

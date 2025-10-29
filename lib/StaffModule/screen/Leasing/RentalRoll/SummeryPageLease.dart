@@ -1048,7 +1048,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       .width -
                                                                   100,
                                                               child: Text(
-                                                                '${formatCurrency(leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0)}',
+                                                                '${formatCurrency(leaseLedger.data != null && leaseLedger.data!.isNotEmpty ? (leaseLedger.data!.first.balance ?? 0.0) : 0.0)}',
                                                                 style:
                                                                     TextStyle(
                                                                   fontSize: 14,
@@ -1094,7 +1094,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             const SizedBox(
                                                                 height: 4),
                                                             Text(
-                                                              '${formatCurrency(leasesummery.data?.amount?.toDouble())}',
+                                                              '${formatCurrency(leasesummery.data?.amount?.toDouble() ?? 0.0)}',
                                                               style: TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
@@ -1479,6 +1479,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               ),
                                                               child: Center(
                                                                 child: Text(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Configure Recurring',
                                                                   style:
                                                                       TextStyle(
@@ -1529,6 +1532,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               ),
                                                               child: Center(
                                                                 child: Text(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Scheduled Charges',
                                                                   style:
                                                                       TextStyle(
@@ -1570,6 +1576,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               ),
                                                               child: Center(
                                                                 child: Text(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Scheduled Payments',
                                                                   style:
                                                                       TextStyle(
@@ -2095,17 +2104,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: blueColor,
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(13),
-                                      topRight: Radius.circular(13),
-                                    ),
-                                  ),
+                                      color: const Color(0xFFF4F8FF),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: const Color(0xFFDBE0E5))),
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     title: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           flex: 3,
@@ -2114,27 +2120,27 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             child: Row(
                                               children: [
                                                 width < 400
-                                                    ? const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 20.0),
-                                                        child: Text(
-                                                          "Property",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 14),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      )
-                                                    : const Text(
-                                                        "     Property",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14),
-                                                        textAlign:
-                                                            TextAlign.center),
+                                                    ?  Padding(
+                                                  padding:
+                                                  EdgeInsets.only(
+                                                      left: 20.0),
+                                                  child: Text(
+                                                    "Property",
+                                                    style: TextStyle(
+                                                        color:
+                                                        blueColor,
+                                                        fontSize: 14,fontWeight: FontWeight.bold),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                )
+                                                    :  Text(
+                                                    "     Property",
+                                                    style: TextStyle(
+                                                        color: blueColor,
+                                                        fontSize: 14,fontWeight: FontWeight.bold),
+                                                    textAlign:
+                                                    TextAlign.center),
                                                 // Text("Property", style: TextStyle(color: Colors.white)),
                                               ],
                                             ),
@@ -2144,14 +2150,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           flex: 2,
                                           child: InkWell(
                                             onTap: () {},
-                                            child: const Row(
+                                            child:  Row(
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       left: 0.0),
                                                   child: Text("Status",
                                                       style: TextStyle(
-                                                          color: Colors.white,
+                                                          color: blueColor,
+                                                          fontWeight: FontWeight.bold,
                                                           fontSize: 14)),
                                                 ),
                                                 SizedBox(width: 5),
@@ -2163,12 +2170,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           flex: 2,
                                           child: InkWell(
                                             onTap: () {},
-                                            child: const Row(
+                                            child:  Row(
                                               children: [
                                                 Text(
                                                   "Type",
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color:blueColor,
+                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 14),
                                                   textAlign: TextAlign.center,
                                                 ),
@@ -2182,14 +2190,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                 ),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
+                                  //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                  //     border: Border.all(
+                                  //         color: const Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  // // decoration: BoxDecoration(
+                                  // //   border: Border.all(color: blueColor),
+                                  // // ),
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color:  Colors.white,
+                                    border: Border.all(
+                                        color: const Color(0xFFDBE0E5)),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -2198,9 +2215,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           padding: const EdgeInsets.all(2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
@@ -2213,15 +2230,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       left: 5),
                                                   padding: !isExpanded
                                                       ? const EdgeInsets.only(
-                                                          bottom: 10)
+                                                      bottom: 10)
                                                       : const EdgeInsets.only(
-                                                          top: 10),
+                                                      top: 10),
                                                   child: FaIcon(
                                                     isExpanded
                                                         ? FontAwesomeIcons
-                                                            .sortUp
+                                                        .sortUp
                                                         : FontAwesomeIcons
-                                                            .sortDown,
+                                                        .sortDown,
                                                     size: 20,
                                                     color: blueColor,
                                                   ),
@@ -2235,14 +2252,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 5.0),
+                                                    const EdgeInsets.only(
+                                                        left: 5.0),
                                                     child: Text(
                                                       '${snapshot.data!.data!.rentalAddress}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                            FontWeight.bold,
+                                                        FontWeight.bold,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -2251,8 +2268,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               SizedBox(
                                                 width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
+                                                    .size
+                                                    .width *
                                                     .06,
                                               ),
                                               Expanded(
@@ -2268,9 +2285,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               SizedBox(
                                                 width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .04,
+                                                    .size
+                                                    .width *
+                                                    .06,
                                               ),
                                               Expanded(
                                                 flex: 4,
@@ -2285,8 +2302,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               SizedBox(
                                                 width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
+                                                    .size
+                                                    .width *
                                                     .02,
                                               ),
                                             ],
@@ -2296,49 +2313,49 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       if (isExpanded)
                                         Container(
                                           margin:
-                                              const EdgeInsets.only(bottom: 20),
+                                          const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                                   children: [
                                                     FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                              .sortUp
+                                                          .sortUp
                                                           : FontAwesomeIcons
-                                                              .sortDown,
+                                                          .sortDown,
                                                       size: 50,
                                                       color: Colors.transparent,
                                                     ),
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: <Widget>[
                                                           Text.rich(
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Start - End   ',
+                                                                  'Start - End   ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color:
-                                                                          blueColor),
+                                                                      blueColor),
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${snapshot.data!.data!.startDate} to ${snapshot.data!.data!.endDate}',
+                                                                  '${dateProvider.formatCurrentDate('${snapshot.data!.data!.startDate}')} to ${dateProvider.formatCurrentDate('${snapshot.data!.data!.endDate}')}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
                                                                           .grey),
                                                                 ),
@@ -2353,21 +2370,21 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Amount : ',
+                                                                  'Rent : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color:
-                                                                          blueColor),
+                                                                      blueColor),
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}',
+                                                                  '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
+                                                                      FontWeight
+                                                                          .w700,
                                                                       color: Colors
                                                                           .grey),
                                                                 ),
@@ -2487,7 +2504,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           DataCell(Text(
                                               '${snapshot.data!.data!.leaseType}')),
                                           DataCell(Text(
-                                              '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}')),
+                                              '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}')),
                                         ]),
                                         // Add more rows as needed
                                       ],
@@ -2753,7 +2770,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       Expanded(
                                                         flex: 4,
                                                         child: Text(
-                                                          '${formatCurrency(lease.amount!.toDouble())}',
+                                                          '${formatCurrency(lease.amount?.toDouble() ?? 0.0)}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -3180,7 +3197,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${formatCurrency(lease.amount!)}',
+                                                                              '${formatCurrency(lease.amount ?? 0.0)}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),

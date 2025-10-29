@@ -170,7 +170,9 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all( color: Color(0xFFDBE0E5),),
+                  border: Border.all(
+                    color: Color(0xFFDBE0E5),
+                  ),
                 ),
                 child: Padding(
                   padding:
@@ -181,55 +183,89 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Staff Member Name *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2),
-                                    Material(
-                                      //elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA),),
-                                        ),
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() => nameerror = false);
-                                          },
-                                          controller: name,
-                                          cursorColor: blueColor,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
-                                          ],
-                                          decoration: InputDecoration(
-                                            hintText: "Enter staff member name",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              Text(
+                                "Staff Member Name *",
+                                style: TextStyle(
+                                  color: Color(0xFF101828),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              SizedBox(height: 2),
+                              Material(
+                                //elevation: 4,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFFCED4DA),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      setState(() => nameerror = false);
+                                    },
+                                    controller: name,
+                                    cursorColor: blueColor,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // only letters + spaces
+                                    ],
+                                    decoration: InputDecoration(
+                                      hintText: "Enter staff member name",
+                                      hintStyle: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: Color(0xFFA1A8B0),
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              nameerror
+                                  ? Padding(
+                                padding: const EdgeInsets.only(top: 4,left: 3),
+                                child: Container(
+                                  alignment: Alignment
+                                      .centerLeft, // Ensure left alignment
+                                  child: Text(
+                                    namemessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.035,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  : SizedBox.shrink(),
+
+                            ],
+                          ),
+                          SizedBox(height: 8),
+
+                          Row(
+                            children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +277,12 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         style: TextStyle(
                                           color: Color(0xFF101828),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 14
+                                              : 18,
                                         ),
                                       ),
                                     ),
@@ -252,19 +293,28 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       child: Container(
                                         height: 50,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA),),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Color(0xFFCED4DA),
+                                          ),
                                         ),
                                         child: TextField(
                                           onChanged: (value) {
-                                            setState(() => designationerror = false);
+                                            setState(
+                                                    () => designationerror = false);
                                           },
                                           controller: designation,
                                           cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             hintText: "Enter designation",
                                             hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
@@ -281,44 +331,27 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           // SizedBox(height: 6),
                           Row(
                             children: [
-                              Expanded(
-                                child: nameerror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft, // Ensure left alignment
-                                    child: Text(
-                                      namemessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
+                              designationerror
+                                  ? Padding(
+                                padding: const EdgeInsets.only(top: 4,left: 3),
+                                child: Container(
+                                  alignment: Alignment
+                                      .centerLeft, // Ensure left alignment
+                                  child: Text(
+                                    designationmessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.035,
                                     ),
                                   ),
-                                )
-                                    : SizedBox.shrink(),
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: designationerror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft, // Ensure left alignment
-                                    child: Text(
-                                      designationmessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                    : SizedBox.shrink(),
-                              ),
+                                ),
+                              )
+                                  : SizedBox.shrink(),
                             ],
                           ),
-
                         ],
                       ),
                       SizedBox(
@@ -328,149 +361,84 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Phone Number *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                      ),
-                                    ),
-                                    Material(
-                                      //elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA),),
-                                        ),
-                                        child: TextField(
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.digitsOnly,
-                                            LengthLimitingTextInputFormatter(10),
-                                            PhoneNumberFormatter(),
-                                          ],
-                                          focusNode: _nodeText1,
-                                          onChanged: (value) {
-                                            setState(() => phonenumbererror = false);
-                                          },
-                                          controller: phonenumber,
-                                          keyboardType: TextInputType.number,
-                                          cursorColor: blueColor,
-                                          decoration: InputDecoration(
-                                            hintText: "Enter phone number",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          Text(
+                            "Phone Number *",
+                            style: TextStyle(
+                              color: Color(0xFF101828),
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 20,
+                            ),
+                          ),
+                          Material(
+                            //elevation: 4,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Color(0xFFCED4DA),
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Email *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                      ),
-                                    ),
-                                    Material(
-                                      //  elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA),),
-                                        ),
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() => emailerror = false);
-                                          },
-                                          controller: email,
-                                          keyboardType: TextInputType.emailAddress,
-                                          cursorColor: blueColor,
-                                          decoration: InputDecoration(
-                                            hintText: "Enter email",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              child: TextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
+                                focusNode: _nodeText1,
+                                onChanged: (value) {
+                                  setState(() => phonenumbererror = false);
+                                },
+                                controller: phonenumber,
+                                keyboardType: TextInputType.number,
+                                cursorColor: blueColor,
+                                decoration: InputDecoration(
+                                  hintText: "Enter phone number",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
+                                    color: Color(0xFFA1A8B0),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: phonenumbererror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      phonenumbermessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                    : SizedBox.shrink(), // Keeps height consistent when error is absent
+                        ],
+                      ),
+
+                      SizedBox(height: 2),
+                      Row(
+                        children: [
+                          phonenumbererror
+                              ? Padding(
+                            padding: const EdgeInsets.only(top: 4,left: 3),
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                phonenumbermessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.035,
+                                ),
                               ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: emailerror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      emailmessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                    : SizedBox.shrink(), // Keeps height consistent
-                              ),
-                            ],
-                          ),
+                            ),
+                          )
+                              : SizedBox
+                              .shrink(),
 
                         ],
                       ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      //password and confirm pass
+                      SizedBox(height: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -481,50 +449,50 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Password *",
+                                      "Email *",
                                       style: TextStyle(
                                         color: Color(0xFF101828),
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 20,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
                                     Material(
                                       //  elevation: 4,
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
                                         height: 50,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Color(0xFFCED4DA),
+                                          ),
                                         ),
                                         child: TextField(
                                           onChanged: (value) {
-                                            setState(() => passworderror = false);
+                                            setState(() => emailerror = false);
                                           },
-                                          controller: password,
+                                          controller: email,
+                                          keyboardType:
+                                          TextInputType.emailAddress,
                                           cursorColor: blueColor,
-                                          obscureText: obsecure,
                                           decoration: InputDecoration(
-                                            hintText: "Enter password",
+                                            hintText: "Enter email",
                                             hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.all(12),
-                                            suffixIcon: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  obsecure = !obsecure;
-                                                });
-                                              },
-                                              child: Icon(
-                                                obsecure ? Icons.visibility : Icons.visibility_off,
-                                                color: Color(0xFF444444),
-                                                size: 20,
-                                              ),
-                                            ),
                                           ),
                                         ),
                                       ),
@@ -532,7 +500,129 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 8),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              emailerror
+                                  ? Padding(
+                                padding: const EdgeInsets.only(top: 4,left: 3),
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    emailmessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.035,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  : SizedBox
+                                  .shrink(),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      //password and confirm pass
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Password *",
+                            style: TextStyle(
+                              color: Color(0xFF101828),
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 18,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Material(
+                            //  elevation: 4,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Color(0xFFCED4DA)),
+                              ),
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() => passworderror = false);
+                                },
+                                controller: password,
+                                cursorColor: blueColor,
+                                obscureText: obsecure,
+                                decoration: InputDecoration(
+                                  hintText: "Enter password",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
+                                    color: Color(0xFFA1A8B0),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        obsecure = !obsecure;
+                                      });
+                                    },
+                                    child: Icon(
+                                      obsecure
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Color(0xFF444444),
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 2),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          passworderror
+                              ? Padding(
+                            padding: const EdgeInsets.only(top: 4,left: 3),
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                passwordmessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.035,
+                                ),
+                              ),
+                            ),
+                          )
+                              : SizedBox
+                              .shrink(),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,7 +632,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       style: TextStyle(
                                         color: Color(0xFF101828),
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
                                       ),
                                     ),
                                     SizedBox(height: 2),
@@ -552,12 +646,16 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       child: Container(
                                         height: 50,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all( color: Color(0xFFCED4DA),),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Color(0xFFCED4DA),
+                                          ),
                                         ),
                                         child: TextField(
                                           onChanged: (value) {
-                                            setState(() => conpassworderror = false);
+                                            setState(
+                                                    () => conpassworderror = false);
                                           },
                                           controller: conpassword,
                                           obscureText: conobsecure,
@@ -565,7 +663,12 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                           decoration: InputDecoration(
                                             hintText: "Enter password",
                                             hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
@@ -577,7 +680,9 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                                 });
                                               },
                                               child: Icon(
-                                                conobsecure ? Icons.visibility : Icons.visibility_off,
+                                                conobsecure
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off,
                                                 color: Color(0xFF444444),
                                                 size: 20,
                                               ),
@@ -594,44 +699,27 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: passworderror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      passwordmessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
+                              conpassworderror
+                                  ? Padding(
+                                padding: const EdgeInsets.only(top: 4,left: 3),
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    conpasswordmessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.035,
                                     ),
                                   ),
-                                )
-                                    : SizedBox.shrink(), // Ensures consistent spacing
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: conpassworderror
-                                    ? Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      conpasswordmessage,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                    : SizedBox.shrink(), // Ensures consistent spacing
-                              ),
+                                ),
+                              )
+                                  : SizedBox
+                                  .shrink(),
                             ],
                           ),
-
                         ],
                       ),
                       SizedBox(

@@ -30,6 +30,7 @@ import '../../../../repository/properties_summery.dart';
 import '../../../../widgets/drawer_tiles.dart';
 import '../../../model/LeaseLedgerModel.dart';
 import '../../../model/LeaseSummary.dart';
+import '../../../model/LeaseChargesModel.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
@@ -68,6 +69,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<LeaseSummary> futureLeaseSummary;
   late Future<List<LeaseTenant>> futureLeasetenant;
   late Future<LeaseLedger?> _leaseLedgerFuture;
+  late Future<LeaseCharges?> _leaseChargesFuture;
   TabController? _tabController;
   ConnectivityResult? _connectivityResult;
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -86,6 +88,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _leaseLedgerFuture =
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+    _leaseChargesFuture = LeaseRepository().fetchLeaseCharges(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     // moveOutDate = widget.enddate!;
@@ -223,15 +226,55 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                 ),
                               ),
+
+                              // Container(
+                              //   width: 30,
+                              //   height: 30,
+                              //   decoration: BoxDecoration(
+                              //     color: Color(0xFFe9e9e9),
+                              //     borderRadius: BorderRadius.circular(5),
+                              //   ),
+                              //   child: PopupMenuButton(
+                              //     onSelected: (value) async {
+                              //       if (value == 'Edit') {
+                              //         final result = await Navigator.of(context)
+                              //             .push(MaterialPageRoute(
+                              //                 builder: (context) => Edit_lease(
+                              //                       leaseId: snapshot
+                              //                           .data!.data!.leaseId!,
+                              //                     )));
+                              //       }
+                              //       if (value == 'Send Mail') {
+                              //         final result = await Navigator.of(context)
+                              //             .push(MaterialPageRoute(
+                              //                 builder: (context) => send_email(
+                              //                       lease: snapshot
+                              //                           .data!.data!.tenantId!,
+                              //                       leaseID: snapshot
+                              //                           .data!.data!.leaseId!,
+                              //                     )));
+                              //       }
+                              //     },
+                              //     // horizontal three dot icon
+                              //     icon: Icon(Icons.more_horiz),
+                              //     itemBuilder: (context) => [
+                              //       PopupMenuItem(
+                              //         value: 'Edit',
+                              //         child: Text('Edit'),
+                              //       ),
+                              //       PopupMenuItem(
+                              //         value: 'Send Mail',
+                              //         child: Text('Send Mail'),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // )
                               // Text('${snapshot.data!.data!.rentalAddress}',
                               //     style: TextStyle(
                               //         color: blueColor,
                               //         fontWeight: FontWeight.bold,
                               //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
                             ],
-                          ),
-                          const SizedBox(
-                            height: 5,
                           ),
                           Padding(
                             padding:
@@ -345,50 +388,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               ],
                             ),
                           ),
-                          /* GestureDetector(
-                            onTap: () async {
-                              // Provider.of<SelectedTenantsProvider>(context,
-                              //     listen: false)
-                              //     .clearTenant();
-                              // Provider.of<SelectedCosignersProvider>(context,
-                              //     listen: false)
-                              //     .clearCosigner();
-                              // Provider.of<SelectedApplicantProvider>(context,
-                              //     listen: false)
-                              //     .clearApplicant();
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                  builder: (context) => send_email(
-                                     lease: snapshot.data!.data!.tenantId!
-                                  )));
-
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 35
-                                  : MediaQuery.of(context).size.width * 0.063,
-                              width: (MediaQuery.of(context).size.width < 500)
-                                  ? MediaQuery.of(context).size.width * 0.35
-                                  : MediaQuery.of(context).size.width * 0.2,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "+ Send Mail",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 22,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),*/
                           const SizedBox(
                             height: 10,
                           ),
@@ -1034,8 +1033,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 0.0, right: 0.0, bottom: 10.0),
-                  child: FutureBuilder<LeaseLedger?>(
-                    future: _leaseLedgerFuture,
+                  child: FutureBuilder<List<dynamic>>(
+                    future:
+                        Future.wait([_leaseLedgerFuture, _leaseChargesFuture]),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container();
@@ -1045,10 +1045,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         // );
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData) {
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.length < 2) {
                         return const Center(child: Text('No data found'));
                       } else {
-                        final leaseLedger = snapshot.data!;
+                        final leaseLedger = snapshot.data![0] as LeaseLedger?;
+                        final leaseCharges = snapshot.data![1] as LeaseCharges?;
 
                         //final data = leaseLedger.data!.toList();
                         return SingleChildScrollView(
@@ -1126,7 +1128,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${formatCurrency(leaseLedger.data != null && leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0) ?? 0.0}',
+                                                        '${formatCurrency(leaseLedger?.data != null && leaseLedger!.data!.length > 0 ? leaseLedger.data!.first.balance : 0.0)}',
                                                         style: const TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:
@@ -1194,7 +1196,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         ),
                                                       ),
                                                       Text(
-                                                        '${formatCurrency(leasesummery.data?.amount?.toDouble() ?? 0.0)}',
+                                                        '${formatCurrency(leaseCharges?.data?.securityDeposits?.totalAmount ?? 0.0)}',
                                                         style: const TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:
@@ -1227,9 +1229,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           color: Colors.black,
                                                         ),
                                                       ),
-                                                      const Text(
-                                                        "1",
-                                                        style: TextStyle(
+                                                      Text(
+                                                        '${leaseCharges?.data?.lateRentPayments?.totalEntries ?? 0}',
+                                                        style: const TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -2362,12 +2364,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: blueColor,
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(13),
-                                      topRight: Radius.circular(13),
-                                    ),
-                                  ),
+                                      color: const Color(0xFFF4F8FF),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: const Color(0xFFDBE0E5))),
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     title: Row(
@@ -2381,25 +2381,29 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             child: Row(
                                               children: [
                                                 width < 400
-                                                    ? const Padding(
+                                                    ? Padding(
                                                         padding:
                                                             EdgeInsets.only(
                                                                 left: 20.0),
                                                         child: Text(
                                                           "Property",
                                                           style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 14),
+                                                              color: blueColor,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                           textAlign:
                                                               TextAlign.center,
                                                         ),
                                                       )
-                                                    : const Text(
-                                                        "     Property",
+                                                    : Text("     Property",
                                                         style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14),
+                                                            color: blueColor,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                         textAlign:
                                                             TextAlign.center),
                                                 // Text("Property", style: TextStyle(color: Colors.white)),
@@ -2411,14 +2415,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           flex: 2,
                                           child: InkWell(
                                             onTap: () {},
-                                            child: const Row(
+                                            child: Row(
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       left: 0.0),
                                                   child: Text("Status",
                                                       style: TextStyle(
-                                                          color: Colors.white,
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 14)),
                                                 ),
                                                 SizedBox(width: 5),
@@ -2430,12 +2436,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           flex: 2,
                                           child: InkWell(
                                             onTap: () {},
-                                            child: const Row(
+                                            child: Row(
                                               children: [
                                                 Text(
                                                   "Type",
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 14),
                                                   textAlign: TextAlign.center,
                                                 ),
@@ -2449,14 +2457,22 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                 ),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
+                                  //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                  //     border: Border.all(
+                                  //         color: const Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  // // decoration: BoxDecoration(
+                                  // //   border: Border.all(color: blueColor),
+                                  // // ),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: const Color(0xFFDBE0E5)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -2620,7 +2636,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Amount : ',
+                                                                      'Rent : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -2630,7 +2646,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}',
+                                                                      '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -2715,7 +2731,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           DataCell(Text(
                                               '${snapshot.data!.data!.leaseType}')),
                                           DataCell(Text(
-                                              '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}')),
+                                              '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}')),
                                         ]),
                                         // Add more rows as needed
                                       ],
@@ -2981,7 +2997,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       Expanded(
                                                         flex: 4,
                                                         child: Text(
-                                                          '${formatCurrency(lease.amount!.toDouble())}',
+                                                          '${formatCurrency(lease.amount?.toDouble() ?? 0.0)}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -3409,7 +3425,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${formatCurrency(lease.amount!)}',
+                                                                              '${formatCurrency(lease.amount ?? 0.0)}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),

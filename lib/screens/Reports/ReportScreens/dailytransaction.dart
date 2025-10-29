@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -17,34 +16,15 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 import '../../../Model/profile.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:csv/csv.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
-import 'package:three_zero_two_property/Model/profile.dart';
-import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
-import 'package:three_zero_two_property/repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'dart:io';
 import '../../../repository/daily_transaction_report.dart';
-import '../../../widgets/CustomDateField.dart';
 import '../../../widgets/custom_drawer.dart';
 
 // // Sample data model class
@@ -582,15 +562,13 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       });
     });
     DateTime time = DateTime.now();
-    DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
-    _futureDailytrnsaction = fetchDelinquentTenantsData(
-        formatDate(date.toString()), formatDate(date.toString()));
+    String todayApiFormat = DateFormat('yyyy-MM-dd').format(time);
+    _futureDailytrnsaction =
+        fetchDelinquentTenantsData(todayApiFormat, todayApiFormat);
     // If data is available, show the table automatically
-    if (_futureDailytrnsaction != null) {
-      setState(() {
-        showTableData = true;
-      });
-    }
+    setState(() {
+      showTableData = true;
+    });
   }
 
   Future<DailyTransactionReportData> fetchDelinquentTenantsData(
@@ -599,7 +577,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
-      String? token = prefs.getString('token');
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
@@ -969,7 +946,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
     pdf.addPage(
       pw.MultiPage(
@@ -1208,7 +1184,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           ),
         ]);
         print(property.response);
-        if (property.response != "FAILURE" && property.isDelete == false)
+        if (property.response != "FAILURE" && !property.isDelete!)
           for (var payment in property.entry!) {
             tableData.add([
               pw.Padding(
@@ -1332,8 +1308,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
     final syncXlsx.Style AmountTitleStyle =
         workbook.styles.add('AmountTitleStyle');
-    boldAmountStyle.bold = true;
-    boldAmountStyle.numberFormat = '\$#,##0.00';
+    AmountTitleStyle.bold = true;
+    AmountTitleStyle.numberFormat = '\$#,##0.00';
 
     for (int i = 0; i < headers.length; i++) {
       final cell = sheet.getRangeByIndex(1, i + 1);
@@ -1697,9 +1673,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-
-        // _futureDailytrnsaction =
-        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1735,8 +1708,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // _futureDailytrnsaction =
-        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -3489,11 +3460,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               fromDate.text = "";
                               toDate.text = "";
                             }
-                            if (value != "Custom") {
-                              // _futureDailytrnsaction =
-                              //     fetchDelinquentTenantsData(
-                              //         fromDate.text, toDate.text);
+                            // Auto-fetch data only for "Today" selection
+                            if (value == "Today") {
+                              _futureDailytrnsaction =
+                                  fetchDelinquentTenantsData(
+                                      formatDate(fromDate.text),
+                                      formatDate(toDate.text));
                             }
+                            // For other date ranges, user must click "Run" button
                           });
                           // Handle the selected charge type
                           print(value);
