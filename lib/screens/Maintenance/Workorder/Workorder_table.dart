@@ -20,7 +20,6 @@ import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../../widgets/custom_drawer.dart';
 
-
 class Workorder_table extends StatefulWidget {
   const Workorder_table({super.key});
 
@@ -1126,26 +1125,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    const  SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     Text('Created:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13)),
-                                                    const  SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData?.createdAt}') ??
+                                                              '${workOrder.workOrderData?.createdAt}') ??
                                                           "-",
-                                                      style:  const TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-
                                                   ],
                                                 ),
                                               ),
-                                              const  SizedBox(
+                                              const SizedBox(
                                                 width: 35,
                                               ),
                                               // Spacer(),
@@ -1160,35 +1158,35 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13)),
-                                                    const  SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       workOrder.workOrderData
                                                                   ?.isBillable ==
                                                               true
                                                           ? "Yes"
                                                           : "No",
-                                                      style:  const TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    const  SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     Text('Due Date:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13)),
-                                                    const  SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData?.date}') ??
+                                                              '${workOrder.workOrderData?.date}') ??
                                                           "-",
-                                                      style: const  TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              const  SizedBox(
+                                              const SizedBox(
                                                 width: 4,
                                               ),
                                             ],

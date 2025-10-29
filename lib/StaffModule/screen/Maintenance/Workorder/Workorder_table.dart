@@ -60,10 +60,8 @@ class _Workorder_tableState extends State<Workorder_table> {
               .compareTo(a.workOrderData!.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.workOrderData!.workSubject!
-              .compareTo(b.workOrderData!.workSubject!)
-          : b.workOrderData!.workSubject!
-              .compareTo(a.workOrderData!.workSubject!));
+          ? a.workOrderData!.status!.compareTo(b.workOrderData!.status!)
+          : b.workOrderData!.status!.compareTo(a.workOrderData!.status!));
     }
   }
 
@@ -112,14 +110,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                     if (sorting1 == true) {
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending1 = !ascending1;
                       ascending2 = false;
                       ascending3 = false;
                     } else {
-                      sorting1 = !sorting1;
+                      sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending1 = true;
                       ascending2 = false;
                       ascending3 = false;
                     }
@@ -136,23 +134,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
 
-                    ascending1
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    sorting1
+                        ? (ascending1
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
                   ],
                 ),
               ),
@@ -162,18 +162,17 @@ class _Workorder_tableState extends State<Workorder_table> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting2) {
+                    if (sorting2 == true) {
                       sorting1 = false;
-                      sorting2 = sorting2;
                       sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending2 = !ascending2;
                       ascending1 = false;
                       ascending3 = false;
                     } else {
                       sorting1 = false;
-                      sorting2 = !sorting2;
+                      sorting2 = true;
                       sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending2 = true;
                       ascending1 = false;
                       ascending3 = false;
                     }
@@ -185,23 +184,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                     const Text("       Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    sorting2
+                        ? (ascending2
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
                   ],
                 ),
               ),
@@ -686,7 +687,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -960,127 +963,125 @@ class _Workorder_tableState extends State<Workorder_table> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Data>>(
-                        future: futureworkorders,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Data>>(
+                      future: futureworkorders,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
                               ),
-                            );
-                          } else {
-                            var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((workorder) =>
-                                      workorder.workOrderData!.workSubject!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.workOrderData!.status!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.workOrderData!.isBillable!
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.rentalAddress!.rentalAdress!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.workOrderData!.createdAt
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      workorder.workOrderData!.workCategory!
-                                          .toLowerCase()
-                                          .contains(searchvalue!.toLowerCase()) ||
-                                      (workorder.staffMember?.staffmemberName?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()))
-                                  .toList();
-                            } else {
-                              if (selectedValue == "Over Due") {
-                                data = snapshot.data!.where((element) {
-                                  if (element.workOrderData!.date == null) {
-                                    return false;
-                                  }
-                                  DateTime dueDate = parseDate(
-                                      element.workOrderData!.date.toString());
-                                  bool isOverDue =
-                                      dueDate.isBefore(DateTime.now());
-                                  bool isNotCompleted =
-                                      element.workOrderData!.status !=
-                                              "Completed" &&
-                                          element.workOrderData!.status !=
-                                              "Complete";
-                                  return isOverDue && isNotCompleted;
-                                }).toList();
-                              } else {
-                                data = snapshot.data!
-                                    .where((property) =>
-                                        property.workOrderData!.status ==
-                                        selectedValue)
-                                    .toList();
-                              }
-                            }
-                            if (isChecked) {
-                              data = data
-                                  .where((workorder) =>
-                                      workorder.workOrderData!.isBillable ==
-                                      true)
-                                  .toList();
-                            }
-                            sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (selectedValue == null && searchvalue!.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (selectedValue == "All") {
+                            data = snapshot.data!;
+                          } else if (searchvalue!.isNotEmpty) {
+                            data = snapshot.data!
+                                .where((workorder) =>
+                                    workorder.workOrderData!.workSubject!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    workorder.workOrderData!.status!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    workorder.workOrderData!.isBillable!
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    workorder.rentalAddress!.rentalAdress!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    workorder.workOrderData!.createdAt
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    workorder.workOrderData!.workCategory!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    (workorder.staffMember?.staffmemberName
+                                                ?.toLowerCase() ??
+                                            '')
+                                        .contains(searchvalue.toLowerCase()))
                                 .toList();
-                            Widget workOrderCard(
-                              Data workOrder,
-                              bool isExpanded,
-                              VoidCallback onExpandTap,
-                              BuildContext context,
-                              DateProvider dateProvider,
-                              VoidCallback onEdit,
-                              VoidCallback onDelete,
-                              VoidCallback onViewSummary,
-                            ) {
-                              return Container(
+                          } else {
+                            if (selectedValue == "Over Due") {
+                              data = snapshot.data!.where((element) {
+                                if (element.workOrderData!.date == null) {
+                                  return false;
+                                }
+                                DateTime dueDate = parseDate(
+                                    element.workOrderData!.date.toString());
+                                bool isOverDue =
+                                    dueDate.isBefore(DateTime.now());
+                                bool isNotCompleted = element
+                                            .workOrderData!.status !=
+                                        "Completed" &&
+                                    element.workOrderData!.status != "Complete";
+                                return isOverDue && isNotCompleted;
+                              }).toList();
+                            } else {
+                              data = snapshot.data!
+                                  .where((property) =>
+                                      property.workOrderData!.status ==
+                                      selectedValue)
+                                  .toList();
+                            }
+                          }
+                          if (isChecked) {
+                            data = data
+                                .where((workorder) =>
+                                    workorder.workOrderData!.isBillable == true)
+                                .toList();
+                          }
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          Widget workOrderCard(
+                            Data workOrder,
+                            bool isExpanded,
+                            VoidCallback onExpandTap,
+                            BuildContext context,
+                            DateProvider dateProvider,
+                            VoidCallback onEdit,
+                            VoidCallback onDelete,
+                            VoidCallback onViewSummary,
+                          ) {
+                            return GestureDetector(
+                              onTap: onExpandTap,
+                              child: Container(
                                 margin: EdgeInsets.symmetric(vertical: 8),
                                 padding: EdgeInsets.all(14),
                                 decoration: BoxDecoration(
@@ -1133,12 +1134,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        SizedBox(width: 30),
+                                        const SizedBox(width: 30),
                                         Expanded(
                                           flex: 3,
                                           child: Text(
-                                            workOrder.staffMember
-                                                    ?.staffmemberName ??
+                                            workOrder.workOrderData?.status ??
                                                 'N/A',
                                             style: TextStyle(
                                               fontSize: 13,
@@ -1168,7 +1168,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('Status:',
+                                                    Text('Assigned:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1176,8 +1176,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             fontSize: 13)),
                                                     SizedBox(height: 2),
                                                     Text(
-                                                      workOrder.workOrderData
-                                                              ?.status ??
+                                                      workOrder.staffMember
+                                                              ?.staffmemberName ??
                                                           "-",
                                                       style: TextStyle(
                                                           fontSize: 12),
@@ -1351,216 +1351,214 @@ class _Workorder_tableState extends State<Workorder_table> {
                                       ),
                                   ],
                                 ),
-                              );
-                            }
-
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Color(0xFFF7F9FC),
-                                        border: Border.all(
-                                            color: Color(0xFFDBE0E5)),
-                                        borderRadius: BorderRadius.circular(8)),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 8),
-                                    margin: EdgeInsets.only(bottom: 2),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 25,
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            "Work Order",
-                                            style: TextStyle(
-                                              color: blueColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Text(
-                                            "Assigned",
-                                            style: TextStyle(
-                                              color: blueColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
-                                            textAlign: TextAlign.end,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  ...currentPageData
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    int index = entry.key;
-                                    Data workOrder = entry.value;
-                                    bool isExpanded = expandedIndex == index;
-                                    return workOrderCard(
-                                      workOrder,
-                                      isExpanded,
-                                      () {
-                                        setState(() {
-                                          expandedIndex =
-                                              isExpanded ? null : index;
-                                        });
-                                      },
-                                      context,
-                                      dateProvider,
-                                      () async {
-                                        var check = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ResponsiveEditWorkOrder(
-                                              workorderId: workOrder
-                                                  .workOrderData!.workOrderId!,
-                                            ),
-                                          ),
-                                        );
-                                        if (check == true) {
-                                          setState(() {
-                                            futureworkorders =
-                                                WorkOrderRepository()
-                                                    .fetchWorkOrders();
-                                          });
-                                        }
-                                      },
-                                      () {
-                                        _showAlert(
-                                            context,
-                                            workOrder
-                                                .workOrderData!.workOrderId!);
-                                      },
-                                      () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                Workorder_summery(
-                                              workorder_id: workOrder
-                                                  .workOrderData?.workOrderId,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
-                                  if (data.length > itemsPerPage)
-                                    SizedBox(height: 20),
-                                  if (data.length > itemsPerPage)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Material(
-                                              elevation: 3,
-                                              child: Container(
-                                                height: 40,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.0),
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.grey),
-                                                ),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child: DropdownButton<int>(
-                                                    value: itemsPerPage,
-                                                    items: itemsPerPageOptions
-                                                        .map((int value) {
-                                                      return DropdownMenuItem<
-                                                          int>(
-                                                        value: value,
-                                                        child: Text(
-                                                            value.toString()),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: data.length >
-                                                            itemsPerPageOptions
-                                                                .first
-                                                        ? (newValue) {
-                                                            setState(() {
-                                                              itemsPerPage =
-                                                                  newValue!;
-                                                              currentPage = 0;
-                                                            });
-                                                          }
-                                                        : null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: FaIcon(
-                                                FontAwesomeIcons
-                                                    .circleChevronLeft,
-                                                color: currentPage == 0
-                                                    ? Colors.grey
-                                                    : blueColor,
-                                              ),
-                                              onPressed: currentPage == 0
-                                                  ? null
-                                                  : () {
-                                                      setState(() {
-                                                        currentPage--;
-                                                      });
-                                                    },
-                                            ),
-                                            Text(
-                                                'Page ${currentPage + 1} of $totalPages'),
-                                            IconButton(
-                                              icon: FaIcon(
-                                                FontAwesomeIcons
-                                                    .circleChevronRight,
-                                                color:
-                                                    currentPage < totalPages - 1
-                                                        ? blueColor
-                                                        : Colors.grey,
-                                              ),
-                                              onPressed:
-                                                  currentPage < totalPages - 1
-                                                      ? () {
-                                                          setState(() {
-                                                            currentPage++;
-                                                          });
-                                                        }
-                                                      : null,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
                               ),
                             );
                           }
-                        },
-                      ),
+
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFFF7F9FC),
+                                      border:
+                                          Border.all(color: Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 8),
+                                  margin: EdgeInsets.only(bottom: 2),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 25,
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          "Work Order",
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          "Status",
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.end,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ...currentPageData.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  Data workOrder = entry.value;
+                                  bool isExpanded = expandedIndex == index;
+                                  return workOrderCard(
+                                    workOrder,
+                                    isExpanded,
+                                    () {
+                                      setState(() {
+                                        expandedIndex =
+                                            isExpanded ? null : index;
+                                      });
+                                    },
+                                    context,
+                                    dateProvider,
+                                    () async {
+                                      var check = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ResponsiveEditWorkOrder(
+                                            workorderId: workOrder
+                                                .workOrderData!.workOrderId!,
+                                          ),
+                                        ),
+                                      );
+                                      if (check == true) {
+                                        setState(() {
+                                          futureworkorders =
+                                              WorkOrderRepository()
+                                                  .fetchWorkOrders();
+                                        });
+                                      }
+                                    },
+                                    () {
+                                      _showAlert(
+                                          context,
+                                          workOrder
+                                              .workOrderData!.workOrderId!);
+                                    },
+                                    () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Workorder_summery(
+                                            workorder_id: workOrder
+                                                .workOrderData?.workOrderId,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                                if (data.length > itemsPerPage)
+                                  SizedBox(height: 20),
+                                if (data.length > itemsPerPage)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: data.length >
+                                                          itemsPerPageOptions
+                                                              .first
+                                                      ? (newValue) {
+                                                          setState(() {
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage = 0;
+                                                          });
+                                                        }
+                                                      : null,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
+                                          ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                 ],
               ),
             )
