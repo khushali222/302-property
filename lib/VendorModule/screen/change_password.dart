@@ -207,7 +207,8 @@ class _Change_passwordState extends State<Change_password> {
 
   Future<void> _savePassword(String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("vendor_password", password); // Store the new password
+    await prefs.setString(
+        "vendor_password", password); // Store the new password
   }
 
   String oldPassword = "";
@@ -511,8 +512,7 @@ class _Change_passwordState extends State<Change_password> {
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child:
-                          Form(
+                          child: Form(
                             key: formKey,
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -1033,7 +1033,8 @@ class _Change_passwordState extends State<Change_password> {
 
                                       // If there are no errors, proceed to change the password
                                       if (!passworderror &&
-                                          !confirmpassworderror && !currentpassworderror) {
+                                          !confirmpassworderror &&
+                                          !currentpassworderror) {
                                         //await _savePassword(password.text);
                                         addinsurance(); // Call the function to change the password
                                       }

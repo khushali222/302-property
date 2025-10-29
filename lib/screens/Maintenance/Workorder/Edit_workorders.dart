@@ -1550,6 +1550,101 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             const SizedBox(
                               height: 10,
                             ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          // Container(
+                          //   height: 40,
+                          //   width: 140,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(8.0),
+                          //   ),
+                          //   child: ElevatedButton(
+                          //     style: ElevatedButton.styleFrom(
+                          //       backgroundColor: blueColor,
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(8.0),
+                          //       ),
+                          //     ),
+                          //     onPressed: _images.length >= 10
+                          //         ? null // disables the button
+                          //         : () async {
+                          //             _showImageSourceDialog();
+                          //           },
+                          //     // onPressed: () async {
+                          //     //   _pickImage().then((_) {
+                          //     //     setState(
+                          //     //         () {}); // Rebuild the widget after selecting the image
+                          //     //   });
+                          //     // },
+                          //     child: isLoading
+                          //         ? const Center(
+                          //             child: SpinKitFadingCircle(
+                          //               color: Colors.white,
+                          //               size: 20.0,
+                          //             ),
+                          //           )
+                          //         : const Text(
+                          //             'Upload here',
+                          //             style:
+                          //                 TextStyle(color: Color(0xFFf7f8f9)),
+                          //           ),
+                          //   ),
+                          // ),
+                          if (_imageUrls.isEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                _showImageSourceDialog();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  children: [
+                                    // Icon(Icons.upload,
+                                    //     size: 40, color: Colors.grey[600]),
+                                    Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Upload your Photo here',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Maximum File Size is 20MB',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                    const Text(
+                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (_imageUrls.isEmpty)
+                            const SizedBox(
+                              height: 10,
+                            ),
                           _imageUrls.isNotEmpty
                               ? Container(
                                   width: double.infinity,
@@ -1746,6 +1841,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   ),
                                 )
                               : Container(),
+
                           const SizedBox(
                             height: 10,
                           ),
@@ -4691,6 +4787,97 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                     const SizedBox(
                                       height: 10,
                                     ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  // Container(
+                                  //   height: 50,
+                                  //   width: 150,
+                                  //   decoration: BoxDecoration(
+                                  //     borderRadius: BorderRadius.circular(8.0),
+                                  //   ),
+                                  //   child: ElevatedButton(
+                                  //     style: ElevatedButton.styleFrom(
+                                  //       backgroundColor: blueColor,
+                                  //       shape: RoundedRectangleBorder(
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(8.0),
+                                  //       ),
+                                  //     ),
+                                  //     onPressed: () async {
+                                  //       _showImageSourceDialog();
+                                  //     },
+                                  //     child: isLoading
+                                  //         ? const Center(
+                                  //             child: SpinKitFadingCircle(
+                                  //               color: Colors.white,
+                                  //               size: 55.0,
+                                  //             ),
+                                  //           )
+                                  //         : const Text(
+                                  //             'Upload here',
+                                  //             style: TextStyle(
+                                  //                 color: Color(0xFFf7f8f9)),
+                                  //           ),
+                                  //   ),
+                                  // ),
+                                  if (_imageUrls.isEmpty)
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showImageSourceDialog();
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey.shade300,
+                                              style: BorderStyle.solid),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            // Icon(Icons.upload,
+                                            //     size: 40, color: Colors.grey[600]),
+                                            Image.asset(
+                                              'assets/icons/Upload.png',
+                                              height: 50,
+                                              width: 50,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Upload your Photo here',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            const Text(
+                                              'Maximum File Size is 20MB',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey),
+                                            ),
+                                            const Text(
+                                              'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  if (_imageUrls.isEmpty)
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
                                   _imageUrls.isNotEmpty
                                       ? Container(
                                           width: double.infinity,
@@ -4853,6 +5040,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           ),
                                         )
                                       : Container(),
+
                                   const SizedBox(
                                     height: 10,
                                   ),

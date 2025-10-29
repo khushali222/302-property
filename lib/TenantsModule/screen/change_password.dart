@@ -208,7 +208,8 @@ class _Change_passwordState extends State<Change_password> {
 
   Future<void> _savePassword(String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("tenant_password", password); // Store the new password
+    await prefs.setString(
+        "tenant_password", password); // Store the new password
   }
 
   String oldPassword = "";
@@ -474,7 +475,8 @@ class _Change_passwordState extends State<Change_password> {
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFFffffff),
+                                        backgroundColor:
+                                            const Color(0xFFffffff),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0))),
@@ -604,8 +606,8 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           enabledBorder:
                                                               currentpassworderror
                                                                   ? OutlineInputBorder(
@@ -736,8 +738,8 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           enabledBorder:
                                                               passworderror
                                                                   ? OutlineInputBorder(
@@ -872,8 +874,8 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           enabledBorder:
                                                               confirmpassworderror
                                                                   ? OutlineInputBorder(
@@ -1036,7 +1038,8 @@ class _Change_passwordState extends State<Change_password> {
 
                                       // If there are no errors, proceed to change the password
                                       if (!passworderror &&
-                                          !confirmpassworderror && !currentpassworderror) {
+                                          !confirmpassworderror &&
+                                          !currentpassworderror) {
                                         //await _savePassword(password.text);
                                         addinsurance(); // Call the function to change the password
                                       }
@@ -1412,7 +1415,10 @@ class _Change_passwordState extends State<Change_password> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? email = prefs.getString('email');
-    Map<String, dynamic> values = {'password': password.text.trim(),"currentPassword":currentpassword.text.trim()};
+    Map<String, dynamic> values = {
+      'password': password.text.trim(),
+      "currentPassword": currentpassword.text.trim()
+    };
 
     final http.Response response = await http.put(
       Uri.parse('$Api_url/api/tenant/reset_password/$email'),
@@ -1528,8 +1534,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -1587,8 +1593,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                         suffixIcon: InkWell(
                             onTap: widget.onSuffixIconPressed,
                             child: widget.suffixIcon),
-                        hintStyle:
-                            const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),

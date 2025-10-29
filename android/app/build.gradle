@@ -31,7 +31,8 @@ if (flutterVersionName == null) {
 android {
     namespace "com.hostmerchantservices.cloudrentalmanager"
     compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "28.0.12433566"
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

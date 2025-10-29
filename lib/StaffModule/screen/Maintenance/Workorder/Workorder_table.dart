@@ -60,10 +60,8 @@ class _Workorder_tableState extends State<Workorder_table> {
               .compareTo(a.workOrderData!.workSubject!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.workOrderData!.workSubject!
-              .compareTo(b.workOrderData!.workSubject!)
-          : b.workOrderData!.workSubject!
-              .compareTo(a.workOrderData!.workSubject!));
+          ? a.workOrderData!.status!.compareTo(b.workOrderData!.status!)
+          : b.workOrderData!.status!.compareTo(a.workOrderData!.status!));
     }
   }
 
@@ -112,14 +110,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                     if (sorting1 == true) {
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending1 = !ascending1;
                       ascending2 = false;
                       ascending3 = false;
                     } else {
-                      sorting1 = !sorting1;
+                      sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending1 = true;
                       ascending2 = false;
                       ascending3 = false;
                     }
@@ -136,23 +134,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
 
-                    ascending1
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    sorting1
+                        ? (ascending1
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
                   ],
                 ),
               ),
@@ -162,18 +162,17 @@ class _Workorder_tableState extends State<Workorder_table> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting2) {
+                    if (sorting2 == true) {
                       sorting1 = false;
-                      sorting2 = sorting2;
                       sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending2 = !ascending2;
                       ascending1 = false;
                       ascending3 = false;
                     } else {
                       sorting1 = false;
-                      sorting2 = !sorting2;
+                      sorting2 = true;
                       sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending2 = true;
                       ascending1 = false;
                       ascending3 = false;
                     }
@@ -185,23 +184,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                     const Text("       Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    sorting2
+                        ? (ascending2
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
                   ],
                 ),
               ),
@@ -1078,266 +1079,278 @@ class _Workorder_tableState extends State<Workorder_table> {
                             VoidCallback onDelete,
                             VoidCallback onViewSummary,
                           ) {
-                            return Container(
-                              margin: EdgeInsets.symmetric(vertical: 8),
-                              padding: EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color:
-                                    currentPageData.indexOf(workOrder) % 2 == 0
-                                        ? Color(0xFFF4F8FF)
-                                        : Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Color(0xFFDBE0E5)),
-                                // boxShadow: [
-                                //   BoxShadow(
-                                //     color: Colors.black12,
-                                //     blurRadius: 8,
-                                //     offset: Offset(0, 2),
-                                //   ),
-                                // ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: onExpandTap,
-                                        child: Container(
-                                          width: 20,
-                                          height: 20,
-                                          child: Icon(
-                                            isExpanded
-                                                ? Icons.expand_less
-                                                : Icons.expand_more,
-                                            color: blueColor,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          workOrder.rentalAddress
-                                                  ?.rentalAdress ??
-                                              'N/A',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13,
-                                            color: blueColor,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                      SizedBox(width: 30),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          workOrder.staffMember
-                                                  ?.staffmemberName ??
-                                              'N/A',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.end,
-                                          maxLines: 2,
-                                          softWrap: true,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (isExpanded)
-                                    Column(
+                            return GestureDetector(
+                              onTap: onExpandTap,
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 8),
+                                padding: EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color:
+                                      currentPageData.indexOf(workOrder) % 2 ==
+                                              0
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Color(0xFFDBE0E5)),
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.black12,
+                                  //     blurRadius: 8,
+                                  //     offset: Offset(0, 2),
+                                  //   ),
+                                  // ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
                                       children: [
-                                        Divider(thickness: 2),
-                                        SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 25,
+                                        GestureDetector(
+                                          onTap: onExpandTap,
+                                          child: Container(
+                                            width: 20,
+                                            height: 20,
+                                            child: Icon(
+                                              isExpanded
+                                                  ? Icons.expand_less
+                                                  : Icons.expand_more,
+                                              color: blueColor,
                                             ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('Status:',
-                                                      style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13)),
-                                                  SizedBox(height: 2),
-                                                  Text(
-                                                    workOrder.workOrderData
-                                                            ?.status ??
-                                                        "-",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Text('Due Date:',
-                                                      style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13)),
-                                                  SizedBox(height: 2),
-                                                  Text(
-                                                    dateProvider.formatCurrentDate(
-                                                            '${workOrder.workOrderData?.date}') ??
-                                                        "-",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 35,
-                                            ),
-                                            // Spacer(),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text('Billable:',
-                                                      style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13)),
-                                                  SizedBox(height: 2),
-                                                  Text(
-                                                    workOrder.workOrderData
-                                                                ?.isBillable ==
-                                                            true
-                                                        ? "Yes"
-                                                        : "No",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Text('Created:',
-                                                      style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13)),
-                                                  SizedBox(height: 2),
-                                                  Text(
-                                                    dateProvider.formatCurrentDate(
-                                                            '${workOrder.workOrderData?.createdAt}') ??
-                                                        "-",
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                        SizedBox(height: 15),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: onDelete,
-                                              child: Container(
-                                                height: 35,
-                                                width: 35,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: Colors.red.shade50),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons.trashCan,
-                                                      size: 15,
-                                                      color: Colors.red,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                        SizedBox(width: 5),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            workOrder.rentalAddress
+                                                    ?.rentalAdress ??
+                                                'N/A',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                              color: blueColor,
                                             ),
-                                            SizedBox(
-                                              width: 5,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 30),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            workOrder.workOrderData?.status ??
+                                                'N/A',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            GestureDetector(
-                                              onTap: onEdit,
-                                              child: Container(
-                                                height: 35,
-                                                width: 35,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    color: Colors.green
-                                                        .shade50), // color:Colors.grey[100],
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons.edit,
-                                                      size: 15,
-                                                      color: Colors.green,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            GestureDetector(
-                                              onTap: onViewSummary,
-                                              child: Container(
-                                                height: 35,
-                                                width: 35,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade200,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons.eye,
-                                                      size: 15,
-                                                      color: Colors.black,
-                                                    ),
-                                                    SizedBox(width: 2),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                            textAlign: TextAlign.end,
+                                            maxLines: 2,
+                                            softWrap: true,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                ],
+                                    if (isExpanded)
+                                      Column(
+                                        children: [
+                                          Divider(thickness: 2),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 25,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Assigned:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      workOrder.staffMember
+                                                              ?.staffmemberName ??
+                                                          "-",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Text('Due Date:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      dateProvider.formatCurrentDate(
+                                                              '${workOrder.workOrderData?.date}') ??
+                                                          "-",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 35,
+                                              ),
+                                              // Spacer(),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text('Billable:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      workOrder.workOrderData
+                                                                  ?.isBillable ==
+                                                              true
+                                                          ? "Yes"
+                                                          : "No",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Text('Created:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      dateProvider.formatCurrentDate(
+                                                              '${workOrder.workOrderData?.createdAt}') ??
+                                                          "-",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 15),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: onDelete,
+                                                child: Container(
+                                                  height: 35,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons
+                                                            .trashCan,
+                                                        size: 15,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              GestureDetector(
+                                                onTap: onEdit,
+                                                child: Container(
+                                                  height: 35,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color: Colors.green
+                                                          .shade50), // color:Colors.grey[100],
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons.edit,
+                                                        size: 15,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              GestureDetector(
+                                                onTap: onViewSummary,
+                                                child: Container(
+                                                  height: 35,
+                                                  width: 35,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons.eye,
+                                                        size: 15,
+                                                        color: Colors.black,
+                                                      ),
+                                                      SizedBox(width: 2),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
                               ),
                             );
                           }
@@ -1376,7 +1389,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                       Expanded(
                                         flex: 3,
                                         child: Text(
-                                          "Assigned",
+                                          "Status",
                                           style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold,

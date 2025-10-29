@@ -744,7 +744,9 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -1210,7 +1212,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           });
                                                         },
                                                         child: Text(
-                                                          ' ${Propertytype.propertyType}',
+                                                          '${Propertytype.propertyType}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
