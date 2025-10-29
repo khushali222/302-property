@@ -88,7 +88,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         }
       }
     } else {
-      Fluttertoast.showToast(msg: "Email is not exist");
+      Fluttertoast.showToast(msg: "Email does not exist");
     }
   }
 

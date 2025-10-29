@@ -1064,7 +1064,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     // Camera icon overlay
                     Positioned(
                       top: 10,
-                      right: 10,
+                      right: 5,
                       child: GestureDetector(
                         onTap: () async {
                           final ImagePicker _picker = ImagePicker();
@@ -1092,18 +1092,30 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             }
                           }
                         },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                        child:
+                        Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              //  color: Colors.white.withOpacity(0.8),
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                "assets/icons/bxs_edit.png",
+                                fit: BoxFit.cover,
+                                color: Colors.white,
+                                height: 10,
+                                width: 10,
+                              ),
+                            )
+                          // Icon(
+                          //   Icons.camera_alt,
+                          //   color: Colors.white,
+                          //   size: 20,
+                          // ),
                         ),
                       ),
                     ),
@@ -1527,9 +1539,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                                           ),
                                                                           Positioned(
                                                                             top:
-                                                                                20,
+                                                                            28,
                                                                             right:
-                                                                                25,
+                                                                            28,
                                                                             child:
                                                                                 Container(
                                                                               padding: EdgeInsets.all(4),
