@@ -1004,7 +1004,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     );
   }
 
-  void _showImageDialog(File imageFile, int imageIndex) {
+  void _showImageDialog(
+      File imageFile, int imageIndex, File? originalFile, bool isVideo) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1047,15 +1048,66 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                   ],
                 ),
                 SizedBox(height: 20),
-                // Image with rounded corners
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    imageFile,
-                    fit: BoxFit.cover,
-                    height: 300,
-                    width: 300,
-                  ),
+                // Image with rounded corners and camera icon overlay
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(
+                        imageFile,
+                        fit: BoxFit.cover,
+                        height: 300,
+                        width: 300,
+                      ),
+                    ),
+                    // Camera icon overlay
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                // Update the preview with new image
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              // Update the preview with new image
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 // Action buttons
@@ -1075,15 +1127,39 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       ),
                       child: Text(
-                        'Back',
+                        'Cancel',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: blueColor),
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        _updateImageAtIndex(imageIndex);
+
+                        // Update the existing image in the list
+                        setState(() {
+                          _images[imageIndex] = imageFile;
+                          isvideo[imageIndex] = isVideo;
+                          if (originalFile != null) {
+                            videofiles[imageIndex] = originalFile;
+                          } else {
+                            videofiles[imageIndex] = imageFile;
+                          }
+                        });
+
+                        // Upload the new image
+                        try {
+                          String? fileName =
+                              await uploadImage(originalFile ?? imageFile);
+                          if (fileName != null &&
+                              imageIndex < _uploadedFileNames.length) {
+                            setState(() {
+                              _uploadedFileNames[imageIndex] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          print('Image upload failed: $e');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[100],
@@ -1118,33 +1194,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       final File file = File(image.path);
       bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
 
+      // Show preview dialog first
       if (isVideo) {
         String? thumbnailPath = await _generateVideoThumbnail(image.path);
         if (thumbnailPath != null) {
-          setState(() {
-            _images[index] = File(thumbnailPath);
-            isvideo[index] = true;
-            videofiles[index] = file;
-          });
+          _showImageDialog(File(thumbnailPath), index, file, true);
         }
       } else {
-        setState(() {
-          _images[index] = file;
-          isvideo[index] = false;
-          videofiles[index] = file;
-        });
-      }
-
-      // Upload the new image and update the uploaded file names
-      try {
-        String? fileName = await uploadImage(file);
-        if (fileName != null && index < _uploadedFileNames.length) {
-          setState(() {
-            _uploadedFileNames[index] = fileName;
-          });
-        }
-      } catch (e) {
-        print('Image upload failed: $e');
+        _showImageDialog(file, index, file, false);
       }
     }
   }
@@ -1449,7 +1506,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                                           () {
                                                                         _showImageDialog(
                                                                             _images[index],
-                                                                            index);
+                                                                            index,
+                                                                            _images[index],
+                                                                            false);
                                                                       },
                                                                       child:
                                                                           Stack(
@@ -3977,7 +4036,8 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     }
   }
 
-  void _showImageDialog(File imageFile, int imageIndex) {
+  void _showImageDialog(
+      File imageFile, int imageIndex, File? originalFile, bool isVideo) {
     showDialog(
       context: context,
       builder: (context) {
@@ -4021,15 +4081,66 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                   ],
                 ),
                 SizedBox(height: 20),
-                // Image with rounded corners
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    imageFile,
-                    fit: BoxFit.cover,
-                    height: 300,
-                    width: 300,
-                  ),
+                // Image with rounded corners and camera icon overlay
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(
+                        imageFile,
+                        fit: BoxFit.cover,
+                        height: 300,
+                        width: 300,
+                      ),
+                    ),
+                    // Camera icon overlay
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                // Update the preview with new image
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              // Update the preview with new image
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 // Action buttons
@@ -4048,12 +4159,30 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       ),
-                      child: Text('Back'),
+                      child: Text('Cancel'),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        _updateImageAtIndex(imageIndex);
+
+                        // Update the existing image in the list
+                        setState(() {
+                          _images[imageIndex] = imageFile;
+                        });
+
+                        // Upload the new image
+                        try {
+                          String? fileName =
+                              await uploadImage(originalFile ?? imageFile);
+                          if (fileName != null &&
+                              imageIndex < _uploadedFileNames.length) {
+                            setState(() {
+                              _uploadedFileNames[imageIndex] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          print('Image upload failed: $e');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[400],
@@ -4082,20 +4211,16 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
 
     if (image != null) {
       final File file = File(image.path);
-      setState(() {
-        _images[index] = file;
-      });
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
 
-      // Upload the new image and update the uploaded file names
-      try {
-        String? fileName = await uploadImage(file);
-        if (fileName != null && index < _uploadedFileNames.length) {
-          setState(() {
-            _uploadedFileNames[index] = fileName;
-          });
+      // Show preview dialog first
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          _showImageDialog(File(thumbnailPath), index, file, true);
         }
-      } catch (e) {
-        print('Image upload failed: $e');
+      } else {
+        _showImageDialog(file, index, file, false);
       }
     }
   }
@@ -4261,7 +4386,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                           onTap: () {
                                                             _showImageDialog(
                                                                 _images[index],
-                                                                index);
+                                                                index,
+                                                                _images[index],
+                                                                false);
                                                           },
                                                           child: Stack(
                                                             alignment: Alignment

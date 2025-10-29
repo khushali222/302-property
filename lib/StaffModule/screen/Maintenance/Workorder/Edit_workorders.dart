@@ -12,7 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 import '../../../../widgets/camera_capture_screen.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video_thumbnail;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/Edit_workorder.dart';
 import '../../../../widgets/VideoPlayerWidget.dart';
@@ -839,8 +840,23 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   //for tenants
   File? _image;
   List<File> _images = [];
+  List<File> videofiles = [];
   String? _uploadedFileName;
+  List<bool> isvideo = [];
   List<String> _uploadedFileNames = [];
+
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
+  }
+
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -994,10 +1010,25 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     final XFile? image = await _picker.pickMedia();
 
     if (image != null) {
-      setState(() {
-        _images.add(File(image.path));
-      });
-      _uploadImage(File(image.path));
+      final File file = File(image.path);
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          setState(() {
+            _images.add(File(thumbnailPath));
+            isvideo.add(true);
+            videofiles.add(file);
+          });
+        }
+      } else {
+        setState(() {
+          _images.add(file);
+          isvideo.add(false);
+          videofiles.add(file);
+        });
+      }
+      _uploadImage(file);
     }
   }
 
@@ -1024,14 +1055,22 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
               // Handle captured image
               setState(() {
                 _images.add(imageFile);
+                isvideo.add(false);
+                videofiles.add(imageFile);
               });
               _uploadImage(imageFile);
             },
             onVideoCaptured: (File videoFile) async {
               // Handle captured video
-              setState(() {
-                _images.add(videoFile);
-              });
+              String? thumbnailPath =
+                  await _generateVideoThumbnail(videoFile.path);
+              if (thumbnailPath != null) {
+                setState(() {
+                  _images.add(File(thumbnailPath));
+                  isvideo.add(true);
+                  videofiles.add(videoFile);
+                });
+              }
               _uploadImage(videoFile);
             },
           ),
@@ -1098,6 +1137,192 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         return Container(
           child: VideoPlayerDialog(
             videoUrl: videoFile,
+          ),
+        );
+      },
+    );
+  }
+
+  void _showImageDialog(
+      dynamic imageFile, int imageIndex, File? originalFile, bool isVideo) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with title and close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Preview',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: blueColor, width: 1),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: blueColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                // Image with rounded corners and camera icon overlay
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: imageFile is String
+                          ? Image.network(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            )
+                          : Image.file(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            ),
+                    ),
+                    // Camera icon overlay for updating image
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                // Action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: blueColor),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+
+                        // Update the existing image in the list
+                        setState(() {
+                          if (imageFile is String) {
+                            // This is a network image URL, update it
+                            _imageUrls[imageIndex] = imageFile;
+                          } else {
+                            _images[imageIndex] = imageFile;
+                          }
+                        });
+
+                        // Upload the new image if it's a file
+                        if (originalFile != null) {
+                          try {
+                            String? fileName = await uploadImage(originalFile);
+                            if (fileName != null &&
+                                imageIndex < _uploadedFileNames.length) {
+                              setState(() {
+                                _uploadedFileNames[imageIndex] = fileName;
+                              });
+                            }
+                          } catch (e) {
+                            print('Image upload failed: $e');
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[100],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Update',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.green),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -1178,69 +1403,128 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            height: 40,
-                            width: 140,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                          if (_imageUrls.isEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                _showImageSourceDialog();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  children: [
+                                    // Icon(Icons.upload,
+                                    //     size: 40, color: Colors.grey[600]),
+                                    Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Upload your Photo here',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Maximum File Size is 20MB',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                    const Text(
+                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              onPressed: _images.length >= 10
-                                  ? null // disables the button
-                                  : () async {
-                                      _showImageSourceDialog();
-                                    },
-                              // onPressed: () async {
-                              //   _pickImage().then((_) {
-                              //     setState(
-                              //         () {}); // Rebuild the widget after selecting the image
-                              //   });
-                              // },
-                              child: isLoading
-                                  ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 20.0,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Upload here',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          if (_imageUrls.isEmpty)
+                            const SizedBox(
+                              height: 10,
+                            ),
                           _imageUrls.isNotEmpty
-                              ? Row(
+                              ? Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  style: BorderStyle.solid),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                if (_imageUrls.length < 10)
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.end,
+                                    // crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                          onTap: () {
+                                            _showImageSourceDialog();
+                                          },
+                                          child: Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                color: blueColor,
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    7),
+                                              ),
+                                              child: const Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                                size: 15,
+                                              ))),
+                                    ],
+                                  ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
                                   children: [
                                     Expanded(
                                       child: Container(
+                                        //color: Colors.blue,
                                         child: Wrap(
                                           spacing:
-                                              8.0, // Horizontal spacing between items
+                                          8.0, // Horizontal spacing between items
                                           runSpacing:
-                                              8.0, // Vertical spacing between rows
+                                          8.0, // Vertical spacing between rows
                                           children: List.generate(
                                             _imageUrls.length,
-                                            (index) {
-                                              bool isMp4 =
-                                                  isVideo(_imageUrls[index]);
+                                                (index) {
+                                              bool isMp4 = isVideo(
+                                                  _imageUrls[index]);
                                               return Container(
+                                                // color: Colors.green,
                                                 width: 85,
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  MainAxisAlignment
+                                                      .start,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment
+                                                      .start,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -1251,72 +1535,108 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                             setState(() {
                                                               _imageUrls
                                                                   .removeAt(
-                                                                      index);
+                                                                  index);
                                                             });
                                                           },
-                                                          child: const Icon(
+                                                          child:
+                                                          const Icon(
                                                             Icons.close,
-                                                            color: Colors.grey,
+                                                            color: Colors
+                                                                .grey,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
+                                                      MainAxisAlignment
+                                                          .start,
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                      CrossAxisAlignment
+                                                          .start,
                                                       children: [
                                                         isMp4
                                                             ? Container(
-                                                                height: 80,
-                                                                width: 80,
+                                                          height:
+                                                          80,
+                                                          width: 80,
+                                                          child:
+                                                          GestureDetector(
+                                                            onTap:
+                                                                () {
+                                                              _showVideoDialog(
+                                                                  '$image_url${_imageUrls[index]}');
+                                                            },
+                                                            child:
+                                                            Stack(
+                                                              alignment:
+                                                              Alignment.center,
+                                                              children: [
+                                                                // Image.file(
+                                                                // File(snapshot.data!),
+                                                                // height:80,
+                                                                // width: 80,
+                                                                // fit: BoxFit.cover,
+                                                                // ),
+                                                                VideoItem(url: '$image_url${_imageUrls[index]}'),
+                                                                const Icon(Icons.play_circle_fill,
+                                                                    color: Colors.white,
+                                                                    size: 40),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                            : GestureDetector(
+                                                          onTap:
+                                                              () {
+                                                            _showImageDialog(
+                                                                "$image_url${_imageUrls[index]}",
+                                                                index,
+                                                                null,
+                                                                false);
+                                                          },
+                                                          child:
+                                                          Stack(
+                                                            alignment:
+                                                            Alignment.center,
+                                                            children: [
+                                                              Image
+                                                                  .network(
+                                                                "$image_url${_imageUrls[index]}",
+                                                                height:
+                                                                80,
+                                                                width:
+                                                                80,
+                                                                fit:
+                                                                BoxFit.cover,
+                                                                errorBuilder: (context,
+                                                                    error,
+                                                                    stackTrace) {
+                                                                  return const Icon(Icons.error);
+                                                                },
+                                                              ),
+                                                              Positioned(
+                                                                top:
+                                                                20,
+                                                                right:
+                                                                25,
                                                                 child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    _showVideoDialog(
-                                                                        '$image_url${_imageUrls[index]}');
-                                                                  },
-                                                                  child: Stack(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    children: [
-                                                                      VideoItem(
-                                                                        url:
-                                                                            '$image_url${_imageUrls[index]}',
-                                                                      ),
-                                                                      const Icon(
-                                                                          Icons
-                                                                              .play_circle_fill,
-                                                                          color: Colors
-                                                                              .white,
-                                                                          size:
-                                                                              40),
-                                                                    ],
+                                                                Container(
+                                                                  padding: EdgeInsets.all(4),
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.black54,
+                                                                    borderRadius: BorderRadius.circular(15),
+                                                                  ),
+                                                                  child: Icon(
+                                                                    Icons.visibility,
+                                                                    color: Colors.white,
+                                                                    size: 16,
                                                                   ),
                                                                 ),
-                                                              )
-                                                            : Container(
-                                                                child: Image
-                                                                    .network(
-                                                                  "$image_url${_imageUrls[index]}",
-                                                                  height: 80,
-                                                                  width: 80,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                    return const Icon(
-                                                                        Icons
-                                                                            .error); // Placeholder for errors
-                                                                  },
-                                                                ),
                                                               ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
@@ -1328,9 +1648,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                       ),
                                     ),
                                   ],
-                                )
-                              : const Center(
-                                  child: Text("No images selected.")),
+                                ),
+                              ],
+                            ),
+                          )
+                              : Container(),
                           // _imageUrls.isNotEmpty
                           //     ? Row(
                           //         children: [
@@ -2710,7 +3032,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                     children: [
                       Container(
                         height: 50,
-                        width: 180,
+                        width: 160,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -3584,8 +3906,23 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   //for tenants
   File? _image;
   List<File> _images = [];
+  List<File> videofiles = [];
   String? _uploadedFileName;
+  List<bool> isvideo = [];
   List<String> _uploadedFileNames = [];
+
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
+  }
+
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -3736,14 +4073,30 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   // Pick image from specific source
   Future<void> _pickImageFromSource(ImageSource source) async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: source);
+    final XFile? image = await _picker.pickMedia();
 
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-        _images.add(File(image.path));
-      });
-      _uploadImage(File(image.path));
+      final File file = File(image.path);
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          setState(() {
+            _image = File(thumbnailPath);
+            _images.add(File(thumbnailPath));
+            isvideo.add(true);
+            videofiles.add(file);
+          });
+        }
+      } else {
+        setState(() {
+          _image = file;
+          _images.add(file);
+          isvideo.add(false);
+          videofiles.add(file);
+        });
+      }
+      _uploadImage(file);
     }
   }
 
@@ -4069,22 +4422,61 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                Container(
-                                                                  child: Image
-                                                                      .network(
-                                                                    "$image_url${_imageUrls[index]}",
-                                                                    height: 80,
-                                                                    width: 80,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    errorBuilder:
-                                                                        (context,
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    _showImageDialog(
+                                                                        "$image_url${_imageUrls[index]}",
+                                                                        index,
+                                                                        null,
+                                                                        false);
+                                                                  },
+                                                                  child: Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Image
+                                                                          .network(
+                                                                        "$image_url${_imageUrls[index]}",
+                                                                        height:
+                                                                            80,
+                                                                        width:
+                                                                            80,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        errorBuilder: (context,
                                                                             error,
                                                                             stackTrace) {
-                                                                      return const Icon(
-                                                                          Icons
-                                                                              .error); // Placeholder for errors
-                                                                    },
+                                                                          return const Icon(
+                                                                              Icons.error);
+                                                                        },
+                                                                      ),
+                                                                      Positioned(
+                                                                        top: 20,
+                                                                        right:
+                                                                            25,
+                                                                        child:
+                                                                            Container(
+                                                                          padding:
+                                                                              EdgeInsets.all(4),
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                Colors.black54,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(15),
+                                                                          ),
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.visibility,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            size:
+                                                                                16,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ],
@@ -6239,5 +6631,184 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       });
       print('Form is invalid');
     }
+  }
+
+  void _showImageDialog(
+      dynamic imageFile, int imageIndex, File? originalFile, bool isVideo) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Preview',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: blueColor, width: 1),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: blueColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: imageFile is String
+                          ? Image.network(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            )
+                          : Image.file(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            ),
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: blueColor),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+
+                        setState(() {
+                          if (imageFile is String) {
+                            _imageUrls[imageIndex] = imageFile;
+                          } else {
+                            _images[imageIndex] = imageFile;
+                          }
+                        });
+
+                        if (originalFile != null) {
+                          try {
+                            String? fileName = await uploadImage(originalFile);
+                            if (fileName != null &&
+                                imageIndex < _uploadedFileNames.length) {
+                              setState(() {
+                                _uploadedFileNames[imageIndex] = fileName;
+                              });
+                            }
+                          } catch (e) {
+                            print('Image upload failed: $e');
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[100],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Update',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.green),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
