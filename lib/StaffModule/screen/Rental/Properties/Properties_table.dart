@@ -76,8 +76,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   final List<String> applicantStatusOptions = [
     'All',
-    'Accepting Applicant',
-    'Not Accepting Applicant',
+    'Accepting Applications',
+    'Not Accepting Applications',
   ];
   final List<String> applicantoccupiedOptions = [
     'All',

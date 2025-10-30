@@ -78,8 +78,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
   bool ascending3 = false;
   final List<String> applicantStatusOptions = [
     'All',
-    'Accepting Applicant',
-    'Not Accepting Applicant',
+    'Accepting Applications',
+    'Not Accepting Applications',
   ];
   final List<String> applicantoccupiedOptions = [
     'All',

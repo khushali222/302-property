@@ -1334,60 +1334,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           //           ),
                           //   ),
                           // ),
-                          if (_images.isEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _showImageSourceDialog();
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade300,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  children: [
-                                    // Icon(Icons.upload,
-                                    //     size: 40, color: Colors.grey[600]),
-                                    Image.asset(
-                                      'assets/icons/Upload.png',
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Upload your Photo here',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    const Text(
-                                      'Maximum File Size is 20MB',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                    const Text(
-                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          if (_images.isEmpty)
-                            const SizedBox(
-                              height: 10,
-                            ),
+
                           // Container(
                           //   height: 45,
                           //   width: 130,

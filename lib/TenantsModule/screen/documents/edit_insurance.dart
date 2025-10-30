@@ -186,7 +186,7 @@ class _edit_insuranceState extends State<edit_insurance> {
           expiration.text = '';
           Fluttertoast.showToast(
               msg:
-                  "Effective date cannot be after expiration date. Please select a new expiration date.");
+              "Effective date cannot be after expiration date. Please select a new expiration date.");
         }
       });
     }
@@ -329,14 +329,16 @@ class _edit_insuranceState extends State<edit_insurance> {
                     // size: 18,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04,
+                        vertical: 10),
                     child: Container(
                       width: double.infinity,
                       // height: !form_valid ? 860 : 830,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 103, 1),
+                            color: const Color.fromRGBO(21, 43, 103, 1),
                           )),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -344,12 +346,12 @@ class _edit_insuranceState extends State<edit_insurance> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Provider *',
+                            const Text('Provider *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -364,21 +366,25 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Policy Id *',
+                            const Text('Policy Id *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.text,
                               hintText: 'Enter Policy Id',
                               controller: policy,
+                              // inputFormatters: [
+                              //   // Only allow alphanumeric characters (letters and digits)
+                              //   FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
+                              // ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the subject';
@@ -386,15 +392,15 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Effective Date *',
+                            const Text('Effective Date *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -403,7 +409,7 @@ class _edit_insuranceState extends State<edit_insurance> {
                               },
                               keyboardType: TextInputType.text,
                               hintText: Provider.of<DateProvider>(context,
-                                      listen: false)
+                                  listen: false)
                                   .dateFormat
                                   .toUpperCase(),
                               label: "Enter effective date",
@@ -419,15 +425,15 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 color: blueColor,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Expiration Date *',
+                            const Text('Expiration Date *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -436,7 +442,7 @@ class _edit_insuranceState extends State<edit_insurance> {
                               },
                               keyboardType: TextInputType.text,
                               hintText: Provider.of<DateProvider>(context,
-                                      listen: false)
+                                  listen: false)
                                   .dateFormat
                                   .toUpperCase(),
                               label: "Enter expiration date",
@@ -452,19 +458,19 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 color: blueColor,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Liability Coverage *',
+                            const Text('Liability Coverage *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             // CustomTextField(
-                            //   keyboardType: TextInputType.text,
+                            //   keyboardType: TextInputType.number,
                             //   hintText: '\$0.0',
                             //    label: "Enter Liability Coverage",
                             //    controller: liablity,
@@ -496,15 +502,15 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Upload Insurance Document',
+                            const Text('Upload Insurance Document',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Container(
@@ -521,14 +527,14 @@ class _edit_insuranceState extends State<edit_insurance> {
                                   ),
                                 ),
                                 onPressed: _pickPdfFiles,
-                                child: Text('Choose Files'),
+                                child: const Text('Choose Files'),
                               ),
                             ),
                             SingleChildScrollView(
                               child: Column(
                                 children: _uploadedFileNames.map((fileName) {
                                   int index =
-                                      _uploadedFileNames.indexOf(fileName);
+                                  _uploadedFileNames.indexOf(fileName);
                                   return ListTile(
                                     title: Text(
                                       fileName,

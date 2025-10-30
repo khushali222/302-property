@@ -409,14 +409,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             : 60,
                                     dataRowHeight:
                                         MediaQuery.of(context).size.width < 500
-                                            ? 50
+                                            ? 60
                                             : 60,
                                     // horizontalMargin: 10,
                                     columns: [
                                       DataColumn(
                                           label: Expanded(
                                         child: Text(
-                                          'Rentalowner \nName',
+                                          'Rental Owner \nName',
                                           style: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                           .size
@@ -465,8 +465,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                         cells: [
                                           DataCell(
                                             Text(
-                                              '${filteredOwners[index].rentalOwnername} '
-                                              '(${filteredOwners[index].phoneNumber})',
+                                              '${filteredOwners[index].rentalOwnername}'
+                                              '\n${filteredOwners[index].phoneNumber}',
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)

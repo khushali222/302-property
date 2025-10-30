@@ -1338,157 +1338,77 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment: MainAxisAlignment.end,
                                                           children: [
-                                                            if (Propertytype
-                                                                    .status ==
-                                                                'ACTIVE')
-                                                              Expanded(
-                                                                child: InkWell(
-                                                                  onTap:
-                                                                      () async {
-                                                                    var check = await Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => edit_insurance(
-                                                                                  data: Propertytype,
-                                                                                )));
-                                                                    if (check ==
-                                                                        true) {
-                                                                      setState(
-                                                                          () {
-                                                                        futurePropertyTypes =
-                                                                            InsuranceRepository().fetchInsurancesProperties();
-                                                                      });
-                                                                    }
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                            color:
-                                                                                Colors.grey[350]), // color:Colors.grey[100],
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        GestureDetector(
-                                                                          onTap:
-                                                                              () async {
-                                                                            var check = await Navigator.push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                    builder: (context) => edit_insurance(
-                                                                                          data: Propertytype,
-                                                                                        )));
-                                                                            if (check ==
-                                                                                true) {
-                                                                              setState(() {
-                                                                                futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
-                                                                              });
-                                                                            }
-                                                                            /* var check = await Navigator.push(
+                                                            // if (Propertytype
+                                                            //         .status ==
+                                                            //     'ACTIVE')
+                                                              InkWell(
+                                                                onTap:
+                                                                    () async {
+                                                                  var check = await Navigator.push(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                        builder: (context) => Edit_properties(
-                                                                          properties: rentals,
-                                                                          rentalId: rentals.rentalId!,
-                                                                        ),
+                                                                          builder: (context) => edit_insurance(
+                                                                                data: Propertytype,
+                                                                              )));
+                                                                  if (check ==
+                                                                      true) {
+                                                                    setState(
+                                                                        () {
+                                                                      futurePropertyTypes =
+                                                                          InsuranceRepository().fetchInsurancesProperties();
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child: Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.green.shade50), // color:Colors.grey[100],
+                                                                  child: const Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons.edit,
+                                                                        size: 15,
+                                                                        color: Colors.green,
                                                                       ),
-                                                                    );
-                                                                    if (check == true) {
-                                                                      // Update State
-                                                                    }*/
-                                                                          },
-                                                                          child:
-                                                                              FaIcon(
-                                                                            FontAwesomeIcons.edit,
-                                                                            size:
-                                                                                15,
-                                                                            color:
-                                                                                blueColor,
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              10,
-                                                                        ),
-                                                                        Text(
-                                                                          "Edit",
-                                                                          style: TextStyle(
-                                                                              color: blueColor,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child: InkWell(
-                                                                onTap: () {
-                                                                  _showAlert(
-                                                                      context,
-                                                                      Propertytype
-                                                                          .tenantInsuranceId!);
-                                                                  // _showAlert(context, rentals.rentalId!);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      GestureDetector(
-                                                                        onTap:
-                                                                            () {
-                                                                          _showAlert(
-                                                                              context,
-                                                                              Propertytype.tenantInsuranceId!);
-                                                                          // _showAlert(context, rentals.rentalId!);
-                                                                        },
-                                                                        child:
-                                                                            FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .trashCan,
-                                                                          size:
-                                                                              15,
-                                                                          color:
-                                                                              blueColor,
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                            InkWell(
+                                                              onTap: () {
+                                                                _showAlert(
+                                                                    context,
+                                                                    Propertytype
+                                                                        .tenantInsuranceId!);
+                                                                // _showAlert(context, rentals.rentalId!);
+                                                              },
+                                                              child:
+                                                              Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
+                                                                child: const Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons.trashCan,
+                                                                      size: 15,
+                                                                      color: Colors.red,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
+                                                            ),
+                                                             SizedBox(
+                                                              width: 5,
                                                             ),
                                                             /*  SizedBox(width: 5,),
                                                       Expanded(
@@ -1517,6 +1437,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                       ),*/
                                                           ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
                                                         ),
                                                       ],
                                                     ),

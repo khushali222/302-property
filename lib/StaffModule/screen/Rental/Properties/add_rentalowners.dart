@@ -331,8 +331,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       borderRadius: BorderRadius.circular(5),
                                       // color: Colors
                                       //     .white,
-                                      border:
-                                          Border.all(color: const Color(0xFF8A95A8)),
+                                      border: Border.all(
+                                          color: const Color(0xFF8A95A8)),
                                     ),
                                     child: Stack(
                                       children: [
@@ -362,10 +362,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                              contentPadding: const EdgeInsets.only(
-                                                  top: 13,
-                                                  bottom: 13,
-                                                  left: 14),
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      top: 13,
+                                                      bottom: 13,
+                                                      left: 14),
                                               hintText:
                                                   "Search by first and last name",
                                               hintStyle: TextStyle(
@@ -410,14 +411,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             : 60,
                                     dataRowHeight:
                                         MediaQuery.of(context).size.width < 500
-                                            ? 50
+                                            ? 60
                                             : 60,
                                     // horizontalMargin: 10,
                                     columns: [
                                       DataColumn(
                                           label: Expanded(
                                         child: Text(
-                                          'Rentalowner \nName',
+                                          'Rental Owner \nName',
                                           style: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                           .size
@@ -467,7 +468,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           DataCell(
                                             Text(
                                               '${filteredOwners[index].rentalOwnername} '
-                                              '(${filteredOwners[index].phoneNumber})',
+                                              '\n${filteredOwners[index].phoneNumber}',
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -675,7 +676,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText: "Enter name",
                                                     hintStyle: TextStyle(
                                                       color: Colors.grey[600],
@@ -707,8 +709,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               firstnamemessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -791,7 +793,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter company name",
                                                     hintStyle: TextStyle(
@@ -824,8 +827,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               comnamemessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -910,7 +913,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter primary email",
                                                     hintStyle: TextStyle(
@@ -943,8 +947,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               primaryemailmessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -1028,7 +1032,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter alternative email",
                                                     hintStyle: TextStyle(
@@ -1061,8 +1066,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               alternativemessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -1158,7 +1163,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter phone number",
                                                     hintStyle: TextStyle(
@@ -1191,8 +1197,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               phonenummessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -1266,7 +1272,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter home number",
                                                     hintStyle: TextStyle(
@@ -1299,8 +1306,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               homenummessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -1375,7 +1382,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter business number",
                                                     hintStyle: TextStyle(
@@ -1408,8 +1416,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             ),
                                             Text(
                                               businessnummessage,
-                                              style:
-                                                  const TextStyle(color: Colors.red),
+                                              style: const TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         )
@@ -1492,7 +1500,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(14),
+                                                        const EdgeInsets.all(
+                                                            14),
                                                     hintText:
                                                         "Enter street address",
                                                     hintStyle: TextStyle(
@@ -1521,7 +1530,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ? Center(
                                           child: Text(
                                           street2message,
-                                          style: const TextStyle(color: Colors.red),
+                                          style: const TextStyle(
+                                              color: Colors.red),
                                         ))
                                       : Container(),
                                   const SizedBox(
@@ -1543,7 +1553,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "City",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1562,7 +1573,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: const Color(0xFF8A95A8)),
+                                                      color: const Color(
+                                                          0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1586,9 +1598,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                             city2error = false;
                                                           });
                                                         },
-                                                        cursorColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 81, 1),
+                                                        cursorColor: const Color
+                                                            .fromRGBO(
+                                                            21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
                                                           // enabledBorder:
@@ -1606,8 +1618,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           hintText:
                                                               "Enter city",
                                                           hintStyle: TextStyle(
@@ -1649,7 +1661,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "State",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1668,7 +1681,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: const Color(0xFF8A95A8)),
+                                                      color: const Color(
+                                                          0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1692,9 +1706,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                             state2error = false;
                                                           });
                                                         },
-                                                        cursorColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 81, 1),
+                                                        cursorColor: const Color
+                                                            .fromRGBO(
+                                                            21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
                                                           // enabledBorder:
@@ -1712,8 +1726,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           hintText:
                                                               "Enter state",
                                                           hintStyle: TextStyle(
@@ -1767,7 +1781,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "Country",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1786,7 +1801,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: const Color(0xFF8A95A8)),
+                                                      color: const Color(
+                                                          0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1811,9 +1827,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                                 false;
                                                           });
                                                         },
-                                                        cursorColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 81, 1),
+                                                        cursorColor: const Color
+                                                            .fromRGBO(
+                                                            21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
                                                           // enabledBorder:
@@ -1831,8 +1847,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           hintText:
                                                               "Enter country",
                                                           hintStyle: TextStyle(
@@ -1874,7 +1890,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "Zip Code",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1893,7 +1910,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: const Color(0xFF8A95A8)),
+                                                      color: const Color(
+                                                          0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1902,9 +1920,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                         focusNode: _nodeText4,
                                                         controller: code2,
                                                         keyboardType:
-                                                            TextInputType.number,
+                                                            TextInputType
+                                                                .number,
                                                         inputFormatters: [
-                                                          FilteringTextInputFormatter.digitsOnly,
+                                                          FilteringTextInputFormatter
+                                                              .digitsOnly,
                                                         ],
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1921,9 +1941,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                             code2error = false;
                                                           });
                                                         },
-                                                        cursorColor:
-                                                            const Color.fromRGBO(
-                                                                21, 43, 81, 1),
+                                                        cursorColor: const Color
+                                                            .fromRGBO(
+                                                            21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
                                                           // enabledBorder:
@@ -1941,8 +1961,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  14),
+                                                              const EdgeInsets
+                                                                  .all(14),
                                                           hintText:
                                                               "Enter zip code",
                                                           hintStyle: TextStyle(
