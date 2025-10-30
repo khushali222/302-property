@@ -1252,7 +1252,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ))
                             : Container(),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
+                          height: MediaQuery.of(context).size.height * 0.012,
                         ),
                         Row(
                           children: [
@@ -1304,6 +1304,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 width:
                                     MediaQuery.of(context).size.width * 0.05),
                           ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.012,
                         ),
                         if (requires2FA) ...[
                           Row(
