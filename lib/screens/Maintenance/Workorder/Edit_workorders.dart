@@ -12,6 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/camera_capture_screen.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video_thumbnail;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/Edit_workorder.dart';
@@ -1108,6 +1110,18 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     }
   }
 
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
+  }
+
   List<String> _imageUrls = [];
 
   bool isVideo(String url) {
@@ -1127,7 +1141,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     );
   }
 
-  void _showImageDialog(String imageUrl, int imageIndex) {
+  void _showImageDialog(
+      dynamic imageFile, int imageIndex, File? originalFile, bool isVideo) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1170,35 +1185,95 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                   ],
                 ),
                 SizedBox(height: 20),
-                // Image with rounded corners
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    height: 300,
-                    width: 300,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 300,
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[100],
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.error, size: 50, color: Colors.red),
-                              SizedBox(height: 10),
-                              Text('Failed to load image'),
-                            ],
+                // Image with rounded corners and camera icon overlay
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: imageFile is String
+                          ? Image.network(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 300,
+                                  width: 300,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.error,
+                                            size: 50, color: Colors.red),
+                                        SizedBox(height: 10),
+                                        Text('Failed to load image'),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Image.file(
+                              imageFile as File,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            ),
+                    ),
+                    // Camera icon overlay
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                // Update the preview with new image
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              // Update the preview with new image
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 // Action buttons
@@ -1218,15 +1293,36 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       ),
                       child: Text(
-                        'Back',
+                        'Cancel',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: blueColor),
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        _updateImageAtIndex(imageIndex);
+
+                        // Update the existing image in the list
+                        setState(() {
+                          _images[imageIndex] = imageFile is String
+                              ? File(imageFile)
+                              : imageFile as File;
+                        });
+
+                        // Upload the new image
+                        try {
+                          String? fileName = await uploadImage(
+                              originalFile ?? (imageFile as File));
+                          if (fileName != null &&
+                              imageIndex < _uploadedFileNames.length) {
+                            setState(() {
+                              _uploadedFileNames[imageIndex] = fileName;
+                              _imageUrls[imageIndex] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          print('Image upload failed: $e');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[100],
@@ -1259,21 +1355,16 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
     if (image != null) {
       final File file = File(image.path);
-      setState(() {
-        _images.add(file);
-      });
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
 
-      // Upload the new image and update the uploaded file names
-      try {
-        String? fileName = await uploadImage(file);
-        if (fileName != null) {
-          setState(() {
-            _uploadedFileNames.add(fileName);
-            _imageUrls[index] = fileName; // Replace the specific image URL
-          });
+      // Show preview dialog first
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          _showImageDialog(File(thumbnailPath), index, file, true);
         }
-      } catch (e) {
-        print('Image upload failed: $e');
+      } else {
+        _showImageDialog(file, index, file, false);
       }
     }
   }
@@ -1581,7 +1672,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                                           () {
                                                                         _showImageDialog(
                                                                             "$image_url${_imageUrls[index]}",
-                                                                            index);
+                                                                            index,
+                                                                            null,
+                                                                            false);
                                                                       },
                                                                       child:
                                                                           Stack(
@@ -4085,7 +4178,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             onImageCaptured: (File imageFile) {
               // Handle captured image
               setState(() {
-                _image = imageFile;
                 _images.add(imageFile);
               });
               _uploadImage(imageFile);
@@ -4093,7 +4185,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             onVideoCaptured: (File videoFile) async {
               // Handle captured video
               setState(() {
-                _image = videoFile;
                 _images.add(videoFile);
               });
               _uploadImage(videoFile);
@@ -4150,7 +4241,20 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     }
   }
 
-  void _showImageDialog(String imageUrl, int imageIndex) {
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
+  }
+
+  void _showImageDialog(
+      dynamic imageFile, int imageIndex, File? originalFile, bool isVideo) {
     showDialog(
       context: context,
       builder: (context) {
@@ -4194,35 +4298,95 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                   ],
                 ),
                 SizedBox(height: 20),
-                // Image with rounded corners
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    height: 300,
-                    width: 300,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 300,
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[100],
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.error, size: 50, color: Colors.red),
-                              SizedBox(height: 10),
-                              Text('Failed to load image'),
-                            ],
+                // Image with rounded corners and camera icon overlay
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: imageFile is String
+                          ? Image.network(
+                              imageFile,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 300,
+                                  width: 300,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.error,
+                                            size: 50, color: Colors.red),
+                                        SizedBox(height: 10),
+                                        Text('Failed to load image'),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Image.file(
+                              imageFile as File,
+                              fit: BoxFit.cover,
+                              height: 300,
+                              width: 300,
+                            ),
+                    ),
+                    // Camera icon overlay
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final ImagePicker _picker = ImagePicker();
+                          final XFile? image = await _picker.pickMedia();
+
+                          if (image != null) {
+                            final File newFile = File(image.path);
+                            bool isNewVideo = image.path.endsWith('.mp4') ||
+                                image.path.endsWith('.mov');
+
+                            if (isNewVideo) {
+                              String? thumbnailPath =
+                                  await _generateVideoThumbnail(image.path);
+                              if (thumbnailPath != null) {
+                                // Update the preview with new image
+                                Navigator.of(context).pop();
+                                _showImageDialog(File(thumbnailPath),
+                                    imageIndex, newFile, true);
+                              }
+                            } else {
+                              // Update the preview with new image
+                              Navigator.of(context).pop();
+                              _showImageDialog(
+                                  newFile, imageIndex, newFile, false);
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 // Action buttons
@@ -4241,12 +4405,33 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       ),
-                      child: Text('Back'),
+                      child: Text('Cancel'),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).pop();
-                        _updateImageAtIndex(imageIndex);
+
+                        // Update the existing image in the list
+                        setState(() {
+                          _images[imageIndex] = imageFile is String
+                              ? File(imageFile)
+                              : imageFile as File;
+                        });
+
+                        // Upload the new image
+                        try {
+                          String? fileName = await uploadImage(
+                              originalFile ?? (imageFile as File));
+                          if (fileName != null &&
+                              imageIndex < _uploadedFileNames.length) {
+                            setState(() {
+                              _uploadedFileNames[imageIndex] = fileName;
+                              _imageUrls[imageIndex] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          print('Image upload failed: $e');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[400],
@@ -4275,21 +4460,16 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
     if (image != null) {
       final File file = File(image.path);
-      setState(() {
-        _images.add(file);
-      });
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
 
-      // Upload the new image and update the uploaded file names
-      try {
-        String? fileName = await uploadImage(file);
-        if (fileName != null) {
-          setState(() {
-            _uploadedFileNames.add(fileName);
-            _imageUrls[index] = fileName; // Replace the specific image URL
-          });
+      // Show preview dialog first
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          _showImageDialog(File(thumbnailPath), index, file, true);
         }
-      } catch (e) {
-        print('Image upload failed: $e');
+      } else {
+        _showImageDialog(file, index, file, false);
       }
     }
   }
@@ -4606,7 +4786,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                             () {
                                                                           _showImageDialog(
                                                                               "$image_url${_imageUrls[index]}",
-                                                                              index);
+                                                                              index,
+                                                                              null,
+                                                                              false);
                                                                         },
                                                                         child:
                                                                             Stack(

@@ -2456,7 +2456,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 height: 40,
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 decoration: BoxDecoration(
-                                  color: blueColor,
+                                  color: Colors.red,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Center(
@@ -2517,14 +2517,8 @@ class _Profile_screenState extends State<Profile_screen> {
             ),
             TextButton(
               onPressed: () async {
-                // clear shared preferences and navigate to login screen
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.clear();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login_Screen()),
-                );
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close dialog first
+                await _callDeactivateAPI();
               },
               child: Text("Deactivate"),
             ),
@@ -2532,6 +2526,95 @@ class _Profile_screenState extends State<Profile_screen> {
         );
       },
     );
+  }
+
+  Future<void> _callDeactivateAPI() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString("token");
+
+      if (id == null || token == null) {
+        Fluttertoast.showToast(
+          msg: 'Unable to get user information',
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
+
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 20),
+                Text("Deactivate account..."),
+              ],
+            ),
+          );
+        },
+      );
+
+      final response = await http.put(
+        Uri.parse('${Api_url}/api/admin/togglestatus/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"status": "deactivate"}),
+      );
+
+      // Close loading dialog
+      Navigator.of(context).pop();
+
+      print('Deactivate account response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData["success"] == true) {
+          Fluttertoast.showToast(
+            msg: jsonData["message"] ?? 'Account deactivated successfully',
+            backgroundColor: Colors.green,
+          );
+
+          // Clear shared preferences and navigate to login screen
+          prefs.clear();
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Login_Screen()),
+            (route) => false, // Remove all previous routes
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: jsonData["message"] ?? 'Failed to deactivate account',
+            backgroundColor: Colors.red,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Failed to deactivate account. Please try again.',
+          backgroundColor: Colors.red,
+        );
+      }
+    } catch (e) {
+      // Close loading dialog if it's still open
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
+    }
   }
 
   Widget buildTextField(
