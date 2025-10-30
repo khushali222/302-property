@@ -104,7 +104,7 @@ void main() {
     runApp(
       DevicePreview(
         enabled: false,
-        tools: [
+        tools: const [
           ...DevicePreview.defaultTools,
         ],
         builder: (context) => MultiProvider(

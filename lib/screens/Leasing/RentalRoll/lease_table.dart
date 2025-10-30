@@ -1207,7 +1207,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                           FontWeight
                                                                               .bold,
                                                                       fontSize:
-                                                                          13,
+                                                                          11,
                                                                     ),
                                                                   ),
                                                                   if (lease
@@ -1221,10 +1221,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                           const TextStyle(
                                                                         color: Colors
                                                                             .lightBlue, // Light blue color for tenant names
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
+                                                                        // fontWeight:
+                                                                        //     FontWeight.bold,
                                                                         fontSize:
-                                                                            11,
+                                                                            10,
                                                                       ),
                                                                     ),
                                                                 ],

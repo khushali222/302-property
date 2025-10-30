@@ -1280,87 +1280,60 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       bool isExpanded = expandedIndex == index;
                                       Rentals rentals = entry.value;
                                       //return CustomExpansionTile(data: Propertytype, index: index);
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 6),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
-                                        decoration: BoxDecoration(
-                                          color: index % 2 != 0
-                                              ? const Color(0xFFF4F8FF)
-                                              : Colors.white,
-                                          border: Border.all(
-                                              color: const Color(0xFFDBE0E5)),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              title: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(2.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    InkWell(
-                                                      onTap: () {
-                                                        // setState(() {
-                                                        //    isExpanded = !isExpanded;
-                                                        // //  expandedIndex = !expandedIndex;
-                                                        //
-                                                        // });
-                                                        // setState(() {
-                                                        //   if (isExpanded) {
-                                                        //     expandedIndex = null;
-                                                        //     isExpanded = !isExpanded;
-                                                        //   } else {
-                                                        //     expandedIndex = index;
-                                                        //   }
-                                                        // });
-                                                        setState(() {
-                                                          if (expandedIndex ==
-                                                              index) {
-                                                            expandedIndex =
-                                                                null;
-                                                          } else {
-                                                            expandedIndex =
-                                                                index;
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        //width: 25,
-                                                        // color: Colors.blue,
-                                                        margin: const EdgeInsets
-                                                            .only(
-                                                            left: 5, right: 2),
-                                                        padding: !isExpanded
-                                                            ? const EdgeInsets
-                                                                .only(
-                                                                bottom: 10)
-                                                            : const EdgeInsets
-                                                                .only(top: 10),
-                                                        child: FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 20,
-                                                          color: blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: InkWell(
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            if (expandedIndex == index) {
+                                              expandedIndex = null;
+                                            } else {
+                                              expandedIndex = index;
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      InkWell(
                                                         onTap: () {
+                                                          // setState(() {
+                                                          //    isExpanded = !isExpanded;
+                                                          // //  expandedIndex = !expandedIndex;
+                                                          //
+                                                          // });
+                                                          // setState(() {
+                                                          //   if (isExpanded) {
+                                                          //     expandedIndex = null;
+                                                          //     isExpanded = !isExpanded;
+                                                          //   } else {
+                                                          //     expandedIndex = index;
+                                                          //   }
+                                                          // });
                                                           setState(() {
                                                             if (expandedIndex ==
                                                                 index) {
@@ -1372,399 +1345,444 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             }
                                                           });
                                                         },
-                                                        child: Padding(
-                                                          padding:
+                                                        child: Container(
+                                                          //width: 25,
+                                                          // color: Colors.blue,
+                                                          margin:
                                                               const EdgeInsets
                                                                   .only(
-                                                                  left: 10.0),
-                                                          child: Text(
-                                                            '${(rentals.rentalAddress ?? '').isEmpty ? 'N/A' : rentals.rentalAddress}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    // SizedBox(
-                                                    //     width: MediaQuery.of(
-                                                    //                 context)
-                                                    //             .size
-                                                    //             .width *
-                                                    //         .01),
-                                                    // Expanded(
-                                                    //   child: Text(
-                                                    //     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
-                                                    //     style: TextStyle(
-                                                    //       color: blueColor,
-                                                    //       fontWeight:
-                                                    //           FontWeight.bold,
-                                                    //       fontSize: 13,
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    // SizedBox(
-                                                    //     width:
-                                                    //         MediaQuery.of(context)
-                                                    //                 .size
-                                                    //                 .width *
-                                                    //             .08),
-                                                    rentals!.is_available!
-                                                        ? Expanded(
-                                                            flex: 2,
-                                                            child: Row(
-                                                              children: [
-                                                                const SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    _publishRentAmount(
-                                                                        rentals
-                                                                            .rentalId!,
-                                                                        "0",
-                                                                        isAvailable:
-                                                                            true);
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    height: 35,
-                                                                    width: 35,
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            5),
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                8),
-                                                                        color: Colors
-                                                                            .greenAccent
-                                                                            .shade100),
-                                                                    child: const Center(
-                                                                        child: Icon(
-                                                                      Icons
-                                                                          .check_circle,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                                const Spacer()
-                                                              ],
-                                                            ))
-                                                        : Expanded(
-                                                            flex: 2,
-                                                            child: Row(
-                                                              children: [
-                                                                const SizedBox(
-                                                                  width: 20,
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    _showPublishRentDialog(
-                                                                        rentals
-                                                                            .rentalId!);
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    height: 35,
-                                                                    width: 35,
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            5),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .redAccent
-                                                                          .withOpacity(
-                                                                              0.3),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ),
-                                                                    child: const Center(
-                                                                        child: Icon(
-                                                                      Icons
-                                                                          .lock_rounded,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                                const Spacer()
-                                                              ],
-                                                            )),
-                                                    // SizedBox(
-                                                    //     width:
-                                                    //         MediaQuery.of(context)
-                                                    //                 .size
-                                                    //                 .width *
-                                                    //             .02),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            if (isExpanded)
-                                              Container(
-                                                decoration: const BoxDecoration(
-                                                  border: Border(
-                                                    top: BorderSide(
-                                                        color:
-                                                            Color(0xFFDBE0E5),
-                                                        width: 1),
-                                                  ),
-                                                ),
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          FaIcon(
+                                                                  left: 5,
+                                                                  right: 2),
+                                                          padding: !isExpanded
+                                                              ? const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(
+                                                                  top: 10),
+                                                          child: FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
                                                             size: 20,
-                                                            color: Colors
-                                                                .transparent,
+                                                            color: blueColor,
                                                           ),
-                                                          Expanded(
-                                                            child: Table(
-                                                              columnWidths: {
-                                                                // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                                // 1: FlexColumnWidth(),
-                                                                0: const FlexColumnWidth(), // Distribute columns equally
-                                                                1: const FlexColumnWidth(),
-                                                              },
-                                                              children: [
-                                                                _buildTableRow(
-                                                                    'Rental Company Name :',
-                                                                    _getDisplayValue(rentals
-                                                                        .rentalOwnerData
-                                                                        ?.rentalOwnerCompanyName),
-                                                                    'City :',
-                                                                    _getDisplayValue(
-                                                                        rentals
-                                                                            .rentalCity)),
-                                                                _buildTableRow(
-                                                                  'Property Type :',
-                                                                  '${_getDisplayValue(rentals.propertyTypeData?.propertyType)} - ${_getDisplayValue(rentals.propertyTypeData?.propertySubType)}',
-                                                                  'Tenants :',
-                                                                  rentals.tenantsData !=
-                                                                              null &&
-                                                                          rentals
-                                                                              .tenantsData!
-                                                                              .isNotEmpty
-                                                                      ? rentals
-                                                                          .tenantsData!
-                                                                          .map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}"
-                                                                              .trim())
-                                                                          .join(
-                                                                              ", ")
-                                                                      : "-----",
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          // FaIcon(
-                                                          //   isExpanded
-                                                          //       ? FontAwesomeIcons
-                                                          //       .sortUp
-                                                          //       : FontAwesomeIcons
-                                                          //       .sortDown,
-                                                          //   size: 20,
-                                                          //   color:
-                                                          //   Colors.transparent,
-                                                          // ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          const SizedBox(
-                                                            width: 12,
-                                                          ),
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                _showAlert(
-                                                                    context,
-                                                                    rentals
-                                                                        .rentalId!);
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              height: 35,
-                                                              width: 35,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  color: Colors
-                                                                      .red
-                                                                      .shade50),
-                                                              child: const Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .trashCan,
-                                                                    size: 15,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          GestureDetector(
-                                                            onTap: () async {
-                                                              var check =
-                                                                  await Navigator
-                                                                      .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Edit_properties(
-                                                                    properties:
-                                                                        rentals,
-                                                                    rentalId:
-                                                                        rentals
-                                                                            .rentalId!,
-                                                                  ),
-                                                                ),
-                                                              );
-                                                              if (check ==
-                                                                  true) {
-                                                                setState(() {
-                                                                  futureRentalOwners =
-                                                                      PropertiesRepository()
-                                                                          .fetchProperties();
-                                                                });
-                                                                // Update State
+                                                      Expanded(
+                                                        flex: 4,
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (expandedIndex ==
+                                                                  index) {
+                                                                expandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedIndex =
+                                                                    index;
                                                               }
-                                                            },
-                                                            child: Container(
-                                                              height: 35,
-                                                              width: 35,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
+                                                            });
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0),
+                                                            child: Text(
+                                                              '${(rentals.rentalAddress ?? '').isEmpty ? 'N/A' : rentals.rentalAddress}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // SizedBox(
+                                                      //     width: MediaQuery.of(
+                                                      //                 context)
+                                                      //             .size
+                                                      //             .width *
+                                                      //         .01),
+                                                      // Expanded(
+                                                      //   child: Text(
+                                                      //     '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType} - \n ${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}  ',
+                                                      //     style: TextStyle(
+                                                      //       color: blueColor,
+                                                      //       fontWeight:
+                                                      //           FontWeight.bold,
+                                                      //       fontSize: 13,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                      // SizedBox(
+                                                      //     width:
+                                                      //         MediaQuery.of(context)
+                                                      //                 .size
+                                                      //                 .width *
+                                                      //             .08),
+                                                      rentals!.is_available!
+                                                          ? Expanded(
+                                                              flex: 2,
+                                                              child: Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                    width: 20,
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      _publishRentAmount(
+                                                                          rentals
+                                                                              .rentalId!,
+                                                                          "0",
+                                                                          isAvailable:
+                                                                              true);
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          35,
+                                                                      width: 35,
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .all(
+                                                                              5),
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
                                                                               8),
-                                                                  color: Colors
-                                                                      .green
-                                                                      .shade50), // color:Colors.grey[100],
-                                                              child: const Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .edit,
-                                                                    size: 15,
-                                                                    color: Colors
-                                                                        .green,
+                                                                          color: Colors
+                                                                              .greenAccent
+                                                                              .shade100),
+                                                                      child: const Center(
+                                                                          child: Icon(
+                                                                        Icons
+                                                                            .check_circle,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      )),
+                                                                    ),
                                                                   ),
+                                                                  const Spacer()
                                                                 ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              // Check if property is multi-unit based on property type data
-                                                              bool isMultiUnit =
-                                                                  rentals.propertyTypeData
-                                                                          ?.isMultiunit ??
-                                                                      false;
-
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          Summery_page(
-                                                                            properties:
-                                                                                rentals,
-                                                                          )));
-                                                            },
-                                                            child: Container(
-                                                              height: 35,
-                                                              width: 35,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade200,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                              ),
-                                                              child: const Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                              ))
+                                                          : Expanded(
+                                                              flex: 2,
+                                                              child: Row(
                                                                 children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .eye,
-                                                                    size: 15,
-                                                                    color: Colors
-                                                                        .black,
+                                                                  const SizedBox(
+                                                                    width: 20,
                                                                   ),
-                                                                  SizedBox(
-                                                                      width: 2),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      _showPublishRentDialog(
+                                                                          rentals
+                                                                              .rentalId!);
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          35,
+                                                                      width: 35,
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .all(
+                                                                              5),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .redAccent
+                                                                            .withOpacity(0.3),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child: const Center(
+                                                                          child: Icon(
+                                                                        Icons
+                                                                            .lock_rounded,
+                                                                        color: Colors
+                                                                            .red,
+                                                                      )),
+                                                                    ),
+                                                                  ),
+                                                                  const Spacer()
                                                                 ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 12,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 15,
-                                                      ),
+                                                              )),
+                                                      // SizedBox(
+                                                      //     width:
+                                                      //         MediaQuery.of(context)
+                                                      //                 .size
+                                                      //                 .width *
+                                                      //             .02),
                                                     ],
                                                   ),
                                                 ),
                                               ),
-                                            //SizedBox(height: 13,),
-                                          ],
+                                              if (isExpanded)
+                                                Container(
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color:
+                                                              Color(0xFFDBE0E5),
+                                                          width: 1),
+                                                    ),
+                                                  ),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 20,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Table(
+                                                                columnWidths: {
+                                                                  // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                                  // 1: FlexColumnWidth(),
+                                                                  0: const FlexColumnWidth(), // Distribute columns equally
+                                                                  1: const FlexColumnWidth(),
+                                                                },
+                                                                children: [
+                                                                  _buildTableRow(
+                                                                      'Rental Company Name :',
+                                                                      _getDisplayValue(rentals
+                                                                          .rentalOwnerData
+                                                                          ?.rentalOwnerCompanyName),
+                                                                      'City :',
+                                                                      _getDisplayValue(
+                                                                          rentals
+                                                                              .rentalCity)),
+                                                                  _buildTableRow(
+                                                                    'Property Type :',
+                                                                    '${_getDisplayValue(rentals.propertyTypeData?.propertyType)} - ${_getDisplayValue(rentals.propertyTypeData?.propertySubType)}',
+                                                                    'Tenants :',
+                                                                    rentals.tenantsData !=
+                                                                                null &&
+                                                                            rentals
+                                                                                .tenantsData!.isNotEmpty
+                                                                        ? rentals
+                                                                            .tenantsData!
+                                                                            .map((tenant) =>
+                                                                                "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim())
+                                                                            .join(", ")
+                                                                        : "-----",
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+
+                                                            // FaIcon(
+                                                            //   isExpanded
+                                                            //       ? FontAwesomeIcons
+                                                            //       .sortUp
+                                                            //       : FontAwesomeIcons
+                                                            //       .sortDown,
+                                                            //   size: 20,
+                                                            //   color:
+                                                            //   Colors.transparent,
+                                                            // ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            const SizedBox(
+                                                              width: 12,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _showAlert(
+                                                                      context,
+                                                                      rentals
+                                                                          .rentalId!);
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50),
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                var check =
+                                                                    await Navigator
+                                                                        .push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Edit_properties(
+                                                                      properties:
+                                                                          rentals,
+                                                                      rentalId:
+                                                                          rentals
+                                                                              .rentalId!,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    futureRentalOwners =
+                                                                        PropertiesRepository()
+                                                                            .fetchProperties();
+                                                                  });
+                                                                  // Update State
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                // Check if property is multi-unit based on property type data
+                                                                bool
+                                                                    isMultiUnit =
+                                                                    rentals.propertyTypeData
+                                                                            ?.isMultiunit ??
+                                                                        false;
+
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Summery_page(
+                                                                              properties: rentals,
+                                                                            )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            2),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 12,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 15,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              //SizedBox(height: 13,),
+                                            ],
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -1949,6 +1967,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () async {
                 String rentAmount = rentController.text.trim();
                 if (rentAmount.isEmpty) {
@@ -1986,7 +2008,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
       );
       print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Fluttertoast.showToast(msg: "Rent amount published successfully");
+        Fluttertoast.showToast(
+            msg: "Property availability updated successfully.");
         // Optionally refresh data here
         setState(() {
           futureRentalOwners = PropertiesRepository().fetchProperties();

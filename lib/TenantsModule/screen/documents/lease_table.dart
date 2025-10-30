@@ -995,447 +995,458 @@ class _Lease_TableState extends State<Lease_Table> {
                                         String formattedDate = _formatDate(
                                             Propertytype.updatedAt!);
                                         //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () {
-                                                          // setState(() {
-                                                          //    isExpanded = !isExpanded;
-                                                          // //  expandedIndex = !expandedIndex;
-                                                          //
-                                                          // });
-                                                          // setState(() {
-                                                          //   if (isExpanded) {
-                                                          //     expandedIndex = null;
-                                                          //     isExpanded = !isExpanded;
-                                                          //   } else {
-                                                          //     expandedIndex = index;
-                                                          //   }
-                                                          // });
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isExpanded
-                                                              ? EdgeInsets.only(
-                                                                  bottom: 10)
-                                                              : EdgeInsets.only(
-                                                                  top: 10),
-                                                          child: FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex: 4,
-                                                        child: InkWell(
-                                                          /* onTap: (){
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
-                                                    },*/
-                                                          child: Text(
-                                                            '${Propertytype.rentalAdress}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .04),
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Text(
-                                                          '${Propertytype.startDate?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.startDate}') : 'N/A'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .04),
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Text(
-                                                          // '${widget.data.createdAt}',
-                                                          '${Propertytype.endDate?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.endDate}') : 'N/A'}',
-
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 20),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (expandedIndex == index) {
+                                                expandedIndex = null;
+                                              } else {
+                                                expandedIndex = index;
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: index % 2 != 0
+                                                  ? Color(0xFFF4F8FF)
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                  color: Color(0xFFDBE0E5)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Column(
+                                              children: <Widget>[
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  title: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            2.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        InkWell(
+                                                          onTap: () {
+                                                            // setState(() {
+                                                            //    isExpanded = !isExpanded;
+                                                            // //  expandedIndex = !expandedIndex;
+                                                            //
+                                                            // });
+                                                            // setState(() {
+                                                            //   if (isExpanded) {
+                                                            //     expandedIndex = null;
+                                                            //     isExpanded = !isExpanded;
+                                                            //   } else {
+                                                            //     expandedIndex = index;
+                                                            //   }
+                                                            // });
+                                                            setState(() {
+                                                              if (expandedIndex ==
+                                                                  index) {
+                                                                expandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedIndex =
+                                                                    index;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 5,
+                                                                    right: 5),
+                                                            padding: !isExpanded
+                                                                ? EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            10)
+                                                                : EdgeInsets
+                                                                    .only(
+                                                                        top:
+                                                                            10),
+                                                            child: FaIcon(
                                                               isExpanded
                                                                   ? FontAwesomeIcons
                                                                       .sortUp
                                                                   : FontAwesomeIcons
                                                                       .sortDown,
-                                                              size: 30,
-                                                              color: Colors
-                                                                  .transparent,
+                                                              size: 20,
+                                                              color: blueColor,
                                                             ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Rent Cycle : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.rentCycle}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Rent : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.leaseAmount}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Deposits Held : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.deposite ?? 0}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Charges : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.recurringCharge ?? 0}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Created At : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.createdAt}') : 'N/A'}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Updated At : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${formattedDate}') : 'N/A'}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: InkWell(
+                                                            /* onTap: (){
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
+                                                      },*/
+                                                            child: Text(
+                                                              '${Propertytype.rentalAdress}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 13,
                                                               ),
                                                             ),
-                                                            // SizedBox(width: 5),
-                                                            // Expanded(
-                                                            //   child: Column(
-                                                            //     crossAxisAlignment:
-                                                            //     CrossAxisAlignment.start,
-                                                            //     children: <Widget>[
-                                                            //       Text.rich(
-                                                            //         TextSpan(
-                                                            //           children: [
-                                                            //             TextSpan(
-                                                            //               text:
-                                                            //               'Sample Header: ',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .bold,
-                                                            //                   color:
-                                                            //                   blueColor), // Bold and black
-                                                            //             ),
-                                                            //             TextSpan(
-                                                            //               text: 'Sample Data',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .w700,
-                                                            //                   color: Colors
-                                                            //                       .grey), // Light and grey
-                                                            //             ),
-                                                            //           ],
-                                                            //         ),
-                                                            //       ),
-                                                            //       Text.rich(
-                                                            //         TextSpan(
-                                                            //           children: [
-                                                            //             TextSpan(
-                                                            //               text:
-                                                            //               'Sample Header : ',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .bold,
-                                                            //                   color:
-                                                            //                   blueColor), // Bold and black
-                                                            //             ),
-                                                            //             TextSpan(
-                                                            //               text: 'Sample Data',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .w700,
-                                                            //                   color: Colors
-                                                            //                       .grey), // Light and grey
-                                                            //             ),
-                                                            //           ],
-                                                            //         ),
-                                                            //       ),
-                                                            //       Text.rich(
-                                                            //         TextSpan(
-                                                            //           children: [
-                                                            //             TextSpan(
-                                                            //               text:
-                                                            //               'Sample Header : ',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .bold,
-                                                            //                   color:
-                                                            //                   blueColor), // Bold and black
-                                                            //             ),
-                                                            //             TextSpan(
-                                                            //               text: 'Sample Data',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .w700,
-                                                            //                   color: Colors
-                                                            //                       .grey), // Light and grey
-                                                            //             ),
-                                                            //           ],
-                                                            //         ),
-                                                            //       ),
-                                                            //     ],
-                                                            //   ),
-                                                            // ),
-                                                            /* Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .04),
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Text(
+                                                            '${Propertytype.startDate?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.startDate}') : 'N/A'}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .04),
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Text(
+                                                            // '${widget.data.createdAt}',
+                                                            '${Propertytype.endDate?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.endDate}') : 'N/A'}',
 
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_property_type(
-                                                                          property: Propertytype,
-                                                                        )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                          () {});
-                                                                }
-                                                              },
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                               */ /* _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);*/ /*
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
-                                                      ),*/
-                                                          ],
-                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .02),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-                                              //SizedBox(height: 13,),
-                                            ],
+                                                if (isExpanded)
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8.0),
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 20),
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 30,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Rent Cycle : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.rentCycle}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Rent : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.leaseAmount}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Deposits Held : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.deposite ?? 0}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Charges : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.recurringCharge ?? 0}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Created At : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.createdAt}') : 'N/A'}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Updated At : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${Propertytype.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${formattedDate}') : 'N/A'}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              // SizedBox(width: 5),
+                                                              // Expanded(
+                                                              //   child: Column(
+                                                              //     crossAxisAlignment:
+                                                              //     CrossAxisAlignment.start,
+                                                              //     children: <Widget>[
+                                                              //       Text.rich(
+                                                              //         TextSpan(
+                                                              //           children: [
+                                                              //             TextSpan(
+                                                              //               text:
+                                                              //               'Sample Header: ',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .bold,
+                                                              //                   color:
+                                                              //                   blueColor), // Bold and black
+                                                              //             ),
+                                                              //             TextSpan(
+                                                              //               text: 'Sample Data',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .w700,
+                                                              //                   color: Colors
+                                                              //                       .grey), // Light and grey
+                                                              //             ),
+                                                              //           ],
+                                                              //         ),
+                                                              //       ),
+                                                              //       Text.rich(
+                                                              //         TextSpan(
+                                                              //           children: [
+                                                              //             TextSpan(
+                                                              //               text:
+                                                              //               'Sample Header : ',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .bold,
+                                                              //                   color:
+                                                              //                   blueColor), // Bold and black
+                                                              //             ),
+                                                              //             TextSpan(
+                                                              //               text: 'Sample Data',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .w700,
+                                                              //                   color: Colors
+                                                              //                       .grey), // Light and grey
+                                                              //             ),
+                                                              //           ],
+                                                              //         ),
+                                                              //       ),
+                                                              //       Text.rich(
+                                                              //         TextSpan(
+                                                              //           children: [
+                                                              //             TextSpan(
+                                                              //               text:
+                                                              //               'Sample Header : ',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .bold,
+                                                              //                   color:
+                                                              //                   blueColor), // Bold and black
+                                                              //             ),
+                                                              //             TextSpan(
+                                                              //               text: 'Sample Data',
+                                                              //               style: TextStyle(
+                                                              //                   fontWeight:
+                                                              //                   FontWeight
+                                                              //                       .w700,
+                                                              //                   color: Colors
+                                                              //                       .grey), // Light and grey
+                                                              //             ),
+                                                              //           ],
+                                                              //         ),
+                                                              //       ),
+                                                              //     ],
+                                                              //   ),
+                                                              // ),
+                                                              /* Container(
+                                                          width: 40,
+                                                          child: Column(
+                                                            children: [
+                                                              IconButton(
+                                                                icon: FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 20,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  // handleEdit(Propertytype);
+                                          
+                                                                  var check = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => Edit_property_type(
+                                                                            property: Propertytype,
+                                                                          )));
+                                                                  if (check ==
+                                                                      true) {
+                                                                    setState(
+                                                                            () {});
+                                                                  }
+                                                                },
+                                                              ),
+                                                              IconButton(
+                                                                icon: FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 20,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      83,
+                                                                      1),
+                                                                ),
+                                                                onPressed: () {
+                                                                  //handleDelete(Propertytype);
+                                                                 */ /* _showAlert(
+                                                                      context,
+                                                                      Propertytype
+                                                                          .propertyId!);*/ /*
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),*/
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                //SizedBox(height: 13,),
+                                              ],
+                                            ),
                                           ),
                                         );
                                       }).toList(),
