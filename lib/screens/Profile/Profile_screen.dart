@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -25,6 +26,7 @@ import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../repository/profile_repository.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
+import '../../widgets/custom_switch.dart';
 
 class Profile_screen extends StatefulWidget {
   // final String email;
@@ -84,6 +86,43 @@ class _Profile_screenState extends State<Profile_screen> {
     _loadOldPassword();
     status2FA(); // Fetch 2FA status on screen load
     backupcodeapicall();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    // Cancel any existing timer first
+    _timer?.cancel();
+
+    // 10 minutes timer for 2FA verification code
+    seconds.value = 600;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (seconds.value > 0) {
+        seconds.value--;
+      } else {
+        _timer?.cancel();
+        Fluttertoast.showToast(
+          msg: 'Verification code expired',
+          backgroundColor: Colors.red,
+        );
+      }
+    });
+  }
+
+  void stopTimer() {
+    _timer?.cancel();
+    seconds.value = 0;
+  }
+
+  String getTimerString() {
+    if (seconds.value <= 0) {
+      return '0m 0s';
+    }
+    return '${seconds.value ~/ 60}m ${seconds.value % 60}s';
   }
 
   void checkInternet() async {
@@ -171,6 +210,11 @@ class _Profile_screenState extends State<Profile_screen> {
   // Backup Codes Variables
   bool backupCode = false;
   List<Map<String, dynamic>> codes = [];
+
+  // Timer for 2FA verification code
+  Timer? _timer;
+  ValueNotifier<int> seconds = ValueNotifier(600);
+  final GlobalKey<FormState> _formKey2FA = GlobalKey<FormState>();
 
   String passwordmessage = "";
   String passwordsamemessage = "";
@@ -607,9 +651,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Switch(
-                                            activeColor: blueColor,
-                                            value: enble2FA,
+                                        CustomSwitch(
+                                            initialValue: enble2FA,
                                             onChanged: (value) {
                                               setState(() {
                                                 if (value) {
@@ -771,27 +814,163 @@ class _Profile_screenState extends State<Profile_screen> {
                                           SizedBox(height: 16),
 
                                           // Verification Code Input Field
-                                          TextField(
-                                            controller:
-                                                verificationCodeController,
-                                            keyboardType: TextInputType.number,
-                                            maxLength: 6,
-                                            decoration: InputDecoration(
-                                              hintText: "Enter 6-digit code",
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey),
+                                          Form(
+                                            key: _formKey2FA,
+                                            child: TextFormField(
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please enter a valid code';
+                                                }
+                                                if (value.length != 6) {
+                                                  return 'Code must be 6 digits';
+                                                }
+                                                return null;
+                                              },
+                                              controller:
+                                                  verificationCodeController,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              maxLength: 6,
+                                              decoration: InputDecoration(
+                                                hintText: "Enter 6-digit code",
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: blueColor,
+                                                      width: 2),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.red,
+                                                      width: 2),
+                                                ),
+                                                focusedErrorBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.red,
+                                                      width: 2),
+                                                ),
+                                                counterText: "",
                                               ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                borderSide: BorderSide(
-                                                    color: blueColor, width: 2),
-                                              ),
-                                              counterText: "",
                                             ),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              if (seconds.value > 0)
+                                                ValueListenableBuilder<int>(
+                                                  valueListenable: seconds,
+                                                  builder:
+                                                      (context, value, child) {
+                                                    return RichText(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                "Code will expire in ",
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .grey[600],
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                "${getTimerString()}",
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  verificationCodeController
+                                                      .clear();
+                                                  if (showVerificationInput &&
+                                                      seconds.value <= 540) {
+                                                    _initiate2FASetup();
+                                                  }
+                                                },
+                                                child:
+                                                    ValueListenableBuilder<int>(
+                                                  valueListenable: seconds,
+                                                  builder:
+                                                      (context, value, child) {
+                                                    return Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 5),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(Icons.refresh,
+                                                              color: value <=
+                                                                      540
+                                                                  ? blueColor
+                                                                  : Colors.grey
+                                                                      .shade600,
+                                                              size: 16),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                            "Resend Code",
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: value <=
+                                                                      540
+                                                                  ? blueColor
+                                                                  : Colors.grey
+                                                                      .shade600,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
 
                                           SizedBox(height: 20),
@@ -803,7 +982,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                             child: ElevatedButton(
                                               onPressed: isVerifyingCode
                                                   ? null
-                                                  : () => _verifyAndEnable2FA(),
+                                                  : () => _formKey2FA
+                                                          .currentState!
+                                                          .validate()
+                                                      ? _verifyAndEnable2FA()
+                                                      : null,
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: blueColor,
                                                 foregroundColor: Colors.white,
@@ -841,6 +1024,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             height: 48,
                                             child: OutlinedButton(
                                               onPressed: () {
+                                                stopTimer();
                                                 setState(() {
                                                   show2FASetup = false;
                                                   showVerificationInput = false;
@@ -2695,6 +2879,7 @@ class _Profile_screenState extends State<Profile_screen> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData["statusCode"] == 200) {
+          startTimer();
           setState(() {
             showVerificationInput = true;
             isVerifyingCode = false;
@@ -2704,6 +2889,7 @@ class _Profile_screenState extends State<Profile_screen> {
             backgroundColor: Colors.green,
           );
         } else {
+          _timer?.cancel();
           setState(() {
             isVerifyingCode = false;
           });
@@ -2713,6 +2899,7 @@ class _Profile_screenState extends State<Profile_screen> {
           );
         }
       } else {
+        _timer?.cancel();
         setState(() {
           isVerifyingCode = false;
         });
@@ -2722,6 +2909,7 @@ class _Profile_screenState extends State<Profile_screen> {
         );
       }
     } catch (e) {
+      _timer?.cancel();
       setState(() {
         isVerifyingCode = false;
       });
@@ -2735,10 +2923,6 @@ class _Profile_screenState extends State<Profile_screen> {
   // Verify code and enable 2FA
   void _verifyAndEnable2FA() async {
     if (verificationCodeController.text.length != 6) {
-      Fluttertoast.showToast(
-        msg: 'Please enter a valid 6-digit code',
-        backgroundColor: Colors.orange,
-      );
       return;
     }
 
@@ -2770,6 +2954,7 @@ class _Profile_screenState extends State<Profile_screen> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData["statusCode"] == 200) {
+          stopTimer();
           setState(() {
             enble2FA = true;
             show2FASetup = false;
@@ -2794,6 +2979,7 @@ class _Profile_screenState extends State<Profile_screen> {
             backgroundColor: Colors.green,
           );
         } else {
+          _timer?.cancel();
           setState(() {
             isVerifyingCode = false;
           });
@@ -2803,22 +2989,20 @@ class _Profile_screenState extends State<Profile_screen> {
           );
         }
       } else {
+        _timer?.cancel();
+        Fluttertoast.showToast(
+          msg: 'Invalid or expired verification code',
+          backgroundColor: Colors.red,
+        );
         setState(() {
           isVerifyingCode = false;
         });
-        Fluttertoast.showToast(
-          msg: 'Failed to verify code',
-          backgroundColor: Colors.red,
-        );
       }
     } catch (e) {
+      _timer?.cancel();
       setState(() {
         isVerifyingCode = false;
       });
-      Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
-        backgroundColor: Colors.red,
-      );
     }
   }
 

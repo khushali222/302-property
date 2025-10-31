@@ -59,6 +59,7 @@ class _Profile_screenState extends State<Profile_screen> {
   TextEditingController disableVerificationController = TextEditingController();
   TextEditingController regenerateVerificationController =
       TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -84,7 +85,7 @@ class _Profile_screenState extends State<Profile_screen> {
 
     // 10 minutes timer for 2FA verification code
     seconds.value = 600;
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (seconds.value > 0) {
         seconds.value--;
       } else {
@@ -400,7 +401,6 @@ class _Profile_screenState extends State<Profile_screen> {
           });
         }
       } else {
-        _timer?.cancel();
         Fluttertoast.showToast(
           msg: 'Invalid or expired verification code',
           backgroundColor: Colors.red,
@@ -912,7 +912,7 @@ class _Profile_screenState extends State<Profile_screen> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 30),
+                                  const SizedBox(height: 30),
                                   titleBar(
                                       title: 'Personal Details',
                                       width: MediaQuery.of(context).size.width *
@@ -936,15 +936,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        padding: EdgeInsets.all(20),
+                                        padding: const EdgeInsets.all(20),
                                         child: Column(
                                           children: [
                                             // Name Card
                                             Container(
                                               width: double.infinity,
-                                              padding: EdgeInsets.all(16),
-                                              margin:
-                                                  EdgeInsets.only(bottom: 12),
+                                              padding: const EdgeInsets.all(16),
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 12),
                                               decoration: BoxDecoration(
                                                 color:
                                                     blueColor.withOpacity(0.05),
@@ -967,10 +967,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       color: blueColor,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
                                                     "${profiledata['tenant_firstName']} ${profiledata['tenant_lastName']}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       fontSize: 18,
@@ -987,9 +987,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 // Phone Card
                                                 Expanded(
                                                   child: Container(
-                                                    padding: EdgeInsets.all(16),
-                                                    margin: EdgeInsets.only(
-                                                        right: 6),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 6),
                                                     decoration: BoxDecoration(
                                                       color: blueColor
                                                           .withOpacity(0.05),
@@ -1015,12 +1018,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 4),
+                                                        const SizedBox(
+                                                            height: 4),
                                                         Text(
                                                           profiledata[
                                                                   'tenant_phoneNumber'] ??
                                                               'N/A',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             fontSize: 16,
@@ -1036,9 +1041,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 // Email Card
                                                 Expanded(
                                                   child: Container(
-                                                    padding: EdgeInsets.all(16),
-                                                    margin: EdgeInsets.only(
-                                                        left: 6),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 6),
                                                     decoration: BoxDecoration(
                                                       color: blueColor
                                                           .withOpacity(0.05),
@@ -1064,12 +1072,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 4),
+                                                        const SizedBox(
+                                                            height: 4),
                                                         Text(
                                                           profiledata[
                                                                   'tenant_email'] ??
                                                               'N/A',
-                                                          style: TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             fontSize: 16,
@@ -1090,7 +1100,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 30),
+                                  const SizedBox(height: 30),
                                   titleBar(
                                       title: 'Lease Details',
                                       width: MediaQuery.of(context).size.width *
@@ -1114,7 +1124,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        padding: EdgeInsets.all(20),
+                                        padding: const EdgeInsets.all(20),
                                         child: leaseData.isNotEmpty
                                             ? Column(
                                                 children: [
@@ -1125,10 +1135,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   right: 6),
                                                           decoration:
                                                               BoxDecoration(
@@ -1161,14 +1172,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 leaseData[0][
                                                                         'lease_type'] ??
                                                                     'N/A',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1185,10 +1196,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 6),
                                                           decoration:
                                                               BoxDecoration(
@@ -1221,14 +1233,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 leaseData[0][
                                                                         'rental_adress'] ??
                                                                     'N/A',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1247,7 +1259,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     ],
                                                   ),
 
-                                                  SizedBox(height: 12),
+                                                  const SizedBox(height: 12),
 
                                                   // Start Date and End Date Row
                                                   Row(
@@ -1256,10 +1268,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   right: 6),
                                                           decoration:
                                                               BoxDecoration(
@@ -1292,7 +1305,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 dateProvider.formatCurrentDate(
@@ -1300,7 +1313,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         [
                                                                         'start_date']),
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1317,10 +1330,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 6),
                                                           decoration:
                                                               BoxDecoration(
@@ -1353,7 +1367,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 dateProvider.formatCurrentDate(
@@ -1361,7 +1375,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         [
                                                                         'end_date']),
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1377,7 +1391,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     ],
                                                   ),
 
-                                                  SizedBox(height: 12),
+                                                  const SizedBox(height: 12),
 
                                                   // Rent Cycle, Amount, and Due Date Row
                                                   Row(
@@ -1386,10 +1400,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   right: 4),
                                                           decoration:
                                                               BoxDecoration(
@@ -1422,14 +1437,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 leaseData[0][
                                                                         'rent_cycle'] ??
                                                                     'N/A',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1446,10 +1461,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
-                                                          margin: EdgeInsets
-                                                              .symmetric(
+                                                              const EdgeInsets
+                                                                  .all(16),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       4),
                                                           decoration:
@@ -1483,12 +1499,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 '\$${leaseData[0]['amount']?.toString() ?? 'N/A'}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1505,10 +1521,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       Expanded(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 4),
                                                           decoration:
                                                               BoxDecoration(
@@ -1541,14 +1558,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       blueColor,
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   height: 4),
                                                               Text(
                                                                 leaseData[0][
                                                                         'date'] ??
                                                                     'N/A',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1566,7 +1583,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 ],
                                               )
                                             : Container(
-                                                padding: EdgeInsets.all(40),
+                                                padding:
+                                                    const EdgeInsets.all(40),
                                                 child: Column(
                                                   children: [
                                                     Icon(
@@ -1575,7 +1593,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       size: 48,
                                                       color: Colors.grey[400],
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                     Text(
                                                       'No lease data available',
                                                       style: TextStyle(
@@ -1585,7 +1603,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             FontWeight.w500,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     Text(
                                                       'Please contact your property manager for lease information.',
                                                       style: TextStyle(
@@ -1601,7 +1619,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 30),
+                                  const SizedBox(height: 30),
                                   // 2FA Section for Tablet
                                   titleBar(
                                     title: 'Two-Factor Authentication (2FA)',
@@ -1631,23 +1649,21 @@ class _Profile_screenState extends State<Profile_screen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    "Two-Factor Authentication (2FA):",
-                                                    style: TextStyle(
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                Text(
+                                                  "Two-Factor Authentication (2FA)",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.grey[800],
                                                   ),
                                                 ),
-                                                SizedBox(width: 10),
-                                                Switch(
-                                                  activeColor: blueColor,
-                                                  value: enble2FA,
+                                                CustomSwitch(
+                                                  initialValue: enble2FA,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       if (value) {
@@ -1666,13 +1682,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       }
                                                     });
                                                   },
-                                                )
+                                                ),
                                               ],
                                             ),
 
                                             // Show different content based on 2FA state
                                             if (!enble2FA && !show2FASetup)
-                                              Padding(
+                                              const Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 16.0),
                                                 child: Text(
@@ -1688,13 +1704,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                             if (show2FASetup &&
                                                 !showVerificationInput)
                                               Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       "Choose your preferred 2FA method:",
                                                       style: TextStyle(
                                                         color: Colors.black87,
@@ -1703,7 +1720,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             FontWeight.w500,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                     // SMS Radio Button
                                                     Row(
                                                       children: [
@@ -1720,11 +1737,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           activeColor:
                                                               blueColor,
                                                         ),
-                                                        SizedBox(width: 8),
+                                                        const SizedBox(
+                                                            width: 8),
                                                         Expanded(
                                                           child: Text(
                                                             "SMS (${profiledata['tenant_phoneNumber']})",
-                                                            style: TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               fontSize: 16,
                                                               color: Colors
                                                                   .black87,
@@ -1752,11 +1771,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           activeColor:
                                                               blueColor,
                                                         ),
-                                                        SizedBox(width: 8),
+                                                        const SizedBox(
+                                                            width: 8),
                                                         Expanded(
                                                           child: Text(
                                                             "Email (${profiledata['tenant_email']})",
-                                                            style: TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               fontSize: 16,
                                                               color: Colors
                                                                   .black87,
@@ -1768,7 +1789,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(height: 20),
+                                                    const SizedBox(height: 20),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
@@ -1795,7 +1816,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         8),
                                                           ),
                                                         ),
-                                                        child: Text(
+                                                        child: const Text(
                                                           "Enable 2FA",
                                                           style: TextStyle(
                                                             fontSize: 16,
@@ -1812,65 +1833,226 @@ class _Profile_screenState extends State<Profile_screen> {
                                             // Verification Code Input
                                             if (showVerificationInput)
                                               Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       "Enter verification code sent to your ${selected2FAMethod == 'email' ? 'email' : 'phone'}:",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         color: Colors.black87,
                                                         fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 16),
-                                                    TextField(
-                                                      controller:
-                                                          verificationCodeController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      maxLength: 6,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            "Enter 6-digit code",
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .grey),
+                                                    const SizedBox(height: 16),
+                                                    Form(
+                                                      key: _formKey,
+                                                      child: TextFormField(
+                                                        autovalidateMode:
+                                                            AutovalidateMode
+                                                                .onUserInteraction,
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter a valid code';
+                                                          }
+                                                          if (value.length !=
+                                                              6) {
+                                                            return 'Code must be 6 digits';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        controller:
+                                                            verificationCodeController,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        maxLength: 6,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Enter 6-digit code",
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey),
+                                                          ),
+                                                          focusedBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                BorderSide(
+                                                                    color:
+                                                                        blueColor,
+                                                                    width: 2),
+                                                          ),
+                                                          errorBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    width: 2),
+                                                          ),
+                                                          focusedErrorBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    width: 2),
+                                                          ),
+                                                          counterText: "",
                                                         ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color:
-                                                                      blueColor,
-                                                                  width: 2),
-                                                        ),
-                                                        counterText: "",
                                                       ),
                                                     ),
-                                                    SizedBox(height: 20),
+                                                    const SizedBox(height: 10),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        if (seconds.value > 0)
+                                                          ValueListenableBuilder<
+                                                              int>(
+                                                            valueListenable:
+                                                                seconds,
+                                                            builder: (context,
+                                                                value, child) {
+                                                              return RichText(
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          "Code will expire in ",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .grey[600],
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          "${getTimerString()}",
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            verificationCodeController
+                                                                .clear();
+                                                            if (showVerificationInput &&
+                                                                seconds.value <=
+                                                                    540) {
+                                                              _initiate2FASetup();
+                                                            }
+                                                          },
+                                                          child: ValueListenableBuilder<
+                                                                  int>(
+                                                              valueListenable:
+                                                                  seconds,
+                                                              builder: (context,
+                                                                  value,
+                                                                  child) {
+                                                                return Container(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade200,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(Icons.refresh,
+                                                                          color: value <= 540
+                                                                              ? blueColor
+                                                                              : Colors.grey.shade600,
+                                                                          size: 16),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              4),
+                                                                      Text(
+                                                                        "Resend Code",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          color: value <= 540
+                                                                              ? blueColor
+                                                                              : Colors.grey.shade600,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 20),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
                                                       child: ElevatedButton(
                                                         onPressed: isVerifyingCode
                                                             ? null
-                                                            : () =>
-                                                                _verifyAndEnable2FA(),
+                                                            : () => _formKey
+                                                                    .currentState!
+                                                                    .validate()
+                                                                ? _verifyAndEnable2FA()
+                                                                : null,
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
@@ -1886,7 +2068,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           ),
                                                         ),
                                                         child: isVerifyingCode
-                                                            ? SizedBox(
+                                                            ? const SizedBox(
                                                                 width: 20,
                                                                 height: 20,
                                                                 child:
@@ -1897,7 +2079,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       2,
                                                                 ),
                                                               )
-                                                            : Text(
+                                                            : const Text(
                                                                 "Verify & Enable",
                                                                 style:
                                                                     TextStyle(
@@ -1909,7 +2091,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               ),
                                                       ),
                                                     ),
-                                                    SizedBox(height: 12),
+                                                    const SizedBox(height: 12),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
@@ -1929,9 +2111,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         },
                                                         style: OutlinedButton
                                                             .styleFrom(
-                                                          side: BorderSide(
-                                                              color:
-                                                                  Colors.grey),
+                                                          side:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
                                                           shape:
                                                               RoundedRectangleBorder(
                                                             borderRadius:
@@ -1940,7 +2123,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         8),
                                                           ),
                                                         ),
-                                                        child: Text(
+                                                        child: const Text(
                                                           "Cancel",
                                                           style: TextStyle(
                                                             fontSize: 16,
@@ -1958,33 +2141,35 @@ class _Profile_screenState extends State<Profile_screen> {
                                             // 2FA Enabled Status
                                             if (enble2FA && !show2FASetup)
                                               Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
                                                 child: Text(
                                                   email2FA
                                                       ? "✓ 2FA is enabled via Email"
                                                       : sms2FA
                                                           ? "✓ 2FA is enabled via SMS"
                                                           : "✓ 2FA is enabled",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.green,
                                                     fontSize: 16,
                                                   ),
                                                 ),
                                               ),
 
-                                            SizedBox(height: 20),
+                                            const SizedBox(height: 20),
 
                                             // Disable 2FA Verification Input
                                             if (showDisableVerification)
                                               Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       "Enter verification code to disable 2FA:",
                                                       style: TextStyle(
                                                         color: Colors.black87,
@@ -1993,7 +2178,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             FontWeight.w500,
                                                       ),
                                                     ),
-                                                    SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
                                                     TextField(
                                                       controller:
                                                           disableVerificationController,
@@ -2010,7 +2195,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               BorderRadius
                                                                   .circular(8),
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                                   color: Colors
                                                                       .grey),
                                                         ),
@@ -2020,7 +2205,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               BorderRadius
                                                                   .circular(8),
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                                   color: Colors
                                                                       .red,
                                                                   width: 2),
@@ -2028,7 +2213,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         counterText: "",
                                                       ),
                                                     ),
-                                                    SizedBox(height: 20),
+                                                    const SizedBox(height: 20),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
@@ -2052,7 +2237,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           ),
                                                         ),
                                                         child: isVerifyingCode
-                                                            ? SizedBox(
+                                                            ? const SizedBox(
                                                                 width: 20,
                                                                 height: 20,
                                                                 child:
@@ -2063,7 +2248,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       2,
                                                                 ),
                                                               )
-                                                            : Text(
+                                                            : const Text(
                                                                 "Disable 2FA",
                                                                 style:
                                                                     TextStyle(
@@ -2075,7 +2260,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               ),
                                                       ),
                                                     ),
-                                                    SizedBox(height: 12),
+                                                    const SizedBox(height: 12),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
@@ -2090,9 +2275,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         },
                                                         style: OutlinedButton
                                                             .styleFrom(
-                                                          side: BorderSide(
-                                                              color:
-                                                                  Colors.grey),
+                                                          side:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
                                                           shape:
                                                               RoundedRectangleBorder(
                                                             borderRadius:
@@ -2101,7 +2287,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         8),
                                                           ),
                                                         ),
-                                                        child: Text(
+                                                        child: const Text(
                                                           "Cancel",
                                                           style: TextStyle(
                                                             fontSize: 16,
@@ -2121,9 +2307,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 !showDisableVerification &&
                                                 !showRegenerateVerification)
                                               Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.0,
-                                                    vertical: 8),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0,
+                                                        vertical: 8),
                                                 child: Row(
                                                   children: [
                                                     // Disable 2FA Button
@@ -2164,18 +2351,18 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                           8),
                                                             ),
                                                           ),
-                                                          child: Row(
+                                                          child: const Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              const Icon(
+                                                              Icon(
                                                                   Icons
                                                                       .security,
                                                                   size: 18),
-                                                              const SizedBox(
+                                                              SizedBox(
                                                                   width: 8),
-                                                              const Flexible(
+                                                              Flexible(
                                                                 child: Text(
                                                                   "Disable 2FA",
                                                                   style:
@@ -2245,28 +2432,31 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               const SizedBox(
                                                                   width: 8),
                                                               Flexible(
-                                                                child:
-                                                                    !backupCode
-                                                                        ? Text(
-                                                                            "Backup Codes",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                          )
-                                                                        : Text(
-                                                                            "Regenerate Backup Codes",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                          ),
+                                                                child: !backupCode
+                                                                    ? const Text(
+                                                                        "Backup Codes",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                      )
+                                                                    : const Text(
+                                                                        "Regenerate Backup Codes",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                      ),
                                                               ),
                                                             ],
                                                           ),
@@ -2317,7 +2507,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             color: Colors.grey.withOpacity(0.1),
                                             spreadRadius: 1,
                                             blurRadius: 10,
-                                            offset: Offset(0, 2),
+                                            offset: const Offset(0, 2),
                                           ),
                                         ],
                                       ),
@@ -2338,13 +2528,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     '${profiledata['tenant_email']}',
                                               },
                                             ),
-                                            SizedBox(height: 20),
+                                            const SizedBox(height: 20),
                                             // Divider
                                             Container(
                                               height: 1,
                                               color: Colors.grey[300],
                                             ),
-                                            SizedBox(height: 20),
+                                            const SizedBox(height: 20),
                                             // 2FA Section - integrated in same card
                                             Row(
                                               mainAxisAlignment:
@@ -2381,31 +2571,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     });
                                                   },
                                                 ),
-                                                // Switch(
-                                                //   activeColor: blueColor,
-                                                //   value: enble2FA,
-                                                //   onChanged: (value) {
-                                                //     setState(() {
-                                                //       if (value) {
-                                                //         show2FASetup = true;
-                                                //         showVerificationInput =
-                                                //             false;
-                                                //         selected2FAMethod = '';
-                                                //       } else {
-                                                //         enble2FA = false;
-                                                //         show2FASetup = false;
-                                                //         showVerificationInput =
-                                                //             false;
-                                                //         selected2FAMethod = '';
-                                                //         sms2FA = false;
-                                                //         email2FA = false;
-                                                //       }
-                                                //     });
-                                                //   },
-                                                // ),
                                               ],
                                             ),
-                                            SizedBox(height: 12),
+                                            const SizedBox(height: 12),
 
                                             // Show different content based on 2FA state
                                             if (!enble2FA && !show2FASetup)
@@ -2434,7 +2602,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           FontWeight.w500,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 16),
+                                                  const SizedBox(height: 16),
 
                                                   // SMS Radio Button
                                                   _buildOptionTile(
@@ -2478,7 +2646,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   .circular(8),
                                                         ),
                                                       ),
-                                                      child: Text(
+                                                      child: const Text(
                                                         "Enable 2FA",
                                                         style: TextStyle(
                                                           fontSize: 16,
@@ -2513,41 +2681,85 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     const SizedBox(height: 16),
 
                                                     // Verification Code Input Field
-                                                    TextField(
-                                                      controller:
-                                                          verificationCodeController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      maxLength: 6,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            "Enter 6-digit code",
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          borderSide:
-                                                              const BorderSide(
-                                                                  color: Colors
-                                                                      .grey),
+                                                    Form(
+                                                      key: _formKey,
+                                                      child: TextFormField(
+                                                        autovalidateMode:
+                                                            AutovalidateMode
+                                                                .onUserInteraction,
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter a valid code';
+                                                          }
+                                                          if (value.length !=
+                                                              6) {
+                                                            return 'Code must be 6 digits';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        controller:
+                                                            verificationCodeController,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        maxLength: 6,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Enter 6-digit code",
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey),
+                                                          ),
+                                                          focusedBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                BorderSide(
+                                                                    color:
+                                                                        blueColor,
+                                                                    width: 2),
+                                                          ),
+                                                          errorBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    width: 2),
+                                                          ),
+                                                          focusedErrorBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    width: 2),
+                                                          ),
+                                                          counterText: "",
                                                         ),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color:
-                                                                      blueColor,
-                                                                  width: 2),
-                                                        ),
-                                                        counterText: "",
                                                       ),
                                                     ),
-                                                    SizedBox(height: 10),
+                                                    const SizedBox(height: 10),
                                                     Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -2584,7 +2796,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       text:
                                                                           "${getTimerString()}",
                                                                       style:
-                                                                          TextStyle(
+                                                                          const TextStyle(
                                                                         color: Colors
                                                                             .red,
                                                                         fontSize:
@@ -2602,67 +2814,70 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           onTap: () {
                                                             print(
                                                                 "showVerificationInput: $showVerificationInput");
+                                                            // clear the field
+                                                            verificationCodeController
+                                                                .clear();
                                                             if (showVerificationInput &&
                                                                 seconds.value <=
                                                                     540) {
                                                               _initiate2FASetup();
                                                             }
                                                           },
-                                                          child: Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        5),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors.grey
-                                                                  .shade200,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .refresh,
-                                                                    color: seconds.value <=
-                                                                            540
-                                                                        ? blueColor
-                                                                        : Colors
-                                                                            .grey
-                                                                            .shade600,
-                                                                    size: 14),
-                                                                SizedBox(
-                                                                    width: 4),
-                                                                Text(
-                                                                  "Resend Code",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: seconds.value <=
-                                                                            540
-                                                                        ? blueColor
-                                                                        : Colors
-                                                                            .grey
-                                                                            .shade600,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
+                                                          child: ValueListenableBuilder<
+                                                                  int>(
+                                                              valueListenable:
+                                                                  seconds,
+                                                              builder: (context,
+                                                                  value,
+                                                                  child) {
+                                                                return Container(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade200,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(Icons.refresh,
+                                                                          color: value <= 540
+                                                                              ? blueColor
+                                                                              : Colors.grey.shade600,
+                                                                          size: 14),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              4),
+                                                                      Text(
+                                                                        "Resend Code",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color: value <= 540
+                                                                              ? blueColor
+                                                                              : Colors.grey.shade600,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }),
                                                         ),
                                                       ],
                                                     ),
 
-                                                    SizedBox(height: 10),
+                                                    const SizedBox(height: 10),
                                                     // Verify & Enable Button
                                                     SizedBox(
                                                       width: double.infinity,
@@ -2670,8 +2885,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       child: ElevatedButton(
                                                         onPressed: isVerifyingCode
                                                             ? null
-                                                            : () =>
-                                                                _verifyAndEnable2FA(),
+                                                            : () => _formKey
+                                                                    .currentState!
+                                                                    .validate()
+                                                                ? _verifyAndEnable2FA()
+                                                                : null,
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
@@ -2702,7 +2920,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                 "Verify & Enable",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 15,
+                                                                  fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w600,
@@ -2745,13 +2963,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         8),
                                                           ),
                                                         ),
-                                                        child: const Text(
+                                                        child: Text(
                                                           "Cancel",
                                                           style: TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 14,
                                                             fontWeight:
                                                                 FontWeight.w600,
-                                                            color: Colors.grey,
+                                                            color: Colors
+                                                                .grey.shade800,
                                                           ),
                                                         ),
                                                       ),
@@ -3027,7 +3246,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                 ),
                                                               )
                                                             : backupCode
-                                                                ? Text(
+                                                                ? const Text(
                                                                     "Regenerate Backup Codes",
                                                                     style:
                                                                         TextStyle(
@@ -3038,7 +3257,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                               .w600,
                                                                     ),
                                                                   )
-                                                                : Text(
+                                                                : const Text(
                                                                     "Backup Codes",
                                                                     style:
                                                                         TextStyle(
@@ -3153,18 +3372,18 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                               8),
                                                                 ),
                                                               ),
-                                                              child: Row(
+                                                              child: const Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  const Icon(
+                                                                  Icon(
                                                                       Icons
                                                                           .security,
                                                                       size: 18),
-                                                                  const SizedBox(
+                                                                  SizedBox(
                                                                       width: 8),
-                                                                  const Flexible(
+                                                                  Flexible(
                                                                     child: Text(
                                                                       "Disable 2FA",
                                                                       style:
@@ -3236,7 +3455,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                       width: 8),
                                                                   Flexible(
                                                                     child: !backupCode
-                                                                        ? Text(
+                                                                        ? const Text(
                                                                             "Backup Codes",
                                                                             style:
                                                                                 TextStyle(
@@ -3246,7 +3465,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                             textAlign:
                                                                                 TextAlign.center,
                                                                           )
-                                                                        : Text(
+                                                                        : const Text(
                                                                             "Regenerate Backup Codes",
                                                                             style:
                                                                                 TextStyle(
@@ -3305,20 +3524,21 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                             .circular(8),
                                                                   ),
                                                                 ),
-                                                                child: Row(
+                                                                child:
+                                                                    const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    const Icon(
+                                                                    Icon(
                                                                         Icons
                                                                             .security,
                                                                         size:
                                                                             18),
-                                                                    const SizedBox(
+                                                                    SizedBox(
                                                                         width:
                                                                             8),
-                                                                    const Flexible(
+                                                                    Flexible(
                                                                       child:
                                                                           Text(
                                                                         "Disable 2FA",
@@ -3393,7 +3613,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                             8),
                                                                     Flexible(
                                                                       child: !backupCode
-                                                                          ? Text(
+                                                                          ? const Text(
                                                                               "Backup Codes",
                                                                               style: TextStyle(
                                                                                 fontSize: 12,
@@ -3401,7 +3621,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                               ),
                                                                               textAlign: TextAlign.center,
                                                                             )
-                                                                          : Text(
+                                                                          : const Text(
                                                                               "Regenerate Backup Codes",
                                                                               style: TextStyle(
                                                                                 fontSize: 12,
@@ -3426,7 +3646,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   if (leaseData.isNotEmpty) ...[
                                     // Modern Lease Details Section
                                     Padding(
@@ -3446,7 +3666,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                               color: blueColor,
                                             ),
                                           ),
-                                          SizedBox(height: 16),
+                                          const SizedBox(height: 16),
                                         ],
                                       ),
                                     ),
@@ -3530,11 +3750,11 @@ class _Profile_screenState extends State<Profile_screen> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -3603,8 +3823,8 @@ class _Profile_screenState extends State<Profile_screen> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             decoration: BoxDecoration(
-              color: Color(0xFFF7F9FC),
-              border: Border.all(color: Color(0xFFDBE0E5)),
+              color: const Color(0xFFF7F9FC),
+              border: Border.all(color: const Color(0xFFDBE0E5)),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
@@ -3643,7 +3863,7 @@ class _Profile_screenState extends State<Profile_screen> {
 
               //return CustomExpansionTile(data: Data, index: index);
               return Container(
-                margin: EdgeInsets.only(bottom: 4),
+                margin: const EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
@@ -3692,7 +3912,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ],
                               ),
                             ),
-                            SizedBox(width: 16),
+                            const SizedBox(width: 16),
                             // Lease type
                             Expanded(
                               flex: 1,
@@ -3714,7 +3934,7 @@ class _Profile_screenState extends State<Profile_screen> {
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: Colors.grey[50],
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(8),
                             bottomRight: Radius.circular(8),
                           ),
@@ -3731,7 +3951,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         .formatCurrentDate(lease['start_date']),
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 Expanded(
                                   child: _buildDetailItem(
                                     "End Date",
@@ -3741,7 +3961,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
@@ -3750,7 +3970,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                     lease['rent_cycle'],
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 Expanded(
                                   child: _buildDetailItem(
                                     "Rent Amount",
@@ -3759,7 +3979,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
@@ -3769,7 +3989,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         .formatCurrentDate(lease['date']),
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 Expanded(
                                   child: Container(), // Empty for alignment
                                 ),
@@ -3793,7 +4013,8 @@ class _Profile_screenState extends State<Profile_screen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(text,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 
@@ -3835,7 +4056,7 @@ class _Profile_screenState extends State<Profile_screen> {
             color: Colors.grey[600],
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
@@ -3854,7 +4075,7 @@ class _Profile_screenState extends State<Profile_screen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(
           height: 5,

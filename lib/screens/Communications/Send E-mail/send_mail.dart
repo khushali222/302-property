@@ -22,7 +22,7 @@ import '../../../widgets/titleBar.dart';
 class send_email extends StatefulWidget {
   List<String>? lease;
   String? leaseID;
-  send_email({super.key, this.lease,this.leaseID});
+  send_email({super.key, this.lease, this.leaseID});
 
   @override
   _send_emailState createState() => _send_emailState();
@@ -52,9 +52,7 @@ class _send_emailState extends State<send_email> {
   String bodymessage = "";
   String eventmessage = "";
 
-  List<Map<String, dynamic>> tenants = [
-
-  ];
+  List<Map<String, dynamic>> tenants = [];
 
   List<String> selectedTenantIds = [];
   bool isLoading = false;
@@ -83,10 +81,11 @@ class _send_emailState extends State<send_email> {
     fetchTenant();
     print("tenants ${widget.lease}");
     print("tenants ${widget.leaseID}");
-   currentEventList =  (widget.lease != null ? eventTypes["lease"] :eventTypes["tenant"]!)!;
+    currentEventList =
+        (widget.lease != null ? eventTypes["lease"] : eventTypes["tenant"]!)!;
   }
-  Future<void> fetchTenant() async {
 
+  Future<void> fetchTenant() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
@@ -102,34 +101,32 @@ class _send_emailState extends State<send_email> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final tenant = data['data'] as List;
-     // log(tenant.toString());
-      if(widget.lease != null){
+      // log(tenant.toString());
+      if (widget.lease != null) {
         tenants = tenant
-            .cast<Map<String, dynamic>>() // Ensure it's a List<Map<String, dynamic>>
+            .cast<
+                Map<String,
+                    dynamic>>() // Ensure it's a List<Map<String, dynamic>>
             .where((t) {
           final tenantId = t['tenant_id'];
 
           return tenantId != null && widget.lease!.contains(tenantId);
-        })
-            .toList();
+        }).toList();
         selectedTenantIds = widget.lease!;
-      }else{
-       // setState(() {
-          tenants = tenant.cast<Map<String, dynamic>>();
+      } else {
+        // setState(() {
+        tenants = tenant.cast<Map<String, dynamic>>();
 
-     //   });
+        //   });
       }
 
-
-      setState(() {
-
-      });
+      setState(() {});
     } else {
       print("Failed to load templates");
     }
   }
-  Future<void> fetchTemplatestype() async {
 
+  Future<void> fetchTemplatestype() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
@@ -145,7 +142,7 @@ class _send_emailState extends State<send_email> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final templates = data['data'] as List;
-      if (data["statusCode"] == 200 ) {
+      if (data["statusCode"] == 200) {
         setState(() {
           templateList = templates.map((e) => Template.fromJson(e)).toList();
           var selectedTemplete = templateList.first;
@@ -155,7 +152,8 @@ class _send_emailState extends State<send_email> {
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) {
               _htmlEditorController.setFocus();
-              _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+              _htmlEditorController
+                  .setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
             }
           });
           selectedTemplateId = selectedTemplete.name;
@@ -183,6 +181,7 @@ class _send_emailState extends State<send_email> {
       print("Failed to load templates");
     }
   }
+
   String replaceSpanTags(String html) {
     print("spn${html}");
     // Mapping class names to corresponding font sizes
@@ -197,16 +196,19 @@ class _send_emailState extends State<send_email> {
     // Regex to match <span> with class and/or style attributes
     return html.replaceAllMapped(
       RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Extract attributes inside <span>
         String text = match.group(2) ?? ''; // Extract inner text
 
         // Extract class names
-        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? classMatch =
+            RegExp(r'class="([^"]+)"').firstMatch(attributes);
         String classNames = classMatch?.group(1) ?? '';
 
         // Extract styles
-        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? styleMatch =
+            RegExp(r'style="([^"]+)"').firstMatch(attributes);
         String style = styleMatch?.group(1) ?? '';
 
         // Extract color from style
@@ -231,9 +233,13 @@ class _send_emailState extends State<send_email> {
       },
     );
   }
+
   final Map<String, List<Map<String, String>>> eventTypes = {
     "tenant": [
-      {"title": "Invitation", "detail": "On tenant, vendor and staff-member creation"},
+      {
+        "title": "Invitation",
+        "detail": "On tenant, vendor and staff-member creation"
+      },
       {"title": "Lease creation", "detail": ""},
       {"title": "Lease end Reminder", "detail": ""},
       {"title": "Payment receipt", "detail": ""},
@@ -266,7 +272,7 @@ class _send_emailState extends State<send_email> {
     double s = int.parse(match.group(2)!) / 100;
     double l = int.parse(match.group(3)!) / 100;
 
-    double c = (1 - (2 * l - 1).abs())*s;
+    double c = (1 - (2 * l - 1).abs()) * s;
     double x = c * (1 - ((h / 60) % 2 - 1).abs());
     double m = l - c / 2;
 
@@ -300,8 +306,8 @@ class _send_emailState extends State<send_email> {
         "${green.toRadixString(16).padLeft(2, '0')}"
         "${blue.toRadixString(16).padLeft(2, '0')}";
   }
-  Future<void> fetchTemplates() async {
 
+  Future<void> fetchTemplates() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
@@ -318,7 +324,6 @@ class _send_emailState extends State<send_email> {
       final data = json.decode(response.body);
       if (data["statusCode"] == 200 && data.containsKey("template")) {
         setState(() {
-
           templates = [data["template"]]; // Store in list
           //events = [data["template"]["name"] as String]; // Extract name
           _selectedEvent = data["template"]["mail_type"]; // Select default
@@ -335,7 +340,8 @@ class _send_emailState extends State<send_email> {
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
             _htmlEditorController.setFocus();
-            _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+            _htmlEditorController
+                .setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
           }
         });
       }
@@ -529,7 +535,6 @@ class _send_emailState extends State<send_email> {
     ],
   };
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -540,7 +545,7 @@ class _send_emailState extends State<send_email> {
       ),
       appBar: widget_302.App_Bar(context: context),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -548,210 +553,177 @@ class _send_emailState extends State<send_email> {
               key: _formkey,
               child: Column(
                 children: [
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          // height: 50.0,
-                          height: (MediaQuery.of(context).size.width < 500)
-                              ? 50
-                              : 60,
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.width < 500
-                                  ? 9
-                                  : 5,
-                              left: 10),
-                          margin: const EdgeInsets.only(bottom: 6.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: blueColor,
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(0.0, 1.0),
-                                blurRadius: 6.0,
-                              ),
-                            ],
-                          ),
-                          child: const Text(
-                          'Send Email',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if(tenants.length > 0)
-                  Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text('Tenants *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: blueColor)),
-                    ),
-                    Row(
+                  titleBar(title: "Send Email", width: double.infinity),
+                  const SizedBox(height: 10),
+                  if (tenants.length > 0)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-
-                              isExpanded: true,
-                              hint: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
-                                child: Text(
-                                  selectedTenantIds.isEmpty
-                                      ? "Select Tenant"
-                                      : selectedTenantIds
-                                      .map((id) {
-                                    final tenant = tenants.firstWhere((owner) => owner['tenant_id'] == id);
-                                    return "${tenant['tenant_firstName']} ${tenant['tenant_lastName']}";
-                                  })
-                                      .join(', '),
-                                  style: const TextStyle(fontSize: 14, color: Colors.black),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              items:
-
-                            [
-                              DropdownMenuItem<String>(
-                                value: "select_all",
-                                child: StatefulBuilder(
-                                  builder: (context, setState) {
-                                    bool isAllSelected =
-                                        selectedTenantIds.length == tenants.length;
-                                    return CheckboxListTile(
-                                      title: const Text(
-                                        "Select All",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      value: isAllSelected,
-                                      controlAffinity: ListTileControlAffinity.leading,
-                                      onChanged: (bool? checked) {
-                                        setState(() {
-                                          if (checked == true) {
-                                            selectedTenantIds = tenants
-                                                .map((tenant) => tenant['tenant_id'].toString()!)
-                                                .toList();
-                                          } else {
-                                            selectedTenantIds.clear();
-                                          }
-                                        });
-                                        // Update the outer state
-                                        this.setState(() {});
-                                        Navigator.pop(context);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              ...tenants.map((owner) {
-                                return DropdownMenuItem<String>(
-                                  value: owner['tenant_id'],
-                                  child: StatefulBuilder(
-                                    builder: (context, setState) {
-                                      bool isSelected =
-                                      selectedTenantIds.contains(owner['tenant_id']);
-                                      return CheckboxListTile(
-                                        value: isSelected,
-                                        title: Text(
-                                          "${owner['tenant_firstName']!} ${owner['tenant_lastName']!}",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        controlAffinity: ListTileControlAffinity.leading,
-                                        onChanged: (bool? checked) {
-                                          setState(() {
-                                            if (checked == true) {
-                                              selectedTenantIds.add(owner['tenant_id']!);
-                                            } else {
-                                              selectedTenantIds.remove(owner['tenant_id']!);
-                                            }
-                                          });
-                                          // Update the outer state
-                                          this.setState(() {});
-
-                                        },
-                                      );
-                                    },
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('Tenants *',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Text(
+                                      selectedTenantIds.isEmpty
+                                          ? "Select Tenant"
+                                          : selectedTenantIds.map((id) {
+                                              final tenant = tenants.firstWhere(
+                                                  (owner) =>
+                                                      owner['tenant_id'] == id);
+                                              return "${tenant['tenant_firstName']} ${tenant['tenant_lastName']}";
+                                            }).join(', '),
+                                      style: const TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                );
-                              }).toList()],
-                              onChanged: (_) {},
-                              buttonStyleData: ButtonStyleData(
-                                height: 46,
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 3),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
+                                  items: [
+                                    DropdownMenuItem<String>(
+                                      value: "select_all",
+                                      child: StatefulBuilder(
+                                        builder: (context, setState) {
+                                          bool isAllSelected =
+                                              selectedTenantIds.length ==
+                                                  tenants.length;
+                                          return CheckboxListTile(
+                                            title: const Text(
+                                              "Select All",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            value: isAllSelected,
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
+                                            onChanged: (bool? checked) {
+                                              setState(() {
+                                                if (checked == true) {
+                                                  selectedTenantIds = tenants
+                                                      .map((tenant) =>
+                                                          tenant['tenant_id']
+                                                              .toString()!)
+                                                      .toList();
+                                                } else {
+                                                  selectedTenantIds.clear();
+                                                }
+                                              });
+                                              // Update the outer state
+                                              this.setState(() {});
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    ...tenants.map((owner) {
+                                      return DropdownMenuItem<String>(
+                                        value: owner['tenant_id'],
+                                        child: StatefulBuilder(
+                                          builder: (context, setState) {
+                                            bool isSelected = selectedTenantIds
+                                                .contains(owner['tenant_id']);
+                                            return CheckboxListTile(
+                                              value: isSelected,
+                                              title: Text(
+                                                "${owner['tenant_firstName']!} ${owner['tenant_lastName']!}",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .leading,
+                                              onChanged: (bool? checked) {
+                                                setState(() {
+                                                  if (checked == true) {
+                                                    selectedTenantIds.add(
+                                                        owner['tenant_id']!);
+                                                  } else {
+                                                    selectedTenantIds.remove(
+                                                        owner['tenant_id']!);
+                                                  }
+                                                });
+                                                // Update the outer state
+                                                this.setState(() {});
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }).toList()
+                                  ],
+                                  onChanged: (_) {},
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 46,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  // iconStyleData: const IconStyleData(
+                                  //   icon: SizedBox.shrink(), // Hides the dropdown icon
+                                  // ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 300,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                  ),
                                 ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              // iconStyleData: const IconStyleData(
-                              //   icon: SizedBox.shrink(), // Hides the dropdown icon
-                              // ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 300,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                  MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 50,
-                                padding:
-                                EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
                   Column(
-
                     children: [
-
                       const SizedBox(
                         height: 5,
                       ),
                       Row(
                         children: [
                           Expanded(
-
                             child: Container(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -788,16 +760,18 @@ class _send_emailState extends State<send_email> {
                                           fetchTemplatestype();
                                           //  fetchTemplates();
                                         });
-                                        print('Selected Event: $_selectedEvent');
+                                        print(
+                                            'Selected Event: $_selectedEvent');
 
                                         // Notify FormField of value change
                                       },
                                       buttonStyleData: ButtonStyleData(
                                         height: 46,
-                                        padding:
-                                        const EdgeInsets.symmetric(horizontal: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         elevation: 2,
@@ -813,66 +787,70 @@ class _send_emailState extends State<send_email> {
                                       // ),
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
-                                          thickness: MaterialStateProperty.all(6),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
                                           thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
-                                      menuItemStyleData: const MenuItemStyleData(
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
                                         height: 50,
-                                        padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
                                       ),
                                     ),
                                   ),
                                   const SizedBox(height: 3),
                                   eventError
                                       ? Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        eventmessage,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                .035),
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                    ],
-                                  )
+                                          children: [
+                                            const SizedBox(
+                                              width: 3,
+                                            ),
+                                            Text(
+                                              eventmessage,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .035),
+                                            ),
+                                            const SizedBox(
+                                              width: 2,
+                                            ),
+                                          ],
+                                        )
                                       : nameError
-                                      ? Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        eventmessage,
-                                        style: TextStyle(
-                                            color: Colors.transparent,
-                                            fontSize:
-                                            MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                .035),
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                    ],
-                                  )
-                                      : Container(),
+                                          ? Row(
+                                              children: [
+                                                const SizedBox(
+                                                  width: 3,
+                                                ),
+                                                Text(
+                                                  eventmessage,
+                                                  style: TextStyle(
+                                                      color: Colors.transparent,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .035),
+                                                ),
+                                                const SizedBox(
+                                                  width: 2,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
                                 ],
                               ),
                             ),
@@ -881,157 +859,170 @@ class _send_emailState extends State<send_email> {
                       ),
                     ],
                   ),
-                  if(_selectedEvent != null && templateList.length > 0)
-                  const SizedBox(height: 10),
-                  if(_selectedEvent != null && templateList.length > 0)
-                  Column(
-
-                    children: [
-
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      "Templates",
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      style: const TextStyle(
-                                          fontSize: 15, color: Colors.black),
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Select Event',
+                  if (_selectedEvent != null && templateList.length > 0)
+                    const SizedBox(height: 10),
+                  if (_selectedEvent != null && templateList.length > 0)
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        "Templates",
+                                        style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      value: selectedTemplateId,
-                                      items: templateList.map((method) {
-                                        return DropdownMenuItem<String>(
-                                          value: method.name,
-                                          child: Text(method.name),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedTemplateId = newValue;
-                                         var selectedTemplete = templateList.firstWhere((template)=>template.name == newValue);
-                                          subject.text = selectedTemplete.subject;
-                                          htmlBody = selectedTemplete.body;
-                                          eventError = false;
-                                          Future.delayed(const Duration(milliseconds: 500), () {
-                                            if (mounted) {
-                                              _htmlEditorController.setFocus();
-                                              _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
-                                            }
+                                    ),
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        style: const TextStyle(
+                                            fontSize: 15, color: Colors.black),
+                                        isExpanded: true,
+                                        hint: const Text(
+                                          'Select Event',
+                                        ),
+                                        value: selectedTemplateId,
+                                        items: templateList.map((method) {
+                                          return DropdownMenuItem<String>(
+                                            value: method.name,
+                                            child: Text(method.name),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedTemplateId = newValue;
+                                            var selectedTemplete = templateList
+                                                .firstWhere((template) =>
+                                                    template.name == newValue);
+                                            subject.text =
+                                                selectedTemplete.subject;
+                                            htmlBody = selectedTemplete.body;
+                                            eventError = false;
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 500), () {
+                                              if (mounted) {
+                                                _htmlEditorController
+                                                    .setFocus();
+                                                _htmlEditorController.setText(
+                                                    replaceDollarWithAt(
+                                                        replaceSpanTags(
+                                                            htmlBody)));
+                                              }
+                                            });
+                                            //  fetchTemplates();
                                           });
-                                          //  fetchTemplates();
-                                        });
-                                        print('Selected Event: $selectedTemplateId');
+                                          print(
+                                              'Selected Event: $selectedTemplateId');
 
-                                        // Notify FormField of value change
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 46,
-                                        padding:
-                                        const EdgeInsets.symmetric(horizontal: 3),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
-                                          color: Colors.white,
+                                          // Notify FormField of value change
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 46,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 3),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
                                         ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(Icons.arrow_drop_down),
-                                        iconSize: 24,
-                                        iconEnabledColor: Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      // iconStyleData: const IconStyleData(
-                                      //   icon: SizedBox.shrink(), // Hides the dropdown icon
-                                      // ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
-                                          color: Colors.white,
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
                                         ),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(6),
-                                          thickness: MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                        // iconStyleData: const IconStyleData(
+                                        //   icon: SizedBox.shrink(), // Hides the dropdown icon
+                                        // ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
+                                          ),
                                         ),
-                                      ),
-                                      menuItemStyleData: const MenuItemStyleData(
-                                        height: 50,
-                                        padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  eventError
-                                      ? Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        eventmessage,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                .035),
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                    ],
-                                  )
-                                      : nameError
-                                      ? Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        eventmessage,
-                                        style: TextStyle(
-                                            color: Colors.transparent,
-                                            fontSize:
-                                            MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                .035),
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                    ],
-                                  )
-                                      : Container(),
-                                ],
+                                    const SizedBox(height: 3),
+                                    eventError
+                                        ? Row(
+                                            children: [
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Text(
+                                                eventmessage,
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .035),
+                                              ),
+                                              const SizedBox(
+                                                width: 2,
+                                              ),
+                                            ],
+                                          )
+                                        : nameError
+                                            ? Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(
+                                                    eventmessage,
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.transparent,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .035),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 2,
+                                                  ),
+                                                ],
+                                              )
+                                            : Container(),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -1108,22 +1099,22 @@ class _send_emailState extends State<send_email> {
                   const SizedBox(height: 5),
                   subjectError
                       ? Row(
-                    children: [
-                      const SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        submessage,
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize:
-                            MediaQuery.of(context).size.width * .035),
-                      ),
-                      const SizedBox(
-                        width: 2,
-                      ),
-                    ],
-                  )
+                          children: [
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              submessage,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * .035),
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                          ],
+                        )
                       : Container(),
                   const SizedBox(height: 10),
                   Row(
@@ -1149,16 +1140,17 @@ class _send_emailState extends State<send_email> {
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
                             tipsObject[_selectedEvent] != null &&
-                                tipsObject[_selectedEvent]!.isNotEmpty
+                                    tipsObject[_selectedEvent]!.isNotEmpty
                                 ? 'You can personalize transaction templates using the following dynamic variables :\n' +
-                                tipsObject[_selectedEvent]!
-                                    .map((e) => e.entries.first)
-                                    .map((entry) =>
-                                "@${entry.key}: ${entry.value}")
-                                    .join("\n")
+                                    tipsObject[_selectedEvent]!
+                                        .map((e) => e.entries.first)
+                                        .map((entry) =>
+                                            "@${entry.key}: ${entry.value}")
+                                        .join("\n")
                                 : 'You can personalize transaction templates using the following dynamic variables :',
                             softWrap: true,
-                            style: const TextStyle(color: Colors.white, fontSize: 15),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15),
                           ),
                         ),
                         child: Icon(
@@ -1203,9 +1195,12 @@ class _send_emailState extends State<send_email> {
                                         icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.format_list_bulleted, color: Colors.black),
+                                            Icon(Icons.format_list_bulleted,
+                                                color: Colors.black),
                                             // SizedBox(width: 4),
-                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                            Icon(Icons.arrow_drop_down,
+                                                color: Colors
+                                                    .black), // Dropdown Arrow
                                           ],
                                         ),
                                         tooltip: "Unordered List",
@@ -1218,7 +1213,7 @@ class _send_emailState extends State<send_email> {
                                           _htmlEditorController.execCommand(
                                               "insertHTML",
                                               argument:
-                                              '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                                  '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
                                         },
                                         itemBuilder: (context) => [
                                           const PopupMenuItem(
@@ -1226,7 +1221,8 @@ class _send_emailState extends State<send_email> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.circle,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Disc"),
                                               ],
@@ -1237,7 +1233,8 @@ class _send_emailState extends State<send_email> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.circle_outlined,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Circle"),
                                               ],
@@ -1248,7 +1245,8 @@ class _send_emailState extends State<send_email> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.square,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Square"),
                                               ],
@@ -1256,52 +1254,67 @@ class _send_emailState extends State<send_email> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(width: 5,),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
                                       PopupMenuButton<String>(
                                         constraints: const BoxConstraints(
-                                          minWidth: 100, // Minimum width of the popup
+                                          minWidth:
+                                              100, // Minimum width of the popup
                                           maxWidth: 200, // Maximum width
                                         ),
                                         padding: const EdgeInsets.all(0),
                                         icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.format_list_numbered, color: Colors.black),
+                                            Icon(Icons.format_list_numbered,
+                                                color: Colors.black),
                                             // SizedBox(width: 4),
-                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                            Icon(Icons.arrow_drop_down,
+                                                color: Colors
+                                                    .black), // Dropdown Arrow
                                           ],
                                         ), // Ordered List Button
                                         tooltip: "Ordered List",
                                         offset: const Offset(0, 40),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10)),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
                                         onSelected: (String style) {
                                           _htmlEditorController.execCommand(
                                               "insertHTML",
                                               argument:
-                                              '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
+                                                  '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
                                         },
                                         itemBuilder: (context) => [
                                           PopupMenuItem(
                                             enabled:
-                                            false, // Disable selection on this item
+                                                false, // Disable selection on this item
                                             child: Container(
-                                              width: 200, // Adjust width as needed
+                                              width:
+                                                  200, // Adjust width as needed
                                               child: GridView.count(
                                                 shrinkWrap: true,
-                                                crossAxisCount: 3, // 3 items in a row
+                                                crossAxisCount:
+                                                    3, // 3 items in a row
                                                 mainAxisSpacing: 5,
                                                 crossAxisSpacing: 5,
                                                 //childAspectRatio: .3,
                                                 // Adjust for better layout
                                                 children: [
-                                                  _buildListItem("decimal", "1"),
                                                   _buildListItem(
-                                                      "decimal-leading-zero", "01"),
-                                                  _buildListItem("lower-roman", "i"),
-                                                  _buildListItem("upper-roman", "I"),
-                                                  _buildListItem("lower-alpha", "a"),
-                                                  _buildListItem("upper-alpha", "A"),
+                                                      "decimal", "1"),
+                                                  _buildListItem(
+                                                      "decimal-leading-zero",
+                                                      "01"),
+                                                  _buildListItem(
+                                                      "lower-roman", "i"),
+                                                  _buildListItem(
+                                                      "upper-roman", "I"),
+                                                  _buildListItem(
+                                                      "lower-alpha", "a"),
+                                                  _buildListItem(
+                                                      "upper-alpha", "A"),
                                                 ],
                                               ),
                                             ),
@@ -1312,7 +1325,6 @@ class _send_emailState extends State<send_email> {
                                   ),
 
                                   // OL (Ordered List) Style Dropdown
-
 
                                   PopupMenuButton<String>(
                                     child: const Padding(
@@ -1445,22 +1457,22 @@ class _send_emailState extends State<send_email> {
                   const SizedBox(height: 5),
                   bodyError
                       ? Row(
-                    children: [
-                      const SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        bodymessage,
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize:
-                            MediaQuery.of(context).size.width * .035),
-                      ),
-                      const SizedBox(
-                        width: 2,
-                      ),
-                    ],
-                  )
+                          children: [
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              bodymessage,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * .035),
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                          ],
+                        )
                       : Container(),
                   const SizedBox(
                     height: 8,
@@ -1471,7 +1483,6 @@ class _send_emailState extends State<send_email> {
                         onPressed: () async {
                           print(await _htmlEditorController.getText());
                           // Validate name
-
 
                           // Validate designation
                           if (subject.text.trim().isEmpty) {
@@ -1495,7 +1506,7 @@ class _send_emailState extends State<send_email> {
                             });
                           }
                           String updatedHtmlBody =
-                          await _htmlEditorController.getText();
+                              await _htmlEditorController.getText();
 
                           if (updatedHtmlBody.trim().isEmpty) {
                             setState(() {
@@ -1519,20 +1530,19 @@ class _send_emailState extends State<send_email> {
                             });
 
                             SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                             String? adminId = prefs.getString("adminId");
 
                             if (adminId != null) {
                               try {
                                 await sendMail(
-                                  adminId: adminId,
-                                  name: name.text.trim(),
-                                  subject: subject.text.trim(),
-                                  body: replaceFontTags(updatedHtmlBody),
-                                  type: "E-mail",
-                                  mail_type: _selectedEvent,
-                                  leaseid: widget.leaseID
-                                );
+                                    adminId: adminId,
+                                    name: name.text.trim(),
+                                    subject: subject.text.trim(),
+                                    body: replaceFontTags(updatedHtmlBody),
+                                    type: "E-mail",
+                                    mail_type: _selectedEvent,
+                                    leaseid: widget.leaseID);
                                 setState(() {
                                   isLoading = false;
                                 });
@@ -1556,14 +1566,14 @@ class _send_emailState extends State<send_email> {
                         ),
                         child: isLoading
                             ? const SpinKitFadingCircle(
-                          color: Colors.white,
-                          size: 25.0,
-                        )
+                                color: Colors.white,
+                                size: 25.0,
+                              )
                             : const Text(
-                          "Send",
-                          style: TextStyle(
-                              fontSize: 16, color: Colors.white),
-                        ),
+                                "Send",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
                       ),
                       const SizedBox(
                         width: 10,
@@ -1595,25 +1605,25 @@ class _send_emailState extends State<send_email> {
       ),
     );
   }
-  Future<void> sendMail({
-    required String? adminId,
-    required String? name,
-    required String? subject,
-    required String body,
-    required String? type,
-    required String? mail_type,
-    String? leaseid
-  }) async {
+
+  Future<void> sendMail(
+      {required String? adminId,
+      required String? name,
+      required String? subject,
+      required String body,
+      required String? type,
+      required String? mail_type,
+      String? leaseid}) async {
     final Map<String, dynamic> data = {
       "admin_id": adminId,
       "lease_id": leaseid,
       "subject": subject,
-      "tenants":selectedTenantIds,
+      "tenants": selectedTenantIds,
       "body": body,
-      "manual_send":true,
+      "manual_send": true,
       "mail_type": mail_type,
     };
-  //  print(data);
+    //  print(data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
@@ -1627,37 +1637,39 @@ class _send_emailState extends State<send_email> {
       body: jsonEncode(data),
     );
 
-
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
-     // Navigator.pop(context,true);
+      // Navigator.pop(context,true);
       return json.decode(response.body);
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add Templet ');
     }
   }
+
   String replaceDollarWithAt(String input) {
     return input.replaceAllMapped(
       RegExp(r'\$\{(\w+)\}'), // Match ${VariableName}
-          (match) => '@${match.group(1)}', // Replace with @VariableName
+      (match) => '@${match.group(1)}', // Replace with @VariableName
     );
   }
+
   String replaceAtWithDollar(String input) {
     return input.replaceAllMapped(
       RegExp(r'@(\w+)'), // Match @ followed by a word
-          (match) => '\${${match.group(1)}}', // Replace with ${Variable}
+      (match) => '\${${match.group(1)}}', // Replace with ${Variable}
     );
   }
+
   String replaceFontTags(String html) {
     final Map<String, String> fontSizeMap = {
       '1': 'text-tiny',
       '2': 'text-small',
       '3': 'text-default',
-      '4': 'text-medium',  // Added missing size 4
+      '4': 'text-medium', // Added missing size 4
       '5': 'text-big',
-      '6': 'text-larger',  // Added missing size 6
+      '6': 'text-larger', // Added missing size 6
       '7': 'text-huge',
     };
 
@@ -1666,8 +1678,9 @@ class _send_emailState extends State<send_email> {
         r'<font\s+([^>]*)>(.*?)<\/font>',
         caseSensitive: false,
       ),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Get all attributes inside <font>
         String text = match.group(2) ?? ''; // Get the inner text
 
         // Extract size attribute
@@ -1675,7 +1688,8 @@ class _send_emailState extends State<send_email> {
         String? size = sizeMatch?.group(1);
 
         // Extract color attribute
-        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? colorMatch =
+            RegExp(r'color="([^"]+)"').firstMatch(attributes);
         String? color = colorMatch?.group(1);
 
         // Get the corresponding class name for size
@@ -1689,13 +1703,14 @@ class _send_emailState extends State<send_email> {
       },
     ));
   }
+
   Widget _buildListItem(String value, String text) {
     return GestureDetector(
       onTap: () {
         // Execute the command when an item is clicked
         _htmlEditorController.execCommand("insertHTML",
             argument:
-            '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
+                '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
       },
       child: Container(
         alignment: Alignment.center,
@@ -1703,7 +1718,7 @@ class _send_emailState extends State<send_email> {
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
         ),
-        child:  SvgPicture.asset(
+        child: SvgPicture.asset(
           "assets/images/${text == "1" ? "1" : text == "01" ? "01" : text == "i" ? "OL-i" : text == "I" ? "OL-II" : text == "a" ? "OL-aa" : "OL-AAA"}.svg",
           height: 80,
           width: 80,

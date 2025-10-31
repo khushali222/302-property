@@ -410,7 +410,9 @@ class _TempletTableState extends State<TempletTable> {
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 13,),
+                    SizedBox(
+                      width: 13,
+                    ),
                   Expanded(
                     flex: 3,
                     child: Padding(
@@ -468,93 +470,101 @@ class _TempletTableState extends State<TempletTable> {
             ),
             // if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             // if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: EdgeInsets.all(
-                    MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                child: FutureBuilder<List<EmailTemplate>>(
-                  future: futureTemplet,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      if (searchValue == null || searchValue!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (searchValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchValue!.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((rentals) =>
-                                rentals.name!
-                                    .toLowerCase()
-                                    .contains(searchValue!.toLowerCase()) ||
-                                rentals.subject!
-                                    .toLowerCase()
-                                    .contains(searchValue!.toLowerCase()))
-                            .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((rentals) => rentals.name == searchValue)
-                            .toList();
-                      }
-                      sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
+            Padding(
+              padding: EdgeInsets.all(
+                  MediaQuery.of(context).size.width < 500 ? 11 : 28),
+              child: FutureBuilder<List<EmailTemplate>>(
+                future: futureTemplet,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(height: 10),
-                            _buildHeaders(),
-                            SizedBox(height: 10),
-                            Container(
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(
-                              //         color: Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
-                              child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  EmailTemplate rentals = entry.value;
-                                  //  print(rentals.body);
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    var data = snapshot.data!;
+                    if (searchValue == null || searchValue!.isEmpty) {
+                      data = snapshot.data!;
+                    } else if (searchValue == "All") {
+                      data = snapshot.data!;
+                    } else if (searchValue!.isNotEmpty) {
+                      data = snapshot.data!
+                          .where((rentals) =>
+                              rentals.name!
+                                  .toLowerCase()
+                                  .contains(searchValue!.toLowerCase()) ||
+                              rentals.subject!
+                                  .toLowerCase()
+                                  .contains(searchValue!.toLowerCase()))
+                          .toList();
+                    } else {
+                      data = snapshot.data!
+                          .where((rentals) => rentals.name == searchValue)
+                          .toList();
+                    }
+                    sortData(data);
+                    final totalPages = (data.length / itemsPerPage).ceil();
+                    final currentPageData = data
+                        .skip(currentPage * itemsPerPage)
+                        .take(itemsPerPage)
+                        .toList();
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10),
+                          _buildHeaders(),
+                          SizedBox(height: 10),
+                          Container(
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(
+                            //         color: Color.fromRGBO(152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: blueColor)),
+                            child: Column(
+                              children:
+                                  currentPageData.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                bool isExpanded = expandedIndex == index;
+                                EmailTemplate rentals = entry.value;
+                                //  print(rentals.body);
+                                //return CustomExpansionTile(data: Propertytype, index: index);
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (expandedIndex == index) {
+                                        expandedIndex = null;
+                                      } else {
+                                        expandedIndex = index;
+                                      }
+                                    });
+                                  },
+                                  child: Container(
                                     margin: EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
@@ -926,120 +936,120 @@ class _TempletTableState extends State<TempletTable> {
                                         //SizedBox(height: 13,),
                                       ],
                                     ),
-                                  );
-                                }).toList(),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  // Text('Rows per page:'),
+                                  SizedBox(width: 10),
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPage,
+                                          items: itemsPerPageOptions
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: data.length >
+                                                  itemsPerPageOptions
+                                                      .first // Condition to check if dropdown should be enabled
+                                              ? (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage =
+                                                        0; // Reset to first page when items per page change
+                                                  });
+                                                }
+                                              : null,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
-                                                : null,
-                                          ),
-                                        ),
-                                      ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPage == 0
+                                          ? Colors.grey
+                                          : blueColor,
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                    onPressed: currentPage == 0
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          },
+                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_back),
+                                  //   onPressed: currentPage > 0
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage--;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  Text(
+                                      'Page ${currentPage + 1} of $totalPages'),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.arrow_forward),
+                                  //   onPressed: currentPage < totalPages - 1
+                                  //       ? () {
+                                  //     setState(() {
+                                  //       currentPage++;
+                                  //     });
+                                  //   }
+                                  //       : null,
+                                  // ),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPage < totalPages - 1
+                                          ? blueColor
+                                          : Colors.grey,
                                     ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
+                                    onPressed: currentPage < totalPages - 1
+                                        ? () {
+                                            setState(() {
+                                              currentPage++;
+                                            });
+                                          }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
+            ),
           ],
         ),
       ),
