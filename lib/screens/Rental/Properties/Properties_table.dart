@@ -166,7 +166,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      ascending1 = true;
+                      // Start with descending on first tap to show immediate change
+                      ascending1 = false;
                       ascending2 = false;
                       ascending3 = false;
                     }
@@ -188,10 +189,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                    sorting1
-                        ? (ascending1
+                    ascending1
                             ? Padding(
-                                padding: const EdgeInsets.only(top: 7, left: 2),
+                                padding:  EdgeInsets.only(top: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortUp,
                                   size: 20,
@@ -200,14 +200,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                               )
                             : Padding(
                                 padding:
-                                    const EdgeInsets.only(bottom: 7, left: 2),
+                                     EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
                                   size: 20,
                                   color: blueColor,
                                 ),
-                              ))
-                        : const SizedBox(width: 22),
+                              )
+
                   ],
                 ),
               ),

@@ -35,6 +35,7 @@ class Rentals {
   StaffMemberData? staffMemberData;
   List<TenantPropertiesData>? tenantsData;
   List<Map<String, dynamic>>? units;
+  List<InsuredValue>? insuredValues; // Insured values list
 
   Rentals(
       {this.id,
@@ -64,7 +65,8 @@ class Rentals {
       this.parcelNumber,
       this.purchaseDate,
       this.purchasePrice,
-      this.units});
+      this.units,
+      this.insuredValues});
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
@@ -109,6 +111,34 @@ class Rentals {
       units: (json['units'] as List<dynamic>?)
           ?.map((e) => Map<String, dynamic>.from(e))
           .toList(),
+      insuredValues: (json['insured_values'] as List<dynamic>?)
+          ?.map((e) => InsuredValue.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class InsuredValue {
+  String? id;
+  String? year;
+  double? insuredValue;
+  String? createdAt;
+
+  InsuredValue({
+    this.id,
+    this.year,
+    this.insuredValue,
+    this.createdAt,
+  });
+
+  factory InsuredValue.fromJson(Map<String, dynamic> json) {
+    return InsuredValue(
+      id: json['_id'] ?? "",
+      year: json['year'] ?? "",
+      insuredValue: (json['insured_value'] is int)
+          ? (json['insured_value'] as int).toDouble()
+          : (json['insured_value'] as num?)?.toDouble(),
+      createdAt: json['created_at'] ?? "",
     );
   }
 }

@@ -3566,7 +3566,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Images',
+                                    'Property',
                                     style: TextStyle(
                                       color: blueColor,
                                       fontSize: 16,
@@ -3668,14 +3668,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     ),
                                   ],
                                 ),
-                              if (summery.workOrderImages!.length == 0)
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("No Images Provided"),
-                                    // Text("(${summery.unitData!.unitName})"),
-                                  ],
-                                ),
+                              // if (summery.workOrderImages!.length == 0)
+                              //   const Row(
+                              //     mainAxisAlignment: MainAxisAlignment.center,
+                              //     children: [
+                              //       Text("No Images Provided"),
+                              //       // Text("(${summery.unitData!.unitName})"),
+                              //     ],
+                              //   ),
                               const SizedBox(
                                 height: 10,
                               ),
