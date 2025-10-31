@@ -787,7 +787,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
                       child: titleBar(
                         width: double.infinity,
                         title: 'Email Logs',
@@ -870,130 +874,137 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                     ),
                   ),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 15 : 28),
-                      child: FutureBuilder<Email_log_table>(
-                        future: futureEmailss,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (snapshot.hasError) {
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 15 : 28),
+                    child: FutureBuilder<Email_log_table>(
+                      future: futureEmailss,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data?.emails?.isEmpty == true) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Store all emails for frontend pagination
+                          _allEmails = snapshot.data?.emails ?? [];
+                          // Apply search filter if needed
+                          List<Emails> filteredEmails = _allEmails;
+                          if (searchvalue.isNotEmpty) {
+                            filteredEmails = filteredEmails
+                                .where((property) =>
+                                    (property.email?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (property.rentalAddress?.toLowerCase() ??
+                                            '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    ((property.isAccepted == true
+                                            ? dateProvider
+                                                .formatCurrentDateTime(
+                                                    '${property.createdAt}')
+                                            : 'Not Sent')
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase())))
+                                .toList();
+                          }
+                          if (filteredEmails.isEmpty) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data?.emails?.isEmpty == true) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
                               ),
                             );
-                          } else {
-                            // Store all emails for frontend pagination
-                            _allEmails = snapshot.data?.emails ?? [];
-                            // Apply search filter if needed
-                            List<Emails> filteredEmails = _allEmails;
-                            if (searchvalue.isNotEmpty) {
-                              filteredEmails = filteredEmails
-                                  .where((property) =>
-                                      (property.email?.toLowerCase() ?? '')
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      (property.rentalAddress?.toLowerCase() ??
-                                              '')
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      ((property.isAccepted == true
-                                              ? dateProvider
-                                                  .formatCurrentDateTime(
-                                                      '${property.createdAt}')
-                                              : 'Not Sent')
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase())))
-                                  .toList();
-                            }
-                            if (filteredEmails.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
+                          }
 
-                            //  filteredEmails = filteredEmails.reversed.toList();
-                            sortData(filteredEmails);
-                            int totalPages =
-                                (filteredEmails.length / _rowsPerPage).ceil();
-                            List<Emails> currentPageData = filteredEmails
-                                .skip(_currentPage * _rowsPerPage)
-                                .take(_rowsPerPage)
-                                .toList();
-                            print(
-                                "rental address ${snapshot.data?.emails?.first.rentalAddress}");
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  _buildHeaders(),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(
-                                    //         color: Color.fromRGBO(
-                                    //             152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(color: blueColor)),
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Emails Propertytype = entry.value;
+                          //  filteredEmails = filteredEmails.reversed.toList();
+                          sortData(filteredEmails);
+                          int totalPages =
+                              (filteredEmails.length / _rowsPerPage).ceil();
+                          List<Emails> currentPageData = filteredEmails
+                              .skip(_currentPage * _rowsPerPage)
+                              .take(_rowsPerPage)
+                              .toList();
+                          print(
+                              "rental address ${snapshot.data?.emails?.first.rentalAddress}");
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                _buildHeaders(),
+                                SizedBox(height: 10),
+                                Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(color: blueColor)),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Emails Propertytype = entry.value;
 
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            if (expandedIndex == index) {
+                                              expandedIndex = null;
+                                            } else {
+                                              expandedIndex = index;
+                                            }
+                                          });
+                                        },
+                                        child: Container(
                                           margin:
                                               EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
@@ -1307,102 +1318,99 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                               //SizedBox(height: 13,),
                                             ],
                                           ),
-                                        );
-                                      }).toList(),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: _rowsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  if (newValue != null) {
+                                                    _changeRowsPerPage(
+                                                        newValue);
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: _rowsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newValue) {
-                                                    if (newValue != null) {
-                                                      _changeRowsPerPage(
-                                                          newValue);
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: _currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: _currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: _currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      _currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          Text(
-                                              'Page ${_currentPage + 1} of $totalPages'),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color: (_currentPage + 1) <
-                                                      totalPages
-                                                  ? blueColor
-                                                  : Colors.grey,
-                                            ),
-                                            onPressed:
+                                          onPressed: _currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    _currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        Text(
+                                            'Page ${_currentPage + 1} of $totalPages'),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color:
                                                 (_currentPage + 1) < totalPages
-                                                    ? () {
-                                                        setState(() {
-                                                          _currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
+                                                    ? blueColor
+                                                    : Colors.grey,
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                                          onPressed:
+                                              (_currentPage + 1) < totalPages
+                                                  ? () {
+                                                      setState(() {
+                                                        _currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                 ],
               ),
             )
