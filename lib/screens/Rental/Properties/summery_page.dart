@@ -97,6 +97,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
+  late Future<List<Map<String, dynamic>>> futurePropertyTaxes;
   int _selectedIndex = 0;
 
   //late Future<List<RentalSummary>> futuresummery;
@@ -250,6 +251,7 @@ class _Summery_pageState extends State<Summery_page>
     print(" unit id ${widget.unit?.unitId ?? ""}");
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
+    futurePropertyTaxes = _fetchPropertyTaxes();
     // displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
     // startdateController.text = displayDate;
     print('abc test for enddate ${widget.tenants?.endDate}');
@@ -267,6 +269,43 @@ class _Summery_pageState extends State<Summery_page>
     setState(() {
       _connectivityResult = connectiondata;
     });
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchPropertyTaxes() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      final response = await http.get(
+        Uri.parse('${Api_url}/api/taxes/${widget.properties.rentalId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+      }
+      return [];
+    } catch (e) {
+      print('Error loading property taxes: $e');
+      return [];
+    }
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      DateTime date = DateTime.parse(dateString);
+      return DateFormat('yyyy-MM-dd').format(date);
+    } catch (e) {
+      return dateString; // Return original string if parsing fails
+    }
   }
 
   // Scroll to previous tab
@@ -4122,168 +4161,6 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                // const SizedBox(height: 10),
-                // // Insured Values Section
-                // Row(
-                //   children: [
-                //     if (MediaQuery.of(context).size.width > 500)
-                //       const SizedBox(
-                //         width: 6,
-                //       ),
-                //     if (MediaQuery.of(context).size.width < 500)
-                //       const SizedBox(
-                //         width: 5,
-                //       ),
-                //     Text(
-                //       "Insured Values",
-                //       style: TextStyle(
-                //           color: blueColor,
-                //           fontSize:
-                //               MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                //           fontWeight: FontWeight.bold),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 5),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 6, right: 6),
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: const Color(0xFFF4F8FF),
-                //       borderRadius: BorderRadius.circular(16),
-                //       border: Border.all(color: Colors.grey.shade300),
-                //     ),
-                //     child: ClipRRect(
-                //       borderRadius: BorderRadius.circular(16),
-                //       child: (rentalDetails.insuredValues != null &&
-                //               rentalDetails.insuredValues!.isNotEmpty)
-                //           ? Table(
-                //               columnWidths: const {
-                //                 0: FlexColumnWidth(2),
-                //                 1: FlexColumnWidth(2),
-                //                 2: FlexColumnWidth(2),
-                //               },
-                //               border: TableBorder(
-                //                 horizontalInside: BorderSide(
-                //                     color: Colors.grey.shade400, width: 1),
-                //                 top: BorderSide.none,
-                //                 bottom: BorderSide.none,
-                //                 left: BorderSide.none,
-                //                 right: BorderSide.none,
-                //               ),
-                //               children: [
-                //                 // Header Row
-                //                 TableRow(
-                //                   decoration: BoxDecoration(
-                //                     color: const Color(0xFF1A2F5B)
-                //                         .withOpacity(0.08),
-                //                   ),
-                //                   children: [
-                //                     const Padding(
-                //                       padding: EdgeInsets.all(12.0),
-                //                       child: Text(
-                //                         "Year",
-                //                         style: TextStyle(
-                //                           fontWeight: FontWeight.bold,
-                //                           color: Color(0xFF1A2F5B),
-                //                           fontSize: 14,
-                //                         ),
-                //                       ),
-                //                     ),
-                //                     const Padding(
-                //                       padding: EdgeInsets.all(12.0),
-                //                       child: Text(
-                //                         "Insured Value",
-                //                         style: TextStyle(
-                //                           fontWeight: FontWeight.bold,
-                //                           color: Color(0xFF1A2F5B),
-                //                           fontSize: 14,
-                //                         ),
-                //                       ),
-                //                     ),
-                //                     const Padding(
-                //                       padding: EdgeInsets.all(12.0),
-                //                       child: Text(
-                //                         "Created Date",
-                //                         style: TextStyle(
-                //                           fontWeight: FontWeight.bold,
-                //                           color: Color(0xFF1A2F5B),
-                //                           fontSize: 14,
-                //                         ),
-                //                       ),
-                //                     ),
-                //                   ],
-                //                 ),
-                //                 // Data Rows
-                //                 ...rentalDetails.insuredValues!
-                //                     .map((insuredValue) => TableRow(
-                //                           decoration: const BoxDecoration(
-                //                             color: Colors.white,
-                //                           ),
-                //                           children: [
-                //                             Padding(
-                //                               padding:
-                //                                   const EdgeInsets.all(12.0),
-                //                               child: Text(
-                //                                 (insuredValue.year == null ||
-                //                                         insuredValue
-                //                                             .year!.isEmpty)
-                //                                     ? "N/A"
-                //                                     : insuredValue.year!,
-                //                                 style: const TextStyle(
-                //                                     fontSize: 14,
-                //                                     color: Colors.black),
-                //                               ),
-                //                             ),
-                //                             Padding(
-                //                               padding:
-                //                                   const EdgeInsets.all(12.0),
-                //                               child: Text(
-                //                                 (insuredValue.insuredValue ==
-                //                                             null ||
-                //                                         insuredValue
-                //                                                 .insuredValue ==
-                //                                             0)
-                //                                     ? "N/A"
-                //                                     : "\$${insuredValue.insuredValue!.toStringAsFixed(0)}",
-                //                                 style: const TextStyle(
-                //                                     fontSize: 14,
-                //                                     color: Colors.black),
-                //                               ),
-                //                             ),
-                //                             Padding(
-                //                               padding:
-                //                                   const EdgeInsets.all(12.0),
-                //                               child: Text(
-                //                                 (insuredValue.createdAt ==
-                //                                             null ||
-                //                                         insuredValue
-                //                                             .createdAt!.isEmpty)
-                //                                     ? "N/A"
-                //                                     : dateProvider
-                //                                         .formatCurrentDate(
-                //                                             '${insuredValue.createdAt!}'),
-                //                                 style: const TextStyle(
-                //                                     fontSize: 14,
-                //                                     color: Colors.black),
-                //                               ),
-                //                             ),
-                //                           ],
-                //                         ))
-                //                     .toList(),
-                //               ],
-                //             )
-                //           : Container(
-                //               padding: const EdgeInsets.all(16.0),
-                //               child: const Text(
-                //                 "No insured values available",
-                //                 style:
-                //                     TextStyle(fontSize: 14, color: Colors.grey),
-                //               ),
-                //             ),
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -4419,310 +4296,330 @@ class _Summery_pageState extends State<Summery_page>
                     ],
                   ),
                 ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // Row(
-                //   children: [
-                //     if (MediaQuery.of(context).size.width > 500)
-                //       const SizedBox(
-                //         width: 6,
-                //       ),
-                //     if (MediaQuery.of(context).size.width < 500)
-                //       const SizedBox(
-                //         width: 5,
-                //       ),
-                //     Text(
-                //       "Historical Insured Values",
-                //       style: TextStyle(
-                //           color: blueColor,
-                //           fontSize:
-                //               MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                //           fontWeight: FontWeight.bold),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // Container(
-                //   decoration: BoxDecoration(
-                //     color: const Color(0xFFEAF1FB),
-                //     borderRadius: BorderRadius.only(
-                //       topLeft: const Radius.circular(16),
-                //       topRight: const Radius.circular(16),
-                //       bottomLeft: insureExpanded
-                //           ? Radius.zero
-                //           : const Radius.circular(16),
-                //       bottomRight: insureExpanded
-                //           ? Radius.zero
-                //           : const Radius.circular(16),
-                //     ),
-                //     border: Border.all(
-                //       color: const Color(0x4D636363), // Translucent gray border
-                //       width: 1.0,
-                //     ),
-                //   ),
-                //   child: Column(
-                //     children: <Widget>[
-                //       ListTile(
-                //         contentPadding: EdgeInsets.zero,
-                //         title: Padding(
-                //           padding: const EdgeInsets.all(2.0),
-                //           child: Row(
-                //             mainAxisAlignment: MainAxisAlignment.start,
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: <Widget>[
-                //               InkWell(
-                //                 onTap: () {
-                //                   setState(() {
-                //                     insureExpanded = !insureExpanded;
-                //                   });
-                //                 },
-                //                 child: Container(
-                //                   margin:
-                //                       const EdgeInsets.only(left: 5, right: 5),
-                //                   padding: !insureExpanded
-                //                       ? const EdgeInsets.only(bottom: 10)
-                //                       : const EdgeInsets.only(top: 10),
-                //                   child: FaIcon(
-                //                     insureExpanded
-                //                         ? FontAwesomeIcons.sortUp
-                //                         : FontAwesomeIcons.sortDown,
-                //                     size: 20,
-                //                     color: blueColor,
-                //                   ),
-                //                 ),
-                //               ),
-                //               const SizedBox(width: 8),
-                //               Text(
-                //                 'Historical Insured Values',
-                //                 style: TextStyle(
-                //                   color: blueColor,
-                //                   fontWeight: FontWeight.bold,
-                //                   fontSize: 14,
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //       if (insureExpanded)
-                //         Container(
-                //           width: double.infinity,
-                //           decoration: const BoxDecoration(
-                //             color: Colors.white,
-                //             border: Border(
-                //               top: BorderSide(
-                //                 color: Color(0x4D636363),
-                //                 width: 1.0,
-                //               ),
-                //             ),
-                //           ),
-                //           child: SingleChildScrollView(
-                //             child: Padding(
-                //               padding: const EdgeInsets.only(
-                //                   left: 25, right: 25, top: 10, bottom: 10),
-                //               child: Column(
-                //                 mainAxisAlignment: MainAxisAlignment.start,
-                //                 crossAxisAlignment: CrossAxisAlignment.start,
-                //                 children: [
-                //                   Text(
-                //                     'Insured Year',
-                //                     style: TextStyle(
-                //                         fontWeight: FontWeight.bold,
-                //                         color: blueColor),
-                //                   ),
-                //                   const SizedBox(height: 4),
-                //                   Text(
-                //                     rentalDetails.staffMemberData
-                //                                     ?.staffmemberName !=
-                //                                 null &&
-                //                             rentalDetails.staffMemberData!
-                //                                 .staffmemberName!.isNotEmpty
-                //                         ? rentalDetails
-                //                             .staffMemberData!.staffmemberName!
-                //                         : 'N/A',
-                //                     style: const TextStyle(
-                //                         fontWeight: FontWeight.w700,
-                //                         color: Colors.grey),
-                //                   ),
-                //                   const SizedBox(height: 4),
-                //                   Text(
-                //                     'Insured Value',
-                //                     style: TextStyle(
-                //                         fontWeight: FontWeight.bold,
-                //                         color: blueColor),
-                //                   ),
-                //                   const SizedBox(height: 4),
-                //                   Text(
-                //                     rentalDetails.staffMemberData
-                //                                     ?.staffmemberName !=
-                //                                 null &&
-                //                             rentalDetails.staffMemberData!
-                //                                 .staffmemberName!.isNotEmpty
-                //                         ? rentalDetails
-                //                             .staffMemberData!.staffmemberName!
-                //                         : 'N/A',
-                //                     style: const TextStyle(
-                //                         fontWeight: FontWeight.w700,
-                //                         color: Colors.grey),
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       //SizedBox(height: 13,),
-                //     ],
-                //   ),
-                // ),
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: const Color(0xFFF4F8FF),
-                //       borderRadius: BorderRadius.circular(16),
-                //       border: Border.all(color: Colors.grey.shade400),
-                //     ),
-                //     child: Column(
-                //       children: [
-                //         // Header Row
-                //         InkWell(
-                //           onTap: () {
-                //             setState(() {
-                //               staffExpanded = !staffExpanded;
-                //             });
-                //           },
-                //           child: Container(
-                //             padding: const EdgeInsets.symmetric(
-                //                 horizontal: 16, vertical: 14),
-                //             decoration: const BoxDecoration(
-                //               borderRadius: BorderRadius.vertical(
-                //                   top: Radius.circular(16)),
-                //               color: Color(0xFFF4F8FF),
-                //             ),
-                //             child: Row(
-                //               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //               children: [
-                //                 FaIcon(
-                //                   staffExpanded
-                //                       ? FontAwesomeIcons
-                //                       .sortUp
-                //                       : FontAwesomeIcons
-                //                       .sortDown,
-                //                   size: 20,
-                //                   color: blueColor,
-                //                 ),
-                //
-                //                 SizedBox(width: 13,),
-                //                 Text(
-                //                   'Staff Details',
-                //                   style: TextStyle(
-                //                     color: blueColor,
-                //                     fontWeight:
-                //                     FontWeight.bold,
-                //                     fontSize: 14,
-                //                   ),
-                //                 ),
-                //
-                //               ],
-                //             ),
-                //           ),
-                //         ),
-                //
-                //         if (staffExpanded)
-                //             Container(
-                //               width: double.infinity,
-                //               decoration: const BoxDecoration(
-                //                 color: Colors.white,
-                //                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-                //               ),
-                //               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                //               child: Padding(
-                //                 padding: const EdgeInsets.all(8.0),
-                //                 child: Column(
-                //                   crossAxisAlignment: CrossAxisAlignment.start,
-                //                   children: [
-                //                     Text(
-                //                       'Staff Member',
-                //                       style: TextStyle(
-                //                           fontWeight:
-                //                           FontWeight.bold,
-                //                           color: blueColor),
-                //                     ),
-                //                     const SizedBox(height: 4),
-                //                     Text(
-                //                       rentalDetails.staffMemberData?.staffmemberName != null &&
-                //                           rentalDetails.staffMemberData!.staffmemberName!.isNotEmpty
-                //                           ? rentalDetails.staffMemberData!.staffmemberName!
-                //                           : 'N/A',
-                //                       style: TextStyle(
-                //                           fontWeight:
-                //                           FontWeight.w700,
-                //                           color: Colors.grey),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
+                const SizedBox(height: 10),
+                // Insured Values Section
+                Row(
+                  children: [
+                    if (MediaQuery.of(context).size.width > 500)
+                      const SizedBox(
+                        width: 6,
+                      ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      const SizedBox(
+                        width: 5,
+                      ),
+                    Text(
+                      "Insured Values",
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6, right: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Table(
+                        columnWidths: const {
+                          0: FlexColumnWidth(2),
+                          1: FlexColumnWidth(2),
 
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 5, right: 5),
-                //   child: Table(
-                //     border: TableBorder.all(color: blueColor),
-                //     children: [
-                //       TableRow(
-                //           decoration: BoxDecoration(
-                //             color: blueColor,
-                //             //  borderRadius: BorderRadius.circular(10),
-                //           ),
-                //           children: [
-                //             TableCell(
-                //               child: Padding(
-                //                 padding: EdgeInsets.all(8.0),
-                //                 child: Text(
-                //                   'Staff Member',
-                //                   style: TextStyle(
-                //                       color: Colors.white,
-                //                       fontSize:
-                //                           MediaQuery.of(context).size.width <
-                //                                   500
-                //                               ? 16
-                //                               : 19,
-                //                       fontWeight: FontWeight.bold),
-                //                 ),
-                //               ),
-                //             ),
-                //           ]),
-                //       TableRow(children: [
-                //         TableCell(
-                //           child: Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: Text(
-                //               rentalDetails.staffMemberData?.staffmemberName !=
-                //                           null &&
-                //                       rentalDetails.staffMemberData!
-                //                           .staffmemberName!.isNotEmpty
-                //                   ? '${rentalDetails.staffMemberData!.staffmemberName}'
-                //                   : 'N/A',
-                //               style: TextStyle(
-                //                 fontSize:
-                //                     MediaQuery.of(context).size.width < 500
-                //                         ? 16
-                //                         : 19,
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ])
-                //     ],
-                //   ),
-                // ),
+                        },
+                        border: TableBorder(
+                          horizontalInside:
+                              BorderSide(color: Colors.grey.shade400, width: 1),
+                          top: BorderSide.none,
+                          bottom: BorderSide.none,
+                          left: BorderSide.none,
+                          right: BorderSide.none,
+                        ),
+                        children: [
+                          // Header Row
+                          TableRow(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1A2F5B).withOpacity(0.08),
+                            ),
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(
+                                  "Year",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.all(12.0),
+
+                                child: Text(
+                                  "Insured Value",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A2F5B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Data Rows
+                          ...(rentalDetails.insuredValues != null &&
+                                  rentalDetails.insuredValues!.isNotEmpty)
+                              ? rentalDetails.insuredValues!
+                                  .map((insuredValue) => TableRow(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              (insuredValue.year == null ||
+                                                      insuredValue
+                                                          .year!.isEmpty)
+                                                  ? "N/A"
+                                                  : insuredValue.year!,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              (insuredValue.insuredValue ==
+                                                          null ||
+                                                      insuredValue
+                                                              .insuredValue ==
+                                                          0)
+                                                  ? "N/A"
+                                                  : "\$${insuredValue.insuredValue!.toStringAsFixed(0)}",
+                                              textAlign: TextAlign.right,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ],
+                                      ))
+                                  .toList()
+                              : [
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                    ),
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.all(12.0),
+                                        child: Text(
+                                          "N/A",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.all(12.0),
+                                        child: Text(
+                                          "N/A",
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+                // Property Tax Table Section
+                Row(
+                  children: [
+                    if (MediaQuery.of(context).size.width > 500)
+                      const SizedBox(
+                        width: 6,
+                      ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      const SizedBox(
+                        width: 5,
+                      ),
+                    Text(
+                      "Recent Property Taxes",
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6, right: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: FutureBuilder<List<Map<String, dynamic>>>(
+                        future: futurePropertyTaxes,
+                        builder: (context, snapshot) {
+                          List<Map<String, dynamic>> taxes = [];
+                          if (snapshot.hasData && snapshot.data != null) {
+                            taxes = snapshot.data!;
+                          }
+
+                          return Table(
+                            columnWidths: const {
+                              0: FlexColumnWidth(2),
+                              1: FlexColumnWidth(2),
+
+                            },
+                            border: TableBorder(
+                              horizontalInside: BorderSide(
+                                  color: Colors.grey.shade400, width: 1),
+                              top: BorderSide.none,
+                              bottom: BorderSide.none,
+                              left: BorderSide.none,
+                              right: BorderSide.none,
+                            ),
+                            children: [
+                              // Header Row
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xFF1A2F5B).withOpacity(0.08),
+                                ),
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(12.0),
+                                    child: Text(
+                                      "Year",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1A2F5B),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.all(12.0),
+                                    child: Text(
+                                      "Tax Amount",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1A2F5B),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Data Rows
+                              ...(taxes.isNotEmpty)
+                                  ? taxes
+                                      .map((tax) => TableRow(
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  (tax['tax_year'] == null ||
+                                                          tax['tax_year']
+                                                              .toString()
+                                                              .isEmpty)
+                                                      ? "N/A"
+                                                      : tax['tax_year']
+                                                          .toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  (tax['tax_amount'] == null ||
+                                                          tax['tax_amount'] ==
+                                                              0)
+                                                      ? "N/A"
+                                                      : "\$${tax['tax_amount'].toStringAsFixed(0)}",
+                                                  textAlign: TextAlign.right,
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                            ],
+                                          ))
+                                      .toList()
+                                  : [
+                                      TableRow(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: Text(
+                                              "N/A",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: Text(
+                                              "N/A",
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                    ],
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(
                   height: 50,
                 ),

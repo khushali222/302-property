@@ -1,28 +1,0 @@
-
-Ñ
-;
-android*http://schemas.android.com/apk/res/android	%FrameLayout"T
-*http://schemas.android.com/apk/res/androidlayout_marginEnd50dp"	(¶‡„2:hd"p
-*http://schemas.android.com/apk/res/android
-background@drawable/corner"	(Ô„2
-ë€œødrawable/corner0"`
-*http://schemas.android.com/apk/res/androidlayout_widthwrap_content"	(ô„2:0şÿÿÿÿÿÿÿÿ"a
-*http://schemas.android.com/apk/res/androidlayout_heightwrap_content"	(õ„2:0şÿÿÿÿÿÿÿÿ"V
-*http://schemas.android.com/apk/res/androidlayout_marginStart50dp"	(µ‡„2:hd"^
-*http://schemas.android.com/apk/res/androidlayout_gravitycenter_horizontal"	(³„2:8*¿
-¶TextView"N
-*http://schemas.android.com/apk/res/android
-paddingEnd16dp"(´‡„2:h "V
-*http://schemas.android.com/apk/res/android
-background	#CC000000"(Ô„2:H€€€à"L
-*http://schemas.android.com/apk/res/androidgravitycenter"(¯„2:8"`
-*http://schemas.android.com/apk/res/androidlayout_widthwrap_content"(ô„2:0şÿÿÿÿÿÿÿÿ"a
-*http://schemas.android.com/apk/res/androidlayout_heightwrap_content"(õ„2:0şÿÿÿÿÿÿÿÿ"Q
-*http://schemas.android.com/apk/res/androidpaddingBottom10dp"(Ù„2:h"S
-*http://schemas.android.com/apk/res/android	textColor#FFFFFF"(˜„2:Pÿÿÿÿ"P
-*http://schemas.android.com/apk/res/androidpaddingStart16dp"(³‡„2:h "J
-*http://schemas.android.com/apk/res/androidmaxLines100"(Ó‚„2:0d"Y
-*http://schemas.android.com/apk/res/androidid	@+id/text"(Ğ„2
-Ö øid/text0"N
-*http://schemas.android.com/apk/res/android
-paddingTop10dp"(×„2:h/	%
