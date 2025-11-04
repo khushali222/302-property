@@ -189,6 +189,9 @@ class LeaseData {
   bool? tenantResidentStatus;
   String? unitId;
   List<String>? uploadedFile;
+  bool? creditCardAccepted;
+  bool? debitCardAccepted;
+  bool? leasePaymentSettings;
 
   LeaseData({
     this.leaseId,
@@ -204,6 +207,9 @@ class LeaseData {
     this.tenantResidentStatus,
     this.unitId,
     this.uploadedFile,
+    this.creditCardAccepted,
+    this.debitCardAccepted,
+    this.leasePaymentSettings,
   });
 
   factory LeaseData.fromJson(Map<String, dynamic> json) {
@@ -223,6 +229,9 @@ class LeaseData {
       tenantResidentStatus: json['tenant_residentStatus'],
       unitId: json['unit_id'],
       uploadedFile: List<String>.from(json['uploaded_file']),
+      creditCardAccepted: json['creditCardAccepted'],
+      debitCardAccepted: json['debitCardAccepted'],
+      leasePaymentSettings: json['leasePaymentSettings'],
     );
   }
 
@@ -241,6 +250,9 @@ class LeaseData {
       'tenant_residentStatus': tenantResidentStatus,
       'unit_id': unitId,
       'uploaded_file': uploadedFile,
+      'creditCardAccepted': creditCardAccepted,
+      'debitCardAccepted': debitCardAccepted,
+      'leasePaymentSettings': leasePaymentSettings,
     };
   }
 }

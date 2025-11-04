@@ -215,6 +215,9 @@ class LeaseData {
   String? memo;
   bool? isProRent;
   List<String>? uploadedFile;
+  bool? creditCardAccepted;
+  bool? debitCardAccepted;
+  bool? leasePaymentSettings;
 
   LeaseData({
     this.leaseId,
@@ -233,6 +236,9 @@ class LeaseData {
     this.unitId,
     this.uploadedFile,
     this.isProRent,
+    this.creditCardAccepted,
+    this.debitCardAccepted,
+    this.leasePaymentSettings,
   });
 
   factory LeaseData.fromJson(Map<String, dynamic> json) {
@@ -253,6 +259,9 @@ class LeaseData {
       unitId: json['unit_id'],
       isProRent: json['isProRent'],
       uploadedFile: List<String>.from(json['uploaded_file']),
+      creditCardAccepted: json['creditCardAccepted'],
+      debitCardAccepted: json['debitCardAccepted'],
+      leasePaymentSettings: json['leasePaymentSettings'],
     );
   }
 
@@ -275,6 +284,9 @@ class LeaseData {
       'isProRent': isProRent,
       'proRatedRent': proRatedRent,
       'uploaded_file': uploadedFile,
+      'creditCardAccepted': creditCardAccepted,
+      'debitCardAccepted': debitCardAccepted,
+      'leasePaymentSettings': leasePaymentSettings,
     };
   }
 }

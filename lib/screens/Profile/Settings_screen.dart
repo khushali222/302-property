@@ -3085,12 +3085,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   border: InputBorder.none,
                                                   contentPadding:
                                                       const EdgeInsets.all(13),
-                                                  suffixIcon: const Icon(
-                                                    Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
-                                                    size: 18,
-                                                  ),
+                                                  // suffixIcon: const Icon(
+                                                  //   Icons.percent,
+                                                  //   color: Color.fromRGBO(
+                                                  //       21, 43, 81, 1),
+                                                  //   size: 18,
+                                                  // ),
                                                 ),
                                               ),
                                             ),
