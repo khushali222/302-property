@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
+import 'package:three_zero_two_property/screens/Profile/ContactUsScreen.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/activity/activity_table.dart';
@@ -304,6 +305,20 @@ class widget_302 {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ActivityTable()));
                           //  }
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(Icons.contact_mail, color: blueColor),
+                            SizedBox(width: 10),
+                            Text("Contact Us",
+                                style: TextStyle(color: blueColor)),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ContactUsScreen()));
                         },
                       ),
                       PopupMenuItem(

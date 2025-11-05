@@ -8,8 +8,6 @@ import '../constant/constant.dart';
 class AdminBalanceRepository {
   final String baseUrl = '$Api_url/api/payment/admin_balance';
 
-
-
   // Future<List<RentPastDue>> fetchAdminBalance(String adminId, {bool report = true}) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? token = prefs.getString('token');
@@ -115,7 +113,7 @@ class AdminBalanceRepository {
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
-          "id":"CRM $id",
+          "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
@@ -124,26 +122,31 @@ class AdminBalanceRepository {
 
       if (response.statusCode == 200) {
         final dynamic jsonData = json.decode(response.body);
-        print('=== DEBUG: API Response Structure ===');
+        //  print('=== DEBUG: API Response Structure ===');
         print('Response type: ${jsonData.runtimeType}');
         if (jsonData is List && jsonData.isNotEmpty) {
           print('Data is a List with ${jsonData.length} elements');
-          print('First element data structure: ${jsonData[0]["data"]?.keys.toList()}');
-          print('Last Month Data: ${jsonData[0]["data"]?["lastDueRentCharges"]}');
-          print('Current Month Data: ${jsonData[0]["data"]?["currentDueRentCharges"]}');
+          print(
+              'First element data structure: ${jsonData[0]["data"]?.keys.toList()}');
+          print(
+              'Last Month Data: ${jsonData[0]["data"]?["lastDueRentCharges"]}');
+          print(
+              'Current Month Data: ${jsonData[0]["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData[0]["data"] ?? {});
         } else if (jsonData is Map<String, dynamic>) {
           print('Data is a Map with keys: ${jsonData.keys.toList()}');
           print('Data field structure: ${jsonData["data"]?.keys.toList()}');
           print('Last Month Data: ${jsonData["data"]?["lastDueRentCharges"]}');
-          print('Current Month Data: ${jsonData["data"]?["currentDueRentCharges"]}');
+          print(
+              'Current Month Data: ${jsonData["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData["data"] ?? {});
         } else {
           print('Admin Balance: Unexpected response format.');
           throw Exception('Unexpected response format');
         }
       } else {
-        print('Failed to load Admin Balance. Status code: ${response.statusCode}');
+        print(
+            'Failed to load Admin Balance. Status code: ${response.statusCode}');
         throw Exception('Failed to load Admin Balance');
       }
     } catch (error) {
@@ -151,6 +154,4 @@ class AdminBalanceRepository {
       throw Exception('Error fetching Admin Balance');
     }
   }
-
-
 }

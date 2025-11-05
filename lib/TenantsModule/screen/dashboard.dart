@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/make_payment.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/recurringpayment.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart';
@@ -176,7 +177,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           loading = false;
         });
       } else {
-        throw Exception('Failed to load data');
+        //throw Exception('Failed to load data');
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -385,7 +386,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     fetchDatacount();
     fetchData();
     _loadName();
-    fetchDatafinancial();
+    //fetchDatafinancial();
     fetchRecentTransactions();
   }
 
@@ -485,7 +486,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           iconColor: const Color(0xFF4CAF50),
           title: "Lease",
           leftLabel: "Start Date",
-          leftValue: "12/26/2024",
+          leftValue: countList[3].toString(),
           rightLabel: "End Date",
           rightValue: countList[4].toString(),
           onTap: () {},
@@ -580,8 +581,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
@@ -609,8 +610,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                       Text(
                         leftValue,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          // fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
@@ -631,8 +632,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                       Text(
                         rightValue,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          //  fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
@@ -670,7 +671,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
               const Text(
                 "Recent Transactions",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
+                  letterSpacing: 0.5,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -683,7 +685,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                 child: const Text(
                   "See All",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
+                    letterSpacing: 0.5,
                     color: Colors.grey,
                   ),
                 ),
@@ -696,7 +699,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
               child: Text(
                 "No recent transactions found",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.grey,
                 ),
               ),
@@ -800,7 +803,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           const Text(
             "Upcoming Payments",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
+              letterSpacing: 0.5,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -809,6 +813,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           Column(
             children: [
               SizedBox(
+                height: 40,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
@@ -818,68 +823,85 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                     ));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4CAF50),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: Color(0xFF3DA600),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   child: const Text(
-                    textAlign: TextAlign.center,
                     "Schedule a Payment",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               SizedBox(
-                height: 50,
+                height: 40,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (context) =>
+                    //       RecurringPayment(leaseData: leaseData),
+                    // ));
                     // You can add your navigation or functionality here
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: const Color(0xFFF3F7FF),
                     foregroundColor: const Color(0xFF2196F3),
                     elevation: 0,
-                    side: const BorderSide(color: Color(0xFF2196F3), width: 2),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2196F3).withOpacity(0.13),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.autorenew,
-                          color: Color(0xFF2196F3),
-                          size: 20,
-                        ),
+                      const Icon(
+                        Icons.autorenew,
+                        color: Colors.black,
+                        size: 20,
                       ),
                       const SizedBox(width: 10),
-                      Flexible(
-                        child: Text(
-                          "Setup Autopay",
-                          style: const TextStyle(
-                            color: Color(0xFF2196F3),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            letterSpacing: 0.2,
-                          ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
+                      // put in Text span for different color of text
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Setup",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            TextSpan(
+                              text: " Auto",
+                              style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "pay",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -916,73 +938,96 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                       color: const Color(0xFFF8F9FA),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.home,
-                            color: Color(0xFF2196F3),
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                payment['tenant_name'] ?? 'Unknown',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Due Date - ${payment['date'] ?? ''}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF9C27B0).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                color: const Color(0xFF2196F3).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(
-                                payment['payment_type'] ?? 'Payment',
+                              child: const Icon(
+                                Icons.home,
+                                color: Color(0xFF2196F3),
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    payment['tenant_name'] ?? 'Unknown',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Due Date – ${payment['date'] ?? ''}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF9C27B0),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                payment['payment_type'] ?? 'Recurring',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Color(0xFF9C27B0),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 4),
+                        if (payment['amount'].runtimeType == List<dynamic>)
+                          Text(
+                            "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        if (payment['amount'].runtimeType == double)
+                          Text(
+                            "\$${payment['amount'].toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                       ],
                     ),
                   ),

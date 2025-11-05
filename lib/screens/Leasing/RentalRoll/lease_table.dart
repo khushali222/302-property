@@ -104,10 +104,10 @@ class _Lease_tableState extends State<Lease_table> {
       String bDays = b.remainingDays ?? "---";
 
       // Debug logging
-      print(
-          "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
-      print(
-          "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
 
       // If both are "---", they are equal
       if (aDays == "---" && bDays == "---") return 0;

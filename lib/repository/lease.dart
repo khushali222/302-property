@@ -1,8 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,10 +10,10 @@ import '../model/LeaseSummary.dart';
 import '../model/edit_lease.dart';
 import '../model/get_lease.dart';
 import '../model/lease.dart';
+import '../model/LeaseChargesModel.dart';
 import 'ExpiringLeaseTable.dart';
 
 class LeaseRepository {
-
   String baseUrl = '$Api_url/api/payment/charges_payments';
   // Future<void> postLease(Lease lease) async {
   //
@@ -121,47 +118,48 @@ class LeaseRepository {
   //     return false;
   //   }
   // }
-  Future<bool>  ifApplicantMoveInTrue(String applicantId,List<String> applicantIds) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      String? id = prefs.getString('adminId');
-      final String url = '$Api_url/api/applicant/applicant-movein';
-      final Map<String, dynamic> body = {
-        'ids': applicantIds.isNotEmpty ? applicantIds : applicantIds,
-        'updates': {
-          'isMovedin': true,
-          'applicant_status': [
-            {
-              'status': 'Approved',
-              'statusUpdatedBy': 'Admin',
-            },
-          ],
-        }
-      };
-
-      try {
-        final response = await http.put(
-          Uri.parse(url),
-          headers: {
-            'authorization': 'CRM $token',
-            'id': 'CRM $id',
-            'Content-Type': 'application/json'
+  Future<bool> ifApplicantMoveInTrue(
+      String applicantId, List<String> applicantIds) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    final String url = '$Api_url/api/applicant/applicant-movein';
+    final Map<String, dynamic> body = {
+      'ids': applicantIds.isNotEmpty ? applicantIds : applicantIds,
+      'updates': {
+        'isMovedin': true,
+        'applicant_status': [
+          {
+            'status': 'Approved',
+            'statusUpdatedBy': 'Admin',
           },
-          body: json.encode(body),
-        );
+        ],
+      }
+    };
 
-        if (response.statusCode == 200) {
-          print('Applicant status updated successfully');
-          return true;
-        } else {
-          print('Failed to update applicant status: ${response.body}');
-          return false;
-        }
-      } catch (e) {
-        print('Error updating applicant status: $e');
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        print('Applicant status updated successfully');
+        return true;
+      } else {
+        print('Failed to update applicant status: ${response.body}');
         return false;
       }
+    } catch (e) {
+      print('Error updating applicant status: $e');
+      return false;
     }
+  }
 
   Future<bool> updateLease(Lease lease) async {
     print("calling navigate main");
@@ -205,7 +203,8 @@ class LeaseRepository {
           print('=== LeaseRepository.updateLease SUCCESS ===');
           return true;
         } else {
-          print('ERROR: API returned error status code: ${responseData['statusCode']}');
+          print(
+              'ERROR: API returned error status code: ${responseData['statusCode']}');
           print('Error message: ${responseData['message']}');
           print('Full response: ${responseData}');
           Fluttertoast.showToast(
@@ -214,7 +213,8 @@ class LeaseRepository {
           return false;
         }
       } else {
-        print('ERROR: HTTP request failed with status code: ${response.statusCode}');
+        print(
+            'ERROR: HTTP request failed with status code: ${response.statusCode}');
         print('Failed to add lease: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to update lease');
@@ -273,11 +273,10 @@ class LeaseRepository {
     }
   }
 
-  Future<Map<String, dynamic>> deleteLease({
-    required String leaseId,
-    required String companyName,
-    String? reason
-  }) async {
+  Future<Map<String, dynamic>> deleteLease(
+      {required String leaseId,
+      required String companyName,
+      String? reason}) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
           .replace(queryParameters: {
@@ -286,15 +285,13 @@ class LeaseRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(
-        uri,
-        headers: <String, String>{
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-          body: jsonEncode({"reason":reason})
-      );
+      final http.Response response = await http.delete(uri,
+          headers: <String, String>{
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({"reason": reason}));
 
       var responseData = json.decode(response.body);
       print(response.body);
@@ -379,7 +376,6 @@ class LeaseRepository {
     }
   }
 
-
   // Future<void> updateLease(Lease1 lease) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? token = prefs.getString('token');
@@ -463,24 +459,28 @@ class LeaseRepository {
   }*/
 
   Future<LeaseDetails> fetchLeaseDetails(String leaseId) async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
-      headers: {"authorization" : "CRM $token",
-        "id":"CRM $id",},); // Update with your actual API URL
+    String? id = prefs.getString('adminId');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    ); // Update with your actual API URL
     print('update fetch ${response.body}');
     print('${Api_url}/api/leases/get_lease/$leaseId');
     print(leaseId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];
-      return  LeaseDetails.fromJson(jsonResponse['data']);
+      return LeaseDetails.fromJson(jsonResponse['data']);
     } else {
       throw Exception('Failed to load lease');
     }
   }
+
   /*Future<bool> ifApplicantMoveInTrue(String applicantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -523,60 +523,62 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-     try {
-    print('$Api_url/api/leases/lease_summary/$leaseId');
-    final response = await http.get(
-      Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-    );
-    log(response.body);
-    print(json);
-    log('JSON being parsed: ${response.body}');
-
-    print('lease renewal ${response.body}');
-    if (response.statusCode == 200) {
-      return LeaseSummary.fromJson(jsonDecode(response.body));
-
-    } else {
-      throw Exception('Failed to load lease summary');
-    }
-      } catch (e) {
-      throw Exception('Error fetching lease data: $e');
-    }
-  }
-  static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
-    final url = Uri.parse('$Api_url/api/tenant/leases/$leaseId');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
-  //  try {
-      final response = await http.get(url,
+    try {
+      print('$Api_url/api/leases/lease_summary/$leaseId');
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
         },
       );
+      // log(response.body);
+      // print(json);
+      // log('JSON being parsed: ${response.body}');
 
+      // print('lease renewal ${response.body}');
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        // Parsing the list of leases from the response
-        List<dynamic> leaseList = data['data'];
-        List<LeaseTenant> leaseTenants = leaseList.map((leaseJson) {
-          return LeaseTenant.fromJson(leaseJson);
-        }).toList();
-
-        return leaseTenants;
+        return LeaseSummary.fromJson(jsonDecode(response.body));
       } else {
-        throw Exception('Failed to load lease data');
+        throw Exception('Failed to load lease summary');
       }
-  /*  } catch (e) {
+    } catch (e) {
+      throw Exception('Error fetching lease data: $e');
+    }
+  }
+
+  static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
+    final url = Uri.parse('$Api_url/api/tenant/leases/$leaseId');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    //  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Parsing the list of leases from the response
+      List<dynamic> leaseList = data['data'];
+      List<LeaseTenant> leaseTenants = leaseList.map((leaseJson) {
+        return LeaseTenant.fromJson(leaseJson);
+      }).toList();
+
+      return leaseTenants;
+    } else {
+      throw Exception('Failed to load lease data');
+    }
+    /*  } catch (e) {
       throw Exception('Error fetching lease data: $e');
     }*/
   }
+
   // Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? token = prefs.getString('token');
@@ -620,7 +622,7 @@ class LeaseRepository {
   //   }
   // }
   Future<LeaseLedger?> fetchLeaseLedger(
-      {String? fromDate, String? toDate,String? leaseId}) async {
+      {String? fromDate, String? toDate, String? leaseId}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -629,7 +631,7 @@ class LeaseRepository {
     if (fromDate != null && toDate != null) {
       url += '?from_date=$fromDate&to_date=$toDate';
     }
-   print(' lease url $url');
+    print(' lease url $url');
     try {
       print('entry');
       final response = await http.get(Uri.parse(url), headers: {
@@ -643,7 +645,7 @@ class LeaseRepository {
         print('parsedJson: $parsedJson');
         final report = LeaseLedger.fromJson(parsedJson);
         print('parsed ReportExpiringLeaseTable: ${report.data}');
-          return report;
+        return report;
       } else {
         throw ServerException(response.statusCode,
             'Failed to load data. Status code: ${response.statusCode}');
@@ -669,21 +671,22 @@ class LeaseRepository {
       },
       body: jsonEncode(charge.toJson()),
     );
-     print('charge respo ${response.body}');
+    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
-     // Fluttertoast.showToast(msg: 'Charge delete successfully');
+      // Fluttertoast.showToast(msg: 'Charge delete successfully');
       // Successfully posted
       print('Charge posted successfully');
     } else {
       // Handle error
-    //  Fluttertoast.showToast(msg: 'Failed to delete charge');
+      //  Fluttertoast.showToast(msg: 'Failed to delete charge');
       print('Failed to post charge: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
 
     return response.statusCode;
   }
-  Future<int> EditCharge(Charge charge,String charge_id) async {
+
+  Future<int> EditCharge(Charge charge, String charge_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
@@ -708,20 +711,19 @@ class LeaseRepository {
 
     return response.statusCode;
   }
-  Future<int> DeleteCharge(String charge_id,String? reason) async {
+
+  Future<int> DeleteCharge(String charge_id, String? reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.delete(
-      Uri.parse('$Api_url/api/charge/charge/$charge_id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'CRM $token',
-        "id": "CRM $id",
-      },
-        body: jsonEncode({"reason":reason})
-
-    );
+    final response =
+        await http.delete(Uri.parse('$Api_url/api/charge/charge/$charge_id'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'CRM $token',
+              "id": "CRM $id",
+            },
+            body: jsonEncode({"reason": reason}));
     print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
@@ -735,31 +737,57 @@ class LeaseRepository {
     return response.statusCode;
   }
 
-  Future<int> DeletePayment(String payment_id,String? reason) async {
+  Future<int> DeletePayment(String payment_id, String? reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.delete(
-        Uri.parse('$Api_url/api/payment/payment/$payment_id'),
+    final response =
+        await http.delete(Uri.parse('$Api_url/api/payment/payment/$payment_id'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'CRM $token',
+              "id": "CRM $id",
+            },
+            body: jsonEncode({"reason": reason}));
+    print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+
+  Future<LeaseCharges?> fetchLeaseCharges(String leaseId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+
+    try {
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/lease-charges/$leaseId'),
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'CRM $token',
+          "authorization": "CRM $token",
           "id": "CRM $id",
         },
-        body: jsonEncode({"reason":reason})
+      );
 
-    );
-    print('charge respo ${response.body}');
-    if (response.statusCode == 200) {
-      // Successfully posted
-      print('Charge posted successfully');
-    } else {
-      // Handle error
-      print('Failed to post charge: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('Lease charges URL: $Api_url/api/leases/lease-charges/$leaseId');
+      print('Lease charges response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return LeaseCharges.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception(
+            'Failed to load lease charges. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching lease charges: $e');
+      throw Exception('Error fetching lease charges: $e');
     }
-
-    return response.statusCode;
   }
-
 }
