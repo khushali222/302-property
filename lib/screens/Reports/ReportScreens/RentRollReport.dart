@@ -76,7 +76,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     RentRollReportService service = RentRollReportService();
     try {
       rentrollreportmodel data =
-      await service.fetchRentRollreport(rentalOwnerId: id);
+          await service.fetchRentRollreport(rentalOwnerId: id);
       setState(() {
         // rentersInsuranceModel = data;
         isLoading = false;
@@ -87,7 +87,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       setState(() {
         isLoading = false;
         errorMessage =
-        'Failed to load renters insurance data. Please try again later.';
+            'Failed to load renters insurance data. Please try again later.';
       });
       throw Exception('Failed to load renters insurance');
     }
@@ -181,10 +181,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -201,10 +201,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -216,8 +216,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -318,9 +318,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     children: [
                       width < 400
                           ? const Text("   Unit",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text("   Unit",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -526,9 +526,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     children: [
                       width < 400
                           ? Text("   $h1",
-                          style: const TextStyle(color: Colors.white))
+                              style: const TextStyle(color: Colors.white))
                           : Text("   $h1",
-                          style: const TextStyle(color: Colors.white)),
+                              style: const TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -662,7 +662,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     );
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final currentDate =
-    dateProvider.formatCurrentDate(DateTime.now().toString());
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     final headers = [
       {'title': 'Unit', 'flex': 1},
@@ -683,19 +683,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
     // Table Data
     final tableData = data.bedBathSummary!.bedBathSummary?.map((item) {
-      return [
-        leftAlignedText(item.bedBath ?? ''),
-        rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
-        rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
-        rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
-        rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
-        rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
-        rightAlignedText(item.avgSqFt ?? '0.00'),
-        rightAlignedText(item.totalRent ?? '0.00'),
-        rightAlignedText(item.avgRent ?? '0.00'),
-        rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
-      ];
-    }).toList() ??
+          return [
+            leftAlignedText(item.bedBath ?? ''),
+            rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
+            rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.avgSqFt ?? '0.00'),
+            rightAlignedText(item.totalRent ?? '0.00'),
+            rightAlignedText(item.avgRent ?? '0.00'),
+            rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
+          ];
+        }).toList() ??
         [];
 
     // Add Totals and Averages
@@ -703,17 +703,17 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       leftAlignedText('Totals and Averages', isBold: true),
       rightAlignedText(
           data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
           data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
           data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
@@ -722,7 +722,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           isBold: true),
       rightAlignedText(
           data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
@@ -744,19 +744,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
     final tablePropertyData =
         data.propertySummary!.propertySummary?.map((item) {
-          return [
-            leftAlignedText(item.property ?? ''),
-            rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
-            rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
-            rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
-            rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
-            rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
-            rightAlignedText(item.avgSqFt ?? '0.00'),
-            rightAlignedText(item.totalRent ?? '0.00'),
-            rightAlignedText(item.avgRent ?? '0.00'),
-            rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
-          ];
-        }).toList() ??
+              return [
+                leftAlignedText(item.property ?? ''),
+                rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
+                rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.avgSqFt ?? '0.00'),
+                rightAlignedText(item.totalRent ?? '0.00'),
+                rightAlignedText(item.avgRent ?? '0.00'),
+                rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
+              ];
+            }).toList() ??
             [];
 
     // Add Totals and Averages
@@ -764,17 +764,17 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       leftAlignedText('Totals and Averages', isBold: true),
       rightAlignedText(
           data.propertySummary!.totalsAndAveragesProperty?.totalUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
           data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
           data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
@@ -783,7 +783,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           isBold: true),
       rightAlignedText(
           data.propertySummary!.totalsAndAveragesProperty?.totalSqFt
-              ?.toStringAsFixed(0) ??
+                  ?.toStringAsFixed(0) ??
               '0',
           isBold: true),
       rightAlignedText(
@@ -799,7 +799,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           isBold: true),
       rightAlignedText(
           data.propertySummary!.totalsAndAveragesProperty
-              ?.avgMarketRentPerSqFt ??
+                  ?.avgMarketRentPerSqFt ??
               '0.00',
           isBold: true),
     ];
@@ -880,9 +880,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 headerAlignments: {
                   for (int i = 0; i < headers.length; i++)
                     i: headers[i]['title']
-                        .toString()
-                        .toLowerCase()
-                        .contains('tenant')
+                            .toString()
+                            .toLowerCase()
+                            .contains('tenant')
                         ? pw.Alignment.centerLeft
                         : pw.Alignment.center,
                 },
@@ -903,7 +903,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             // Data
             ...data.rentals!.expand((rental) {
               final List<List<pw.Widget>> leaseRows =
-              rental.activeLeases!.map((leasedata) {
+                  rental.activeLeases!.map((leasedata) {
                 return [
                   pw.Text(leasedata.unit?.rentalUnit ?? '',
                       style: const pw.TextStyle(fontSize: 7)),
@@ -912,14 +912,14 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       child: pw.Text(
                         leasedata.tenants!
                             .map((t) =>
-                        "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
+                                "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
                             .join(", "),
                         style: const pw.TextStyle(fontSize: 7),
                       )),
                   pw.Text(
                       leasedata.leaseStart != null
                           ? dateProvider
-                          .formatCurrentDate(leasedata.leaseStart!)
+                              .formatCurrentDate(leasedata.leaseStart!)
                           : '',
                       style: const pw.TextStyle(fontSize: 7)),
                   pw.Text(
@@ -934,7 +934,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Text(
                       leasedata.leaseStart != null
                           ? dateProvider
-                          .formatCurrentDate(leasedata.leaseStart!)
+                              .formatCurrentDate(leasedata.leaseStart!)
                           : '',
                       style: const pw.TextStyle(fontSize: 7)),
                   pw.Align(
@@ -1024,7 +1024,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Table.fromTextArray(
                     cellAlignment: pw.Alignment.centerLeft,
                     headerDecoration:
-                    const pw.BoxDecoration(), // No header style
+                        const pw.BoxDecoration(), // No header style
                     headerHeight: 0, // Hide header row
                     border: null,
                     data: [
@@ -1123,9 +1123,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   headerAlignments: {
                     for (int i = 0; i < headers.length; i++)
                       i: headers[i]['title']
-                          .toString()
-                          .toLowerCase()
-                          .contains('tenant')
+                              .toString()
+                              .toLowerCase()
+                              .contains('tenant')
                           ? pw.Alignment.centerLeft
                           : pw.Alignment.center,
                   },
@@ -1346,7 +1346,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     // Set the current date
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final currentDate =
-    dateProvider.formatCurrentDate(DateTime.now().toString());
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Add header information
 
@@ -1479,9 +1479,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).setText("");
     sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.bold = true;
     sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.backColor =
-    '#1E88E5';
+        '#1E88E5';
     sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.fontColor =
-    '#FFFFFF';
+        '#FFFFFF';
     sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.hAlign =
         syncXlsx.HAlignType.center;
     sheet.getRangeByIndex(rowIndex, 4).setText("Amount");
@@ -1595,12 +1595,12 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits?.toDouble() ??
             0.0);
     sheet.getRangeByIndex(rowIndex, 3).setNumber(data
-        .bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
-        ?.toDouble() ??
+            .bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 4).setNumber(data
-        .bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
-        ?.toDouble() ??
+            .bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 5).setText(
         "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ??
@@ -1672,23 +1672,23 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     // Add property totals
     sheet.getRangeByIndex(rowIndex, 1).setText('Totals and Averages');
     sheet.getRangeByIndex(rowIndex, 2).setNumber(data
-        .propertySummary!.totalsAndAveragesProperty?.totalUnits
-        ?.toDouble() ??
+            .propertySummary!.totalsAndAveragesProperty?.totalUnits
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 3).setNumber(data
-        .propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
-        ?.toDouble() ??
+            .propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 4).setNumber(data
-        .propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
-        ?.toDouble() ??
+            .propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 5).setText(
         "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ??
             '0.00%');
     sheet.getRangeByIndex(rowIndex, 6).setNumber(data
-        .propertySummary!.totalsAndAveragesProperty?.totalSqFt
-        ?.toDouble() ??
+            .propertySummary!.totalsAndAveragesProperty?.totalSqFt
+            ?.toDouble() ??
         0.0);
     sheet.getRangeByIndex(rowIndex, 7).setText(
         data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00');
@@ -1740,7 +1740,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
     final currentDate =
-    dateProvider.formatCurrentDate(DateTime.now().toString());
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Add headers
     final headers = [
@@ -1895,18 +1895,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final bedBathTotals = [
       'Totals and Averages',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ??
           '0.00%',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ?? '0.00',
@@ -1946,18 +1946,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final propertyTotals = [
       'Totals and Averages',
       data.propertySummary!.totalsAndAveragesProperty?.totalUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ??
           '0.00%',
       data.propertySummary!.totalsAndAveragesProperty?.totalSqFt
-          ?.toStringAsFixed(0) ??
+              ?.toStringAsFixed(0) ??
           '0',
       data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00',
       data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ??
@@ -2034,661 +2034,667 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0),
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left:
-                    MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                    right:
-                    MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                child: titleBar(
-                  width: double.infinity,
-                  title: "Rent Roll Report",
-                ),
-              ),
-            ),
-            // if (MediaQuery.of(context).size.width > 500)
-            //   const SizedBox(height: 16),
-            // if (MediaQuery.of(context).size.width < 500)
-            FutureBuilder<rentrollreportmodel>(
-              future: _futureRentersInsurance,
-              builder: (context, snapshot) {
-                if (isLoading) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ColabShimmerLoadingWidget(),
-                  );
-                } else if (!snapshot.hasData ||
-                    snapshot.data!.rentals!.isEmpty) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: Row(
-                          children: [
-                            // Dropdown for Rental Owners
-                            Expanded(
-                              child: DropdownButtonHideUnderline(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: DropdownButton2<String>(
-                                    isExpanded: true,
-                                    hint: const Row(
-                                      children: [
-                                        SizedBox(width: 4),
-                                        Expanded(
-                                          child: Text(
-                                            'Select Rental Owners',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    items: rentalowners
-                                        .map((owner) =>
-                                        DropdownMenuItem<String>(
-                                          value:
-                                          owner['rentalowner_id'],
-                                          child: Text(
-                                            owner[
-                                            'rentalOwner_name']!,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                        .toList(),
-                                    value: selectedOwner,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedOwner = value;
-                                      });
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 45,
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.only(
-                                          left: 14, right: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: const Color(0xFF8A95A8),
-                                        ),
-                                        color: Colors.white,
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight: 250,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.8,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(14),
-                                      ),
-                                      offset: const Offset(-20, 0),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(40),
-                                        thickness:
-                                        MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                        MaterialStateProperty.all(
-                                            true),
-                                      ),
-                                    ),
-                                    menuItemStyleData:
-                                    const MenuItemStyleData(
-                                      height: 50,
-                                      padding: EdgeInsets.only(
-                                          left: 14, right: 14),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-
-                            // Run Report Button
-                            Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(0),
-                                color: Colors.white,
-                              ),
-                              child: IconButton(
-                                icon: const FaIcon(
-                                    FontAwesomeIcons.circlePlay),
-                                onPressed: () {
-                                  setState(() {
-                                    _futureRentersInsurance =
-                                        fetchRentersInsuranceData(
-                                            id: selectedOwner);
-                                  });
-                                  print("Run Report");
-                                },
-                                tooltip: "Run Report",
-                              ),
-                            ),
-                            //const SizedBox(width: 8),
-
-                            // Download Button with Dropdown
-                            Container(
-                              height: 45,
-                              width: 75,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(0),
-                                color: Colors.white,
-                              ),
-                              child: PopupMenuButton<String>(
-                                offset: const Offset(5, 50),
-                                onSelected: handleDownload,
-                                icon: const Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons
-                                        .download), // Your download icon
-                                    SizedBox(
-                                        width:
-                                        5), // Adds spacing between the icons
-                                    Icon(Icons
-                                        .arrow_drop_down), // The dropdown arrow icon
-                                  ],
-                                ),
-                                tooltip: "Download",
-                                itemBuilder: (BuildContext context) {
-                                  return downloadOptions
-                                      .map((String option) {
-                                    return PopupMenuItem<String>(
-                                      value: option,
-                                      onTap: () async {
-                                        if (snapshot.hasData)
-                                          generateRentersInsuranceExcel(
-                                              snapshot.data!);
-                                      },
-                                      child: Text("Download as $option"),
-                                    );
-                                  }).toList();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Rent Roll Report",
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-
-                var data = snapshot.data!.rentals!;
-
-                // Pagination logic
-                final totalPages = (data.length / itemsPerPage).ceil();
-                final currentPageData = data
-                    .skip(currentPage * itemsPerPage)
-                    .take(itemsPerPage)
-                    .toList();
-
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Search & Export Section
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: Row(
-                          children: [
-                            // Dropdown for Rental Owners
-                            Expanded(
-                              child: DropdownButtonHideUnderline(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: DropdownButton2<String>(
-                                    isExpanded: true,
-                                    hint: const Row(
-                                      children: [
-                                        SizedBox(width: 4),
-                                        Expanded(
-                                          child: Text(
-                                            'Select Rental Owners',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    items: rentalowners
-                                        .map((owner) =>
-                                        DropdownMenuItem<String>(
-                                          value:
-                                          owner['rentalowner_id'],
-                                          child: Text(
-                                            owner[
-                                            'rentalOwner_name']!,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                        .toList(),
-                                    value: selectedOwner,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedOwner = value;
-                                      });
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 45,
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.only(
-                                          left: 14, right: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: const Color(0xFF8A95A8),
-                                        ),
-                                        color: Colors.white,
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight: 250,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.8,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(14),
-                                      ),
-                                      offset: const Offset(-20, 0),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(40),
-                                        thickness:
-                                        MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                        MaterialStateProperty.all(
-                                            true),
-                                      ),
-                                    ),
-                                    menuItemStyleData:
-                                    const MenuItemStyleData(
-                                      height: 50,
-                                      padding: EdgeInsets.only(
-                                          left: 14, right: 14),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-
-                            // Run Report Button
-                            Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(0),
-                                color: Colors.white,
-                              ),
-                              child: IconButton(
-                                icon: const FaIcon(
-                                    FontAwesomeIcons.circlePlay),
-                                onPressed: () {
-                                  setState(() {
-                                    _futureRentersInsurance =
-                                        fetchRentersInsuranceData(
-                                            id: selectedOwner);
-                                  });
-                                  print("Run Report");
-                                },
-                                tooltip: "Run Report",
-                              ),
-                            ),
-                            //const SizedBox(width: 8),
-
-                            // Download Button with Dropdown
-                            Container(
-                              height: 45,
-                              width: 75,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(0),
-                                color: Colors.white,
-                              ),
-                              child: PopupMenuButton<String>(
-                                offset: const Offset(5, 50),
-                                onSelected: handleDownload,
-                                icon: const Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    FaIcon(FontAwesomeIcons
-                                        .download), // Your download icon
-                                    SizedBox(
-                                        width:
-                                        5), // Adds spacing between the icons
-                                    Icon(Icons
-                                        .arrow_drop_down), // The dropdown arrow icon
-                                  ],
-                                ),
-                                tooltip: "Download",
-                                itemBuilder: (BuildContext context) {
-                                  return downloadOptions
-                                      .map((String option) {
-                                    return PopupMenuItem<String>(
-                                      value: option,
-                                      onTap: () async {
-                                        if (option == "PDF")
-                                          generaterentersInsurancePdf(
-                                              snapshot.data!);
-                                        if (option == "Excel")
-                                          generateRentersInsuranceExcel(
-                                              snapshot.data!);
-                                        if (option == "CSV")
-                                          generateRentersInsuranceCSV(
-                                              snapshot.data!);
-                                      },
-                                      child: Text("Download as $option"),
-                                    );
-                                  }).toList();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin:
-                        const EdgeInsets.symmetric(horizontal: 15),
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE0E0E0),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          children: [
-                            _buildTabButton("Details", 0),
-                            _buildTabButton("Summary", 1),
-                          ],
-                        ),
-                      ),
-                      if (_selectedIndex == 0)
-                        DetailScreen(currentPageData),
-                      if (_selectedIndex == 1)
-                        SummeryScreen(snapshot.data!),
-
-                      // Pagination controls for Details tab
-                      if (_selectedIndex == 0 &&
-                          data.length > itemsPerPage)
-                        Padding(
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  FutureBuilder<rentrollreportmodel>(
+                    future: _futureRentersInsurance,
+                    builder: (context, snapshot) {
+                      if (isLoading) {
+                        return Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
+                          child: ColabShimmerLoadingWidget(),
+                        );
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.rentals!.isEmpty) {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
                                 children: [
-                                  const SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child:
-                                              Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: (newValue) {
+                                  // Dropdown for Rental Owners
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  'Select Rental Owners',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items: rentalowners
+                                              .map((owner) =>
+                                                  DropdownMenuItem<String>(
+                                                    value:
+                                                        owner['rentalowner_id'],
+                                                    child: Text(
+                                                      owner[
+                                                          'rentalOwner_name']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                          value: selectedOwner,
+                                          onChanged: (value) {
                                             setState(() {
-                                              itemsPerPage = newValue!;
-                                              currentPage =
-                                              0; // Reset to first page when items per page change
+                                              selectedOwner = value;
                                             });
                                           },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: const Color(0xFF8A95A8),
+                                              ),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 250,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            offset: const Offset(-20, 0),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(40),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
+
+                                  // Run Report Button
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: IconButton(
+                                      icon: const FaIcon(
+                                          FontAwesomeIcons.circlePlay),
+                                      onPressed: () {
+                                        setState(() {
+                                          _futureRentersInsurance =
+                                              fetchRentersInsuranceData(
+                                                  id: selectedOwner);
+                                        });
+                                        print("Run Report");
+                                      },
+                                      tooltip: "Run Report",
+                                    ),
+                                  ),
+                                  //const SizedBox(width: 8),
+
+                                  // Download Button with Dropdown
+                                  Container(
+                                    height: 45,
+                                    width: 75,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: PopupMenuButton<String>(
+                                      offset: const Offset(5, 50),
+                                      onSelected: handleDownload,
+                                      icon: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons
+                                              .download), // Your download icon
+                                          SizedBox(
+                                              width:
+                                                  5), // Adds spacing between the icons
+                                          Icon(Icons
+                                              .arrow_drop_down), // The dropdown arrow icon
+                                        ],
+                                      ),
+                                      tooltip: "Download",
+                                      itemBuilder: (BuildContext context) {
+                                        return downloadOptions
+                                            .map((String option) {
+                                          return PopupMenuItem<String>(
+                                            value: option,
+                                            onTap: () async {
+                                              if (snapshot.hasData)
+                                                generateRentersInsuranceExcel(
+                                                    snapshot.data!);
+                                            },
+                                            child: Text("Download as $option"),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  )
                                 ],
                               ),
-                              Row(
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      // Filter rentals to show only those with active lease data
+                      var allRentals = snapshot.data!.rentals!;
+                      var data = allRentals
+                          .where((rental) =>
+                              rental.activeLeases != null &&
+                              rental.activeLeases!.isNotEmpty)
+                          .toList();
+
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Search & Export Section
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
                                 children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 0
-                                          ? Colors.grey
-                                          : blueColor,
+                                  // Dropdown for Rental Owners
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  'Select Rental Owners',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items: rentalowners
+                                              .map((owner) =>
+                                                  DropdownMenuItem<String>(
+                                                    value:
+                                                        owner['rentalowner_id'],
+                                                    child: Text(
+                                                      owner[
+                                                          'rentalOwner_name']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                          value: selectedOwner,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              selectedOwner = value;
+                                            });
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: const Color(0xFF8A95A8),
+                                              ),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 250,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            offset: const Offset(-20, 0),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(40),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                      setState(() {
-                                        currentPage--;
-                                      });
-                                    },
                                   ),
-                                  Text(
-                                      'Page ${currentPage + 1} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages - 1
-                                          ? blueColor
-                                          : Colors.grey,
+                                  const SizedBox(width: 8),
+
+                                  // Run Report Button
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
                                     ),
-                                    onPressed:
-                                    currentPage < totalPages - 1
-                                        ? () {
-                                      setState(() {
-                                        currentPage++;
-                                      });
-                                    }
-                                        : null,
+                                    child: IconButton(
+                                      icon: const FaIcon(
+                                          FontAwesomeIcons.circlePlay),
+                                      onPressed: () {
+                                        setState(() {
+                                          _futureRentersInsurance =
+                                              fetchRentersInsuranceData(
+                                                  id: selectedOwner);
+                                        });
+                                        print("Run Report");
+                                      },
+                                      tooltip: "Run Report",
+                                    ),
                                   ),
+                                  //const SizedBox(width: 8),
+
+                                  // Download Button with Dropdown
+                                  Container(
+                                    height: 45,
+                                    width: 75,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: PopupMenuButton<String>(
+                                      offset: const Offset(5, 50),
+                                      onSelected: handleDownload,
+                                      icon: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons
+                                              .download), // Your download icon
+                                          SizedBox(
+                                              width:
+                                                  5), // Adds spacing between the icons
+                                          Icon(Icons
+                                              .arrow_drop_down), // The dropdown arrow icon
+                                        ],
+                                      ),
+                                      tooltip: "Download",
+                                      itemBuilder: (BuildContext context) {
+                                        return downloadOptions
+                                            .map((String option) {
+                                          return PopupMenuItem<String>(
+                                            value: option,
+                                            onTap: () async {
+                                              if (option == "PDF")
+                                                generaterentersInsurancePdf(
+                                                    snapshot.data!);
+                                              if (option == "Excel")
+                                                generateRentersInsuranceExcel(
+                                                    snapshot.data!);
+                                              if (option == "CSV")
+                                                generateRentersInsuranceCSV(
+                                                    snapshot.data!);
+                                            },
+                                            child: Text("Download as $option"),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  )
                                 ],
                               ),
-                            ],
-                          ),
-                        )
-                      // Custom Tab Bar
-                    ],
+                            ),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE0E0E0),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  _buildTabButton("Details", 0),
+                                  _buildTabButton("Summary", 1),
+                                ],
+                              ),
+                            ),
+                            if (_selectedIndex == 0)
+                              DetailScreen(currentPageData),
+                            if (_selectedIndex == 1)
+                              SummeryScreen(snapshot.data!),
+
+                            // Pagination controls for Details tab
+                            if (_selectedIndex == 0 &&
+                                data.length > itemsPerPage)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage =
+                                                        0; // Reset to first page when items per page change
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            // Custom Tab Bar
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
 
-            //   FutureBuilder<List<RentersInsuranceData>>(
-            //     future: _futureRentersInsurance,
-            //     builder: (context, snapshot) {
-            //       if (isLoading) {
-            //         return Center(
-            //           child: SpinKitFadingCircle(
-            //             color: Colors.black,
-            //             size: 40.0,
-            //           ),
-            //         );
-            //       } else if (snapshot.hasError) {
-            //         return Center(child: Text(errorMessage ?? 'Unknown error'));
-            //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            //        return Container(
-            //             height: MediaQuery.of(context).size.height * .5,
-            //             child: Center(
-            //               child: Column(
-            //                 mainAxisAlignment: MainAxisAlignment.center,
-            //                 crossAxisAlignment: CrossAxisAlignment.center,
-            //                 children: [
-            //                   Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-            //                   SizedBox(height: 10,),
-            //                   Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-            //                 ],
-            //               ),
-            //             ),
-            //           );
-            //       }
+                  //   FutureBuilder<List<RentersInsuranceData>>(
+                  //     future: _futureRentersInsurance,
+                  //     builder: (context, snapshot) {
+                  //       if (isLoading) {
+                  //         return Center(
+                  //           child: SpinKitFadingCircle(
+                  //             color: Colors.black,
+                  //             size: 40.0,
+                  //           ),
+                  //         );
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(child: Text(errorMessage ?? 'Unknown error'));
+                  //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  //        return Container(
+                  //             height: MediaQuery.of(context).size.height * .5,
+                  //             child: Center(
+                  //               child: Column(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 crossAxisAlignment: CrossAxisAlignment.center,
+                  //                 children: [
+                  //                   Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                  //                   SizedBox(height: 10,),
+                  //                   Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           );
+                  //       }
 
-            //       var data = snapshot.data!;
-            //       return SingleChildScrollView(
-            //         scrollDirection: Axis.horizontal,
-            //         child: SizedBox(
-            //           width: MediaQuery.of(context).size.width * 0.95,
-            //           child: Padding(
-            //             padding: const EdgeInsets.all(16.0),
-            //             child: Column(
-            //               children: [
-            //                 Table(
-            //                   defaultColumnWidth: IntrinsicColumnWidth(),
-            //                   columnWidths: const {
-            //                     0: FlexColumnWidth(),
-            //                     1: FlexColumnWidth(),
-            //                     2: FlexColumnWidth(),
-            //                     3: FlexColumnWidth(),
-            //                   },
-            //                   children: [
-            //                     TableRow(
-            //                       decoration: BoxDecoration(
-            //                         border: Border.all(color: blueColor),
-            //                       ),
-            //                       children: [
-            //                         _buildHeader('Unit', 0,
-            //                             (item) => item.rentalAddress!),
-            //                         _buildHeader('Ten.. Name', 1,
-            //                             (tenant) => tenant.rentalAddress!),
-            //                         _buildHeader(
-            //                             'Provider',
-            //                             2,
-            //                             (tenant) =>
-            //                                 tenant.rentalAddress ?? '-'),
-            //                         _buildHeader('Policy Id', 3,
-            //                             (item) => item.rentalAddress!),
-            //                         _buildHeader('Liability Coverage', 3,
-            //                             (item) => item.rentalAddress!),
-            //                       ],
-            //                     ),
-            //                     TableRow(
-            //                       decoration: BoxDecoration(
-            //                         border: Border.symmetric(
-            //                             horizontal: BorderSide.none),
-            //                       ),
-            //                       children: List.generate(
-            //                           5,
-            //                           (index) => TableCell(
-            //                               child: Container(height: 20))),
-            //                     ),
-            //                     for (var entry in data.asMap().entries)
-            //                       ..._buildExpandableRows(
-            //                           entry.key, entry.value),
-            //                   ],
-            //                 ),
-            //                 SizedBox(height: 25),
-            //                 _buildPaginationControls(),
-            //                 SizedBox(height: 25),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       );
-            //     },
-            //   )
-          ],
-        ),
-      )
+                  //       var data = snapshot.data!;
+                  //       return SingleChildScrollView(
+                  //         scrollDirection: Axis.horizontal,
+                  //         child: SizedBox(
+                  //           width: MediaQuery.of(context).size.width * 0.95,
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.all(16.0),
+                  //             child: Column(
+                  //               children: [
+                  //                 Table(
+                  //                   defaultColumnWidth: IntrinsicColumnWidth(),
+                  //                   columnWidths: const {
+                  //                     0: FlexColumnWidth(),
+                  //                     1: FlexColumnWidth(),
+                  //                     2: FlexColumnWidth(),
+                  //                     3: FlexColumnWidth(),
+                  //                   },
+                  //                   children: [
+                  //                     TableRow(
+                  //                       decoration: BoxDecoration(
+                  //                         border: Border.all(color: blueColor),
+                  //                       ),
+                  //                       children: [
+                  //                         _buildHeader('Unit', 0,
+                  //                             (item) => item.rentalAddress!),
+                  //                         _buildHeader('Ten.. Name', 1,
+                  //                             (tenant) => tenant.rentalAddress!),
+                  //                         _buildHeader(
+                  //                             'Provider',
+                  //                             2,
+                  //                             (tenant) =>
+                  //                                 tenant.rentalAddress ?? '-'),
+                  //                         _buildHeader('Policy Id', 3,
+                  //                             (item) => item.rentalAddress!),
+                  //                         _buildHeader('Liability Coverage', 3,
+                  //                             (item) => item.rentalAddress!),
+                  //                       ],
+                  //                     ),
+                  //                     TableRow(
+                  //                       decoration: BoxDecoration(
+                  //                         border: Border.symmetric(
+                  //                             horizontal: BorderSide.none),
+                  //                       ),
+                  //                       children: List.generate(
+                  //                           5,
+                  //                           (index) => TableCell(
+                  //                               child: Container(height: 20))),
+                  //                     ),
+                  //                     for (var entry in data.asMap().entries)
+                  //                       ..._buildExpandableRows(
+                  //                           entry.key, entry.value),
+                  //                   ],
+                  //                 ),
+                  //                 SizedBox(height: 25),
+                  //                 _buildPaginationControls(),
+                  //                 SizedBox(height: 25),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   )
+                ],
+              ),
+            )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  const Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            const Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -2704,7 +2710,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             Container(
               decoration: BoxDecoration(
                 border:
-                Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: currentPageData.asMap().entries.map((entry) {
@@ -2739,7 +2745,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       } else {
                                         expandedRowIndex = rowIndex;
                                         nestedExpandedIndex =
-                                        null; // reset inner when switching rows
+                                            null; // reset inner when switching rows
                                       }
                                     });
                                   },
@@ -2785,75 +2791,75 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                             ),
                             child: Column(
                               children: item.activeLeases
-                                  ?.asMap()
-                                  .entries
-                                  .map((leaseEntry) {
-                                int leaseIndex = leaseEntry.key;
-                                ActiveLeases lease = leaseEntry.value;
-                                bool isLeaseExpanded =
-                                    expandedLeaseIndex == leaseIndex;
-                                bool isLeaseIndexExpanded =
-                                    expandedLeaseTotalIndex == leaseIndex;
+                                      ?.asMap()
+                                      .entries
+                                      .map((leaseEntry) {
+                                    int leaseIndex = leaseEntry.key;
+                                    ActiveLeases lease = leaseEntry.value;
+                                    bool isLeaseExpanded =
+                                        expandedLeaseIndex == leaseIndex;
+                                    bool isLeaseIndexExpanded =
+                                        expandedLeaseTotalIndex == leaseIndex;
 
-                                return Column(
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 0),
-                                      child: ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        onTap: () {
-                                          setState(() {
-                                            if (expandedLeaseIndex ==
-                                                leaseIndex) {
-                                              expandedLeaseIndex = null;
-                                            } else {
-                                              expandedLeaseIndex =
-                                                  leaseIndex;
-                                            }
-                                          });
-                                        },
-                                        title: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  if (expandedLeaseIndex ==
-                                                      leaseIndex) {
-                                                    expandedLeaseIndex =
-                                                    null;
-                                                  } else {
-                                                    expandedLeaseIndex =
-                                                        leaseIndex;
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                margin:
-                                                const EdgeInsets.only(
-                                                    left: 5),
-                                                padding: !isLeaseExpanded
-                                                    ? const EdgeInsets.only(
-                                                    bottom: 10)
-                                                    : const EdgeInsets.only(
-                                                    top: 10),
-                                                child: FaIcon(
-                                                  isLeaseExpanded
-                                                      ? FontAwesomeIcons
-                                                      .sortUp
-                                                      : FontAwesomeIcons
-                                                      .sortDown,
-                                                  size: 20,
-                                                  color: blueColor,
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 0),
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            onTap: () {
+                                              setState(() {
+                                                if (expandedLeaseIndex ==
+                                                    leaseIndex) {
+                                                  expandedLeaseIndex = null;
+                                                } else {
+                                                  expandedLeaseIndex =
+                                                      leaseIndex;
+                                                }
+                                              });
+                                            },
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (expandedLeaseIndex ==
+                                                          leaseIndex) {
+                                                        expandedLeaseIndex =
+                                                            null;
+                                                      } else {
+                                                        expandedLeaseIndex =
+                                                            leaseIndex;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    padding: !isLeaseExpanded
+                                                        ? const EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : const EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
+                                                      isLeaseExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 20,
+                                                      color: blueColor,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                                child: Text(
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                    child: Text(
                                                   "${lease.unit?.rentalUnit ?? '-'}",
                                                   style: TextStyle(
                                                     color: blueColor,
@@ -2861,8 +2867,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     fontSize: 14,
                                                   ),
                                                 )),
-                                            Expanded(
-                                                child: Text(
+                                                Expanded(
+                                                    child: Text(
                                                   "${lease.leaseStart != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseStart!) : '-'}",
                                                   style: TextStyle(
                                                     color: blueColor,
@@ -2870,8 +2876,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     fontSize: 14,
                                                   ),
                                                 )),
-                                            Expanded(
-                                                child: Text(
+                                                Expanded(
+                                                    child: Text(
                                                   "${lease.leaseEnd != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseEnd!) : '-'}",
                                                   style: TextStyle(
                                                     color: blueColor,
@@ -2879,204 +2885,204 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     fontSize: 14,
                                                   ),
                                                 )),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    if (isLeaseExpanded)
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Table(
-                                              columnWidths: {
-                                                // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                // 1: FlexColumnWidth(),
-                                                0: const FlexColumnWidth(), // Distribute columns equally
-                                                1: const FlexColumnWidth(),
-                                                2: const FlexColumnWidth(),
-                                              },
-                                              children: [
-                                                buildTableRows(
-                                                  'Rent start',
-                                                  getDisplayValue(
-                                                      "${lease.leaseStart != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseStart!) : '-'}"),
-                                                  'Rent Cycle',
-                                                  getDisplayValue(
-                                                      lease.rentCycle),
-                                                  'Credits',
-                                                  getDisplayValue(
-                                                      "\$${lease.creditAmount!.toStringAsFixed(2)}"),
-                                                ),
-                                                buildTableRows(
-                                                  'Bed/Bath',
-                                                  getDisplayValue(
-                                                      "${lease.unit!.bedBath}"),
-                                                  'Prepayments',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .prepayments)),
-                                                  'Charges',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .chargeAmount)),
-                                                ),
-                                                buildTableRows(
-                                                  'Total',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .chargeTotal)),
-                                                  'Balance Due',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .balanceDue)),
-                                                  'Rent',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .rentAmount)),
-                                                ),
-                                                buildTableRows(
-                                                  'Deposit Held',
-                                                  getDisplayValue(
-                                                      formatCurrency(lease
-                                                          .depositHeld)),
-                                                  'Tenants',
-                                                  getDisplayValue(lease
-                                                      .tenants!
-                                                      .map((tenant) =>
-                                                      "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}"
-                                                          .trim())
-                                                      .join(", ")),
-                                                  '',
-                                                  "",
-                                                )
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              top: BorderSide(
-                                                  color: Colors
-                                                      .grey.shade500))),
-                                      child: ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding:
-                                          const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (expandedLeaseTotalIndex ==
-                                                        leaseIndex) {
-                                                      expandedLeaseTotalIndex =
-                                                      null;
-                                                    } else {
-                                                      expandedLeaseTotalIndex =
-                                                          leaseIndex;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin:
-                                                  const EdgeInsets.only(
-                                                      left: 5),
-                                                  padding:
-                                                  !isLeaseIndexExpanded
-                                                      ? const EdgeInsets
-                                                      .only(
-                                                      bottom: 10)
-                                                      : const EdgeInsets
-                                                      .only(
-                                                      top: 10),
-                                                  child: FaIcon(
-                                                    isLeaseIndexExpanded
-                                                        ? FontAwesomeIcons
-                                                        .sortUp
-                                                        : FontAwesomeIcons
-                                                        .sortDown,
-                                                    size: 20,
-                                                    color: blueColor,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
+                                        ),
+                                        if (isLeaseExpanded)
+                                          Row(
+                                            children: [
                                               Expanded(
-                                                child: Text(
-                                                  'Total For ${item.rentalAddress ?? '-'}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontSize: 14,
-                                                  ),
+                                                child: Table(
+                                                  columnWidths: {
+                                                    // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                    // 1: FlexColumnWidth(),
+                                                    0: const FlexColumnWidth(), // Distribute columns equally
+                                                    1: const FlexColumnWidth(),
+                                                    2: const FlexColumnWidth(),
+                                                  },
+                                                  children: [
+                                                    buildTableRows(
+                                                      'Rent start',
+                                                      getDisplayValue(
+                                                          "${lease.leaseStart != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseStart!) : '-'}"),
+                                                      'Rent Cycle',
+                                                      getDisplayValue(
+                                                          lease.rentCycle),
+                                                      'Credits',
+                                                      getDisplayValue(
+                                                          "\$${lease.creditAmount!.toStringAsFixed(2)}"),
+                                                    ),
+                                                    buildTableRows(
+                                                      'Bed/Bath',
+                                                      getDisplayValue(
+                                                          "${lease.unit!.bedBath}"),
+                                                      'Prepayments',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .prepayments)),
+                                                      'Charges',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .chargeAmount)),
+                                                    ),
+                                                    buildTableRows(
+                                                      'Total',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .chargeTotal)),
+                                                      'Balance Due',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .balanceDue)),
+                                                      'Rent',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .rentAmount)),
+                                                    ),
+                                                    buildTableRows(
+                                                      'Deposit Held',
+                                                      getDisplayValue(
+                                                          formatCurrency(lease
+                                                              .depositHeld)),
+                                                      'Tenants',
+                                                      getDisplayValue(lease
+                                                          .tenants!
+                                                          .map((tenant) =>
+                                                              "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}"
+                                                                  .trim())
+                                                          .join(", ")),
+                                                      '',
+                                                      "",
+                                                    )
+                                                  ],
                                                 ),
                                               ),
-                                              const SizedBox(width: 8),
                                             ],
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                    if (isLeaseIndexExpanded)
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Table(
-                                              columnWidths: {
-                                                // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                // 1: FlexColumnWidth(),
-                                                0: const FlexColumnWidth(), // Distribute columns equally
-                                                1: const FlexColumnWidth(),
-                                                2: const FlexColumnWidth(),
-                                              },
-                                              children: [
-                                                buildTableRows(
-                                                  'Credits',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalCredits!.toStringAsFixed(2)}"),
-                                                  'Prepayments',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalPrepayments!.toStringAsFixed(2)}"),
-                                                  'Charges',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalCharges!.toStringAsFixed(2)}"),
-                                                ),
-                                                buildTableRows(
-                                                  'Total',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalAmount!.toStringAsFixed(2)}"),
-                                                  'Balance Due',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalBalanceDue!.toStringAsFixed(2)}"),
-                                                  'Rent',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalRent!.toStringAsFixed(2)}"),
-                                                ),
-                                                buildTableRows(
-                                                  'Deposit Held',
-                                                  getDisplayValue(
-                                                      "\$${item.totals!.totalDeposits!.toStringAsFixed(2)}"),
-                                                  '',
-                                                  "",
-                                                  '',
-                                                  "",
-                                                ),
-                                              ],
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  top: BorderSide(
+                                                      color: Colors
+                                                          .grey.shade500))),
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedLeaseTotalIndex ==
+                                                            leaseIndex) {
+                                                          expandedLeaseTotalIndex =
+                                                              null;
+                                                        } else {
+                                                          expandedLeaseTotalIndex =
+                                                              leaseIndex;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5),
+                                                      padding:
+                                                          !isLeaseIndexExpanded
+                                                              ? const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(
+                                                                  top: 10),
+                                                      child: FaIcon(
+                                                        isLeaseIndexExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 20,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Total For ${item.rentalAddress ?? '-'}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                  ],
-                                );
-                              }).toList() ??
+                                        ),
+                                        if (isLeaseIndexExpanded)
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Table(
+                                                  columnWidths: {
+                                                    // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                    // 1: FlexColumnWidth(),
+                                                    0: const FlexColumnWidth(), // Distribute columns equally
+                                                    1: const FlexColumnWidth(),
+                                                    2: const FlexColumnWidth(),
+                                                  },
+                                                  children: [
+                                                    buildTableRows(
+                                                      'Credits',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalCredits!.toStringAsFixed(2)}"),
+                                                      'Prepayments',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalPrepayments!.toStringAsFixed(2)}"),
+                                                      'Charges',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalCharges!.toStringAsFixed(2)}"),
+                                                    ),
+                                                    buildTableRows(
+                                                      'Total',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalAmount!.toStringAsFixed(2)}"),
+                                                      'Balance Due',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalBalanceDue!.toStringAsFixed(2)}"),
+                                                      'Rent',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalRent!.toStringAsFixed(2)}"),
+                                                    ),
+                                                    buildTableRows(
+                                                      'Deposit Held',
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalDeposits!.toStringAsFixed(2)}"),
+                                                      '',
+                                                      "",
+                                                      '',
+                                                      "",
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                      ],
+                                    );
+                                  }).toList() ??
                                   [const Text("No Active Leases")],
                             ),
                           )
@@ -3122,7 +3128,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             children: [
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                 child: Text(
                   "Grand totals",
                   textAlign: TextAlign.center,
@@ -3179,27 +3185,27 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               ),
               !isdisplaysummeryBedbath
                   ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
-                  });
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: FaIcon(FontAwesomeIcons.squareCaretDown),
-                ),
-              )
+                      onTap: () {
+                        setState(() {
+                          isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: FaIcon(FontAwesomeIcons.squareCaretDown),
+                      ),
+                    )
                   : GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
-                  });
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: FaIcon(FontAwesomeIcons.squareCaretUp),
-                ),
-              )
+                      onTap: () {
+                        setState(() {
+                          isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: FaIcon(FontAwesomeIcons.squareCaretUp),
+                      ),
+                    )
             ],
           ),
         ),
@@ -3217,7 +3223,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             decoration: BoxDecoration(
               border:
-              Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: Column(
               children: [
@@ -3255,7 +3261,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         } else {
                                           expandedRowbedbathIndex = rowIndex;
                                           nestedExpandedIndex =
-                                          null; // reset inner when switching rows
+                                              null; // reset inner when switching rows
                                         }
                                       });
                                     },
@@ -3500,7 +3506,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           currentPageData.length + 1;
                                       isRowExpanded = false;
                                       nestedExpandedIndex =
-                                      null; // reset inner when switching rows
+                                          null; // reset inner when switching rows
                                     }
                                   });
                                 },
@@ -3741,29 +3747,29 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               ),
               !isdisplaysummeryProperty
                   ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isdisplaysummeryProperty = !isdisplaysummeryProperty;
-                  });
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: FaIcon(
-                    FontAwesomeIcons.squareCaretDown,
-                  ),
-                ),
-              )
+                      onTap: () {
+                        setState(() {
+                          isdisplaysummeryProperty = !isdisplaysummeryProperty;
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: FaIcon(
+                          FontAwesomeIcons.squareCaretDown,
+                        ),
+                      ),
+                    )
                   : GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isdisplaysummeryProperty = !isdisplaysummeryProperty;
-                  });
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: FaIcon(FontAwesomeIcons.squareCaretUp),
-                ),
-              )
+                      onTap: () {
+                        setState(() {
+                          isdisplaysummeryProperty = !isdisplaysummeryProperty;
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: FaIcon(FontAwesomeIcons.squareCaretUp),
+                      ),
+                    )
             ],
           ),
         ),
@@ -3781,7 +3787,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             decoration: BoxDecoration(
               border:
-              Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: Column(
               children: [
@@ -3819,7 +3825,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         } else {
                                           expandedRowPropertyIndex = rowIndex;
                                           nestedExpandedIndex =
-                                          null; // reset inner when switching rows
+                                              null; // reset inner when switching rows
                                         }
                                       });
                                     },
@@ -4064,7 +4070,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           currentPageData.length;
                                       isRowPropertyExpanded = false;
                                       nestedExpandedIndex =
-                                      null; // reset inner when switching rows
+                                          null; // reset inner when switching rows
                                     }
                                   });
 
@@ -4357,7 +4363,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 Text(
                   leftLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -4377,7 +4383,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 Text(
                   centerLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -4397,7 +4403,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 Text(
                   rightLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(

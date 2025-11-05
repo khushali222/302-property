@@ -1977,7 +1977,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       timeformateselect =
                                           dateProvider.timeformateselect;
                                       dateformate1 =
-                                          DateFormat('MM-dd-yyyy').format(now);
+                                          DateFormat('MM/dd/yyyy').format(now);
                                       dateformate2 =
                                           DateFormat('yyyy-MM-dd').format(now);
                                       dateformate3 =
@@ -6451,34 +6451,46 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 padding: const EdgeInsets.only(
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(Icons.arrow_drop_down),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon:
+                                                    Icon(Icons.arrow_drop_down),
                                                 iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
-                                              dropdownStyleData: DropdownStyleData(
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
                                                 maxHeight: 250,
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
                                                   thumbVisibility:
-                                                  MaterialStateProperty.all(true),
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
-                                              menuItemStyleData: const MenuItemStyleData(
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
                                                 height: 50,
-                                                padding:
-                                                EdgeInsets.only(left: 14, right: 14),
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
                                               ),
                                               // validator: (value) {
                                               //   if (value == null || value.isEmpty) {
@@ -6675,34 +6687,46 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 padding: const EdgeInsets.only(
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
-                                                icon: Icon(Icons.arrow_drop_down),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon:
+                                                    Icon(Icons.arrow_drop_down),
                                                 iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
-                                              dropdownStyleData: DropdownStyleData(
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
                                                 maxHeight: 250,
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
                                                   thumbVisibility:
-                                                  MaterialStateProperty.all(true),
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
-                                              menuItemStyleData: const MenuItemStyleData(
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
                                                 height: 50,
-                                                padding:
-                                                EdgeInsets.only(left: 14, right: 14),
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
                                               ),
                                             ),
                                           ),

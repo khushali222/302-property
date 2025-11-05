@@ -597,7 +597,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(

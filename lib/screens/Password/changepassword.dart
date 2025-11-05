@@ -14,7 +14,12 @@ class Changepassword extends StatefulWidget {
   final String admin_id;
   final String role;
   String user_id;
-   Changepassword({super.key, required this.email,required this.admin_id, required this.role,required this.user_id});
+  Changepassword(
+      {super.key,
+      required this.email,
+      required this.admin_id,
+      required this.role,
+      required this.user_id});
 
   @override
   State<Changepassword> createState() => _ChangepasswordState();
@@ -46,9 +51,9 @@ class _ChangepasswordState extends State<Changepassword> {
       body: jsonEncode(<String, dynamic>{
         'email': widget.email,
         'password': password.text,
-        'admin_id':widget.admin_id,
-        'role':widget.role,
-        'user_id':widget.user_id
+        'admin_id': widget.admin_id,
+        'role': widget.role,
+        'user_id': widget.user_id
       }),
     );
     print("${widget.role}");
@@ -65,8 +70,7 @@ class _ChangepasswordState extends State<Changepassword> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text("Password updated successfully")),
         // );
-        Fluttertoast.showToast(
-            msg: 'Password updated successfully');
+        Fluttertoast.showToast(msg: 'Password updated successfully');
       } else {
         // Handle other successful responses or display an error message
       }
@@ -75,8 +79,7 @@ class _ChangepasswordState extends State<Changepassword> {
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text("Failed to update password")),
       // );
-      Fluttertoast.showToast(
-          msg: 'Failed to update password');
+      Fluttertoast.showToast(msg: 'Failed to update password');
     }
   }
 
@@ -85,8 +88,7 @@ class _ChangepasswordState extends State<Changepassword> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body:
-        Form(
+        body: Form(
           key: formKey,
           child: ListView(
             children: [
@@ -118,14 +120,31 @@ class _ChangepasswordState extends State<Changepassword> {
               // Login text
               Center(
                 child: Text(
-                  "change Password ?",
+                  "Change Password ?",
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: MediaQuery.of(context).size.width * 0.034),
+                      fontSize: MediaQuery.of(context).size.width * 0.045),
                 ),
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.06,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Text(
+                    'Password',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: blueColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
               ),
               Row(
                 children: [
@@ -204,14 +223,48 @@ class _ChangepasswordState extends State<Changepassword> {
                 ],
               ),
               passworderror
-                  ? Center(
-                      child: Text(
-                      passwordmessage,
-                      style: TextStyle(color: Colors.red),
-                    ))
+                  ? Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.099,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.005,
+                            ),
+                            child: Text(
+                              passwordmessage,
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.099,
+                        ),
+                      ],
+                    )
                   : Container(),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
+                height: MediaQuery.of(context).size.height * 0.03,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.099,
+                  ),
+                  Text(
+                    'Confirm Password',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: blueColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
               ),
               Row(
                 children: [
@@ -260,7 +313,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                       child: Image.asset(
                                           'assets/icons/pasword.png'),
                                     ),
-                                    hintText: "Confirmpassword",
+                                    hintText: "Confirm Password",
                                     suffixIcon: InkWell(
                                       onTap: () {
                                         setState(() {
@@ -290,17 +343,26 @@ class _ChangepasswordState extends State<Changepassword> {
                 ],
               ),
               confirmpassworderror
-                  ? Center(
-                      child: Text(
-                      confirmpasswordmessage,
-                      style: TextStyle(color: Colors.red),
-                    ))
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.099,
+                        top: MediaQuery.of(context).size.height * 0.005,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          confirmpasswordmessage,
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    )
                   : Container(),
 
               // Spacer(),
               // Login button
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: MediaQuery.of(context).size.height * 0.08,
               ),
               GestureDetector(
                 onTap: () {
@@ -335,7 +397,7 @@ class _ChangepasswordState extends State<Changepassword> {
                   } else if (confirmpassword.text != password.text) {
                     setState(() {
                       confirmpassworderror = true;
-                      confirmpasswordmessage = "Both password is not match";
+                      confirmpasswordmessage = "Passwords do not match";
                     });
                   } else {
                     setState(() {
@@ -370,7 +432,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                       fontWeight: FontWeight.bold,
                                       fontSize:
                                           MediaQuery.of(context).size.width *
-                                              0.045),
+                                              0.04),
                                 ),
                               ],
                             ),
@@ -378,11 +440,9 @@ class _ChangepasswordState extends State<Changepassword> {
                   ),
                 ),
               ),
+
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
               ),
               GestureDetector(
                 onTap: () {
@@ -396,8 +456,7 @@ class _ChangepasswordState extends State<Changepassword> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.black)),
-                    child:
-                    Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
@@ -406,8 +465,7 @@ class _ChangepasswordState extends State<Changepassword> {
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize:
-                              MediaQuery.of(context).size.width *
-                                  0.045),
+                                  MediaQuery.of(context).size.width * 0.04),
                         ),
                       ],
                     ),

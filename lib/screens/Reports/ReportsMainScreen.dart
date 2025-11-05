@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
@@ -13,9 +12,7 @@ import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOr
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../Model/Home_System_Report_model.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/Home_System_Report.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
@@ -27,6 +24,8 @@ import 'ReportScreens/ReopenWorkorder.dart';
 import 'ReportScreens/PropertyInsuranceSummary.dart';
 import 'ReportScreens/LivePropertyReport.dart';
 import 'ReportScreens/PropertyTaxReport.dart';
+import 'ReportScreens/OutstandingLeaseBalance.dart';
+import 'ReportScreens/PropertyRevenueReport.dart';
 
 class ReportsMainScreen extends StatefulWidget {
   @override
@@ -444,9 +443,6 @@ class WideScreenLayout extends StatelessWidget {
 class NarrowScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = screenWidth > 600 ? 3 : 2;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -759,6 +755,18 @@ class ReportScreen extends StatelessWidget {
                   'title': 'Rent Roll Report',
                   'subtitle': 'Rent balance due by property and tenants',
                   "navigate": RentersInsurances()
+                },
+                {
+                  'title': 'Outstanding Lease Balance Report',
+                  'subtitle':
+                      'Detailed breakdown of outstanding lease balances by aging period',
+                  "navigate": OutstandingLeaseBalance()
+                },
+                {
+                  'title': 'Property Revenue Report',
+                  'subtitle':
+                      'Compare property revenue between current and previous periods',
+                  "navigate": PropertyRevenueReport()
                 },
               ],
               "Track payments, transactions, and owner accounts.",

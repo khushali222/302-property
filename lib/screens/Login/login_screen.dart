@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +10,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/VendorModule/screen/dashboard.dart';
-import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +25,6 @@ import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../../provider/dateProvider.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
-import '../Password/otp_vrify.dart';
 import '../Plans/PlansPurcharCard.dart';
 
 class Login_Screen extends StatefulWidget {
@@ -205,6 +200,69 @@ class _Login_ScreenState extends State<Login_Screen> {
     } else {
       Fluttertoast.showToast(msg: "Email address not found.");
     }
+  }
+
+  bool isChecked = false;
+  bool rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  // Load saved credentials if Remember Me was previously enabled
+  Future<void> _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? savedRememberMe = prefs.getBool('rememberMe');
+    String? savedEmail = prefs.getString('savedEmail');
+    String? savedPassword = prefs.getString('savedPassword');
+
+    print('🔍 Loading saved credentials:');
+    print('   rememberMe: $savedRememberMe');
+    print('   savedEmail: $savedEmail');
+    print('   savedPassword: ${savedPassword != null ? '***' : 'null'}');
+
+    if (savedRememberMe == true &&
+        savedEmail != null &&
+        savedPassword != null) {
+      print('✅ Auto-filling credentials and submitting email');
+      setState(() {
+        rememberMe = true;
+        isChecked = true;
+        email.text = savedEmail;
+        password.text = savedPassword;
+        // Auto-submit email to check for roles
+        submitEmail();
+      });
+    } else {
+      print('❌ No saved credentials found or Remember Me not enabled');
+    }
+  }
+
+  // Save credentials to SharedPreferences
+  Future<void> _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (rememberMe) {
+      print('Saving credentials for Remember Me');
+      await prefs.setBool('rememberMe', true);
+      await prefs.setString('savedEmail', email.text.trim());
+      await prefs.setString('savedPassword', password.text.trim());
+      print('Credentials saved successfully');
+    } else {
+      print('Clearing Remember Me credentials');
+      await prefs.setBool('rememberMe', false);
+      await prefs.remove('savedEmail');
+      await prefs.remove('savedPassword');
+    }
+  }
+
+  // Clear saved credentials (call this on logout if needed)
+  static Future<void> clearSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', false);
+    await prefs.remove('savedEmail');
+    await prefs.remove('savedPassword');
   }
 
   @override
@@ -1194,7 +1252,58 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ))
                             : Container(),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.025,
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.099,
+                            ),
+                            // Checkbox
+                            Container(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.035,
+                              width: MediaQuery.of(context).size.height * 0.035,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Checkbox(
+                                activeColor: blueColor,
+                                checkColor: Colors.white,
+                                value: isChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isChecked = value ?? false;
+                                    rememberMe = value ?? false;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+
+                            // Text that wraps
+                            Expanded(
+                              child: Text(
+                                " Remember Me",
+                                textAlign: TextAlign.justify,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.033,
+                                  color: blueColor,
+                                  height: 1.3, //
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
+                          ],
                         ),
                         if (requires2FA) ...[
                           Row(
@@ -2024,6 +2133,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       "role": selectedrole == "staff" ? "staffmember" : rolename.toLowerCase(),
       "company": selectedCompany,
       "user_id": userId,
+      "rememberMe": rememberMe.toString(),
     });
     print(response.body);
     await backupcodeapicall();
@@ -2035,6 +2145,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('token', jsonData["token"]);
       prefs.setString('adminId', adminId);
       prefs.setString('userId', userId!);
+
+      // Save credentials if Remember Me is enabled
+      await _saveCredentials();
+
       print(rolename);
       if (rolename == "staffmember" || selectedrole == "staff")
         await checkTokenStaff(jsonData["token"]);
@@ -2080,6 +2194,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       "role": selectedrole,
       "admin_id": adminId,
       "user_id": userId,
+      "rememberMe": rememberMe.toString(),
     });
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -2091,6 +2206,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
       prefs.setString('userId', userId!);
+
+      // Save credentials if Remember Me is enabled
+      await _saveCredentials();
+
       print(jsonData);
       //  print("required 2FA ${jsonData["data"]["requires2FA"]}");
       await checkToken(jsonData["token"]);
@@ -2136,6 +2255,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         "otp_id": switchtoBackupcode ? null : OtpId,
         "user_type": selectedrole,
         "user_id": userId,
+        "rememberMe": rememberMe,
       }),
     );
     print(response.body);
@@ -2147,6 +2267,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
       prefs.setString('userId', userId!);
+
+      // Save credentials if Remember Me is enabled
+      await _saveCredentials();
+
       print(jsonData);
       print(selectedrole);
       //print("required 2FA ${jsonData["data"]["requires2FA"]}");

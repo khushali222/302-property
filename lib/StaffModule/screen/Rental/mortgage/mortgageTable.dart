@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/custom_drawer.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -43,6 +41,33 @@ class _MortgageTableState extends State<MortgageTable> {
 
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
 
+  // Sorting variables
+  bool sorting1 = false; // Bank name
+  bool sorting2 = false; // Status
+  bool ascending1 = false;
+  bool ascending2 = false;
+
+  void sortData(List<Map<String, dynamic>> data) {
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2) {
+      data.sort((a, b) => ascending1
+          ? (a['bank_name'] ?? '')
+              .toString()
+              .compareTo((b['bank_name'] ?? '').toString())
+          : (b['bank_name'] ?? '')
+              .toString()
+              .compareTo((a['bank_name'] ?? '').toString()));
+    } else if (sorting2 && !sorting1) {
+      data.sort((a, b) => ascending2
+          ? (a['status'] ?? '')
+              .toString()
+              .compareTo((b['status'] ?? '').toString())
+          : (b['status'] ?? '')
+              .toString()
+              .compareTo((a['status'] ?? '').toString()));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +88,6 @@ class _MortgageTableState extends State<MortgageTable> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? adminid = prefs.getString("adminId");
       String? id = prefs.getString("staff_id");
 
       final response = await http.get(
@@ -330,39 +354,6 @@ class _MortgageTableState extends State<MortgageTable> {
     return formatter.format(numValue);
   }
 
-  String _formatDate(String? dateString) {
-    if (dateString == null) return 'N/A';
-    try {
-      final date = DateTime.parse(dateString);
-      return '${date.day}/${_getMonthAbbr(date.month)}/${date.year}';
-    } catch (e) {
-      return 'Invalid Date';
-    }
-  }
-
-  String _getMonthAbbr(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-    return months[month - 1];
-  }
-
-  String _getPropertyDisplay(List<dynamic> properties) {
-    if (properties.isEmpty) return 'No Properties';
-    return '${properties.length} Property${properties.length > 1 ? 's' : ''}';
-  }
-
   Widget _buildHeaders() {
     return Container(
       decoration: BoxDecoration(
@@ -374,15 +365,103 @@ class _MortgageTableState extends State<MortgageTable> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
-              "    Bank",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 3,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      ascending1 = !ascending1;
+                      ascending2 = false;
+                    } else {
+                      sorting1 = true;
+                      sorting2 = false;
+                      ascending1 = true;
+                      ascending2 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "    Bank",
+                      style: TextStyle(
+                          color: blueColor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 3),
+                    sorting1
+                        ? (ascending1
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
+                  ],
+                ),
+              ),
             ),
-            Text(
-              "Status    ",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 1,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2 == true) {
+                      sorting1 = false;
+                      ascending2 = !ascending2;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = true;
+                      ascending2 = true;
+                      ascending1 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "Status",
+                      style: TextStyle(
+                          color: blueColor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 5),
+                    sorting2
+                        ? (ascending2
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              ))
+                        : const SizedBox(width: 22),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -444,6 +523,8 @@ class _MortgageTableState extends State<MortgageTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Apply sorting to filtered mortgages
+    sortData(_filteredMortgages);
     final totalPages = (_filteredMortgages.length / itemsPerPage).ceil();
     final currentPageData = _filteredMortgages
         .skip(currentPage * itemsPerPage)
@@ -467,7 +548,9 @@ class _MortgageTableState extends State<MortgageTable> {
             child: Row(
               children: [
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 13,),
+                  SizedBox(
+                    width: 13,
+                  ),
                 Expanded(
                   flex: 3,
                   child: Padding(
@@ -505,10 +588,9 @@ class _MortgageTableState extends State<MortgageTable> {
                     ),
                   ),
                 ),
-                if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(width: 3),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 3),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 18),
+                  const SizedBox(width: 18),
               ],
             ),
           ),
@@ -519,9 +601,10 @@ class _MortgageTableState extends State<MortgageTable> {
             padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width < 500)
+                  const SizedBox(width: 2),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                 Material(
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
@@ -560,7 +643,7 @@ class _MortgageTableState extends State<MortgageTable> {
           // Content Section
           Expanded(
             child: _isLoading
-                ? Center(
+                ? const Center(
                     child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 50.0,

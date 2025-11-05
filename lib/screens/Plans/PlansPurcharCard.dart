@@ -14,7 +14,6 @@ import 'package:three_zero_two_property/screens/Plans/PreminumPlanForm.dart';
 import 'package:three_zero_two_property/screens/Plans/planform.dart';
 import '../../widgets/appbar.dart';
 
-
 class PlanPurchaseCard extends StatefulWidget {
   bool isappbarShow = true;
   PlanPurchaseCard({this.isappbarShow = true});
@@ -45,6 +44,13 @@ class _PlanPurchaseCardState extends State<PlanPurchaseCard> {
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
       });
+      if (data!.isEmpty) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.clear();
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Login_Screen()));
+        return [];
+      }
       return data!;
     } catch (e) {
       setState(() {
@@ -92,7 +98,24 @@ class _PlanPurchaseCardState extends State<PlanPurchaseCard> {
                     onPressed: () async {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
+
+                      // Preserve Remember Me credentials
+                      bool? rememberMe = prefs.getBool('rememberMe');
+                      String? savedEmail = prefs.getString('savedEmail');
+                      String? savedPassword = prefs.getString('savedPassword');
+
+                      // Clear all preferences
                       prefs.clear();
+
+                      // Restore Remember Me credentials if they exist
+                      if (rememberMe == true &&
+                          savedEmail != null &&
+                          savedPassword != null) {
+                        await prefs.setBool('rememberMe', true);
+                        await prefs.setString('savedEmail', savedEmail);
+                        await prefs.setString('savedPassword', savedPassword);
+                      }
+
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -125,7 +148,7 @@ class _PlanPurchaseCardState extends State<PlanPurchaseCard> {
           future: _futureCard,
           builder: (context, snapshot) {
             if (isLoading) {
-              return  Center(
+              return Center(
                 child: SpinKitSpinningLines(
                   color: blueColor,
                   size: 40.0,
@@ -238,7 +261,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
           children: [
             Container(
               height: 50,
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: blueColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -347,7 +370,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
                     width: 120,
                     height: 40,
                     decoration: BoxDecoration(
-                      color:blueColor,
+                      color: blueColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Center(
@@ -368,12 +391,10 @@ class _buildPlanCardsState extends State<buildPlanCards> {
               ),
             ),
             const SizedBox(height: 10),
-             Center(
+            Center(
                 child: Text(
               "Term Apply",
-              style: TextStyle(
-                  color: blueColor,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
             )),
             const SizedBox(height: 25),
           ],

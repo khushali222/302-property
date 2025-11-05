@@ -717,7 +717,9 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -737,7 +739,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                 final result = await Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const Add_property()));
+                                            const Add_property()));
                                 if (result == true) {
                                   setState(() {
                                     futurePropertyTypes =
@@ -748,9 +750,9 @@ class _PropertyTableState extends State<PropertyTable> {
                               },
                               child: Container(
                                 height:
-                                (MediaQuery.of(context).size.width < 768)
-                                    ? 50
-                                    : 60,
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
                                 decoration: BoxDecoration(
                                   color: blueColor,
                                   borderRadius: BorderRadius.circular(5),
@@ -1162,7 +1164,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           });
                                                         },
                                                         child: Text(
-                                                          ' ${Propertytype.propertyType}',
+                                                          '${Propertytype.propertyType}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:

@@ -2586,6 +2586,7 @@ class _Profile_screenState extends State<Profile_screen> {
           );
 
           // Clear shared preferences and navigate to login screen
+          // Note: For account deactivation, we clear all data including Remember Me
           prefs.clear();
           Navigator.pushAndRemoveUntil(
             context,

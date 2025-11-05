@@ -2073,7 +2073,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                   onTap: () {
                                                                                     _showAlert(context, Propertytype.tenantInsuranceId!);
                                                                                   },
-                                                                                  child: Container(
+                                                                                  child:
+                                                                                  Container(
                                                                                     height: 35,
                                                                                     width: 35,
                                                                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
