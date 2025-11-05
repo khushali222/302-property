@@ -103,7 +103,7 @@ void main() {
     ]);
     runApp(
       DevicePreview(
-        enabled: kDebugMode ? true  : true,
+        enabled: kDebugMode ? false  :  false,
         tools: const [
           ...DevicePreview.defaultTools,
         ],

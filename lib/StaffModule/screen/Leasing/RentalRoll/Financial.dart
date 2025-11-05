@@ -1617,7 +1617,7 @@ class _FinancialTableState extends State<FinancialTable> {
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.symmetric(
                   horizontal:
-                  MediaQuery.of(context).size.width <= 360 ? 11.0 : 11.0),
+                      MediaQuery.of(context).size.width <= 360 ? 11.0 : 11.0),
               child: Column(
                 children: [
                   // Second row - Make Payment and Enter Charge
@@ -1627,7 +1627,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       Expanded(
                         child: Container(
                           height:
-                          MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
                             color: blueColor,
@@ -1655,7 +1655,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 setState(() {
                                   _leaseLedgerFuture = LeaseRepository()
                                       .fetchLeaseLedger(
-                                      leaseId: widget.leaseId);
+                                          leaseId: widget.leaseId);
                                 });
                               }
                             },
@@ -1672,9 +1672,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                   'Make Payment',
                                   style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width <= 360
-                                        ? 11
-                                        : 14,
+                                        MediaQuery.of(context).size.width <= 360
+                                            ? 11
+                                            : 14,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1696,7 +1696,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
                               border:
-                              Border.all(color: const Color(0xFF8A95A8)),
+                                  Border.all(color: const Color(0xFF8A95A8)),
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -1719,13 +1719,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                   setState(() {
                                     _leaseLedgerFuture = LeaseRepository()
                                         .fetchLeaseLedger(
-                                        leaseId: widget.leaseId);
+                                            leaseId: widget.leaseId);
                                   });
                                 }
                               },
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   SizedBox(
                                     width: 1,
@@ -1740,10 +1740,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                     ' Enter Charge',
                                     style: TextStyle(
                                       fontSize:
-                                      MediaQuery.of(context).size.width <=
-                                          360
-                                          ? 11
-                                          : 14,
+                                          MediaQuery.of(context).size.width <=
+                                                  360
+                                              ? 11
+                                              : 14,
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1823,7 +1823,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
                               border:
-                              Border.all(color: const Color(0xFF8A95A8)),
+                                  Border.all(color: const Color(0xFF8A95A8)),
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -1845,7 +1845,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               },
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Icon(
                                     Icons.credit_card,
@@ -1857,10 +1857,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                     'Add Cards',
                                     style: TextStyle(
                                       fontSize:
-                                      MediaQuery.of(context).size.width <=
-                                          360
-                                          ? 11
-                                          : 14,
+                                          MediaQuery.of(context).size.width <=
+                                                  360
+                                              ? 11
+                                              : 14,
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1895,7 +1895,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       return const Center(child: Text('No data found'));
                     } else {
                       final leaseLedger = snapshot.data!;
-                      var data = leaseLedger.data!.toList();
+                      var data = leaseLedger.data?.toList() ?? [];
                       ;
                       if (searchvalue != null &&
                           searchvalue!.isNotEmpty &&
@@ -2012,11 +2012,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   currentPage = 0;
                                               });
                                             },
-                                            decoration:  InputDecoration(
+                                            decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: "Search here...",
-                                              hintStyle: TextStyle(
-                                                  color:blueColor),
+                                              hintStyle:
+                                                  TextStyle(color: blueColor),
                                             ),
                                           ),
                                         ),
@@ -2307,10 +2307,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             20,
                                                                         minWidth:
                                                                             20),
-                                                                hintStyle:  TextStyle(
+                                                                hintStyle: TextStyle(
                                                                     fontSize:
                                                                         15,
-                                                                    color:blueColor),
+                                                                    color:
+                                                                        blueColor),
                                                                 border:
                                                                     InputBorder
                                                                         .none,
@@ -2323,9 +2324,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       vertical:
                                                                           1),
                                                                   iconSize: 20,
-                                                                  icon:  Icon(
-                                                                      Icons
-                                                                          .calendar_today,color: blueColor,),
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .calendar_today,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
                                                                   onPressed:
                                                                       () {},
                                                                 ),
@@ -2405,10 +2409,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             20,
                                                                         minWidth:
                                                                             20),
-                                                                hintStyle:  TextStyle(
+                                                                hintStyle: TextStyle(
                                                                     fontSize:
                                                                         15,
-                                                                    color: blueColor),
+                                                                    color:
+                                                                        blueColor),
                                                                 border:
                                                                     InputBorder
                                                                         .none,
@@ -2421,9 +2426,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       vertical:
                                                                           1),
                                                                   iconSize: 20,
-                                                                  icon:  Icon(
-                                                                      Icons
-                                                                          .calendar_today,color: blueColor,),
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .calendar_today,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
                                                                   onPressed:
                                                                       () {},
                                                                 ),
@@ -3855,7 +3863,7 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    _tableData = snapshot.data?.data ?? [];
                     totalrecords = _tableData.length;
 
                     return SingleChildScrollView(
@@ -3999,10 +4007,10 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData ||
-                      snapshot.data!.data!.isEmpty) {
+                      (snapshot.data?.data?.isEmpty ?? true)) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    _tableData = snapshot.data?.data ?? [];
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Padding(

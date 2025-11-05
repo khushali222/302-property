@@ -1861,7 +1861,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       );
                     } else {
                       final leaseLedger = snapshot.data!;
-                      var data = leaseLedger.data!.toList();
+                      var data = leaseLedger.data?.toList() ?? [];
                       //final data = data.reversed.toList();
                       if (searchvalue != null &&
                           searchvalue!.isNotEmpty &&
@@ -3856,7 +3856,7 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    _tableData = snapshot.data?.data ?? [];
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -3999,10 +3999,10 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData ||
-                      snapshot.data!.data!.isEmpty) {
+                      (snapshot.data?.data?.isEmpty ?? true)) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    _tableData = snapshot.data?.data ?? [];
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Padding(

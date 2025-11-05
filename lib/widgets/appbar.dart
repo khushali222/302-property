@@ -307,20 +307,20 @@ class widget_302 {
                           //  }
                         },
                       ),
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            Icon(Icons.contact_mail, color: blueColor),
-                            SizedBox(width: 10),
-                            Text("Contact Us",
-                                style: TextStyle(color: blueColor)),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ContactUsScreen()));
-                        },
-                      ),
+                      // PopupMenuItem(
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(Icons.contact_mail, color: blueColor),
+                      //       SizedBox(width: 10),
+                      //       Text("Contact Us",
+                      //           style: TextStyle(color: blueColor)),
+                      //     ],
+                      //   ),
+                      //   onTap: () {
+                      //     Navigator.of(context).push(MaterialPageRoute(
+                      //         builder: (context) => ContactUsScreen()));
+                      //   },
+                      // ),
                       PopupMenuItem(
                         child: Row(
                           children: [

@@ -2236,8 +2236,60 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 const SizedBox(
                                   width: 10,
                                 ),
-                                Expanded(
-                                  child: GestureDetector(
+                                // Show Expanded only when renew button is visible, otherwise use Spacer to push evict to end
+                                if (leasesummery.data!.is_renewing ?? true)
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Evict_tenant(
+                                                      leaseId: widget.leaseId,
+                                                      lease: leasesummery,
+                                                      startdate: leasesummery
+                                                          .data!.startDate,
+                                                      enddate: leasesummery
+                                                          .data!.endDate,
+                                                      leasetype: leasesummery
+                                                          .data!.leaseType,
+                                                      rentamount: leasesummery
+                                                          .data!.amount
+                                                          .toString(),
+                                                    )));
+                                      },
+                                      child: Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 35
+                                              : 45,
+                                          decoration: BoxDecoration(
+                                              color: blueColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                          child: Center(
+                                            child: Text(
+                                              'Evict Tenants',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          )),
+                                    ),
+                                  )
+                                else ...[
+                                  const Spacer(),
+                                  GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                           context,
@@ -2263,11 +2315,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     500
                                                 ? 35
                                                 : 45,
-                                        // width:
-                                        // MediaQuery.of(context).size.width <
-                                        //     500
-                                        //     ? 120
-                                        //     : 165,
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 120
+                                                : 165,
                                         decoration: BoxDecoration(
                                             color: blueColor,
                                             borderRadius:
@@ -2287,14 +2339,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                         )),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Visibility(
-                                    visible:
-                                        leasesummery.data!.is_renewing ?? true,
+                                ],
+                                if (leasesummery.data!.is_renewing ?? true) ...[
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
                                     child: GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -2322,11 +2372,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   500
                                               ? 35
                                               : 45,
-                                          // width:
-                                          //     MediaQuery.of(context).size.width <
-                                          //             500
-                                          //         ? 120
-                                          //         : 165,
                                           decoration: BoxDecoration(
                                               color: blueColor,
                                               borderRadius:
@@ -2348,7 +2393,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           )),
                                     ),
                                   ),
-                                ),
+                                ],
                               ],
                             ),
                           if (MediaQuery.of(context).size.width < 500)

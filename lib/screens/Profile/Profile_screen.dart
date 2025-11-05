@@ -2645,7 +2645,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Deactivate Account",
+                                    "Delete Account",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -2688,25 +2688,121 @@ class _Profile_screenState extends State<Profile_screen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Deactivate Account"),
-          content: Text(
-              "Are you sure you want to deactivate your account? It will be deleted within 7 days."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
             ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop(); // Close dialog first
-                await _callDeactivateAPI();
-              },
-              child: Text("Deactivate"),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.red.shade600,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Title
+                const Text(
+                  "Delete Account",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Content
+                const Text(
+                  "Are you sure you want to do this ?  This cannot be undone.  All of your data will be permanently removed.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Buttons Row
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Text(
+                                "No, Keep My Account ",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Delete Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          Navigator.of(context).pop(); // Close dialog first
+                          await _callDeactivateAPI();
+                        },
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Text(
+                                "Yes, Delete It",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

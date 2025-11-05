@@ -756,18 +756,18 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'Rent balance due by property and tenants',
                   "navigate": RentersInsurances()
                 },
-                {
-                  'title': 'Outstanding Lease Balance Report',
-                  'subtitle':
-                      'Detailed breakdown of outstanding lease balances by aging period',
-                  "navigate": OutstandingLeaseBalance()
-                },
-                {
-                  'title': 'Property Revenue Report',
-                  'subtitle':
-                      'Compare property revenue between current and previous periods',
-                  "navigate": PropertyRevenueReport()
-                },
+                // {
+                //   'title': 'Outstanding Lease Balance Report',
+                //   'subtitle':
+                //       'Detailed breakdown of outstanding lease balances by aging period',
+                //   "navigate": OutstandingLeaseBalance()
+                // },
+                // {
+                //   'title': 'Property Revenue Report',
+                //   'subtitle':
+                //       'Compare property revenue between current and previous periods',
+                //   "navigate": PropertyRevenueReport()
+                // },
               ],
               "Track payments, transactions, and owner accounts.",
               context),
@@ -788,16 +788,16 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'All completed work orders',
                   "navigate": CompletedWorkOrders()
                 },
-                {
-                  'title': 'Reopen Work Orders',
-                  'subtitle': 'Work orders on hold with future reopen dates',
-                  "navigate": ReopenWorkorder()
-                },
-                {
-                  'title': 'Home System Report',
-                  'subtitle': 'Home system report',
-                  "navigate": HomeSystemReportScreen()
-                },
+                // {
+                //   'title': 'Reopen Work Orders',
+                //   'subtitle': 'Work orders on hold with future reopen dates',
+                //   "navigate": ReopenWorkorder()
+                // },
+                // {
+                //   'title': 'Home System Report',
+                //   'subtitle': 'Home system report',
+                //   "navigate": HomeSystemReportScreen()
+                // },
               ],
               "Fix it fast, document it all",
               context),
@@ -820,24 +820,24 @@ class ReportScreen extends StatelessWidget {
                       'Renter\'s insurance policies expiring within the selected time period',
                   "navigate": ExpiringInsurance()
                 },
-                {
-                  'title': 'Property Insurance Summary',
-                  'subtitle':
-                      'Comprehensive summary of all property insurance policies',
-                  "navigate": PropertyInsuranceSummary()
-                },
-                {
-                  'title': 'Live Property Report',
-                  'subtitle':
-                      'Comprehensive overview of all properties with financial details',
-                  "navigate": LivePropertyReport()
-                },
-                {
-                  'title': 'Property Tax Report',
-                  'subtitle':
-                      'Detailed tax information and payment status for all properties',
-                  "navigate": PropertyTaxReport()
-                },
+                // {
+                //   'title': 'Property Insurance Summary',
+                //   'subtitle':
+                //       'Comprehensive summary of all property insurance policies',
+                //   "navigate": PropertyInsuranceSummary()
+                // },
+                // {
+                //   'title': 'Live Property Report',
+                //   'subtitle':
+                //       'Comprehensive overview of all properties with financial details',
+                //   "navigate": LivePropertyReport()
+                // },
+                // {
+                //   'title': 'Property Tax Report',
+                //   'subtitle':
+                //       'Detailed tax information and payment status for all properties',
+                //   "navigate": PropertyTaxReport()
+                // },
               ],
               "Coverage at a glance",
               context),
