@@ -4333,7 +4333,6 @@ class _Summery_pageState extends State<Summery_page>
                         columnWidths: const {
                           0: FlexColumnWidth(2),
                           1: FlexColumnWidth(2),
-
                         },
                         border: TableBorder(
                           horizontalInside:
@@ -4363,7 +4362,6 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(12.0),
-
                                 child: Text(
                                   "Insured Value",
                                   textAlign: TextAlign.right,
@@ -4498,7 +4496,6 @@ class _Summery_pageState extends State<Summery_page>
                             columnWidths: const {
                               0: FlexColumnWidth(2),
                               1: FlexColumnWidth(2),
-
                             },
                             border: TableBorder(
                               horizontalInside: BorderSide(
@@ -4608,7 +4605,6 @@ class _Summery_pageState extends State<Summery_page>
                                                   color: Colors.black),
                                             ),
                                           ),
-
                                         ],
                                       ),
                                     ],

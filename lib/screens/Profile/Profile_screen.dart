@@ -2693,7 +2693,7 @@ class _Profile_screenState extends State<Profile_screen> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -2758,7 +2758,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               child: Text(
                                 "No, Keep My Account ",
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black87,
                                 ),
@@ -2768,7 +2768,7 @@ class _Profile_screenState extends State<Profile_screen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 5),
                     // Delete Button
                     Expanded(
                       child: GestureDetector(
@@ -2788,7 +2788,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               child: Text(
                                 "Yes, Delete It",
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),

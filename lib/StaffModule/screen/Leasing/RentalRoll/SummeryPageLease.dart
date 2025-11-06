@@ -619,6 +619,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   int? expandedIndex;
+  int?
+      recurringChargeExpandedIndex; // Separate variable for recurring charge table
+  int?
+      renewableHistoryExpandedIndex; // Separate variable for renewable history table
   bool isExpanded = false;
 
   String determineStatus(String? startDate, String? endDate) {
@@ -2590,13 +2594,20 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     height: 10,
                                   ),
                                   Container(
+                                    // decoration: BoxDecoration(
+                                    //
+                                    //   color: blueColor,
+                                    //   borderRadius: const BorderRadius.only(
+                                    //     topLeft: Radius.circular(13),
+                                    //     topRight: Radius.circular(13),
+                                    //   ),
+                                    //
+                                    // ),
                                     decoration: BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(13),
-                                        topRight: Radius.circular(13),
-                                      ),
-                                    ),
+                                        color: const Color(0xFFF4F8FF),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: const Color(0xFFDBE0E5))),
                                     child: ListTile(
                                       contentPadding: EdgeInsets.zero,
                                       title: Row(
@@ -2610,24 +2621,29 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               child: Row(
                                                 children: [
                                                   width < 400
-                                                      ? const Padding(
+                                                      ? Padding(
                                                           padding:
                                                               EdgeInsets.only(
                                                                   left: 20.0),
                                                           child: Text(
                                                             "Date",
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                                 fontSize: 14),
                                                             textAlign: TextAlign
                                                                 .center,
                                                           ),
                                                         )
-                                                      : const Text("     Date",
+                                                      : Text("     Date",
                                                           style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 14),
                                                           textAlign:
                                                               TextAlign.center),
@@ -2640,14 +2656,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             flex: 2,
                                             child: InkWell(
                                               onTap: () {},
-                                              child: const Row(
+                                              child: Row(
                                                 children: [
                                                   Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 0.0),
                                                     child: Text("Acount",
                                                         style: TextStyle(
-                                                            color: Colors.white,
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 14)),
                                                   ),
                                                   SizedBox(width: 5),
@@ -2659,12 +2677,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             flex: 2,
                                             child: InkWell(
                                               onTap: () {},
-                                              child: const Row(
+                                              child: Row(
                                                 children: [
                                                   Text(
                                                     "Amount",
                                                     style: TextStyle(
-                                                        color: Colors.white,
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 14),
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -2678,11 +2698,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                        border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    //     border: Border.all(
+                                    //         color: const Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
                                     // ),
@@ -2693,21 +2713,22 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           .map((entry) {
                                         int index = entry.key;
                                         bool isExpanded =
-                                            expandedIndex == index;
+                                            recurringChargeExpandedIndex ==
+                                                index;
                                         RecurringEntry lease = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(
@@ -2725,12 +2746,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       InkWell(
                                                         onTap: () {
                                                           setState(() {
-                                                            if (expandedIndex ==
+                                                            if (recurringChargeExpandedIndex ==
                                                                 index) {
-                                                              expandedIndex =
+                                                              recurringChargeExpandedIndex =
                                                                   null;
                                                             } else {
-                                                              expandedIndex =
+                                                              recurringChargeExpandedIndex =
                                                                   index;
                                                             }
                                                           });
@@ -2763,12 +2784,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         child: InkWell(
                                                           onTap: () {
                                                             setState(() {
-                                                              if (expandedIndex ==
+                                                              if (recurringChargeExpandedIndex ==
                                                                   index) {
-                                                                expandedIndex =
+                                                                recurringChargeExpandedIndex =
                                                                     null;
                                                               } else {
-                                                                expandedIndex =
+                                                                recurringChargeExpandedIndex =
                                                                     index;
                                                               }
                                                             });
@@ -2922,7 +2943,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 18),
+                                            fontSize: 16),
                                       ),
                                     ],
                                   ),
@@ -2931,12 +2952,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(13),
-                                        topRight: Radius.circular(13),
-                                      ),
-                                    ),
+                                        color: const Color(0xFFF4F8FF),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: const Color(0xFFDBE0E5))),
                                     child: ListTile(
                                       contentPadding: EdgeInsets.zero,
                                       title: Row(
@@ -2950,25 +2969,29 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               child: Row(
                                                 children: [
                                                   width < 400
-                                                      ? const Padding(
+                                                      ? Padding(
                                                           padding:
                                                               EdgeInsets.only(
                                                                   left: 20.0),
                                                           child: Text(
                                                             "Property",
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                                 fontSize: 14),
                                                             textAlign: TextAlign
                                                                 .center,
                                                           ),
                                                         )
-                                                      : const Text(
-                                                          "     Property",
+                                                      : Text("     Property",
                                                           style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 14),
                                                           textAlign:
                                                               TextAlign.center),
@@ -2981,14 +3004,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             flex: 2,
                                             child: InkWell(
                                               onTap: () {},
-                                              child: const Row(
+                                              child: Row(
                                                 children: [
                                                   Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 0.0),
                                                     child: Text("Status",
                                                         style: TextStyle(
-                                                            color: Colors.white,
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 14)),
                                                   ),
                                                   SizedBox(width: 5),
@@ -3000,12 +3025,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             flex: 2,
                                             child: InkWell(
                                               onTap: () {},
-                                              child: const Row(
+                                              child: Row(
                                                 children: [
                                                   Text(
                                                     "Type",
                                                     style: TextStyle(
-                                                        color: Colors.white,
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 14),
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -3019,11 +3046,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                        border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    //     border: Border.all(
+                                    //         color: const Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
                                     // ),
@@ -3035,18 +3062,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           .map((entry) {
                                         int index = entry.key;
                                         bool isExpanded =
-                                            expandedIndex == index;
+                                            renewableHistoryExpandedIndex ==
+                                                index;
                                         RenewLeases lease = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
+
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
@@ -3067,12 +3099,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       InkWell(
                                                         onTap: () {
                                                           setState(() {
-                                                            if (expandedIndex ==
+                                                            if (renewableHistoryExpandedIndex ==
                                                                 index) {
-                                                              expandedIndex =
+                                                              renewableHistoryExpandedIndex =
                                                                   null;
                                                             } else {
-                                                              expandedIndex =
+                                                              renewableHistoryExpandedIndex =
                                                                   index;
                                                             }
                                                           });
@@ -3096,9 +3128,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
                                                             size: 20,
-                                                            color: const Color
-                                                                .fromRGBO(
-                                                                21, 43, 83, 1),
+                                                            color: blueColor,
                                                           ),
                                                         ),
                                                       ),
@@ -3107,12 +3137,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         child: InkWell(
                                                           onTap: () {
                                                             setState(() {
-                                                              if (expandedIndex ==
+                                                              if (renewableHistoryExpandedIndex ==
                                                                   index) {
-                                                                expandedIndex =
+                                                                renewableHistoryExpandedIndex =
                                                                     null;
                                                               } else {
-                                                                expandedIndex =
+                                                                renewableHistoryExpandedIndex =
                                                                     index;
                                                               }
                                                             });
@@ -3160,7 +3190,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                     context)
                                                                 .size
                                                                 .width *
-                                                            .08,
+                                                            .01,
                                                       ),
                                                       Expanded(
                                                         flex: 4,

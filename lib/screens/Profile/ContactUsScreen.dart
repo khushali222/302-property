@@ -1,14 +1,18 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/custom_drawer.dart';
+import '../../repository/ContactRepository.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -30,7 +34,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   String? _selectedCategory;
   String? _selectedPriority;
   List<File> _attachments = [];
+  List<String> _uploadedFileNames = [];
   bool _isSubmitting = false;
+  String? _categoryError;
+  String? _priorityError;
+  String? _nameError;
+  String? _emailError;
+  String? _subjectError;
+  String? _descriptionError;
 
   // Dropdown options
   final List<String> _categories = [
@@ -116,6 +127,51 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return null;
   }
 
+  // Upload image function (similar to work order)
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(uploadUrl),
+    );
+    request.files.add(
+      await http.MultipartFile.fromPath('files', imageFile.path),
+    );
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  // Upload file and add to uploaded names
+  Future<void> _uploadFile(File file) async {
+    try {
+      String? fileName = await uploadImage(file);
+      if (fileName != null) {
+        setState(() {
+          _uploadedFileNames.add(fileName);
+        });
+      }
+    } catch (e) {
+      print('File upload failed: $e');
+      Fluttertoast.showToast(
+        msg: 'Failed to upload file: ${file.path.split('/').last}',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+
   // File handling methods
   Future<void> _pickFiles() async {
     try {
@@ -135,7 +191,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       );
 
       if (result != null) {
-        List<File> newFiles = result.paths.map((path) => File(path!)).toList();
+        List<File> newFiles = result.paths
+            .where((path) => path != null)
+            .map((path) => File(path!))
+            .toList();
 
         // Check file count limit
         if (_attachments.length + newFiles.length > 5) {
@@ -148,30 +207,46 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         }
 
         // Check file size limit (10MB per file)
+        List<File> validFiles = [];
         for (File file in newFiles) {
-          int fileSizeInBytes = await file.length();
-          double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+          try {
+            if (await file.exists()) {
+              int fileSizeInBytes = await file.length();
+              double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
 
-          if (fileSizeInMB > 10) {
-            Fluttertoast.showToast(
-              msg:
-                  'File ${file.path.split('/').last} is too large. Maximum size is 10MB.',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
-            );
-            return;
+              if (fileSizeInMB > 10) {
+                Fluttertoast.showToast(
+                  msg:
+                      'File ${file.path.split('/').last} is too large. Maximum size is 10MB.',
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                );
+                continue; // Skip this file but continue with others
+              }
+              validFiles.add(file);
+            }
+          } catch (e) {
+            print('Error checking file size: $e');
+            // Continue with other files
           }
         }
 
-        setState(() {
-          _attachments.addAll(newFiles);
-        });
+        if (validFiles.isNotEmpty) {
+          setState(() {
+            _attachments.addAll(validFiles);
+          });
 
-        Fluttertoast.showToast(
-          msg: '${newFiles.length} file(s) added successfully',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-        );
+          // Upload each file
+          for (File file in validFiles) {
+            await _uploadFile(file);
+          }
+
+          Fluttertoast.showToast(
+            msg: '${validFiles.length} file(s) added successfully',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
       }
     } catch (e) {
       Fluttertoast.showToast(
@@ -185,79 +260,102 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   void _removeAttachment(int index) {
     setState(() {
       _attachments.removeAt(index);
+      if (index < _uploadedFileNames.length) {
+        _uploadedFileNames.removeAt(index);
+      }
     });
   }
 
   // Form submission
   Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
+    // Clear previous errors
+    setState(() {
+      _nameError = null;
+      _emailError = null;
+      _subjectError = null;
+      _descriptionError = null;
+      _categoryError = null;
+      _priorityError = null;
+    });
+
+    // Validate each field
+    String? nameError = _validateName(_nameController.text);
+    String? emailError = _validateEmail(_emailController.text);
+    String? subjectError = _validateSubject(_subjectController.text);
+    String? descriptionError =
+        _validateDescription(_descriptionController.text);
+
+    // Check if any field has errors
+    bool hasErrors = false;
+    setState(() {
+      if (nameError != null) {
+        _nameError = nameError;
+        hasErrors = true;
+      }
+      if (emailError != null) {
+        _emailError = emailError;
+        hasErrors = true;
+      }
+      if (subjectError != null) {
+        _subjectError = subjectError;
+        hasErrors = true;
+      }
+      if (descriptionError != null) {
+        _descriptionError = descriptionError;
+        hasErrors = true;
+      }
+      if (_selectedCategory == null) {
+        _categoryError = 'Please select a category';
+        hasErrors = true;
+      }
+      if (_selectedPriority == null) {
+        _priorityError = 'Please select a priority';
+        hasErrors = true;
+      }
+    });
+
+    if (hasErrors) {
       return;
     }
 
-    if (_selectedCategory == null) {
-      Fluttertoast.showToast(
-        msg: 'Please select a category',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-      );
-      return;
-    }
+    // All validations passed, submit form
+    await submitContactForm();
+  }
 
-    if (_selectedPriority == null) {
-      Fluttertoast.showToast(
-        msg: 'Please select a priority',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-      );
-      return;
-    }
-
+  // API function to submit contact form
+  Future<void> submitContactForm() async {
     setState(() {
       _isSubmitting = true;
     });
 
-    try {
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
-
-      // Here you would typically send the data to your backend
-      Map<String, dynamic> formData = {
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'subject': _subjectController.text.trim(),
-        'category': _selectedCategory,
-        'priority': _selectedPriority,
-        'description': _descriptionController.text.trim(),
-        'attachments': _attachments.map((file) => file.path).toList(),
-        'timestamp': DateTime.now().toIso8601String(),
-      };
-
-      print('Form submitted with data: $formData');
-
-      // Show success message
-      Fluttertoast.showToast(
-        msg: 'Ticket submitted successfully! We\'ll get back to you shortly.',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
-
+    ContactRepository()
+        .submitContactForm(
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      subject: _subjectController.text.trim(),
+      category: _selectedCategory!,
+      priority: _selectedPriority!,
+      description: _descriptionController.text.trim(),
+      attachments: _uploadedFileNames.isNotEmpty ? _uploadedFileNames : null,
+    )
+        .then((value) {
+      setState(() {
+        _isSubmitting = false;
+      });
       // Clear form
       _clearForm();
-    } catch (e) {
+    }).catchError((e) {
+      setState(() {
+        _isSubmitting = false;
+      });
       Fluttertoast.showToast(
-        msg: 'Error submitting ticket. Please try again.',
+        msg: 'Failed to submit ticket. Please try again.',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
-    } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
-    }
+    });
   }
 
   void _clearForm() {
@@ -269,6 +367,13 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       _selectedCategory = null;
       _selectedPriority = null;
       _attachments.clear();
+      _uploadedFileNames.clear();
+      _categoryError = null;
+      _priorityError = null;
+      _nameError = null;
+      _emailError = null;
+      _subjectError = null;
+      _descriptionError = null;
     });
   }
 
@@ -320,11 +425,20 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               CustomTextField(
                 controller: _nameController,
                 hintText: 'Your name',
-                validator: _validateName,
                 keyboardType: TextInputType.name,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                 ],
+                showErrorInTooltip: false,
+                hasError: _nameError != null,
+                errorMessage: _nameError ?? '',
+                onChanged: (value) {
+                  if (_nameError != null) {
+                    setState(() {
+                      _nameError = null;
+                    });
+                  }
+                },
               ),
               SizedBox(height: 20),
 
@@ -341,8 +455,17 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               CustomTextField(
                 controller: _emailController,
                 hintText: 'you@company.com',
-                validator: _validateEmail,
                 keyboardType: TextInputType.emailAddress,
+                showErrorInTooltip: false,
+                hasError: _emailError != null,
+                errorMessage: _emailError ?? '',
+                onChanged: (value) {
+                  if (_emailError != null) {
+                    setState(() {
+                      _emailError = null;
+                    });
+                  }
+                },
               ),
               SizedBox(height: 20),
 
@@ -359,8 +482,17 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               CustomTextField(
                 controller: _subjectController,
                 hintText: 'Brief summary',
-                validator: _validateSubject,
                 keyboardType: TextInputType.text,
+                showErrorInTooltip: false,
+                hasError: _subjectError != null,
+                errorMessage: _subjectError ?? '',
+                onChanged: (value) {
+                  if (_subjectError != null) {
+                    setState(() {
+                      _subjectError = null;
+                    });
+                  }
+                },
               ),
               SizedBox(height: 20),
 
@@ -378,7 +510,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Color(0xFF8A95A8)),
+                  border: Border.all(
+                    color: _categoryError != null
+                        ? Colors.red.shade300
+                        : Color(0xFF8A95A8),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -424,11 +561,23 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedCategory = newValue;
+                      _categoryError =
+                          null; // Clear error when selection is made
                     });
                   },
                   validator: _validateCategory,
                 ),
               ),
+              if (_categoryError != null) ...[
+                SizedBox(height: 8),
+                Text(
+                  _categoryError!,
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
               SizedBox(height: 20),
 
               // Priority Dropdown
@@ -445,7 +594,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Color(0xFF8A95A8)!),
+                  border: Border.all(
+                    color: _priorityError != null
+                        ? Colors.red.shade300
+                        : Color(0xFF8A95A8),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -498,11 +652,23 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedPriority = newValue;
+                      _priorityError =
+                          null; // Clear error when selection is made
                     });
                   },
                   validator: _validatePriority,
                 ),
               ),
+              if (_priorityError != null) ...[
+                SizedBox(height: 8),
+                Text(
+                  _priorityError!,
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
               SizedBox(height: 20),
 
               // Description Field
@@ -518,73 +684,24 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               CustomTextField(
                 controller: _descriptionController,
                 hintText: 'Describe the issue in detail',
-                validator: _validateDescription,
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
+                showErrorInTooltip: false,
+                hasError: _descriptionError != null,
+                errorMessage: _descriptionError ?? '',
+                onChanged: (value) {
+                  if (_descriptionError != null) {
+                    setState(() {
+                      _descriptionError = null;
+                    });
+                  }
+                },
               ),
               SizedBox(height: 20),
-
-              // Attachments Section
-              Text(
-                'Attachments (Maximum of 5)',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(height: 8),
-
-              // File Upload Button
-              GestureDetector(
-                onTap: _pickFiles,
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xFF8A95A8)!,
-                      style: BorderStyle.solid,
-                      width: 2,
-                    ),
-                    color: Colors.grey[50],
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.upload_file,
-                        size: 40,
-                        color: blueColor,
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Click to upload files',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: blueColor,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Each file must be 10 MB or less. Supported: images, PDF, documents',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Attached Files List
-              if (_attachments.isNotEmpty) ...[
-                SizedBox(height: 16),
+              if (_attachments.isEmpty) ...[
+                // Attachments Section
                 Text(
-                  'Attached Files:',
+                  'Attachments (Maximum of 5)',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -592,6 +709,92 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   ),
                 ),
                 SizedBox(height: 8),
+
+                // File Upload Button
+                GestureDetector(
+                  onTap: _pickFiles,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Color(0xFF8A95A8)!,
+                        style: BorderStyle.solid,
+                        width: 2,
+                      ),
+                      color: Colors.grey[50],
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.upload_file,
+                          size: 40,
+                          color: blueColor,
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Click to upload files',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: blueColor,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Each file must be 10 MB or less. Supported: images, PDF, documents',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              // Attached Files List
+              if (_attachments.isNotEmpty) ...[
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Attached Files:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    Spacer(),
+                    if (_attachments.length < 10)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        // crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                _pickFiles();
+                              },
+                              child: Container(
+                                  height: 20,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ))),
+                        ],
+                      ),
+                  ],
+                ),
+                SizedBox(height: 10),
                 ..._attachments.asMap().entries.map((entry) {
                   int index = entry.key;
                   File file = entry.value;
@@ -603,31 +806,35 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Color(0xFF8A95A8)!),
                     ),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Icon(
-                          Icons.attach_file,
-                          color: blueColor,
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            file.path.split('/').last,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.attach_file,
+                              color: blueColor,
+                              size: 20,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => _removeAttachment(index),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.red,
-                            size: 20,
-                          ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                file.path.split('/').last,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => _removeAttachment(index),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -652,34 +859,18 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     elevation: 2,
                   ),
                   child: _isSubmitting
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'Submitting...',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+                      ? SpinKitFadingCircle(
+                          color: Colors.white,
+                          size: 25.0,
                         )
                       : Text(
-                          'Submit Ticket',
+                          "Submit Ticket",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 15
+                                  : 15.5),
                         ),
                 ),
               ),

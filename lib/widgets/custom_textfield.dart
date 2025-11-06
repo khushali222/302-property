@@ -100,26 +100,13 @@ class CustomTextField extends StatelessWidget {
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 19,
                 color: Color(0xFF8A95A8),
               ),
-          enabledBorder: hasError
-              ? OutlineInputBorder(
-                  borderRadius: borderRadius ?? BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: errorBorderColor ?? Colors.red,
-                  ),
-                )
-              : InputBorder.none,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: borderRadius ?? BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: focusedBorderColor ?? blueColor,
-              width: 2,
-            ),
-          ),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           border: InputBorder.none,
           contentPadding: contentPadding ??
               EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 14 : 11),
           suffixIcon: suffixIcon,
-          errorText: showErrorInTooltip ? null : errorMessage,
+          errorText: null, // Always null to prevent showing errors inside field
         ),
       ),
     );
@@ -134,8 +121,9 @@ class CustomTextField extends StatelessWidget {
           borderRadius: borderRadius ?? BorderRadius.circular(10),
           border: Border.all(
             color: hasError
-                ? (errorBorderColor ?? Colors.red)
+                ? (errorBorderColor ?? Colors.red.shade300)
                 : (borderColor ?? Color(0xFF8A95A8)),
+            width: 1,
           ),
         ),
         child: formField,
@@ -227,7 +215,7 @@ class CustomTextField extends StatelessWidget {
               errorMessage,
               style: errorTextStyle ??
                   TextStyle(
-                    color: errorBorderColor ?? Colors.red,
+                    color: errorBorderColor ?? Colors.red.shade700,
                     fontSize: 12,
                   ),
               maxLines: wrapErrorText ? errorMaxLines : 1,

@@ -8,6 +8,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../provider/notification_provider.dart';
+import '../../screens/Profile/ContactUsScreen.dart';
 import '../screen/profile.dart';
 import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
@@ -231,6 +232,20 @@ class widget_302_Staff {
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => Change_password()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(Icons.contact_mail, color: blueColor),
+                            SizedBox(width: 10),
+                            Text("Contact Us",
+                                style: TextStyle(color: blueColor)),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ContactUsScreen()));
                         },
                       ),
                       // if(permissions!.settingView!)

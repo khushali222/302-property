@@ -17,6 +17,7 @@ import '../../constant/constant.dart';
 import '../../provider/notification_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
+import '../../screens/Profile/ContactUsScreen.dart';
 import '../screen/change_password.dart';
 
 class widget_302 {
@@ -256,6 +257,20 @@ class widget_302 {
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => Change_password()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(Icons.contact_mail, color: blueColor),
+                            SizedBox(width: 10),
+                            Text("Contact Us",
+                                style: TextStyle(color: blueColor)),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ContactUsScreen()));
                         },
                       ),
                       PopupMenuItem(
