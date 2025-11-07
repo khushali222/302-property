@@ -562,13 +562,18 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           const Text(
             "Quantity",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
             keyboardType: TextInputType.number,
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           const SizedBox(height: 10),
@@ -601,10 +606,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                 //width: 200,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8.0),
                   color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCED4DA),
+                    width: 1.5,
+                  ),
                 ),
-                elevation: 2,
+                elevation: 0,
               ),
               iconStyleData: const IconStyleData(
                 icon: Icon(
@@ -635,7 +644,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           const Text(
             "Description",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -647,20 +658,27 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           const Text(
             "Price",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
             keyboardType: TextInputType.number,
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
           const SizedBox(height: 10),
           const Text(
             "Total",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -1092,8 +1110,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             }
                           }
                         },
-                        child:
-                        Container(
+                        child: Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
@@ -1111,12 +1128,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 width: 10,
                               ),
                             )
-                          // Icon(
-                          //   Icons.camera_alt,
-                          //   color: Colors.white,
-                          //   size: 20,
-                          // ),
-                        ),
+                            // Icon(
+                            //   Icons.camera_alt,
+                            //   color: Colors.white,
+                            //   size: 20,
+                            // ),
+                            ),
                       ),
                     ),
                   ],
@@ -1259,7 +1276,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color(0xFFCED4DA),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -1270,7 +1287,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -1278,6 +1295,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             keyboardType: TextInputType.text,
                             hintText: 'Add subject',
                             controller: subject,
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'please enter the subject';
@@ -1292,7 +1312,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -1578,9 +1598,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                                           ),
                                                                           Positioned(
                                                                             top:
-                                                                            28,
+                                                                                28,
                                                                             right:
-                                                                            28,
+                                                                                28,
                                                                             child:
                                                                                 Container(
                                                                               padding: EdgeInsets.all(4),
@@ -1621,7 +1641,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 2,
                           ),
@@ -1704,10 +1724,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8.0),
                                               color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
                                             ),
-                                            elevation: 2,
+                                            elevation: 0,
                                           ),
                                           iconStyleData: const IconStyleData(
                                             icon: Icon(Icons.arrow_drop_down),
@@ -1762,7 +1786,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.grey))
+                                          color: Color(0xFF101828)))
                                   : Container(),
                               const SizedBox(height: 0),
                               // units.isNotEmpty
@@ -1871,10 +1895,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            6),
+                                                            8.0),
                                                     color: Colors.white,
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFFCED4DA),
+                                                      width: 1.5,
+                                                    ),
                                                   ),
-                                                  elevation: 2,
+                                                  elevation: 0,
                                                 ),
                                                 iconStyleData:
                                                     const IconStyleData(
@@ -1947,7 +1976,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2071,10 +2100,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 padding:
                                     const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   color: Colors.white,
+                                  border: Border.all(
+                                    color: const Color(0xFFCED4DA),
+                                    width: 1.5,
+                                  ),
                                 ),
-                                elevation: 2,
+                                elevation: 0,
                               ),
                               iconStyleData: const IconStyleData(
                                 icon: Icon(Icons.arrow_drop_down),
@@ -2116,7 +2149,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 2,
                           ),
@@ -2193,10 +2226,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8.0),
                                               color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
                                             ),
-                                            elevation: 2,
+                                            elevation: 0,
                                           ),
                                           iconStyleData: const IconStyleData(
                                             icon: Icon(Icons.arrow_drop_down),
@@ -2252,7 +2289,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2282,10 +2319,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 padding:
                                     const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: BorderRadius.circular(8.0),
                                   color: Colors.white,
+                                  border: Border.all(
+                                    color: const Color(0xFFCED4DA),
+                                    width: 1.5,
+                                  ),
                                 ),
-                                elevation: 2,
+                                elevation: 0,
                               ),
                               iconStyleData: const IconStyleData(
                                 icon: Icon(
@@ -2320,7 +2361,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 2,
                           ),
@@ -2398,10 +2439,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8.0),
                                               color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
                                             ),
-                                            elevation: 2,
+                                            elevation: 0,
                                           ),
                                           iconStyleData: const IconStyleData(
                                             icon: Icon(Icons.arrow_drop_down),
@@ -2463,7 +2508,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2472,6 +2517,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             hintText: 'Enter here',
                             controller: perform,
                             optional: true,
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                           ),
                           const SizedBox(
                             height: 10,
@@ -2489,7 +2537,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color(0xFFCED4DA),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -2512,35 +2560,52 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           ),
                           Row(
                             children: [
-                              // SizedBox(width: 10),
-                              const Text('Total :',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    Text('\$${totalAmount.toStringAsFixed(2)}'),
+                              Expanded(
+                                child: GestureDetector(
+                                    onTap: (){
+                                      addRow();
+                                    },
+                                    child: Text(' +   Add Row',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),)),
                               ),
+                              Expanded(
+                                child: Container(
+                                  child: Row(
+                                    children: [
+                                      // SizedBox(width: 10),
+                                      const Text('Total :',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child:
+                                            Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
                             ],
                           ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
+                          // ElevatedButton(
+                          //   onPressed: addRow,
+                          //   style: ElevatedButton.styleFrom(
+                          //       backgroundColor: Colors.white),
+                          //   child:  Text('Add Row',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
+                          // ),
+
                           const SizedBox(
-                            height: 10,
-                          ),
-                          ElevatedButton(
-                            onPressed: addRow,
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor),
-                            child: const Text('Add Row'),
-                          ),
-                          const SizedBox(
-                            height: 10,
+                            height: 15,
                           ),
                           const Text('Vendor Notes ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2555,19 +2620,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               return null;
                             },
                             optional: true,
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                           ),
                           const SizedBox(
                             height: 20,
                           ),
                           Row(
                             children: [
-                              const Text(
-                                "Billable To Tenant",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
                               SizedBox(
                                 width: 24.0, // Standard width for checkbox
                                 height: 24.0,
@@ -2579,8 +2640,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     });
                                   },
                                   activeColor:
-                                      isChecked ? blueColor : Colors.black,
+                                  isChecked ? blueColor : Colors.black,
                                 ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text(
+                                "Billable To Tenant",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF101828)),
                               ),
                             ],
                           ),
@@ -2740,7 +2810,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             children: [
                               Text(
                                 "Priority",
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF101828)),
                               ),
                             ],
                           ),
@@ -2880,7 +2952,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2923,10 +2995,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(8.0),
                                           color: Colors.white,
+                                          border: Border.all(
+                                            color: const Color(0xFFCED4DA),
+                                            width: 1.5,
+                                          ),
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(
@@ -2981,7 +3057,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -2991,19 +3067,19 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 horizontal: 12.0, vertical: 0),
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [
-                                  const BoxShadow(
-                                    color: Colors.black26,
-                                    offset: Offset(1.0,
-                                        1.0), // Shadow offset to the bottom right
-                                    blurRadius:
-                                        8.0, // How much to blur the shadow
-                                    spreadRadius:
-                                        0.0, // How much the shadow should spread
-                                  ),
-                                ],
+                                // boxShadow: [
+                                //   const BoxShadow(
+                                //     color: Colors.black26,
+                                //     offset: Offset(1.0,
+                                //         1.0), // Shadow offset to the bottom right
+                                //     blurRadius:
+                                //     8.0, // How much to blur the shadow
+                                //     spreadRadius:
+                                //     0.0, // How much the shadow should spread
+                                //   ),
+                                // ],
                                 border:
-                                    Border.all(width: 0, color: Colors.white),
+                                Border.all(width: 0, color: Color(0xFFCED4DA),),
                                 borderRadius: BorderRadius.circular(6.0)),
                             child: TextFormField(
                               style: const TextStyle(
@@ -3045,55 +3121,64 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        height: 50,
-                        width: 160,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          onPressed: _submitForm,
-                          child: isloading
-                              ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 55.0,
-                                  ),
+                      Expanded(
+                        child: Container(
+                            height: 50,
+                            width: 120,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(
+                                  color: const Color(0xFFCED4DA),
                                 )
-                              : const Text(
-                                  'Add Work Order',
-                                  style: TextStyle(color: Color(0xFFf7f8f9)),
-                                ),
-                        ),
+                            ),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFffffff),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(8.0))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child:  Text(
+                                  'Cancel',
+                                  style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold),
+                                ))),
                       ),
                       const SizedBox(
-                        width: 8,
+                        width: 20,
                       ),
-                      Container(
+                      Expanded(
+                        child: Container(
                           height: 50,
-                          width: 120,
+                          // width: 160,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0)),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFffffff),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0))),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(color: Color(0xFF748097)),
-                              )))
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onPressed: _submitForm,
+                            child: isloading
+                                ? const Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 55.0,
+                              ),
+                            )
+                                : const Text(
+                              'Add Work Order',
+                              style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -3660,7 +3745,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           const Text(
             "Quantity",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -3698,10 +3785,14 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                 width: 200,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8.0),
                   color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCED4DA),
+                    width: 1.5,
+                  ),
                 ),
-                elevation: 2,
+                elevation: 0,
               ),
               iconStyleData: const IconStyleData(
                 icon: Icon(
@@ -3732,7 +3823,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           const Text(
             "Description",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -3744,7 +3837,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           const Text(
             "Price",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -3756,7 +3851,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           const Text(
             "Total",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF101828)),
           ),
           const SizedBox(height: 5),
           CustomTextField(
@@ -4324,7 +4421,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -4332,6 +4429,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                             keyboardType: TextInputType.text,
                             hintText: 'Add subject',
                             controller: subject,
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'please enter the subject';
@@ -4510,7 +4610,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
+                                            color: Color(0xFF101828))),
                                     const SizedBox(
                                       height: 2,
                                     ),
@@ -4691,7 +4791,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.grey))
+                                                color: Color(0xFF101828)))
                                         : Container(),
                                     const SizedBox(height: 0),
                                     units.isNotEmpty
@@ -5257,7 +5357,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.grey)),
+                                              color: Color(0xFF101828))),
                                       const SizedBox(
                                         height: 2,
                                       ),
@@ -5417,7 +5517,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.grey)),
+                                              color: Color(0xFF101828))),
                                       const SizedBox(
                                         height: 10,
                                       ),
@@ -5427,6 +5527,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         hintText: 'Enter here',
                                         controller: perform,
                                         optional: true,
+                                        showElevation: false,
+                                        borderColor: const Color(0xFFCED4DA),
+                                        borderWidth: 1.5,
                                       ),
                                       const SizedBox(
                                         height: 10,
@@ -5561,6 +5664,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       controller: partsAndLabor[index]
                                           ['qtyController'],
                                       keyboardType: TextInputType.number,
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                     ),
                                   ),
                                   Padding(
@@ -5634,6 +5740,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       controller: partsAndLabor[index]
                                           ['descriptionController'],
                                       keyboardType: TextInputType.text,
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                     ),
                                   ),
                                   Padding(
@@ -5643,6 +5752,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       controller: partsAndLabor[index]
                                           ['priceController'],
                                       keyboardType: TextInputType.number,
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                     ),
                                   ),
                                   Padding(
@@ -5653,6 +5765,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                           ['totalController'],
                                       keyboardType: TextInputType.number,
                                       readOnnly: true,
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                     ),
                                   ),
                                   Padding(
@@ -5770,7 +5885,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -6011,7 +6126,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -6076,7 +6191,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: Color(0xFF101828))),
                           const SizedBox(
                             height: 10,
                           ),
@@ -6086,20 +6201,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 horizontal: 12.0, vertical: 0),
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [
-                                  const BoxShadow(
-                                    color: Colors.black26,
-                                    offset: Offset(1.0,
-                                        1.0), // Shadow offset to the bottom right
-                                    blurRadius:
-                                        8.0, // How much to blur the shadow
-                                    spreadRadius:
-                                        0.0, // How much the shadow should spread
-                                  ),
-                                ],
-                                border:
-                                    Border.all(width: 0, color: Colors.white),
-                                borderRadius: BorderRadius.circular(6.0)),
+                                border: Border.all(
+                                  color: const Color(0xFFCED4DA),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8.0)),
                             child: TextFormField(
                               style: const TextStyle(
                                 color: Color(0xFF8898aa), // Text color

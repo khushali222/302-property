@@ -2400,6 +2400,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ],
                               ],
                             ),
+
                           if (MediaQuery.of(context).size.width < 500)
                             const SizedBox(
                               height: 10,
