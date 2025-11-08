@@ -653,6 +653,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
             hintText: 'Description',
             controller: partsAndLabor[index]['descriptionController'],
             keyboardType: TextInputType.text,
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
           ),
           const SizedBox(height: 10),
           const Text(
@@ -685,6 +688,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
             hintText: 'Total',
             controller: partsAndLabor[index]['totalController'],
             keyboardType: TextInputType.number,
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             readOnnly: true,
           ),
           const SizedBox(height: 10),
@@ -2548,7 +2554,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             children: [
                               Text('Parts and Labor :',
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                      TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
                             ],
                           ),
                           ...partsAndLabor.asMap().entries.map((entry) {

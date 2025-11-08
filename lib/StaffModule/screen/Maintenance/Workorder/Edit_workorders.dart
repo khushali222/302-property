@@ -2692,7 +2692,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             children: [
                               Text('Parts And Labour :',
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                      TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
                             ],
                           ),
                           ...partsAndLabor.asMap().entries.map((entry) {

@@ -122,7 +122,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     if (apiMessage.toLowerCase().contains('invalid') &&
         (apiMessage.toLowerCase().contains('password') ||
             apiMessage.toLowerCase().contains('admin'))) {
-      return "Invalid username or password.";
+      return "Login failed. Please check your credentials.";
     }
     if (apiMessage.toLowerCase().contains('email') &&
         apiMessage.toLowerCase().contains('not found')) {

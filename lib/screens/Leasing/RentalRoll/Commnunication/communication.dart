@@ -76,12 +76,9 @@ class _lease_communicationState extends State<lease_communication> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -126,9 +123,9 @@ class _lease_communicationState extends State<lease_communication> {
                   children: [
                     width < 400
                         ? Text("Recipient",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: blueColor,fontWeight: FontWeight.bold))
                         : Text("Recipient",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -182,7 +179,7 @@ class _lease_communicationState extends State<lease_communication> {
                 child: Row(
                   children: [
                     Text("          Sent",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -704,7 +701,7 @@ class _lease_communicationState extends State<lease_communication> {
               children: [
                 if (MediaQuery.of(context).size.width < 500)
                   Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: FutureBuilder<lease_communications>(
                       future: futureEmailss,
                       builder: (context, snapshot) {
@@ -802,12 +799,12 @@ class _lease_communicationState extends State<lease_communication> {
                             child: Column(
                               children: [
                                 _buildHeaders(),
-                                SizedBox(height: 20),
+                                SizedBox(height: 10),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
@@ -838,17 +835,17 @@ class _lease_communicationState extends State<lease_communication> {
 
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
-                                        ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                          ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(
@@ -1103,7 +1100,8 @@ class _lease_communicationState extends State<lease_communication> {
                                                                     Propertytype
                                                                         .emailId!);
                                                               },
-                                                              child: Container(
+                                                              child:
+                                                              Container(
                                                                 height: 40,
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
