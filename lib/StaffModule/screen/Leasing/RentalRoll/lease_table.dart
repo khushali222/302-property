@@ -105,10 +105,10 @@ class _Lease_tableState extends State<Lease_table> {
       String bDays = b.remainingDays ?? "---";
 
       // Debug logging
-      print(
-          "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
-      print(
-          "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
 
       // If both are "---", they are equal
       if (aDays == "---" && bDays == "---") return 0;
@@ -135,8 +135,8 @@ class _Lease_tableState extends State<Lease_table> {
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
-          ? a.tenantNames!.compareTo(b.tenantNames!)
-          : b.tenantNames!.compareTo(a.tenantNames!));
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.startDate!.compareTo(b.startDate!)
@@ -620,6 +620,7 @@ class _Lease_tableState extends State<Lease_table> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
@@ -999,27 +1000,48 @@ class _Lease_tableState extends State<Lease_table> {
 // Apply the status filter next
                           if (selectedStatus == "Active") {
                             data = data.where((lease) {
-                              if (lease.remainingDays == null ||
-                                  lease.remainingDays == "---") {
-                                return true;
-                              }
+                              DateTime now = DateTime.now();
+                              DateTime? startDate;
                               try {
-                                return double.parse(lease.remainingDays!) > 0;
+                                startDate = DateTime.parse(lease.startDate!);
                               } catch (e) {
                                 return false;
                               }
+
+                              // For "at will" or null end date, only check start date
+                              if (lease.endDate == null ||
+                                  lease.endDate!.toLowerCase() == "at will") {
+                                return startDate.isBefore(now) ||
+                                    startDate.isAtSameMomentAs(now);
+                              }
+
+                              // For regular end dates, check both start and end dates
+                              DateTime? endDate;
+                              try {
+                                endDate = DateTime.parse(lease.endDate!);
+                              } catch (e) {
+                                return false;
+                              }
+                              return (startDate.isBefore(now) ||
+                                      startDate.isAtSameMomentAs(now)) &&
+                                  (endDate.isAfter(now) ||
+                                      endDate.isAtSameMomentAs(now));
                             }).toList();
                           } else if (selectedStatus == "Expired") {
                             data = data.where((lease) {
-                              if (lease.remainingDays == null ||
-                                  lease.remainingDays == "---") {
+                              // At will leases can't expire
+                              if (lease.endDate == null ||
+                                  lease.endDate!.toLowerCase() == "at will") {
                                 return false;
                               }
+                              DateTime now = DateTime.now();
+                              DateTime? endDate;
                               try {
-                                return double.parse(lease.remainingDays!) == 0;
+                                endDate = DateTime.parse(lease.endDate!);
                               } catch (e) {
                                 return false;
                               }
+                              return endDate.isBefore(now);
                             }).toList();
                           } else if (selectedStatus == "All") {
                             // No additional filtering needed
@@ -1051,6 +1073,10 @@ class _Lease_tableState extends State<Lease_table> {
                                       int index = entry.key;
                                       bool isExpanded = expandedIndex == index;
                                       Lease1 lease = entry.value;
+                                      final balance = lease.totalBalance ?? 0.0;
+                                      final isNegative = balance < 0;
+                                      final formattedBalance =
+                                          "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return GestureDetector(
                                         onTap: () {
@@ -1160,7 +1186,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                           FontWeight
                                                                               .bold,
                                                                       fontSize:
-                                                                          13,
+                                                                          11,
                                                                     ),
                                                                   ),
                                                                   if (lease
@@ -1174,10 +1200,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                                           const TextStyle(
                                                                         color: Colors
                                                                             .lightBlue, // Light blue color for tenant names
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
+                                                                        // fontWeight:
+                                                                        //     FontWeight.bold,
                                                                         fontSize:
-                                                                            11,
+                                                                            10,
                                                                       ),
                                                                     ),
                                                                 ],
@@ -1196,8 +1222,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                         flex:
                                                             2, // Smaller size for the second field
                                                         child: Text(
-                                                          formatDate(
-                                                              '${lease.startDate}'),
+                                                          lease.rentCycle!,
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1216,8 +1241,9 @@ class _Lease_tableState extends State<Lease_table> {
                                                         flex:
                                                             2, // Smaller size for the third field
                                                         child: Text(
-                                                          formatDate(
-                                                              '${lease.endDate}'),
+                                                          dateProvider
+                                                              .formatCurrentDate(
+                                                                  '${lease.endDate}'),
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1268,25 +1294,21 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 },
                                                                 children: [
                                                                   _buildTableRow(
-                                                                    'Rent Cycle:',
+                                                                    'Current Balance:',
                                                                     _getDisplayValue(
-                                                                        lease
-                                                                            .rentCycle),
+                                                                        "${formattedBalance}"),
                                                                     'Rent :',
-                                                                    "\$${_getDisplayValue(lease.amount!.toStringAsFixed(2).toString())}",
+                                                                    _getDisplayValue(
+                                                                        "\$${lease.amount!.toStringAsFixed(2).toString()}"),
                                                                   ),
                                                                   _buildTableRow(
                                                                       'Remaining Days:',
-                                                                      _getDisplayValue(lease
-                                                                          .remainingDays
-                                                                          .toString()),
-                                                                      'Rent Start :',
-                                                                      '${formatDate(lease.rentDueDate!)}'),
-                                                                  _buildTableRow(
-                                                                      'Current Balance:',
-                                                                      "\$${_getDisplayValue(lease.totalBalance!.toStringAsFixed(2).toString())}",
+                                                                      _getDisplayValue(
+                                                                          lease
+                                                                              .remainingDays),
                                                                       '',
-                                                                      '')
+                                                                      ''),
+                                                                  //_buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
                                                                 ],
                                                               ),
                                                             ),
