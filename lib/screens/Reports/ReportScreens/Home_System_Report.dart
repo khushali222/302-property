@@ -55,6 +55,356 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
 
+  // Major System categories
+  final List<String> majorSystemCategories = [
+    "Roof",
+    "Electrical",
+    "Plumbing",
+    "Exterior",
+    "Water Heater",
+    "HVAC"
+  ];
+
+  bool _isMajorSystem(dynamic appliance) {
+    // Check system_type first - if it indicates Major System, return true
+    // Try both camelCase and snake_case field names
+    String? systemType;
+
+    // Check for systemType (camelCase)
+    try {
+      final value = appliance.systemType;
+      if (value != null) {
+        systemType = value.toString();
+      }
+    } catch (e) {
+      // Field doesn't exist, try snake_case
+    }
+
+    // Check for system_type (snake_case) if systemType wasn't found
+    if (systemType == null) {
+      try {
+        final value = appliance.system_type;
+        if (value != null) {
+          systemType = value.toString();
+        }
+      } catch (e) {
+        // Field doesn't exist, continue
+      }
+    }
+
+    // If system_type contains "major", it's a major system
+    if (systemType != null && systemType.toLowerCase().contains('major')) {
+      return true;
+    }
+
+    // Also check category field
+    String? category = appliance.category;
+    if (category == null || category.isEmpty) return false;
+    return majorSystemCategories
+        .any((major) => category.toLowerCase() == major.toLowerCase());
+  }
+
+  // Helper method to get display value or N/A
+  String _getValueOrNA(String? value) {
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
+
+  // Helper method to build appliance widget
+  Widget _buildApplianceWidget(
+      dynamic appliance, int applianceIndex, int rowIndex) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    bool isApplianceExpanded = expandedTenantIndex[rowIndex] == applianceIndex;
+
+    return Container(
+      margin: const EdgeInsets.only(left: 2),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade200),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Appliance header row
+          ListTile(
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (expandedTenantIndex[rowIndex] == applianceIndex) {
+                        expandedTenantIndex[rowIndex] = null;
+                      } else {
+                        expandedTenantIndex[rowIndex] = applianceIndex;
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: !isApplianceExpanded
+                        ? const EdgeInsets.only(bottom: 10)
+                        : const EdgeInsets.only(top: 10),
+                    child: FaIcon(
+                      isApplianceExpanded
+                          ? FontAwesomeIcons.sortUp
+                          : FontAwesomeIcons.sortDown,
+                      size: 16,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    _getValueOrNA(appliance.applianceName),
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: appliance.status == 'Working'
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      _getValueOrNA(appliance.status),
+                      style: TextStyle(
+                        color: appliance.status == 'Working'
+                            ? Colors.green
+                            : Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Expanded appliance details
+          if (isApplianceExpanded)
+            Container(
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[200]!),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Type : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "\n${_getValueOrNA(appliance.type)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Brand : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "\n${_getValueOrNA(appliance.brand)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Model : ",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor),
+                              ),
+                              TextSpan(
+                                text: "\n${_getValueOrNA(appliance.model)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Serial : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "\n${_getValueOrNA(appliance.serialNumber)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Installed : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "\n${appliance.installedDate != null ? dateProvider.formatCurrentDate(appliance.installedDate!) : 'N/A'}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Warranty : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "\n${appliance.warrantyExpiry != null ? dateProvider.formatCurrentDate(appliance.warrantyExpiry!) : 'N/A'}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Last Maintenance : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "\n${appliance.lastMaintenanceDate != null ? dateProvider.formatCurrentDate(appliance.lastMaintenanceDate!) : 'N/A'}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Category : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "\n${_getValueOrNA(appliance.category)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Description : ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    "\n${_getValueOrNA(appliance.applianceDescription)}",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -257,7 +607,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // First Page - Details
     pdf.addPage(
@@ -374,23 +726,35 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                         _buildDetailCell('-'),
                       ],
                     ));
-                    } else {
+                  } else {
                     rows.addAll(
                       unit.appliances!.map((appliance) => pw.TableRow(
                             children: [
-                              _buildDetailCell(appliance.applianceName ?? '-'),
                               _buildDetailCell(
-                                  appliance.applianceDescription ?? '-'),
-                              _buildDetailCell(appliance.category ?? '-'),
-                              _buildDetailCell(appliance.type ?? '-'),
-                              _buildDetailCell(appliance.brand ?? '-'),
-                              _buildDetailCell(appliance.model ?? '-'),
-                              _buildDetailCell(appliance.serialNumber ?? '-'),
-                              _buildDetailCell(appliance.installedDate ?? '-'),
-                              _buildDetailCell(appliance.warrantyExpiry ?? '-'),
+                                  _getValueOrNA(appliance.applianceName)),
+                              _buildDetailCell(_getValueOrNA(
+                                  appliance.applianceDescription)),
                               _buildDetailCell(
-                                  appliance.lastMaintenanceDate ?? '-'),
-                              _buildDetailCell(appliance.status ?? '-',
+                                  _getValueOrNA(appliance.category)),
+                              _buildDetailCell(_getValueOrNA(appliance.type)),
+                              _buildDetailCell(_getValueOrNA(appliance.brand)),
+                              _buildDetailCell(_getValueOrNA(appliance.model)),
+                              _buildDetailCell(
+                                  _getValueOrNA(appliance.serialNumber)),
+                              _buildDetailCell(appliance.installedDate != null
+                                  ? dateProvider.formatCurrentDate(
+                                      appliance.installedDate!)
+                                  : 'N/A'),
+                              _buildDetailCell(appliance.warrantyExpiry != null
+                                  ? dateProvider.formatCurrentDate(
+                                      appliance.warrantyExpiry!)
+                                  : 'N/A'),
+                              _buildDetailCell(
+                                  appliance.lastMaintenanceDate != null
+                                      ? dateProvider.formatCurrentDate(
+                                          appliance.lastMaintenanceDate!)
+                                      : 'N/A'),
+                              _buildDetailCell(_getValueOrNA(appliance.status),
                                   color: appliance.status?.toLowerCase() ==
                                           'working'
                                       ? PdfColors.green
@@ -420,7 +784,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
               level: 0,
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
+                children: [
                   pw.Image(image, width: 40, height: 40),
                   pw.Column(
                     children: [
@@ -478,7 +842,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     ),
                   ),
                   pw.Expanded(
-              flex: 3,
+                    flex: 3,
                     child: pw.Text(
                       'Work Subject',
                       style: pw.TextStyle(
@@ -493,7 +857,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             ...data.units!
                 .map((unit) => pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
+                      children: [
                         pw.Container(
                           padding: const pw.EdgeInsets.all(10),
                           child: pw.Column(
@@ -527,9 +891,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                           color: PdfColors.grey700,
                                         ),
                                       ),
-                  ],
-                ),
-              ),
+                                    ],
+                                  ),
+                                ),
                               ] else if (unit.appliances != null)
                                 ...unit.appliances!.map((appliance) {
                                   return pw.Column(
@@ -570,8 +934,12 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                           pw.Expanded(
                                                             flex: 2,
                                                             child: pw.Text(
-                                                                history.timestamp ??
-                                                                    'N/A',
+                                                                history.timestamp !=
+                                                                        null
+                                                                    ? dateProvider
+                                                                        .formatCurrentDate(history
+                                                                            .timestamp!)
+                                                                    : 'N/A',
                                                                 style: const pw
                                                                     .TextStyle(
                                                                     fontSize:
@@ -602,9 +970,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                         ],
                                                       ))
                                                   .toList(),
-          ],
-        ),
-      ),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                       // Notes Section
                                       if (appliance.notes?.isNotEmpty ==
@@ -632,8 +1000,12 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                           pw.Expanded(
                                                             flex: 2,
                                                             child: pw.Text(
-                                                                note.timestamp ??
-                                                                    'N/A',
+                                                                note.timestamp !=
+                                                                        null
+                                                                    ? dateProvider
+                                                                        .formatCurrentDate(note
+                                                                            .timestamp!)
+                                                                    : 'N/A',
                                                                 style: const pw
                                                                     .TextStyle(
                                                                     fontSize:
@@ -723,6 +1095,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   }
 
   Future<void> generateRentersInsuranceExcel(Home_system_report data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
 
     // Details Sheet
@@ -790,37 +1163,41 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         for (var appliance in unit.appliances!) {
           detailsSheet
               .getRangeByIndex(detailRow, 1)
-              .setText(appliance.applianceName ?? '-');
+              .setText(_getValueOrNA(appliance.applianceName));
           detailsSheet
               .getRangeByIndex(detailRow, 2)
-              .setText(appliance.applianceDescription ?? '-');
+              .setText(_getValueOrNA(appliance.applianceDescription));
           detailsSheet
               .getRangeByIndex(detailRow, 3)
-              .setText(appliance.category ?? '-');
+              .setText(_getValueOrNA(appliance.category));
           detailsSheet
               .getRangeByIndex(detailRow, 4)
-              .setText(appliance.type ?? '-');
+              .setText(_getValueOrNA(appliance.type));
           detailsSheet
               .getRangeByIndex(detailRow, 5)
-              .setText(appliance.brand ?? '-');
+              .setText(_getValueOrNA(appliance.brand));
           detailsSheet
               .getRangeByIndex(detailRow, 6)
-              .setText(appliance.model ?? '-');
+              .setText(_getValueOrNA(appliance.model));
           detailsSheet
               .getRangeByIndex(detailRow, 7)
-              .setText(appliance.serialNumber ?? '-');
-          detailsSheet
-              .getRangeByIndex(detailRow, 8)
-              .setText(appliance.installedDate ?? '-');
-          detailsSheet
-              .getRangeByIndex(detailRow, 9)
-              .setText(appliance.warrantyExpiry ?? '-');
-          detailsSheet
-              .getRangeByIndex(detailRow, 10)
-              .setText(appliance.lastMaintenanceDate ?? '-');
+              .setText(_getValueOrNA(appliance.serialNumber));
+          detailsSheet.getRangeByIndex(detailRow, 8).setText(
+              appliance.installedDate != null
+                  ? dateProvider.formatCurrentDate(appliance.installedDate!)
+                  : 'N/A');
+          detailsSheet.getRangeByIndex(detailRow, 9).setText(
+              appliance.warrantyExpiry != null
+                  ? dateProvider.formatCurrentDate(appliance.warrantyExpiry!)
+                  : 'N/A');
+          detailsSheet.getRangeByIndex(detailRow, 10).setText(
+              appliance.lastMaintenanceDate != null
+                  ? dateProvider
+                      .formatCurrentDate(appliance.lastMaintenanceDate!)
+                  : 'N/A');
           detailsSheet
               .getRangeByIndex(detailRow, 11)
-              .setText(appliance.status ?? '-');
+              .setText(_getValueOrNA(appliance.status));
 
           // Color the status cell
           if (appliance.status?.toLowerCase() == 'working') {
@@ -868,7 +1245,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           // Add appliance name
           summarySheet
               .getRangeByIndex(summaryRow, 1)
-              .setText(appliance.applianceName ?? '-');
+              .setText(_getValueOrNA(appliance.applianceName));
           summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
           summaryRow++;
 
@@ -883,9 +1260,10 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             summaryRow++;
 
             for (var history in appliance.maintenanceHistory!) {
-              summarySheet
-                  .getRangeByIndex(summaryRow, 1)
-                  .setText(history.timestamp ?? 'N/A');
+              summarySheet.getRangeByIndex(summaryRow, 1).setText(
+                  history.timestamp != null
+                      ? dateProvider.formatCurrentDate(history.timestamp!)
+                      : 'N/A');
               summarySheet.getRangeByIndex(summaryRow, 2).setText(
                   history.adminName ?? history.staffmemberName ?? 'N/A');
               summarySheet
@@ -904,9 +1282,10 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             summaryRow++;
 
             for (var note in appliance.notes!) {
-              summarySheet
-                  .getRangeByIndex(summaryRow, 1)
-                  .setText(note.timestamp ?? 'N/A');
+              summarySheet.getRangeByIndex(summaryRow, 1).setText(
+                  note.timestamp != null
+                      ? dateProvider.formatCurrentDate(note.timestamp!)
+                      : 'N/A');
               summarySheet
                   .getRangeByIndex(summaryRow, 2)
                   .setText(note.adminName ?? note.staffmemberName ?? 'N/A');
@@ -956,8 +1335,10 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   }
 
   Future<void> generateRentersInsuranceCSV(Home_system_report data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Details Section
     csvBuffer.writeln('Home Systems Report - Details');
@@ -996,22 +1377,28 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             List.filled(detailHeaders.length - 1, '""').join(','));
       } else {
         for (var appliance in unit.appliances!) {
-        final row = [
-            appliance.applianceName ?? '-',
-            appliance.applianceDescription ?? '-',
-            appliance.category ?? '-',
-            appliance.type ?? '-',
-            appliance.brand ?? '-',
-            appliance.model ?? '-',
-            appliance.serialNumber ?? '-',
-            appliance.installedDate ?? '-',
-            appliance.warrantyExpiry ?? '-',
-            appliance.lastMaintenanceDate ?? '-',
-            appliance.status ?? '-'
-        ];
-        csvBuffer.writeln(row
-            .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
-            .join(','));
+          final row = [
+            _getValueOrNA(appliance.applianceName),
+            _getValueOrNA(appliance.applianceDescription),
+            _getValueOrNA(appliance.category),
+            _getValueOrNA(appliance.type),
+            _getValueOrNA(appliance.brand),
+            _getValueOrNA(appliance.model),
+            _getValueOrNA(appliance.serialNumber),
+            appliance.installedDate != null
+                ? dateProvider.formatCurrentDate(appliance.installedDate!)
+                : 'N/A',
+            appliance.warrantyExpiry != null
+                ? dateProvider.formatCurrentDate(appliance.warrantyExpiry!)
+                : 'N/A',
+            appliance.lastMaintenanceDate != null
+                ? dateProvider.formatCurrentDate(appliance.lastMaintenanceDate!)
+                : 'N/A',
+            _getValueOrNA(appliance.status)
+          ];
+          csvBuffer.writeln(row
+              .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+              .join(','));
         }
       }
     }
@@ -1028,22 +1415,24 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
 
       if (unit.appliances != null) {
         for (var appliance in unit.appliances!) {
-          csvBuffer.writeln('"${appliance.applianceName ?? '-'}"');
+          csvBuffer.writeln('"${_getValueOrNA(appliance.applianceName)}"');
 
           // Maintenance History
           if (appliance.maintenanceHistory?.isNotEmpty == true) {
             csvBuffer.writeln('"Maintenance History"');
             csvBuffer.writeln('"Date","Performed By","Work Subject"');
             for (var history in appliance.maintenanceHistory!) {
-          final row = [
-                history.timestamp ?? 'N/A',
+              final row = [
+                history.timestamp != null
+                    ? dateProvider.formatCurrentDate(history.timestamp!)
+                    : 'N/A',
                 history.adminName ?? history.staffmemberName ?? 'N/A',
                 history.workSubject ?? 'N/A'
-          ];
-          csvBuffer.writeln(row
-              .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
-              .join(','));
-        }
+              ];
+              csvBuffer.writeln(row
+                  .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+                  .join(','));
+            }
             csvBuffer.writeln();
           }
 
@@ -1053,7 +1442,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             csvBuffer.writeln('"Date","Performed By","Note"');
             for (var note in appliance.notes!) {
               final row = [
-                note.timestamp ?? 'N/A',
+                note.timestamp != null
+                    ? dateProvider.formatCurrentDate(note.timestamp!)
+                    : 'N/A',
                 note.adminName ?? note.staffmemberName ?? 'N/A',
                 note.note ?? 'N/A'
               ];
@@ -1061,7 +1452,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
                   .join(','));
             }
-    csvBuffer.writeln();
+            csvBuffer.writeln();
           }
         }
       }
@@ -1400,6 +1791,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   }
 
   Widget _buildSummaryView(Home_system_report data) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -1521,7 +1913,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      "\n${_formatDate(history.timestamp ?? 'N/A')}",
+                                                      "\n${history.timestamp != null ? dateProvider.formatCurrentDate(history.timestamp!) : 'N/A'}",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -1645,7 +2037,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      "\n${_formatDate(note.timestamp ?? 'N/A')}",
+                                                      "\n${note.timestamp != null ? dateProvider.formatCurrentDate(note.timestamp!) : 'N/A'}",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -1750,64 +2142,64 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       bool isRowExpanded = expandedRowIndex == rowIndex;
 
                       return Container(
-                              decoration: BoxDecoration(
-                                color: rowIndex % 2 != 0
-                                    ? Colors.white
-                                    : blueColor.withOpacity(0.09),
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5)),
-                              ),
-                              child: Column(
+                        decoration: BoxDecoration(
+                          color: rowIndex % 2 != 0
+                              ? Colors.white
+                              : blueColor.withOpacity(0.09),
+                          border: Border.all(
+                              color: Color.fromRGBO(152, 162, 179, .5)),
+                        ),
+                        child: Column(
+                          children: [
+                            // Main row showing unit info
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Row(
                                 children: [
-                                  // Main row showing unit info
-                                  ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    title: Row(
-                                      children: [
-                                        // Expand/Collapse icon
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              if (expandedRowIndex == rowIndex) {
-                                                expandedRowIndex = null;
-                                              } else {
-                                                expandedRowIndex = rowIndex;
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(left: 5),
-                                            padding: !isRowExpanded
-                                                ? const EdgeInsets.only(bottom: 10)
-                                                : const EdgeInsets.only(top: 10),
-                                            child: FaIcon(
-                                              isRowExpanded
-                                                  ? FontAwesomeIcons.sortUp
-                                                  : FontAwesomeIcons.sortDown,
-                                              size: 20,
-                                              color: blueColor,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        // Unit info
-                                  Expanded(
-                                    child: Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Text(
-                                            'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
-                                            style: TextStyle(
-                                          fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                        ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                  // Expand/Collapse icon
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (expandedRowIndex == rowIndex) {
+                                          expandedRowIndex = null;
+                                        } else {
+                                          expandedRowIndex = rowIndex;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(left: 5),
+                                      padding: !isRowExpanded
+                                          ? const EdgeInsets.only(bottom: 10)
+                                          : const EdgeInsets.only(top: 10),
+                                      child: FaIcon(
+                                        isRowExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons.sortDown,
+                                        size: 20,
+                                        color: blueColor,
+                                      ),
                                     ),
                                   ),
-                                  // Expanded section showing appliances
+                                  SizedBox(width: 8),
+                                  // Unit info
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Text(
+                                        'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Expanded section showing appliances
                             if (isRowExpanded)
                               if (unit.appliances == null ||
                                   unit.appliances!.isEmpty)
@@ -1838,421 +2230,134 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                   ),
                                 )
                               else
-                                ...unit.appliances!
-                                    .asMap()
-                                    .entries
-                                    .map((applianceEntry) {
-                                  int applianceIndex = applianceEntry.key;
-                                  var appliance = applianceEntry.value;
-                                  bool isApplianceExpanded =
-                                      expandedTenantIndex[rowIndex] ==
-                                          applianceIndex;
+                                Builder(
+                                  builder: (context) {
+                                    // Separate appliances into Major Systems and Appliances
+                                    List<MapEntry<int, dynamic>> majorSystems =
+                                        [];
+                                    List<MapEntry<int, dynamic>> appliances =
+                                        [];
 
-                                      return Container(
-                                    margin: const EdgeInsets.only(left: 2),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                            color: Colors.grey.shade200),
-                                      ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                        // Appliance header row
-                                        ListTile(
-                                          title: Row(
+                                    unit.appliances!
+                                        .asMap()
+                                        .entries
+                                        .forEach((entry) {
+                                      if (_isMajorSystem(entry.value)) {
+                                        majorSystems.add(entry);
+                                      } else {
+                                        appliances.add(entry);
+                                      }
+                                    });
+
+                                    // Sort both lists alphabetically by appliance name
+                                    majorSystems.sort((a, b) {
+                                      String nameA =
+                                          a.value.applianceName ?? '';
+                                      String nameB =
+                                          b.value.applianceName ?? '';
+                                      return nameA
+                                          .toLowerCase()
+                                          .compareTo(nameB.toLowerCase());
+                                    });
+
+                                    appliances.sort((a, b) {
+                                      String nameA =
+                                          a.value.applianceName ?? '';
+                                      String nameB =
+                                          b.value.applianceName ?? '';
+                                      return nameA
+                                          .toLowerCase()
+                                          .compareTo(nameB.toLowerCase());
+                                    });
+
+                                    return Column(
+                                      children: [
+                                        // Major Systems Section
+                                        if (majorSystems.isNotEmpty) ...[
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: blueColor.withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: blueColor
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: Row(
                                               children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (expandedTenantIndex[
-                                                            rowIndex] ==
-                                                        applianceIndex) {
-                                                      expandedTenantIndex[
-                                                          rowIndex] = null;
-                                                    } else {
-                                                      expandedTenantIndex[
-                                                              rowIndex] =
-                                                          applianceIndex;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: !isApplianceExpanded
-                                                      ? const EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : const EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isApplianceExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 16,
+                                                Icon(Icons.build,
+                                                    color: blueColor, size: 20),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  'Major System',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
                                                     color: blueColor,
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(width: 8),
-                                                Expanded(
-                                                flex: 1,
-                                                  child: Text(
-                                                  appliance.applianceName ??
-                                                      '-',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: appliance.status ==
-                                                              'Working'
-                                                          ? Colors.green
-                                                              .withOpacity(0.1)
-                                                          : Colors.red
-                                                              .withOpacity(0.1),
-                                                      borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                    ),
-                                                    child: Text(
-                                                      appliance.status ?? '-',
-                                                      style: TextStyle(
-                                                        color: appliance.status ==
-                                                                'Working'
-                                                            ? Colors.green
-                                                            : Colors.red,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      ),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                        ),
-                                        // Expanded appliance details
-                                        if (isApplianceExpanded)
-                                          Container(
-                                            padding: const EdgeInsets.all(20),
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[50],
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.grey[200]!),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: "Type : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.type ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: "Brand : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.brand ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: "Model : ",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      blueColor),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.model ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: "Serial : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.serialNumber ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  "Installed : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.installedDate ?? '-'}",
-                                                  style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                ],
-                              ),
-                            ),
-                                                    ),
-                                                    Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  "Warranty : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.warrantyExpiry ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-              ),
-            ),
-          ],
-        ),
-      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10),
-                                                Row(
-        children: [
-          Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  "Last Maintenance : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.lastMaintenanceDate ?? '-'}",
-                style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  "Category : ",
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.category ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10),
-                                                Row(
-          children: [
-                                                    Expanded(
-                                                      child: RichText(
-                                                        text: TextSpan(
-              children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  "Description : ",
-                  style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  "\n${appliance.applianceDescription ?? '-'}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                  ),
-                ),
-              ],
-                                                        ),
-                                                      ),
-            ),
-          ],
-        ),
-                                                // if (appliance.maintenanceNotes
-                                                //         ?.isNotEmpty ==
-                                                //     true) ...[
-                                                //   SizedBox(height: 8),
-                                                //   Text(
-                                                //       "Notes: ${appliance.maintenanceNotes}"),
-                                                // ],
-                                                // if (appliance
-                                                //         .filters?.isNotEmpty ==
-                                                //     true) ...[
-                                                //   SizedBox(height: 8),
-                                                //   Text("Filters:",
-                                                //       style: TextStyle(
-                                                //           fontWeight:
-                                                //               FontWeight.bold)),
-                                                //   ...appliance.filters!
-                                                //       .map((filter) => Padding(
-                                                //             padding:
-                                                //                 const EdgeInsets
-                                                //                     .only(
-                                                //                     left: 16.0,
-                                                //                     top: 4),
-                                                //             child: Text(
-                                                //                 "${filter.filterName} (${filter.filterSize})"),
-                                                //           )),
-                                                // ],
                                               ],
                                             ),
                                           ),
+                                          ...majorSystems.map((entry) {
+                                            int applianceIndex = entry.key;
+                                            var appliance = entry.value;
+                                            return _buildApplianceWidget(
+                                                appliance,
+                                                applianceIndex,
+                                                rowIndex);
+                                          }).toList(),
+                                        ],
+                                        // Appliances Section
+                                        if (appliances.isNotEmpty) ...[
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Colors.orange
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.kitchen,
+                                                    color: Colors.orange,
+                                                    size: 20),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  'Appliance',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          ...appliances.map((entry) {
+                                            int applianceIndex = entry.key;
+                                            var appliance = entry.value;
+                                            return _buildApplianceWidget(
+                                                appliance,
+                                                applianceIndex,
+                                                rowIndex);
+                                          }).toList(),
+                                        ],
                                       ],
-                                    ),
-                                  );
-                                }).toList(),
+                                    );
+                                  },
+                                ),
                           ],
                         ),
                       );
@@ -2297,20 +2402,24 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    items: properties.keys.map((rentalId) {
-                      return DropdownMenuItem<String>(
-                        value: rentalId,
-                        child: Text(
-                          properties[rentalId]!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
+                    items: (() {
+                      final sortedEntries = properties.entries.toList()
+                        ..sort((a, b) => a.value.compareTo(b.value));
+                      return sortedEntries.map((entry) {
+                        return DropdownMenuItem<String>(
+                          value: entry.key,
+                          child: Text(
+                            entry.value,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList();
+                    })(),
                     value: _selectedPropertyId,
                     onChanged: (value) {
                       setState(() {
@@ -2335,12 +2444,15 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       iconDisabledColor: Colors.grey,
                     ),
                     dropdownStyleData: DropdownStyleData(
+                      maxHeight: 250,
+                      width: 200,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        //color: Colors.redAccent,
                       ),
+                      offset: const Offset(-2, 0),
                       scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(6),
+                        radius: const Radius.circular(40),
                         thickness: MaterialStateProperty.all(6),
                         thumbVisibility: MaterialStateProperty.all(true),
                       ),
@@ -2361,7 +2473,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             children: [
               // Run Button
               Container(
-            height: 45,
+                height: 45,
                 width: 45,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -2370,38 +2482,38 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 ),
                 child: IconButton(
                   padding: EdgeInsets.zero,
-              onPressed: () {
-                if (_selectedPropertyId != null) {
-                  setState(() {
-                    isLoading = true;
-                    _futureRentersInsurance =
-                        fetchRentersInsuranceData(id: _selectedPropertyId!);
-                  });
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "Please select a property first",
-                    toastLength: Toast.LENGTH_SHORT,
-                  );
-                }
-              },
+                  onPressed: () {
+                    if (_selectedPropertyId != null) {
+                      setState(() {
+                        isLoading = true;
+                        _futureRentersInsurance =
+                            fetchRentersInsuranceData(id: _selectedPropertyId!);
+                      });
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "Please select a property first",
+                        toastLength: Toast.LENGTH_SHORT,
+                      );
+                    }
+                  },
                   icon: const FaIcon(FontAwesomeIcons.circlePlay, size: 20),
                 ),
               ),
               const SizedBox(width: 10),
               // Export Button
               Container(
-            height: 45,
+                height: 45,
                 width: 75,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(0),
-                color: Colors.white,
-              ),
-              child: PopupMenuButton<String>(
+                  color: Colors.white,
+                ),
+                child: PopupMenuButton<String>(
                   offset: Offset(5, 50),
                   onSelected: handleDownload,
-                icon: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  icon: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FaIcon(FontAwesomeIcons.download), // Download icon
                       SizedBox(width: 5),
@@ -2409,33 +2521,33 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     ],
                   ),
                   tooltip: "Download",
-                itemBuilder: (BuildContext context) {
-                  return downloadOptions.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      onTap: () async {
-                        if (_futureRentersInsurance == null) {
-                          Fluttertoast.showToast(
-                            msg: "Please run the report first",
-                            toastLength: Toast.LENGTH_SHORT,
-                          );
-                          return;
-                        }
-                        final data = await _futureRentersInsurance;
-                        if (option == "PDF") {
-                          generaterentersInsurancePdf(data!);
-                        } else if (option == "Excel") {
-                          generateRentersInsuranceExcel(data!);
-                        } else if (option == "CSV") {
-                          generateRentersInsuranceCSV(data!);
-                        }
-                      },
+                  itemBuilder: (BuildContext context) {
+                    return downloadOptions.map((String option) {
+                      return PopupMenuItem<String>(
+                        value: option,
+                        onTap: () async {
+                          if (_futureRentersInsurance == null) {
+                            Fluttertoast.showToast(
+                              msg: "Please run the report first",
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                            return;
+                          }
+                          final data = await _futureRentersInsurance;
+                          if (option == "PDF") {
+                            generaterentersInsurancePdf(data!);
+                          } else if (option == "Excel") {
+                            generateRentersInsuranceExcel(data!);
+                          } else if (option == "CSV") {
+                            generateRentersInsuranceCSV(data!);
+                          }
+                        },
                         child: Text("Download as $option"),
-                    );
-                  }).toList();
-                },
+                      );
+                    }).toList();
+                  },
+                ),
               ),
-            ),
             ],
           ),
         ],

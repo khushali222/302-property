@@ -743,7 +743,7 @@ class ReportScreen extends StatelessWidget {
           reportSection('assets/images/mingcute_clipboard-fill.svg', 'Maintenance & Work Orders', [
             {'title': 'Open Work Orders', 'subtitle': 'Work order not yet in complete state',"navigate":OpenWorkOrders()},
             {'title': 'Completed Work Orders', 'subtitle': 'All completed work orders',"navigate":CompletedWorkOrders()},
-          //  {'title': 'Home System Report', 'subtitle': 'Home system report',"navigate":HomeSystemReportScreen()},
+            {'title': 'Home System Report', 'subtitle': 'Home system report',"navigate":HomeSystemReportScreen()},
           ],"Fix it fast, document it all",context),
           SizedBox(height: 10,),
           reportSection('assets/images/solar_shield-up-bold.svg', 'Insurance', [

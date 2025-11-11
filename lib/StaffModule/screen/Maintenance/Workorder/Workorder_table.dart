@@ -1134,9 +1134,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        const SizedBox(width: 30),
+                                        const Spacer(),
                                         Expanded(
-                                          flex: 3,
+                                          flex: 2,
                                           child: Text(
                                             workOrder.workOrderData?.status ??
                                                 'N/A',
@@ -1151,6 +1151,41 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
+                                        // const SizedBox(width: 5),
+                                        // Expanded(
+                                        //   flex: 2,
+                                        //   child: Text(
+                                        //     workOrder.workOrderData?.status ??
+                                        //         'N/A',
+                                        //     style: TextStyle(
+                                        //       fontSize: 13,
+                                        //       color: blueColor,
+                                        //       fontWeight: FontWeight.bold,
+                                        //     ),
+                                        //     textAlign: TextAlign.center,
+                                        //     maxLines: 2,
+                                        //     softWrap: true,
+                                        //     overflow: TextOverflow.ellipsis,
+                                        //   ),
+                                        // ),
+                                        // const Spacer(),
+                                        // Expanded(
+                                        //   flex: 2,
+                                        //   child: Text(
+                                        //     workOrder.workOrderData
+                                        //             ?.ticketNumber ??
+                                        //         'N/A',
+                                        //     style: TextStyle(
+                                        //       fontSize: 13,
+                                        //       color: blueColor,
+                                        //       fontWeight: FontWeight.bold,
+                                        //     ),
+                                        //     textAlign: TextAlign.end,
+                                        //     maxLines: 1,
+                                        //     softWrap: false,
+                                        //     overflow: TextOverflow.ellipsis,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                     if (isExpanded)
@@ -1383,11 +1418,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 30,
-                                      ),
+                                      const Spacer(),
                                       Expanded(
-                                        flex: 3,
+                                        flex: 2,
                                         child: Text(
                                           "Status",
                                           style: TextStyle(
@@ -1398,6 +1431,34 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           textAlign: TextAlign.end,
                                         ),
                                       ),
+                                      // SizedBox(
+                                      //   width: 5,
+                                      // ),
+                                      // Expanded(
+                                      //   flex: 2,
+                                      //   child: Text(
+                                      //     "Status",
+                                      //     style: TextStyle(
+                                      //       color: blueColor,
+                                      //       fontWeight: FontWeight.bold,
+                                      //       fontSize: 14,
+                                      //     ),
+                                      //     textAlign: TextAlign.center,
+                                      //   ),
+                                      // ),
+                                      // const Spacer(),
+                                      // Expanded(
+                                      //   flex: 2,
+                                      //   child: Text(
+                                      //     "Ticket #",
+                                      //     style: TextStyle(
+                                      //       color: blueColor,
+                                      //       fontWeight: FontWeight.bold,
+                                      //       fontSize: 14,
+                                      //     ),
+                                      //     textAlign: TextAlign.end,
+                                      //   ),
+                                      // ),
                                       SizedBox(
                                         width: 8,
                                       ),

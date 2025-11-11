@@ -363,6 +363,7 @@ class WorkOrderData {
   bool? isDelete;
   int? iV;
   String? staffmemberId;
+  String? ticketNumber;
 
   WorkOrderData(
       {this.sId,
@@ -388,7 +389,8 @@ class WorkOrderData {
         this.updatedAt,
         this.isDelete,
         this.iV,
-        this.staffmemberId});
+        this.staffmemberId,
+        this.ticketNumber});
 
   WorkOrderData.fromJson(Map<String, dynamic> json) {
 
@@ -421,6 +423,7 @@ class WorkOrderData {
     isDelete = json['is_delete'];
     iV = json['__v'] != null ? int.tryParse(json['__v'].toString()) : null;
     staffmemberId = json['staffmember_id'];
+    ticketNumber = json['ticket_number'];
   }
 
   Map<String, dynamic> toJson() {
@@ -452,6 +455,7 @@ class WorkOrderData {
     data['is_delete'] = this.isDelete;
     data['__v'] = this.iV;
     data['staffmember_id'] = this.staffmemberId;
+    data['ticket_number'] = this.ticketNumber;
     return data;
   }
 }

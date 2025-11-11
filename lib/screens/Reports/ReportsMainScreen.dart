@@ -793,11 +793,11 @@ class ReportScreen extends StatelessWidget {
                 //   'subtitle': 'Work orders on hold with future reopen dates',
                 //   "navigate": ReopenWorkorder()
                 // },
-                // {
-                //   'title': 'Home System Report',
-                //   'subtitle': 'Home system report',
-                //   "navigate": HomeSystemReportScreen()
-                // },
+                {
+                  'title': 'Home System Report',
+                  'subtitle': 'Home system report',
+                  "navigate": HomeSystemReportScreen()
+                },
               ],
               "Fix it fast, document it all",
               context),

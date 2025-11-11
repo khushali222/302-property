@@ -295,6 +295,24 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 const SizedBox(
                                   height: 10,
                                 ),
+                                // Row(
+                                //   children: [
+                                //     const SizedBox(
+                                //       width: 10,
+                                //     ),
+                                //     Text(
+                                //       "Work Order : # ${snapshot.data!.ticketNumber ?? "N/A"}",
+                                //       style: TextStyle(
+                                //         fontSize: 16,
+                                //         fontWeight: FontWeight.bold,
+                                //         color: blueColor,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // const SizedBox(
+                                //   height: 10,
+                                // ),
                                 Container(
                                   margin:
                                       const EdgeInsets.symmetric(horizontal: 5),
@@ -394,7 +412,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
       children: [
         isHeader
             ? TableRow(
-                decoration: const BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
+                decoration:
+                    const BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
                 children: titles
                     .map(
                       (item) => Padding(
@@ -791,7 +810,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           ),
                                           child: Material(
                                             color: Colors.white,
-                                            borderRadius: const BorderRadius.vertical(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
                                               top: Radius.circular(10),
                                             ),
                                             child: Center(
@@ -844,7 +864,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         ),
                                                   leading: Container(
                                                     padding:
-                                                        const EdgeInsets.only(top: 3),
+                                                        const EdgeInsets.only(
+                                                            top: 3),
                                                     child: const Icon(
                                                       Icons.person,
                                                       size: 30,
@@ -885,7 +906,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         ),
                                                   leading: Container(
                                                     padding:
-                                                        const EdgeInsets.only(top: 3),
+                                                        const EdgeInsets.only(
+                                                            top: 3),
                                                     child: const Icon(
                                                       Icons.person,
                                                       size: 30,
@@ -934,7 +956,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           ),
                                           child: Material(
                                             color: Colors.white,
-                                            borderRadius: const BorderRadius.vertical(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
                                               top: Radius.circular(10),
                                             ),
                                             child: Center(
@@ -986,8 +1009,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                               color: blueColor),
                                                         ),
                                               leading: Container(
-                                                padding:
-                                                    const EdgeInsets.only(top: 3),
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
                                                 child: const Icon(
                                                   Icons.person,
                                                   size: 30,
@@ -3292,8 +3315,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   width: 150,
                                                   height: 150,
                                                   // color: Colors.blue,
-                                                  margin:
-                                                      const EdgeInsets.only(right: 8),
+                                                  margin: const EdgeInsets.only(
+                                                      right: 8),
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -3337,11 +3360,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                                 size: 30.0,
                                                               ),
                                                             ),
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    const Icon(Icons
-                                                                        .error),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                const Icon(Icons
+                                                                    .error),
                                                           ),
                                                   ),
                                                 ),
@@ -3384,8 +3407,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   summery.workOrderImages!.isEmpty)
                                 const Center(
                                   child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8),
+                                    padding: EdgeInsets.symmetric(vertical: 8),
                                     child: Text(
                                       "No Images Provided",
                                       style: TextStyle(
@@ -4169,8 +4191,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
-                                                    border: InputBorder.none),
+                                                decoration:
+                                                    const InputDecoration(
+                                                        border:
+                                                            InputBorder.none),
                                                 isExpanded: true,
                                                 hint: const Row(
                                                   children: [
@@ -4289,8 +4313,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             ),
                                             if (assignedError != null)
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.only(top: 4),
+                                                padding: const EdgeInsets.only(
+                                                    top: 4),
                                                 child: Text(
                                                   assignedError!,
                                                   style: const TextStyle(
@@ -4371,13 +4395,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       },
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 16),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 16),
                                         hintText: "dd-mm-yyyy",
                                         hintStyle:
                                             TextStyle(color: Colors.grey[400]),
-                                        suffixIcon: const Icon(Icons.calendar_today,
-                                            size: 20, color: Colors.grey),
+                                        suffixIcon: const Icon(
+                                            Icons.calendar_today,
+                                            size: 20,
+                                            color: Colors.grey),
                                       ),
                                     ),
                                   ),
@@ -4543,8 +4570,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       controller: message,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 16),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 16),
                                         hintText: "Some description here",
                                         hintStyle: TextStyle(
                                             color: Colors.grey[400],
@@ -4656,8 +4684,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: 10, right: 10),
+                                    padding: const EdgeInsets.only(
+                                        top: 10, right: 10),
                                     child: Wrap(
                                       alignment: WrapAlignment.start,
                                       crossAxisAlignment:
@@ -4670,7 +4698,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           clipBehavior: Clip.none, //
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(4.0),
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
                                               child: Container(
                                                 width: 80,
                                                 height: 80,
@@ -4703,7 +4732,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 child: Container(
                                                   width: 18,
                                                   height: 18,
-                                                  decoration: const BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Colors.white,
                                                     shape: BoxShape.circle,
                                                     boxShadow: [
@@ -4739,7 +4769,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               child: TextButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     side: BorderSide(color: blueColor),
@@ -4840,7 +4871,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),

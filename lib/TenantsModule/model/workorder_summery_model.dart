@@ -1,6 +1,7 @@
 class WorkOrderData_summery {
   String? id;
   String? workOrderId;
+  String? ticketNumber;
   String? adminId;
   String? rentalId;
   String? unitId;
@@ -33,6 +34,7 @@ class WorkOrderData_summery {
   WorkOrderData_summery(
       {this.id,
         this.workOrderId,
+        this.ticketNumber,
         this.adminId,
         this.rentalId,
         this.unitId,
@@ -65,6 +67,7 @@ class WorkOrderData_summery {
   WorkOrderData_summery.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     workOrderId = json['workOrder_id'];
+    ticketNumber = json['ticket_number'];
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
