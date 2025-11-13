@@ -25,7 +25,7 @@ const String defaultGooglePayConfigString = '''
     ],
     "transactionInfo": {
       "totalPriceStatus": "FINAL",
-      "totalPrice": "19.99",
+      "totalPrice": "1.00",
       "totalPriceLabel": "Total",
       "currencyCode": "USD",
       "countryCode": "US"

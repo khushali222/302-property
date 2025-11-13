@@ -111,6 +111,7 @@ dependencies:
   camera: ^0.11.3
   package_info_plus: ^8.0.0
   pay: ^3.2.1
+  upi_india: ^3.0.1
 
   # pdf:
 

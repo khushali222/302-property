@@ -3812,7 +3812,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         size: 18),
                                                     SizedBox(width: 8),
                                                     Text(
-                                                      'Go to Checkout',
+                                                      ' Go to Checkout',
                                                       style: TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
