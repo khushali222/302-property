@@ -167,7 +167,7 @@
 //           Container(
 //             height: 50,
 //             decoration: const BoxDecoration(
-//               color: Color.fromRGBO(21, 43, 81, 1),
+//               color: blueColor,
 //               borderRadius: BorderRadius.only(
 //                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
 //             ),
@@ -203,7 +203,7 @@
 //                     style: TextStyle(
 //                         fontSize: 16,
 //                         fontWeight: FontWeight.bold,
-//                         color: Color.fromRGBO(21, 43, 81, 1)))
+//                         color: blueColor))
 //               ],
 //             ),
 //           ),
@@ -227,7 +227,7 @@
 //                               style: TextStyle(
 //                                   fontSize: 14,
 //                                   fontWeight: FontWeight.w500,
-//                                   color: Color.fromRGBO(21, 43, 81, 1))),
+//                                   color: blueColor)),
 //                         ],
 //                       )),
 //                     ],
@@ -253,7 +253,7 @@
 //                   width: 120,
 //                   height: 40,
 //                   decoration: BoxDecoration(
-//                       color: const Color.fromRGBO(21, 43, 81, 1),
+//                       color:blueColor,
 //                       borderRadius: BorderRadius.circular(4)),
 //                   child: const Center(
 //                       child: Text(
@@ -271,7 +271,7 @@
 //               child: Text(
 //             "Term Apply",
 //             style: TextStyle(
-//                 color: Color.fromRGBO(21, 43, 81, 1),
+//                 color: blueColor,
 //                 fontWeight: FontWeight.bold),
 //           )),
 //           const SizedBox(
@@ -282,6 +282,9 @@
 //     ),
 //   );
 // }
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:lottie/lottie.dart';
+
 import '../../widgets/custom_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -316,10 +319,17 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
   bool isLoading = false;
   String? globalPlanName;
   bool isPlanCancelling = false;
-
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<checkPlanPurchaseProiver>(context, listen: false);
@@ -334,7 +344,15 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
     _futureReport = _fetchPastPlans();
     _futurePlanDetails = _service.fetchPlanPurchaseDetails();
   }
+  void checkInternet()async{
 
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   Future<List<pastPlanData>> _fetchPastPlans() async {
     // Use await to get the Future result from PastPlansHistoryService
     return await PastPlansHistoryService().fetchPastPlans();
@@ -373,7 +391,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                 "Warning",
                 style: TextStyle(
                   fontSize: 20,
@@ -381,7 +399,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   color: Colors.black,
                 ),
               ),
-              content: Text(
+              content: const Text(
                 "Do you want to cancel your subscription?",
                 style: TextStyle(
                   fontSize: 16,
@@ -403,7 +421,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                               size: 25.0,
                             ),
                           )
-                        : Text(
+                        : const Text(
                             "Yes",
                             style: TextStyle(
                                 color: Colors.white,
@@ -454,7 +472,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                 Container(
                   width: 70,
                   child: ElevatedButton(
-                    child: Text(
+                    child: const Text(
                       "No",
                       style: TextStyle(
                           color: Colors.white,
@@ -571,7 +589,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -591,7 +609,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             size: 30,
             color: (_currentPage + 1) * _rowsPerPage >= totalrecords
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= totalrecords
               ? null
@@ -798,14 +816,17 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         currentpage: "Dashboard",
         dropdown: false,
       ),
-      body: globalPlanName == 'Free Plan'
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      globalPlanName == 'Free Plan'
           ? PlanPurchaseCard(isappbarShow: false)
           : Container(
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     FutureBuilder<getPlanDetailModel?>(
@@ -813,7 +834,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CardShimmerCurrentPlan();
+                          return const CardShimmerCurrentPlan();
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
@@ -836,7 +857,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -1171,7 +1192,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   ),
                                 ),
                               ),*/
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                               Container(
@@ -1185,7 +1206,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           color: blueColor,
                                           borderRadius:
                                               BorderRadius.circular(5)),
-                                      child: Center(
+                                      child: const Center(
                                           child: Text(
                                         "Current Subscription Plan Details",
                                         style: TextStyle(
@@ -1193,7 +1214,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             fontWeight: FontWeight.bold,fontSize: 18),
                                       )),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height:8,
                                     ),
                                     Container(
@@ -1225,7 +1246,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   alignment: Alignment.center,
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(3),
-                                                    color: Color.fromRGBO(
+                                                    color: const Color.fromRGBO(
                                                         38, 194, 44, 1),
                                                     //  borderRadius: BorderRadius.circular(5),
                                                   ),
@@ -1262,7 +1283,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   alignment: Alignment.center,
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(3),
-                                                    color: Color.fromRGBO(
+                                                    color: const Color.fromRGBO(
                                                         255, 0, 0, 1),
                                                     //  borderRadius: BorderRadius.circular(5),
                                                   ),
@@ -1279,7 +1300,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             ),
                                           ],
                                         )),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 8,
                                     ),
                                     Padding(
@@ -1295,7 +1316,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                             SizedBox(height: 10,),
+                                             const SizedBox(height: 10,),
                                               // Expanded(
                                               //   child: Container(
                                               //     //color:Colors.blue,
@@ -1429,7 +1450,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                Text("Plan Name : ",style: TextStyle(
+                                                const Text("Plan Name : ",style: TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight:
                                                                 FontWeight.bold,
@@ -1440,7 +1461,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                 fontWeight:
                                                                 FontWeight.bold,
                                                                 color: blueColor),)),
-                                                  Text("Purchase Date : ",style: TextStyle(
+                                                  const Text("Purchase Date : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1454,12 +1475,12 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       color: blueColor),)),
                                                 ],
                                               ),
-                                              SizedBox(height: 5,),
+                                              const SizedBox(height: 5,),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text("Plan Price    : ",style: TextStyle(
+                                                  const Text("Plan Price    : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1470,7 +1491,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       fontWeight:
                                                       FontWeight.bold,
                                                       color: blueColor),)),
-                                                  Text("Billing Period      : ",style: TextStyle(
+                                                  const Text("Billing Period      : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1483,13 +1504,13 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       color: blueColor),)),
                                                 ],
                                               ),
-                                              SizedBox(height: 10,),
+                                              const SizedBox(height: 10,),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 8,
                                     ),
                                     // Row(
@@ -1679,7 +1700,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -2157,7 +2178,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
@@ -2175,7 +2196,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           child: Column(
@@ -2433,8 +2454,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   .circleChevronLeft,
                                               color: currentPage == 0
                                                   ? Colors.grey
-                                                  : const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  :  blueColor
+
+
+,
                                             ),
                                             onPressed: currentPage == 0
                                                 ? null
@@ -2452,8 +2475,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   .circleChevronRight,
                                               color:
                                                   currentPage < totalPages - 1
-                                                      ? const Color.fromRGBO(
-                                                          21, 43, 83, 1)
+                                                      ?  blueColor
+
                                                       : Colors.grey,
                                             ),
                                             onPressed:
@@ -2645,20 +2668,28 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                left:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                right:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                top:  BorderSide(
+                                                    color: blueColor
+
+
+),
                                                 bottom: i ==
                                                         pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
+                                                    ?  BorderSide(
+                                                        color: blueColor
+
+
+)
                                                     : BorderSide.none,
                                               ),
                                             ),
@@ -2691,7 +2722,31 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   ],
                 ),
               ),
+            ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
             ),
+            const Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
@@ -2699,7 +2754,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2707,7 +2762,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   leftLabel,
                   style: TextStyle(color: grey,fontSize: 12),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: Text(
@@ -2721,7 +2776,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2729,7 +2784,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   rightLabel,
                   style: TextStyle(color: grey,fontSize: 12),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Padding(
                   padding: const EdgeInsets.only(left: 1),
                   child: Text(
@@ -2804,7 +2859,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                       width: 100,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
                     highlightColor: Colors.grey[100]!,

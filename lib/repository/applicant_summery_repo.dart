@@ -128,6 +128,7 @@ class ApplicantSummeryRepository {
   //     throw Exception('Failed to fetch applicant summary: ${response.body}');
   //   }
   // }
+
   static Future<applicant_summery_details> getApplicantSummary(
       String applicantId) async {
     print('entry');
@@ -145,6 +146,7 @@ class ApplicantSummeryRepository {
         "id": "CRM $id",
       });
 
+      print(response.body);
       if (response.statusCode == 200) {
         print('entry 200');
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
@@ -241,7 +243,7 @@ class ApplicantSummeryRepository {
           });
 
       if (response.statusCode == 200) {
-        print('Response body: ${response.body}');
+        print('Response body kkk : ${response.body}');
         return ApplicantContentDetails.fromJson(json.decode(response.body));
       } else {
         print(

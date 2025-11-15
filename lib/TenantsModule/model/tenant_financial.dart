@@ -1,4 +1,3 @@
-
 class TenantFinancial {
   int? statusCode;
   List<Data>? data;
@@ -18,7 +17,8 @@ class TenantFinancial {
       data: json['data'] != null
           ? List<Data>.from(json['data'].map((x) => Data.fromJson(x)))
           : null,
-      totalBalance: json['totalBalance']?.toDouble(), // Convert totalBalance to double
+      totalBalance:
+          json['totalBalance']?.toDouble(), // Convert totalBalance to double
       message: json['message'],
     );
   }
@@ -52,7 +52,7 @@ class Data {
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
-
+  TenantData? tenantData;
   double? balance;
   String? paymentId;
   String? adminId;
@@ -74,7 +74,7 @@ class Data {
     this.createdAt,
     this.updatedAt,
     this.isDelete,
-
+    this.tenantData,
     this.balance,
     this.paymentId,
     this.adminId,
@@ -93,14 +93,17 @@ class Data {
       entry: json['entry'] != null
           ? List<Entry>.from(json['entry'].map((x) => Entry.fromJson(x)))
           : null,
-      totalAmount: json['total_amount']?.toDouble(), // Convert total_amount to double
+      totalAmount:
+          json['total_amount']?.toDouble(), // Convert total_amount to double
       paymentType: json['payment_type'],
       type: json['type'],
       paymentAttachment: json['payment_attachment'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
-
+      tenantData: json['tenantData'] != null
+          ? TenantData.fromJson(json['tenantData'])
+          : null,
       balance: json['balance']?.toDouble(), // Convert balance to double
       paymentId: json['payment_id'],
       adminId: json['admin_id'],
@@ -124,7 +127,6 @@ class Data {
       'createdAt': this.createdAt,
       'updatedAt': this.updatedAt,
       'is_delete': this.isDelete,
-
       'balance': this.balance,
       'payment_id': this.paymentId,
       'admin_id': this.adminId,
@@ -133,9 +135,62 @@ class Data {
     if (this.entry != null) {
       data['entry'] = this.entry!.map((v) => v.toJson()).toList();
     }
+    if (this.tenantData != null) {
+      data['tenantData'] = this.tenantData!.toJson();
+    }
     return data;
   }
 }
+
+class TenantData {
+  String? id;
+  String? tenantId;
+  String? adminId;
+  String? tenantFirstName;
+  String? tenantLastName;
+  String? tenantPhoneNumber;
+
+
+  TenantData({
+
+    this.id,
+    this.tenantId,
+    this.adminId,
+    this.tenantFirstName,
+    this.tenantLastName,
+    this.tenantPhoneNumber,
+
+  });
+
+  factory TenantData.fromJson(Map<String, dynamic> json) {
+    return TenantData(
+
+      id: json['_id'],
+      tenantId: json['tenant_id'],
+      adminId: json['admin_id'],
+      tenantFirstName: json['tenant_firstName'],
+      tenantLastName: json['tenant_lastName'],
+      tenantPhoneNumber: json['tenant_phoneNumber'],
+
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+
+      '_id': this.id,
+      'tenant_id': this.tenantId,
+      'admin_id': this.adminId,
+      'tenant_firstName': this.tenantFirstName,
+      'tenant_lastName': this.tenantLastName,
+      'tenant_phoneNumber': this.tenantPhoneNumber,
+
+    };
+    return data;
+  }
+}
+
+
 
 class Entry {
   String? account;

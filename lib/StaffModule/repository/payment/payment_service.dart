@@ -26,11 +26,37 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
+
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
 
     print("surcharge ${surcharge}");
     if (future_Date == false) {
@@ -49,7 +75,9 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
+        'tenantName':tenantname,
+        'notificationTime':notificationTime,
+        'entry':updatedEntries,
       };
     //  log(paymentDetails.toString());
       final response = await http.post(
@@ -77,13 +105,18 @@ class PaymentService {
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-              entries: entries,
+              entries: updatedEntries,
+              //entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge)
+              responseText: "SUCCESS",
+              //responseText: jsonData["data"]["responsetext"],
+              surcharge: surcharge,
+
+          notificationTime: notificationTime,
+          )
           ]);
           return "Payment Success";
         } else {
@@ -103,13 +136,16 @@ class PaymentService {
             paymentType: "Card",
             customerVaultId: customerVaultId,
             billingId: billingId,
-            entries: entries,
+            entries: updatedEntries,
+            //entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge,
+            notificationTime: notificationTime
+        );
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -133,6 +169,7 @@ class PaymentService {
     required String transactionId,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -157,12 +194,13 @@ class PaymentService {
         'billing_id': billingId,
         'entry': entries,
         'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)).toString(),
+            (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -199,11 +237,37 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
+
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
 
     print("surcharge ${surcharge}");
     if (future_Date == false) {
@@ -223,9 +287,11 @@ class PaymentService {
         'amount': amount,
         'tenantId': tenantId,
         'date': date,
+        'entry':updatedEntries,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
+        'tenantName':tenantname,
+        "notificationTime": notificationTime,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -251,13 +317,16 @@ class PaymentService {
               tenantId: tenantId,
               leaseId: leaseid,
               paymentType: "ACH",
-              entries: entries,
+             // entries: entries,
+              entries: updatedEntries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge)
+              responseText: "SUCCESS",
+              surcharge: surcharge,
+              notificationTime: notificationTime,
+          )
           ]);
           return "Payment Success";
         } else {
@@ -275,13 +344,16 @@ class PaymentService {
             tenantId: tenantId,
             leaseId: leaseid,
             paymentType: "Card",
-            entries: entries,
+            entries: updatedEntries,
+            //entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge,
+            notificationTime: notificationTime
+        );
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -303,6 +375,7 @@ class PaymentService {
     required String transactionId,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -325,13 +398,14 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': totalAmount,
-        //'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+      //  'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -370,11 +444,37 @@ class PaymentService {
     required bool Check,
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
+    List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
+      // Determine charge_type based on newfield and account
+      String? chargeType;
+
+      if (entry['newfield'] == true) {
+        // If newfield is true, check account values
+        if (entry['account'] == "Late Fee Income" ||
+            entry['account'] == "Pre-payments" ||
+            entry['account'] == "Security Deposit") {
+          chargeType = entry['account']; // Assign account value as charge_type
+        } else if (entry['account'] == "Rent Income") {
+          chargeType = "Rent"; // Set charge_type as "Rent"
+        } else {
+          chargeType = "One Time Charge"; // Default to "One Time Charge"
+        }
+      } else {
+        // If newfield is false, keep the existing charge_type logic
+        chargeType = entry['sub_charge_type'] ?? entry['charge_type'];
+      }
+
+      return {
+        ...entry, // Keep existing data
+        'charge_type': chargeType, // Set the dynamically calculated charge_type
+      };
+    }).toList();
     print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
@@ -392,6 +492,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'entry':updatedEntries,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
@@ -418,13 +519,16 @@ class PaymentService {
               tenantId: tenantId,
               leaseId: leaseid,
               paymentType: "ACH",
-              entries: entries,
+              entries: updatedEntries,
+             // entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
               responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge);
+              surcharge: surcharge,
+    notificationTime: notificationTime
+          );
           return "Payment Success";
         } else {
           throw Exception('Failed payment ${jsonData["message"]}');
@@ -442,13 +546,15 @@ class PaymentService {
               tenantId: tenantId,
               leaseId: leaseid,
               paymentType: payment_method,
-              entries: entries,
+              entries: updatedEntries,
+              //entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: "",
               checknumber: Check_number,
               responseText: "PENDING",
-              surcharge: surcharge
+              surcharge: surcharge,
+              notificationTime: notificationTime
           )
         ]);
         return "Payment Successfully";
@@ -472,6 +578,7 @@ class PaymentService {
     required String checknumber,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -498,6 +605,7 @@ class PaymentService {
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
         'response': "SUCCESS",
+        'notificationTime':notificationTime,
       }),
     );
 

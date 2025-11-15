@@ -7,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
 
+import '../../../../constant/constant.dart';
+
 class RejectedContent extends StatefulWidget {
   final String applicantId;
   applicant_summery_details applicantDetail;
@@ -48,11 +50,14 @@ class _RejectedContentState extends State<RejectedContent> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-          ? const Center(
-              child: SpinKitSpinningLines(
-              color: Colors.black,
-              size: 40.0,
-            ))
+          ? Padding(
+            padding: const EdgeInsets.only(top: 200),
+            child: const Center(
+                child: SpinKitSpinningLines(
+                color: Colors.black,
+                size: 40.0,
+              )),
+          )
           : applicantDetail != null
               ? LayoutBuilder(builder: (context, contraints) {
                   if (contraints.maxWidth > 600) {
@@ -65,7 +70,7 @@ class _RejectedContentState extends State<RejectedContent> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                           ),
                         ),
                         child: Column(
@@ -78,10 +83,12 @@ class _RejectedContentState extends State<RejectedContent> {
                                   height: 40,
                                   width: 40,
                                   decoration: BoxDecoration(
-                                    color: const Color.fromRGBO(21, 43, 81, 1),
+                                    color:blueColor,
                                     border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            21, 43, 81, 1)),
+                                        color:  blueColor
+
+
+),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: const Center(
@@ -102,11 +109,11 @@ class _RejectedContentState extends State<RejectedContent> {
                                         const SizedBox(width: 2),
                                         Text(
                                           '${widget.applicantDetail.applicantFirstName ?? 'N/A'} ${widget.applicantDetail.applicantLastName ?? 'N/A'}',
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                           ),
                                         ),
                                       ],
@@ -122,17 +129,17 @@ class _RejectedContentState extends State<RejectedContent> {
                             Row(
                               children: [
                                 const SizedBox(width: 75),
-                                const FaIcon(
+                                 FaIcon(
                                   FontAwesomeIcons.phone,
                                   size: 25,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   '${widget.applicantDetail.applicantPhoneNumber ?? 'N/A'}',
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 18,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -142,20 +149,41 @@ class _RejectedContentState extends State<RejectedContent> {
                             Row(
                               children: [
                                 const SizedBox(width: 75),
-                                const FaIcon(
+                                 FaIcon(
                                   FontAwesomeIcons.home,
                                   size: 25,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontWeight: FontWeight.w500,
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width > 500 ? 200 : 200,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 1),
+                                    child: Text(
+                                      '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                                      textAlign: TextAlign.justify,
+                                      maxLines: 7, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
+                                // Text(
+                                //   '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                                //   style:  TextStyle(
+                                //     fontSize: 18,
+                                //     color: blueColor,
+                                //     fontWeight: FontWeight.w500,
+                                //   ),
+                                // ),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -180,13 +208,13 @@ class _RejectedContentState extends State<RejectedContent> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      height: 165,
+                    //  height: 165,
                       width: MediaQuery.of(context).size.width * .9,
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                         ),
                       ),
                       child: Column(
@@ -199,10 +227,10 @@ class _RejectedContentState extends State<RejectedContent> {
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 81, 1)),
+                                         blueColor),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: const Center(
@@ -223,10 +251,10 @@ class _RejectedContentState extends State<RejectedContent> {
                                       const SizedBox(width: 2),
                                       Text(
                                         '${widget.applicantDetail.applicantFirstName ?? 'N/A'} ${widget.applicantDetail.applicantLastName ?? 'N/A'}',
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                         ),
                                       ),
                                     ],
@@ -242,17 +270,17 @@ class _RejectedContentState extends State<RejectedContent> {
                           Row(
                             children: [
                               const SizedBox(width: 65),
-                              const FaIcon(
+                               FaIcon(
                                 FontAwesomeIcons.phone,
                                 size: 15,
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 '${widget.applicantDetail.applicantPhoneNumber ?? 'N/A'}',
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 12,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -262,26 +290,48 @@ class _RejectedContentState extends State<RejectedContent> {
                           Row(
                             children: [
                               const SizedBox(width: 65),
-                              const FaIcon(
+                               FaIcon(
                                 FontAwesomeIcons.home,
                                 size: 15,
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                               ),
                               const SizedBox(width: 5),
-                              Text(
-                                '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  fontWeight: FontWeight.w500,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 180,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
+                                  child: Text(
+                                    '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ),
+                              // Text(
+                              //   '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
+                              //   style:  TextStyle(
+                              //     fontSize: 12,
+                              //     color: blueColor,
+                              //     fontWeight: FontWeight.w500,
+                              //   ),
+                              // ),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           const Row(
                             children: [
-                              SizedBox(width: 65),
+                              SizedBox(width: 68),
                               Text(
                                 'Rejected',
                                 style: TextStyle(
@@ -292,12 +342,16 @@ class _RejectedContentState extends State<RejectedContent> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
                   );
                 })
-              : const Center(child: Text('No details found'));
+              : Padding(
+                padding: const EdgeInsets.only(top: 200),
+                child: const Center(child: Text('No details found')),
+              );
 
   }
 }

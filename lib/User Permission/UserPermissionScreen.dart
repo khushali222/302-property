@@ -1,8 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AdminUser%20Permission/adminUserPermissionModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -48,6 +50,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
   bool staffLeaseView = false;
   bool staffLeaseEdit = false;
   bool staffLeaseDelete = false;
+  bool staffSetting = false;
 
   bool staffWorkorderView = false;
   bool staffWorkorderAdd = false;
@@ -80,11 +83,34 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
   bool staffRentalOwnerDelete = false;
   bool _isLoading = false;
   bool selectAll = false;
+
+  ConnectivityResult? _connectivityResult ;
+
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
+
     _fetchAndSetPermissions();
   }
+
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+
   void checkAllPermissions() {
     selectAll = tenantPropertyView &&
         tenantFinancialView &&
@@ -131,6 +157,8 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         staffRentalOwnerView &&
         staffRentalOwnerAdd &&
         staffRentalOwnerEdit &&
+        staffSetting &&
+
         staffRentalOwnerDelete;
     setState(() {
 
@@ -166,6 +194,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
     staffLeaseView = selectAll;
     staffLeaseEdit = selectAll;
     staffLeaseDelete = selectAll;
+    staffSetting = selectAll;
 
     staffWorkorderView = selectAll;
     staffWorkorderAdd = selectAll;
@@ -210,10 +239,10 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           tenantWorkorderView = permissions.tenantPermission?.workorderView ?? false;
           tenantWorkorderAdd = permissions.tenantPermission?.workorderAdd ?? false;
           tenantWorkorderEdit = permissions.tenantPermission?.workorderEdit ?? false;
-          tenantWorkorderDelete = permissions.tenantPermission?.workorderDelete ?? false;
+         // tenantWorkorderDelete = permissions.tenantPermission?.workorderDelete ?? false;
           tenantDocumentsView = permissions.tenantPermission?.documentsView ?? false;
           tenantDocumentsEdit = permissions.tenantPermission?.documentsEdit ?? false;
-          tenantDocumentsDelete = permissions.tenantPermission?.documentsDelete ?? false;
+         // tenantDocumentsDelete = permissions.tenantPermission?.documentsDelete ?? false;
 
           // Staff permissions
         //  staffPropertydetailView = permissions.staffPermission?.propertydetailView ?? false;
@@ -231,6 +260,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           staffLeaseView = permissions.staffPermission?.leaseView ?? false;
           staffLeaseEdit = permissions.staffPermission?.leaseEdit ?? false;
           staffLeaseDelete = permissions.staffPermission?.leaseDelete ?? false;
+          staffSetting = permissions.staffPermission?.setting ?? false;
        //   staffLeasedetailView = permissions.staffPermission?.leasedetailView ?? false;
           staffWorkorderView = permissions.staffPermission?.workorderView ?? false;
           staffWorkorderAdd = permissions.staffPermission?.workorderAdd ?? false;
@@ -257,6 +287,57 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           // Vendor permissions
           vendorWorkorderEdit = permissions.vendorPermission?.workorderEdit ?? false;
           vendorWorkorderView = permissions.vendorPermission?.workorderView ?? false;
+
+
+          selectAll = [
+            tenantPropertyView,
+            tenantFinancialView,
+            tenantFinancialAdd,
+            tenantFinancialEdit,
+            tenantDocumentsAdd,
+            tenantWorkorderView,
+            tenantWorkorderAdd,
+            tenantWorkorderEdit,
+
+            tenantDocumentsView,
+            tenantDocumentsEdit,
+
+            staffPropertyView,
+            staffLeaseAdd,
+            staffWorkorderEdit,
+            staffPropertyAdd,
+            staffPropertyEdit,
+            staffPropertyDelete,
+            staffTenantView,
+            staffTenantAdd,
+            staffTenantEdit,
+            staffTenantDelete,
+            staffLeaseView,
+            staffLeaseEdit,
+            staffLeaseDelete,
+            staffSetting,
+            staffWorkorderView,
+            staffWorkorderAdd,
+            staffWorkorderDelete,
+            staffPropertyTypeView,
+            staffPropertyTypeAdd,
+            staffPropertyTypeEdit,
+            staffPropertyTypeDelete,
+            staffRentalOwnerView,
+            staffRentalOwnerAdd,
+            staffRentalOwnerEdit,
+            staffRentalOwnerDelete,
+            staffApplicantView,
+            staffApplicantAdd,
+            staffApplicantEdit,
+            staffApplicantDelete,
+            staffVendorView,
+            staffVendorAdd,
+            staffVendorEdit,
+            staffVendorDelete,
+            vendorWorkorderEdit,
+            vendorWorkorderView,
+          ].every((permission) => permission);
         });
       }
     } catch (e) {
@@ -273,7 +354,9 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
       appBar:
           widget_302.App_Bar(context: context, isUserPermitePageActive: true),
       drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-      body: Padding(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
@@ -282,11 +365,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -301,7 +384,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTableselectall(
                         '',
                         [
@@ -322,11 +405,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -341,7 +424,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTable(
                         'Property',
                         [
@@ -361,7 +444,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                         'Financial',
                         [
                           _buildCheckboxRow(
-                            'VIEW',
+                            'View Ledger',
 
                             tenantFinancialView,
                             (value) {
@@ -375,7 +458,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                             },
                           ),
                           _buildCheckboxRow(
-                            'ADD',
+                            'Make Payment',
                             isDisabled: tenantFinancialView ,
                             tenantFinancialAdd,
                             (value) {
@@ -385,16 +468,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                             },
 
                           ),
-                          _buildCheckboxRow(
-                            'EDIT',
-                            isDisabled: tenantFinancialView ,
-                            tenantFinancialEdit,
-                            (value) {
-                              setState(() {
-                                tenantFinancialEdit = value!;
-                              });
-                            },
-                          ),
+
                         ],
                       ),
                       Divider(color: blueColor),
@@ -433,16 +507,16 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               });
                             },
                           ),
-                          _buildCheckboxRow(
-                            'DELETE',
-                            isDisabled: tenantWorkorderView ,
-                            tenantWorkorderDelete,
-                            (value) {
-                              setState(() {
-                                tenantWorkorderDelete = value!;
-                              });
-                            },
-                          ),
+                          // _buildCheckboxRow(
+                          //   'DELETE',
+                          //   isDisabled: tenantWorkorderView ,
+                          //   tenantWorkorderDelete,
+                          //   (value) {
+                          //     setState(() {
+                          //       tenantWorkorderDelete = value!;
+                          //     });
+                          //   },
+                          // ),
                         ],
                       ),
                       Divider(color: blueColor),
@@ -481,16 +555,16 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               });
                             },
                           ),
-                          _buildCheckboxRow(
-                            'DELETE',
-                            isDisabled: tenantDocumentsView ,
-                            tenantDocumentsDelete,
-                            (value) {
-                              setState(() {
-                                tenantDocumentsDelete = value!;
-                              });
-                            },
-                          ),
+                          // _buildCheckboxRow(
+                          //   'DELETE',
+                          //   isDisabled: tenantDocumentsView ,
+                          //   tenantDocumentsDelete,
+                          //   (value) {
+                          //     setState(() {
+                          //       tenantDocumentsDelete = value!;
+                          //     });
+                          //   },
+                          // ),
                         ],
                       ),
                     ],
@@ -500,11 +574,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -519,7 +593,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTable(
                         'Property',
                         [
@@ -968,6 +1042,26 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                         ],
                       ),
 
+                      Divider(color: blueColor),
+
+                      _buildPermissionTable(
+                        'Setting',
+                        [
+                          _buildCheckboxRow(
+                            'MANAGE',
+                            staffSetting,
+                                (value) {
+                              setState(() {
+                                staffSetting = value!;
+                                if (!staffSetting) {
+
+                                }
+                              });
+                            },
+                          ),
+
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -975,11 +1069,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -994,7 +1088,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       _buildPermissionTable(
@@ -1054,7 +1148,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                       documentsDelete: tenantDocumentsDelete,
                                     ),
                                     staffPermission: StaffPermission(
-
+                                      setting: staffSetting,
                                       propertyView: staffPropertyView,
                                       leaseAdd: staffLeaseAdd,
                                       workorderEdit: staffWorkorderEdit,
@@ -1118,19 +1212,19 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                   }
                                 },
                                 child: _isLoading
-                                    ? Center(
+                                    ? const Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 20.0,
                                   ),
                                 )
-                                    : Text('Save', style: TextStyle(fontSize: 20)),
+                                    : const Text('Save', style: TextStyle(fontSize: 20)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             SizedBox(
@@ -1140,7 +1234,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('Cancel', style: TextStyle(fontSize: 20)),
+                                child: const Text('Cancel', style: TextStyle(fontSize: 20)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
                                 ),
@@ -1196,7 +1290,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                   leaseEdit: staffLeaseEdit,
                                   leaseDelete: staffLeaseDelete,
 
-
+                                  setting: staffSetting,
 
 
 
@@ -1249,25 +1343,25 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               }
                             },
                             child: _isLoading
-                                ? Center(
+                                ? const Center(
                               child: SpinKitFadingCircle(
                                 color: Colors.white,
                                 size: 20.0,
                               ),
                             )
-                                : Text('Save'),
+                                : const Text('Save'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                             ),
@@ -1280,6 +1374,30 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
 
             ],
           ),
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            const Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );
@@ -1316,7 +1434,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         return Center(
           child: Table(
             columnWidths: {
-              for (int i = 0; i < columns; i++) i: FlexColumnWidth(1.0),
+              for (int i = 0; i < columns; i++) i: const FlexColumnWidth(1.0),
             },
             children: [
               TableRow(
@@ -1375,7 +1493,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         return Center(
           child: Table(
             columnWidths: {
-              for (int i = 0; i < columns; i++) i: FlexColumnWidth(1.0),
+              for (int i = 0; i < columns; i++) i: const FlexColumnWidth(1.0),
             },
             children: [
 

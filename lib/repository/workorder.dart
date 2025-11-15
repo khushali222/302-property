@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -61,6 +63,8 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
+    String? categoryId,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -76,6 +80,7 @@ class WorkOrderRepository {
       'tenant_id': tenant,
       'rental_id': rentalid,
       'unit_id': unitid,
+      'category_id': categoryId,
       'workOrder_images': workOrderImages,
       'vendor_id': vendorId,
       'vendor_notes': vendorNotes,
@@ -83,6 +88,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
     print("'status': $status");
@@ -104,11 +110,13 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 
     //print('Response status: ${response.statusCode}');
-    // print('Response body: ${response.body}');
+     print('Response body add: ${response.body}');
+     print('Response notifi: ${notificationTime}');
 
     var responseData = json.decode(response.body);
 
@@ -121,7 +129,7 @@ class WorkOrderRepository {
     }
   }
 
-  Future<EditData> fetchWorkordersDetails(String workorderId) async {
+  Future<EditData> fetchWorkordersDetails(BuildContext context,String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -140,6 +148,34 @@ class WorkOrderRepository {
       // List leasesJson = jsonResponse['data'];
       return EditData.fromJson(jsonResponse['data']);
     } else {
+      Alert(
+        context: context,
+        type: AlertType.warning,
+        title: "Workorder data not found",
+        style: const AlertStyle(
+          backgroundColor: Colors.white,
+          titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,  // Ensures the Column doesn't take too much space
+          children: [
+            SizedBox(height: 10), // Add some space between the title and content
+
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            width: 130, // Set width of the button
+            height: 45, // Set height of the button
+            child: const Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: blueColor, // Your button color
+          ),
+        ],
+      ).show();
       throw Exception('Failed to load workorder');
     }
   }
@@ -165,7 +201,9 @@ class WorkOrderRepository {
     bool? workChargeTo,
     String? date,
     bool? isBillable,
+    String? categoryId,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -186,9 +224,11 @@ class WorkOrderRepository {
       'vendor_id': vendorId,
       'vendor_notes': vendorNotes,
       'priority': priority,
+      'category_id': categoryId,
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
 
@@ -206,11 +246,12 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 
     print('data length${data.length}');
-    // print('Response body: ${response.body}');
+    print('Response body workd: ${response.body}');
     // print(workOrderid);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
@@ -223,7 +264,7 @@ class WorkOrderRepository {
   }
 
   Future<Map<String, dynamic>> DeleteWorkOrder(
-      {required String? workOrderid}) async {
+      {required String? workOrderid,String? reason}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -236,6 +277,7 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+        body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
     print('$Api_url/work-order/delete_workorder/$workOrderid');
@@ -288,7 +330,7 @@ class WorkOrderRepository {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({"workOrder": workorder}));
-
+   print('update workorder ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
       return true;

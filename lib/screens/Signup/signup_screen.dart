@@ -13,7 +13,6 @@ class Signup extends StatefulWidget {
   @override
   _SignupState createState() => _SignupState();
 }
-
 class _SignupState extends State<Signup> {
   int currentStep = 0;
   bool loading = false;
@@ -71,8 +70,8 @@ class _SignupState extends State<Signup> {
               context,
               MaterialPageRoute(
                   builder: (context) => Signup2(
-                    firstname: firstname.text,
-                    lastname: lastname.text,
+                    firstname: firstname.text.trim(),
+                    lastname: lastname.text.trim(),
                     email: email,
                   )));
           Fluttertoast.showToast(msg: "added succesfully");
@@ -101,11 +100,33 @@ class _SignupState extends State<Signup> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return
-
-        Scaffold(
+      Scaffold(
           backgroundColor: Colors.white,
           body: ListView(
             children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16), // Safe area
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200], // light grey
+                        borderRadius: BorderRadius.circular(10), // square-ish with smooth edges
+
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: Colors.black54,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
@@ -115,26 +136,28 @@ class _SignupState extends State<Signup> {
                 width: MediaQuery.of(context).size.width * 0.9,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.025,
+                height: MediaQuery.of(context).size.height * 0.04,
               ),
               // Welcome
+              // Center(
+              //   child: Text(
+              //     "Welcome to 302 Rentals",
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width * 0.05,
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.02,
+              // ),
               Center(
                 child: Text(
-                  "Welcome to 302 Rentals",
+                  "Sign up for your free trial account",
                   style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              Center(
-                child: Text(
-                  "Signup for free trial account",
-                  style: TextStyle(color: Colors.black,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.036
                   ),
                 ),
@@ -162,7 +185,7 @@ class _SignupState extends State<Signup> {
                                 });
                               },
                               controller: firstname,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 enabledBorder: firstnameerror
                                     ? OutlineInputBorder(
@@ -226,7 +249,7 @@ class _SignupState extends State<Signup> {
                                 });
                               },
                               controller: lastname,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 enabledBorder: lastnameerror
                                     ? OutlineInputBorder(
@@ -292,7 +315,7 @@ class _SignupState extends State<Signup> {
                               },
                               controller: email,
                               keyboardType: TextInputType.emailAddress,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 enabledBorder: emailerror
@@ -336,10 +359,10 @@ class _SignupState extends State<Signup> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (firstname.text.isEmpty) {
+                  if (firstname.text.trim().isEmpty) {
                     setState(() {
                       firstnameerror = true;
-                      firstnamemessage = "Firstname is required";
+                      firstnamemessage = "First Name is required";
                     });
                   } else {
                     setState(() {
@@ -347,10 +370,10 @@ class _SignupState extends State<Signup> {
                       //firstnamemessage = "Firstname is required";
                     });
                   }
-                  if (lastname.text.isEmpty) {
+                  if (lastname.text.trim().isEmpty) {
                     setState(() {
                       lastnameerror = true;
-                      lastnamemessage = "Lastname is required";
+                      lastnamemessage = "Last Name is required";
                     });
                   } else {
                     setState(() {
@@ -358,18 +381,18 @@ class _SignupState extends State<Signup> {
                       //firstnamemessage = "Firstname is required";
                     });
                   }
-                  if (email.text.isEmpty) {
+                  if (email.text.trim().isEmpty) {
                     setState(() {
                       emailerror = true;
-                      emailmessage = "Email is required";
+                      emailmessage = "Business Email is required";
                     });
-                  } else if (!EmailValidator.validate(email.text)) {
+                  } else if (!EmailValidator.validate(email.text.trim())) {
                     setState(() {
                       emailerror = true;
-                      emailmessage = "Email is not valid";
+                      emailmessage = "Business Email is not valid";
                     });
                   } else {
-                    await _checkEmailVerified(email.text);
+                    await _checkEmailVerified(email.text.trim());
                   }
                   if (!firstnameerror == false &&
                       !lastnameerror == false &&
@@ -401,7 +424,7 @@ class _SignupState extends State<Signup> {
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: MediaQuery.of(context).size.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child:
@@ -459,7 +482,7 @@ class _SignupState extends State<Signup> {
                         height: 30,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black,
+                          color:Color(0xFF152B51),
                         ),
                         child: Center(
                           child: Text(

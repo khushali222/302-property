@@ -62,6 +62,8 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
+    String? categoryId,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -69,6 +71,7 @@ class WorkOrderRepository {
       'work_subject': workSubject,
       'staffmember_id': staffMemberName,
       'work_category': workCategory,
+      'category_id': categoryId,
       'work_performed': workPerformed,
       'status': status,
       'rental_address': rentalAddress,
@@ -84,6 +87,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
     print("'status': $status");
@@ -106,6 +110,7 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -153,6 +158,7 @@ class WorkOrderRepository {
     String? workSubject,
     String? staffMemberName,
     String? workCategory,
+    String? categoryId,
     String? workPerformed,
     String? status,
     String? rentalAddress,
@@ -169,6 +175,7 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -177,6 +184,7 @@ class WorkOrderRepository {
       'work_subject': workSubject,
       'staffmember_id': staffMemberName,
       'work_category': workCategory,
+      'category_id': categoryId,
       'work_performed': workPerformed,
       'status': status,
       'rental_address': rentalAddress,
@@ -192,6 +200,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
 
@@ -210,6 +219,7 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -227,7 +237,7 @@ class WorkOrderRepository {
   }
 
   Future<Map<String, dynamic>> DeleteWorkOrder(
-      {required String? workOrderid}) async {
+      {required String? workOrderid, String? reason}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -240,6 +250,9 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+        body: jsonEncode({
+          "reason":reason
+        })
     );
     var responseData = json.decode(response.body);
     print('$Api_url/work-order/delete_workorder/$workOrderid');
@@ -264,10 +277,13 @@ class WorkOrderRepository {
     final url =
         Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
+
     final response = await http.get(url, headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
+
+    print(' abc workorder summery ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
@@ -278,6 +294,7 @@ class WorkOrderRepository {
   }
 
   static Future<bool> updateworkorderSummary(
+
       Map<String, dynamic> workorder, String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

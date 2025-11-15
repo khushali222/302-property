@@ -11,6 +11,7 @@ import 'package:http/http.dart'as http;
 import '../../model/add_property.dart';
 
 class PropertiesRepository {
+
   final String apiUrl = '${Api_url}/api/propertytype/property_type';
 
   Future<List<Rentals>> fetchProperties() async {

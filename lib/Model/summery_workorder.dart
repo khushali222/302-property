@@ -1,6 +1,7 @@
 class WorkOrderData_summery {
   String? id;
   String? workOrderId;
+  String? ticketNumber;
   String? adminId;
   String? rentalId;
   String? unitId;
@@ -33,6 +34,7 @@ class WorkOrderData_summery {
   WorkOrderData_summery(
       {this.id,
         this.workOrderId,
+        this.ticketNumber,
         this.adminId,
         this.rentalId,
         this.unitId,
@@ -65,6 +67,7 @@ class WorkOrderData_summery {
   WorkOrderData_summery.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     workOrderId = json['workOrder_id'];
+    ticketNumber = json['ticket_number'];
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -119,6 +122,7 @@ class WorkOrderData_summery {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = id;
     data['workOrder_id'] = workOrderId;
+    data['ticket_number'] = ticketNumber;
     data['admin_id'] = adminId;
     data['rental_id'] = rentalId;
     data['unit_id'] = unitId;
@@ -174,6 +178,7 @@ class WorkorderUpdates {
   String? createdAt;
   String? updatedAt;
   String? statusUpdatedBy;
+  List<dynamic>? workOrderUpdateimages;
   String? id;
 
   WorkorderUpdates(
@@ -183,14 +188,17 @@ class WorkorderUpdates {
         this.createdAt,
         this.updatedAt,
         this.statusUpdatedBy,
+        this.workOrderUpdateimages,
         this.id});
 
   WorkorderUpdates.fromJson(Map<String, dynamic> json) {
+    print(' image as ${ json['workOrderUpdate_images']}');
     status = json['status'];
     date = json['date'];
     staffmemberName = json['staffmember_name'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    workOrderUpdateimages = json['workOrderUpdate_images'];
     statusUpdatedBy = json['statusUpdatedBy'];
     id = json['_id'];
   }
@@ -203,6 +211,7 @@ class WorkorderUpdates {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['statusUpdatedBy'] = this.statusUpdatedBy;
+    data['workOrderUpdate_images'] = this.workOrderUpdateimages;
     data['_id'] = this.id;
     return data;
   }
@@ -308,18 +317,24 @@ class PropertyData {
 class UnitData {
   String? id;
   String? unitName;
+  String? rental_unit;
+  String? unit_id;
 
-  UnitData({this.id, this.unitName});
+  UnitData({this.id, this.unitName,this.rental_unit,this.unit_id});
 
   UnitData.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     unitName = json['rental_unit_adress'];
+    rental_unit = json['rental_unit'];
+    unit_id = json['unit_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.id;
     data['unit_name'] = this.unitName;
+    data['rental_unit'] = this.rental_unit;
+    data['unit_id'] = this.unit_id;
     return data;
   }
 }
@@ -374,15 +389,15 @@ class TenantData {
 
   TenantData.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
-    firstname = json['firstname'];
-    lastname = json['lastname'];
+    firstname = json['tenant_firstName'];
+    lastname = json['tenant_lastName'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.id;
-    data['firstname'] = this.firstname;
-    data['lastname'] = this.lastname;
+    data['tenant_firstName'] = this.firstname;
+    data['tenant_lastName'] = this.lastname;
     return data;
   }
 }

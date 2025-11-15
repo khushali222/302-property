@@ -5,12 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../constant/constant.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
+
 class Add_property extends StatefulWidget {
   const Add_property({super.key});
 
@@ -30,28 +32,77 @@ class _Add_propertyState extends State<Add_property> {
   String selectedMonth = 'Residential';
   TextEditingController subtype = TextEditingController();
   bool iserror = false;
+
+  // Helper method to detect if device is tablet
+  bool isTablet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final diagonal = (size.width * size.width + size.height * size.height);
+    // Updated to better detect tablets including your 1280x1880 size
+    return diagonal >
+        800000; // Diagonal > 894px indicates tablet (covers your 1280x1880)
+  }
+
+  // Helper method to get responsive values
+  double getResponsivePadding(BuildContext context) {
+    if (isTablet(context)) {
+      return MediaQuery.of(context).size.width *
+          0.12; // 12% padding for tablets (optimized for 1280px width)
+    }
+    return MediaQuery.of(context).size.width < 500 ? 25 : 55;
+  }
+
+  double getResponsiveFontSize(
+      BuildContext context, double mobileSize, double tabletSize) {
+    if (isTablet(context)) {
+      return tabletSize;
+    }
+    return MediaQuery.of(context).size.width < 500
+        ? mobileSize
+        : mobileSize + 3;
+  }
+
+  double getResponsiveWidth(
+      BuildContext context, double mobileWidth, double tabletWidth) {
+    if (isTablet(context)) {
+      return tabletWidth;
+    }
+    return mobileWidth;
+  }
+
+  double getResponsiveHeight(
+      BuildContext context, double mobileHeight, double tabletHeight) {
+    if (isTablet(context)) {
+      return tabletHeight;
+    }
+    return mobileHeight;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
-      body:
-      SingleChildScrollView(
+      drawer: CustomDrawerStaff(
+        currentpage: "Property Type",
+        dropdown: true,
+      ),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-              height: 25,
+              height: isTablet(context) ? 35 : 25,
             ),
             titleBar(
               width: MediaQuery.of(context).size.width * .88,
               title: 'Add Property Type',
             ),
             SizedBox(
-              height: 25,
+              height: isTablet(context) ? 35 : 25,
             ),
             Padding(
-              padding:  EdgeInsets.only(left:  MediaQuery.of(context).size.width < 500 ? 25 :55, right:  MediaQuery.of(context).size.width < 500 ? 25 :55),
+              padding: EdgeInsets.only(
+                  left: getResponsivePadding(context),
+                  right: getResponsivePadding(context)),
               child: Material(
                 elevation: 6,
                 borderRadius: BorderRadius.circular(10),
@@ -62,56 +113,58 @@ class _Add_propertyState extends State<Add_property> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                       )),
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 20,
+                        height: isTablet(context) ? 30 : 20,
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 25 : 15,
                           ),
                           Text(
                             "New Property Type",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(21, 43, 81, 1),
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
+                                color: blueColor,
+                                fontSize:
+                                    getResponsiveFontSize(context, 17, 26)),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: isTablet(context) ? 15 : 10,
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 25 : 15,
                           ),
                           Text(
                             "Property Type *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                fontSize:
+                                    getResponsiveFontSize(context, 15, 20)),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: isTablet(context) ? 15 : 10,
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 25 : 15,
                           ),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: const Row(
+                              hint: Row(
                                 children: [
                                   SizedBox(
                                     width: 4,
@@ -120,7 +173,7 @@ class _Add_propertyState extends State<Add_property> {
                                     child: Text(
                                       'Type',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: isTablet(context) ? 16 : 14,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -132,17 +185,18 @@ class _Add_propertyState extends State<Add_property> {
                               items: items
                                   .map(
                                       (String item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    isTablet(context) ? 16 : 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
                                   .toList(),
                               value: selectedValue,
                               onChanged: (value) {
@@ -151,10 +205,9 @@ class _Add_propertyState extends State<Add_property> {
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
-                                height: 50,
-                                width: 160,
-                                padding:
-                                const EdgeInsets.only(left: 14, right: 14),
+                                height: isTablet(context) ? 60 : 50,
+                                width: getResponsiveWidth(context, 160, 200),
+                                padding: EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -166,7 +219,7 @@ class _Add_propertyState extends State<Add_property> {
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 maxHeight: 200,
-                                width: 200,
+                                width: isTablet(context) ? 250 : 200,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
                                   //color: Colors.redAccent,
@@ -176,11 +229,11 @@ class _Add_propertyState extends State<Add_property> {
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                  MaterialStateProperty.all(true),
+                                      MaterialStateProperty.all(true),
                                 ),
                               ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
+                              menuItemStyleData: MenuItemStyleData(
+                                height: isTablet(context) ? 50 : 40,
                                 padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
@@ -188,35 +241,36 @@ class _Add_propertyState extends State<Add_property> {
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: isTablet(context) ? 25 : 20,
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 25 : 15,
                           ),
                           Text(
-                            "Property SubType *",
+                            "Property Sub Type *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                fontSize:
+                                    getResponsiveFontSize(context, 15, 20)),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: isTablet(context) ? 15 : 10,
                       ),
                       Row(
                         children: [
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 25 : 15,
                           ),
                           Material(
                             elevation: 2,
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                              width: getResponsiveWidth(context, 160, 200),
                               padding: EdgeInsets.only(left: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -224,39 +278,58 @@ class _Add_propertyState extends State<Add_property> {
                               ),
                               child: TextFormField(
                                 controller: subtype,
+                                style: TextStyle(
+                                  fontSize: isTablet(context) ? 16 : 14,
+                                ),
                                 decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Townhome"),
+                                  border: InputBorder.none,
+                                  hintText: "Townhome",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                        .withOpacity(0.6), // Light grey
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: isTablet(context) ? 16 : 14,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: isTablet(context) ? 25 : 20,
                       ),
                       Row(
                         children: [
                           if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.05),
-                          if (MediaQuery.of(context).size.width > 500)
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500 &&
+                              !isTablet(context))
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                          if (isTablet(context))
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
                           Container(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                            width: MediaQuery.of(context).size.height * 0.02,
+                            height: isTablet(context)
+                                ? MediaQuery.of(context).size.height * 0.025
+                                : MediaQuery.of(context).size.height * 0.02,
+                            width: isTablet(context)
+                                ? MediaQuery.of(context).size.height * 0.025
+                                : MediaQuery.of(context).size.height * 0.02,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Checkbox(
-                              activeColor: isChecked
-                                  ? Color.fromRGBO(21, 43, 81, 1)
-                                  : Colors.white,
+                              activeColor: isChecked ? blueColor : Colors.white,
                               checkColor: Colors.white,
                               value:
-                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ??
@@ -266,12 +339,13 @@ class _Add_propertyState extends State<Add_property> {
                             ),
                           ),
                           SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.02),
+                              width: isTablet(context)
+                                  ? MediaQuery.of(context).size.width * 0.03
+                                  : MediaQuery.of(context).size.width * 0.02),
                           Text(
                             "Multi unit",
                             style: TextStyle(
-                              fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 15 :18,
+                              fontSize: getResponsiveFontSize(context, 15, 18),
                               color: Colors.grey,
                             ),
                           ),
@@ -280,20 +354,27 @@ class _Add_propertyState extends State<Add_property> {
                         ],
                       ),
                       SizedBox(
-                        height: 20,
+                        height: isTablet(context) ? 25 : 20,
                       ),
                       Row(
                         children: [
                           if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.05),
-                          if (MediaQuery.of(context).size.width > 500)
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
+                          if (MediaQuery.of(context).size.width > 500 &&
+                              !isTablet(context))
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                          if (isTablet(context))
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
                           GestureDetector(
                             onTap: () async {
                               if (selectedValue == null ||
-                                  subtype.text.isEmpty) {
+                                  subtype.text.trim().isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
@@ -303,13 +384,13 @@ class _Add_propertyState extends State<Add_property> {
                                   iserror = false;
                                 });
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .addPropertyType(
                                   adminId: id!,
                                   propertyType: selectedValue,
-                                  propertySubType: subtype.text,
+                                  propertySubType: subtype.text.trim(),
                                   isMultiUnit: isChecked,
                                 )
                                     .then((value) {
@@ -328,11 +409,11 @@ class _Add_propertyState extends State<Add_property> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                height: getResponsiveHeight(context, 40, 50),
+                                width: getResponsiveWidth(context, 160, 200),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey,
@@ -344,22 +425,23 @@ class _Add_propertyState extends State<Add_property> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: isTablet(context) ? 30.0 : 25.0,
+                                        )
                                       : Text(
-                                    "Add Property Type",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
-                                  ),
+                                          "Add Property Type",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: getResponsiveFontSize(
+                                                  context, 15, 17)),
+                                        ),
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 15,
+                            width: isTablet(context) ? 20 : 15,
                           ),
                           InkWell(
                             onTap: () {
@@ -368,24 +450,35 @@ class _Add_propertyState extends State<Add_property> {
                             child: Material(
                               elevation: 2,
                               child: Container(
-                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
-                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
+                                  width: getResponsiveWidth(context, 90, 120),
+                                  height: getResponsiveHeight(context, 40, 50),
                                   color: Colors.white,
-                                  child: Center(child: Text("Cancel"))),
+                                  child: Center(
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        fontSize: getResponsiveFontSize(
+                                            context, 14, 16),
+                                      ),
+                                    ),
+                                  )),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(
-                        height: 10,
+                        height: isTablet(context) ? 15 : 10,
                       ),
                       if (iserror)
                         Text(
                           "Please fill in all fields correctly.",
-                          style: TextStyle(color: Colors.redAccent),
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontSize: getResponsiveFontSize(context, 14, 16),
+                          ),
                         ),
                       SizedBox(
-                        height: 10,
+                        height: isTablet(context) ? 15 : 10,
                       ),
                     ],
                   ),

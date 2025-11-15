@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import '../constant/constant.dart';
+
 /*void main() {
   runApp(const MyApp());
 }
@@ -29,15 +31,15 @@ class MyApp extends StatelessWidget {
 class PieCharts extends StatelessWidget {
   final Map<String, double> dataMap;
   final colorList = <Color>[
-    Color.fromRGBO(21, 43, 81, 1),
+    blueColor,
     Colors.transparent, // Gap1
-    Color.fromRGBO(40, 60, 95, 1),
+    const Color.fromRGBO(40, 60, 95, 1),
     Colors.transparent, // Gap2
-    Color.fromRGBO(50, 75, 119, 1),
+    const Color.fromRGBO(50, 75, 119, 1),
     Colors.transparent, // Gap3
-    Color.fromRGBO(60, 89, 142, 1),
+    const Color.fromRGBO(60, 89, 142, 1),
     Colors.transparent, // Gap4
-    Color.fromRGBO(90, 134, 213, 1),
+    const Color.fromRGBO(90, 134, 213, 1),
     Colors.transparent, // Gap5
   ];
   PieCharts({Key? key, required this.dataMap}) : super(key: key);
@@ -59,7 +61,7 @@ class PieCharts extends StatelessWidget {
             return Container(
               height: 250,
               width: 375,
-              margin: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
               child: Card(
                 color: Colors.white,
                 surfaceTintColor: Colors.white,
@@ -79,10 +81,10 @@ class PieCharts extends StatelessWidget {
                           chartType: ChartType.disc,
                           centerText: "",
                           initialAngleInDegree: 0,
-                          legendOptions: LegendOptions(
+                          legendOptions: const LegendOptions(
                             showLegends: false,
                           ),
-                          chartValuesOptions: ChartValuesOptions(
+                          chartValuesOptions: const ChartValuesOptions(
                             showChartValuesInPercentage: false,
                             showChartValues: false,
                           ),
@@ -109,7 +111,7 @@ class PieCharts extends StatelessWidget {
                                 ),
 
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(key,maxLines: 3,),
                             ],
                           );
@@ -124,7 +126,7 @@ class PieCharts extends StatelessWidget {
 
           return Container(
             height: 250,
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             child: Card(
               color: Colors.white,
               surfaceTintColor: Colors.white,
@@ -144,10 +146,10 @@ class PieCharts extends StatelessWidget {
                         chartType: ChartType.disc,
                         centerText: "",
                         initialAngleInDegree: 0,
-                        legendOptions: LegendOptions(
+                        legendOptions: const LegendOptions(
                           showLegends: false,
                         ),
-                        chartValuesOptions: ChartValuesOptions(
+                        chartValuesOptions: const ChartValuesOptions(
                           showChartValuesInPercentage: false,
                           showChartValues: false,
                         ),
@@ -176,7 +178,7 @@ class PieCharts extends StatelessWidget {
                                   color: colorList[dataMap.keys.toList().indexOf(key)],
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(key,maxLines: 3),
                             ],
                           ),

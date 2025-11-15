@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +25,10 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../../provider/dateProvider.dart';
+import '../../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
+import '../../../repository/dashboard_table_repo/cronjob_payment_table.dart';
+import 'Edit_make_payment.dart';
 import 'make_payment.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:printing/printing.dart';
@@ -40,7 +43,7 @@ import 'package:http/http.dart' as http;
 class FinancialTable extends StatefulWidget {
   final String leaseId;
   final String tenantId;
-  final String status;
+  final String? status;
   final String? rentalAddress;
   final String? rentalUnit;
   FinancialTable(
@@ -90,7 +93,7 @@ class _FinancialTableState extends State<FinancialTable> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Refund Amount'),
+              title: const Text('Refund Amount'),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -110,9 +113,9 @@ class _FinancialTableState extends State<FinancialTable> {
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0),
                               blurRadius: 6.0,
@@ -130,8 +133,8 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Text("Date"),
+                    const SizedBox(height: 10),
+                    const Text("Date"),
                     buildCustomTextField(
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
@@ -173,15 +176,15 @@ class _FinancialTableState extends State<FinancialTable> {
                       hintText: 'Enter refund Date',
                       keyboardType: TextInputType.number,
                     ),
-                    SizedBox(height: 10),
-                    Text("Refund Amount"),
+                    const SizedBox(height: 10),
+                    const Text("Refund Amount"),
                     buildCustomTextField(
                       controller: _amountController,
                       hintText: 'Enter refund amount',
                       keyboardType: TextInputType.number,
                     ),
-                    SizedBox(height: 10),
-                    Text("Memo"),
+                    const SizedBox(height: 10),
+                    const Text("Memo"),
                     buildCustomTextField(
                       controller: _memoController,
                       hintText: 'Enter memo',
@@ -220,13 +223,13 @@ class _FinancialTableState extends State<FinancialTable> {
                             type: AlertType.error,
                             title: "Refund Failed!",
                             desc: "${message}",
-                            style: AlertStyle(
+                            style: const AlertStyle(
                               backgroundColor: Colors.white,
                               //  overlayColor: Colors.black.withOpacity(.8)
                             ),
                             buttons: [
                               DialogButton(
-                                child: Text(
+                                child: const Text(
                                   "Ok",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18),
@@ -258,10 +261,10 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                         child: Center(
                             child: isLoading
-                                ? CircularProgressIndicator(
+                                ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   ) // Show loading indicator when isLoading is true
-                                : Text(
+                                : const Text(
                                     'Make Refund',
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.white),
@@ -279,7 +282,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.white,
                         ),
-                        child: Center(child: Text('Cancel')),
+                        child: const Center(child: Text('Cancel')),
                       ),
                     ),
                   ],
@@ -398,7 +401,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   reload_screen() {
     setState(() {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+      _leaseLedgerFuture =
+          LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     });
   }
 
@@ -415,14 +419,14 @@ class _FinancialTableState extends State<FinancialTable> {
       borderRadius: BorderRadius.circular(8.0),
       child: Container(
         height: 50,
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
-              offset: Offset(4, 4),
+              offset: const Offset(4, 4),
               blurRadius: 3,
             ),
           ],
@@ -434,7 +438,7 @@ class _FinancialTableState extends State<FinancialTable> {
           obscureText: false,
           readOnly: false,
           decoration: InputDecoration(
-            hintStyle: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+            hintStyle: const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
             border: InputBorder.none,
             hintText: hintText,
             errorText: errorText,
@@ -471,12 +475,9 @@ class _FinancialTableState extends State<FinancialTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -519,10 +520,16 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Type",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Type",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Type",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("Type",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                   ],
@@ -553,9 +560,12 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Balance      ",
-                        style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    Text("Balance      ",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -585,9 +595,12 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("      Date",
-                        style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    Text("      Date",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -606,13 +619,26 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   void initState() {
     super.initState();
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+      leaseId: widget.leaseId,
+    );
     _expanded = List.generate(_pagedData.length, (_) => false);
+    _fromDateController = TextEditingController(text: '');
+    _toDateController = TextEditingController(text: '');
+    filteredData = allData;
+  }
+
+  @override
+  void dispose() {
+    _fromDateController.dispose();
+    _toDateController.dispose();
+    super.dispose();
   }
 
   void handleEdit(Data? ledge) async {}
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
@@ -620,6 +646,23 @@ class _FinancialTableState extends State<FinancialTable> {
       desc: "Once deleted, you will not be able to recover this Charge!",
       style: const AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
@@ -636,12 +679,69 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await LeaseRepository().DeleteCharge(id);
+            var data = await LeaseRepository().DeleteCharge(id, reason.text);
             // Add your delete logic here
             if (data == 200)
               setState(() {
                 _leaseLedgerFuture =
-                    LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                    LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+              });
+            Navigator.pop(context);
+          },
+          color: blueColor,
+        )
+      ],
+    ).show();
+  }
+
+  void _showAlertpayment(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this payment!",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: grey,
+        ),
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            var data = await LeaseRepository().DeletePayment(id, reason.text);
+            // Add your delete logic here
+            if (data == 200)
+              setState(() {
+                _leaseLedgerFuture =
+                    LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
               });
             Navigator.pop(context);
           },
@@ -653,6 +753,9 @@ class _FinancialTableState extends State<FinancialTable> {
 
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
+
+  String fdate = "";
+  String edate = "";
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
@@ -662,6 +765,21 @@ class _FinancialTableState extends State<FinancialTable> {
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
         endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void sortData(List<Data> data) {
+    if (sorting1) {
+      data.sort((a, b) =>
+          ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.balance!.compareTo(b.balance!)
+          : b.balance!.compareTo(a.balance!));
+    } else if (sorting3) {
+      data.sort((a, b) => ascending3
+          ? a.createdAt!.compareTo(b.createdAt!)
+          : b.createdAt!.compareTo(a.createdAt!));
+    }
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -816,8 +934,7 @@ class _FinancialTableState extends State<FinancialTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? grey : const Color.fromRGBO(21, 43, 83, 1),
+            color: _currentPage == 0 ? grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -837,8 +954,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -874,7 +990,8 @@ class _FinancialTableState extends State<FinancialTable> {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
@@ -891,13 +1008,14 @@ class _FinancialTableState extends State<FinancialTable> {
               child: Center(
                   child: Text(
                 content,
-                style: TextStyle(fontSize: 18, color: Colors.black),
+                style: const TextStyle(fontSize: 18, color: Colors.black),
               ))),
         ),
       ),
     );
   }
 
+  final List<String> downloadOptions = ['PDF', 'Excel', 'CSV'];
   String formatDate3(String date) {
     // Format your date here
     return date;
@@ -1013,7 +1131,7 @@ class _FinancialTableState extends State<FinancialTable> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -1078,18 +1196,18 @@ class _FinancialTableState extends State<FinancialTable> {
                 fontSize: 12,
                 color: PdfColors.white),
             headerAlignment: pw.Alignment.centerLeft,
-            cellStyle: pw.TextStyle(
+            cellStyle: const pw.TextStyle(
               fontSize: 10,
             ),
             cellHeight: 30,
             columnWidths: {
-              0: pw.FlexColumnWidth(1.2), // Date
-              1: pw.FlexColumnWidth(1.4), // tenants
-              2: pw.FlexColumnWidth(1.3), // type
-              3: pw.FlexColumnWidth(2.2), // transaction
-              4: pw.FlexColumnWidth(1.3), // increase
-              5: pw.FlexColumnWidth(1.3), // decrease
-              6: pw.FlexColumnWidth(1.3), // balance
+              0: const pw.FlexColumnWidth(1.2), // Date
+              1: const pw.FlexColumnWidth(1.4), // tenants
+              2: const pw.FlexColumnWidth(1.3), // type
+              3: const pw.FlexColumnWidth(2.2), // transaction
+              4: const pw.FlexColumnWidth(1.3), // increase
+              5: const pw.FlexColumnWidth(1.3), // decrease
+              6: const pw.FlexColumnWidth(1.3), // balance
             },
           ),
           pw.SizedBox(height: 15),
@@ -1117,6 +1235,7 @@ class _FinancialTableState extends State<FinancialTable> {
     );
 
     await Printing.layoutPdf(
+      format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
@@ -1268,7 +1387,7 @@ class _FinancialTableState extends State<FinancialTable> {
       csvData.add(rowData);
     }
 
-    final String csvContent = ListToCsvConverter().convert(csvData);
+    final String csvContent = const ListToCsvConverter().convert(csvData);
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.csv';
@@ -1288,355 +1407,1113 @@ class _FinancialTableState extends State<FinancialTable> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _fromDateController = TextEditingController();
-  final TextEditingController _toDateController = TextEditingController();
+  late TextEditingController _fromDateController;
+  late TextEditingController _toDateController;
+
+  void _fetchData() {
+    if (_fromDateController.text.isNotEmpty &&
+        _toDateController.text.isNotEmpty) {
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+          leaseId: widget.leaseId,
+          fromDate: _fromDateController.text,
+          toDate: _toDateController.text);
+    } else {
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger();
+    }
+    setState(() {});
+  }
+
+  void _onDateChanged() {
+    setState(() {
+      _fetchData();
+    });
+  }
+
+  Future<void> _selectfromDate(
+      BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+        print(picked);
+
+        //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+        fdate = controller.text;
+      });
+    }
+  }
+
+  Future<void> _selectendDate(
+      BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDateController.text.isEmpty
+          ? DateTime.now()
+          : DateTime.parse(_fromDateController.text),
+      firstDate: _fromDateController.text.isEmpty
+          ? DateTime.now()
+          : DateTime.parse(_fromDateController.text),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        edate = picked.toString();
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+        //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+      });
+    }
+  }
+
+  List<Data> allData = []; // Assume this is your complete dataset
+  List<Data> filteredData = [];
+  void _filterData() {
+    // Parse the dates from the controllers
+    try {
+      DateTime fromDate =
+          DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
+      DateTime toDate = DateFormat('dd-MM-yyyy')
+          .parse(_toDateController.text)
+          .add(const Duration(days: 1)); // Include the end date
+
+      // Filter the data based on the selected date range
+      filteredData = allData.where((data) {
+        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(
+            data.entry!.first.date!); // Adjust according to your data structure
+        return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
+      }).toList();
+    } catch (e) {
+      print("Date parsing error: $e");
+      // Optionally, show an error message to the user
+    }
+
+    // Refresh the UI
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
             .checkplanpurchaseModel
             ?.data
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return Scaffold(
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              widget.status == 'Active'
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (!isFreePlan)
-                            Container(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 36
-                                    : 45,
-                                decoration: BoxDecoration(
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 0,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(
+                  horizontal:
+                      MediaQuery.of(context).size.width <= 360 ? 11.0 : 11.0),
+              child: Column(
+                children: [
+                  // Second row - Make Payment and Enter Charge
+                  Row(
+                    children: [
+                      // Make Payment button
+                      Expanded(
+                        child: Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                            ),
+                            onPressed: () async {
+                              final value = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MakePayment(
+                                    leaseId: widget.leaseId,
+                                    tenantId: widget.tenantId,
+                                  ),
+                                ),
+                              );
+                              if (value == true) {
+                                setState(() {
+                                  _leaseLedgerFuture = LeaseRepository()
+                                      .fetchLeaseLedger(
+                                          leaseId: widget.leaseId);
+                                });
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                // const SizedBox(width: 10),
+                                Text(
+                                  'Make Payment',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width <= 360
+                                            ? 11
+                                            : 14,
                                     color: Colors.white,
-                                    border: Border.all(width: 1),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Enter Charge button
+                      if (widget.status == 'Active')
+                        Expanded(
+                          child: Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                              ),
+                              onPressed: () async {
+                                final value = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => enterCharge(
+                                      leaseId: widget.leaseId,
+                                    ),
+                                  ),
+                                );
+                                if (value == true) {
+                                  setState(() {
+                                    _leaseLedgerFuture = LeaseRepository()
+                                        .fetchLeaseLedger(
+                                            leaseId: widget.leaseId);
+                                  });
+                                }
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    width: 1,
+                                  ),
+                                  Icon(
+                                    Icons.attach_money,
+                                    size: 18,
+                                    color: blueColor,
+                                  ),
+                                  // const SizedBox(width: 10),
+                                  Text(
+                                    ' Enter Charge',
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <=
+                                                  360
+                                              ? 11
+                                              : 14,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+// First row - Export and Add Cards
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Export button
+                      // Expanded(
+                      //   child: Container(
+                      //     height:
+                      //     MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      //     margin: const EdgeInsets.only(right: 8),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       borderRadius: BorderRadius.circular(8.0),
+                      //       border: Border.all(color: const Color(0xFF8A95A8)),
+                      //     ),
+                      //     child: ElevatedButton(
+                      //       style: ElevatedButton.styleFrom(
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(8.0),
+                      //         ),
+                      //         elevation: 0,
+                      //         backgroundColor: Colors.transparent,
+                      //       ),
+                      //       onPressed: () {
+                      //         // Export functionality
+                      //       },
+                      //       child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [
+                      //           Text(
+                      //             'All Types',
+                      //             style: TextStyle(
+                      //               fontSize:
+                      //               MediaQuery.of(context).size.width <= 360
+                      //                   ? 11
+                      //                   : 14,
+                      //               color:blueColor,
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //           const SizedBox(width: 15),
+                      //           Icon(
+                      //             Icons.expand_less,
+                      //             size: 18,
+                      //             color: blueColor,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+
+                      // Add Cards button
+                      Spacer(),
+                      if (!isFreePlan &&
+                          (widget.status == 'Active' ||
+                              widget.status == 'Future'))
+                        Expanded(
+                          child: Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddCard(
+                                      leaseId: widget.leaseId,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.credit_card,
+                                    size: 18,
+                                    color: blueColor,
+                                  ),
+                                  // const SizedBox(width: 10),
+                                  Text(
+                                    'Add Cards',
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <=
+                                                  360
+                                              ? 11
+                                              : 14,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 6,
+            ),
+            if (MediaQuery.of(context).size.width > 500)
+              const SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0, right: 10.0, bottom: 10.0),
+                child: FutureBuilder<LeaseLedger?>(
+                  future: _leaseLedgerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ColabShimmerLoadingWidget();
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * .2,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      final leaseLedger = snapshot.data!;
+                      var data = leaseLedger.data?.toList() ?? [];
+                      //final data = data.reversed.toList();
+                      if (searchvalue != null &&
+                          searchvalue!.isNotEmpty &&
+                          searchvalue != "All") {
+                        data = data
+                            .where((lease) =>
+                                lease.type!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
+                                lease.createdAt!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()))
+                            .toList();
+                      }
+
+                      if (_fromDateController.text.isNotEmpty &&
+                          _toDateController.text.isNotEmpty) {
+                        try {
+                          // Use DateFormat to parse the dates
+                          print(_fromDateController.text);
+                          DateTime fromDate = DateFormat('yyyy-MM-dd')
+                              .parse(_fromDateController.text);
+                          DateTime toDate = DateFormat('yyyy-MM-dd')
+                              .parse(_toDateController.text);
+                          print("From Date: $fromDate");
+                          print("To Date: $toDate");
+
+                          if (fromDate.isAtSameMomentAs(toDate)) {
+                            // If both dates are the same, only include leases with the same date
+                            data = data.where((lease) {
+                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                  .parse(lease.entry!.first.date!);
+                              print("Lease Date: $leaseDate");
+                              return leaseDate.isAtSameMomentAs(fromDate);
+                            }).toList();
+                          } else {
+                            // If dates are different, use the original condition
+                            data = data.where((lease) {
+                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                  .parse(lease.entry!.first.date!);
+                              print("Lease Date: $leaseDate");
+                              return (leaseDate.isAfter(fromDate) &&
+                                  leaseDate.isBefore(toDate));
+                            }).toList();
+                          }
+                        } catch (e) {
+                          print("Date parsing error: $e");
+                        }
+                      }
+
+                      sortData(data);
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            Expanded(
+                              flex: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 2.0, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Material(
                                         elevation: 0,
-                                        backgroundColor: Colors.white),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AddCard(
-                                                    leaseId: widget.leaseId,
-                                                  )));
-                                    },
-                                    child: Text(
-                                      'Add Cards',
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
                                                       .size
                                                       .width <
                                                   500
-                                              ? 12
-                                              : 18,
-                                          color: Color.fromRGBO(21, 43, 83, 1)),
-                                    ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 36
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MakePayment(
-                                                  leaseId: widget.leaseId,
-                                                  tenantId: widget.tenantId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Make Payment',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: Color.fromRGBO(21, 43, 83, 1)),
-                                  ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 34
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => enterCharge(
-                                                  leaseId: widget.leaseId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Enter Charge',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: Color.fromRGBO(21, 43, 83, 1)),
-                                  ))),
-                        ],
-                      ),
-                    )
-                  : Container(),
-              const SizedBox(
-                height: 6,
-              ),
-              if (MediaQuery.of(context).size.width > 500)
-                const SizedBox(height: 25),
-              if (MediaQuery.of(context).size.width < 500)
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10.0, right: 10.0, bottom: 10.0),
-                  child: FutureBuilder<LeaseLedger?>(
-                    future: _leaseLedgerFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ColabShimmerLoadingWidget();
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData) {
-                        return Center(child: Text('No data found'));
-                      } else {
-                        final leaseLedger = snapshot.data!;
-                        final data = leaseLedger.data!.toList();
-
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Expanded(
-                                flex: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5.0, vertical: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Spacer(),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
-                                        ),
-                                        onPressed: () {},
-                                        child: PopupMenuButton<String>(
-                                          onSelected: (value) async {
-                                            // Add your export logic here based on the selected value
-                                            if (value == 'PDF') {
-                                              print('pdf');
-                                              generateWorkOrderPdf(data);
-                                              // Export as PDF
-                                            } else if (value == 'XLSX') {
-                                              print('XLSX');
-                                              generateWorkOrderExcel(data);
-                                              // Export as XLSX
-                                            } else if (value == 'CSV') {
-                                              print('CSV');
-                                              generateWorkOrderCsv(data);
-                                              // Export as CSV
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            const PopupMenuItem<String>(
-                                              value: 'PDF',
-                                              child: Text('PDF'),
+                                              ? 48
+                                              : 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: const Color(0xFF8A95A8)),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                searchvalue = value;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle:
+                                                  TextStyle(color: blueColor),
                                             ),
-                                            const PopupMenuItem<String>(
-                                              value: 'XLSX',
-                                              child: Text('XLSX'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'CSV',
-                                              child: Text('CSV'),
-                                            ),
-                                          ],
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
-                                            ],
                                           ),
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    // Container(
+                                    //   height: 45,
+                                    //   width: 110,
+                                    //   decoration: BoxDecoration(
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(8.0)),
+                                    //   child: ElevatedButton(
+                                    //     style: ElevatedButton.styleFrom(
+                                    //       backgroundColor: blueColor,
+                                    //     ),
+                                    //     onPressed: () {},
+                                    //     child: PopupMenuButton<String>(
+                                    //       onSelected: (value) async {
+                                    //         // Add your export logic here based on the selected value
+                                    //         if (value == 'PDF') {
+                                    //           print('pdf');
+                                    //           generateWorkOrderPdf(data);
+                                    //           // Export as PDF
+                                    //         } else if (value == 'XLSX') {
+                                    //           print('XLSX');
+                                    //           generateWorkOrderExcel(data);
+                                    //           // Export as XLSX
+                                    //         } else if (value == 'CSV') {
+                                    //           print('CSV');
+                                    //           generateWorkOrderCsv(data);
+                                    //           // Export as CSV
+                                    //         }
+                                    //       },
+                                    //       itemBuilder:
+                                    //           (BuildContext context) =>
+                                    //               <PopupMenuEntry<String>>[
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'PDF',
+                                    //           child: Text('PDF'),
+                                    //         ),
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'XLSX',
+                                    //           child: Text('XLSX'),
+                                    //         ),
+                                    //         const PopupMenuItem<String>(
+                                    //           value: 'CSV',
+                                    //           child: Text('CSV'),
+                                    //         ),
+                                    //       ],
+                                    //       child: Row(
+                                    //         mainAxisSize: MainAxisSize.min,
+                                    //         children: [
+                                    //           Text(
+                                    //
+                                    //             'Export',
+                                    //
+                                    //             style: TextStyle(
+                                    //                 fontWeight: FontWeight.bold,
+                                    //                 fontSize: 15,
+                                    //               ),
+                                    //
+                                    //           ),
+                                    //           SizedBox(
+                                    //
+                                    //             width: 2,
+                                    //
+                                    //           ),
+                                    //           Icon(
+                                    //
+                                    //             Icons.arrow_drop_down,
+                                    //
+                                    //             size: 25,
+                                    //
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    Container(
+                                      height: 45,
+                                      width: 75,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color(0xFF8A95A8)),
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.white,
+                                      ),
+                                      child: PopupMenuButton<String>(
+                                        offset: const Offset(5, 50),
+                                        // onSelected: handleDownload,
+                                        icon: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            FaIcon(FontAwesomeIcons
+                                                .download), // Your download icon
+                                            SizedBox(
+                                                width:
+                                                    5), // Adds spacing between the icons
+                                            Icon(Icons
+                                                .arrow_drop_down), // The dropdown arrow icon
+                                          ],
+                                        ),
+                                        tooltip: "Download",
+                                        itemBuilder: (BuildContext context) {
+                                          return downloadOptions
+                                              .map((String option) {
+                                            return PopupMenuItem<String>(
+                                              value: option,
+                                              onTap: () async {
+                                                if (option == "PDF")
+                                                  generateWorkOrderPdf(data);
+                                                // generaterentersInsurancePdf(snapshot.data!);
+                                                if (option == "Excel")
+                                                  generateWorkOrderExcel(data);
+                                                //generateRentersInsuranceExcel(snapshot.data!);
+                                                if (option == "CSV")
+                                                  generateWorkOrderCsv(data);
+                                                // generateRentersInsuranceCSV(snapshot.data!);
+                                              },
+                                              child:
+                                                  Text("Download as $option"),
+                                            );
+                                          }).toList();
+                                        },
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              _buildHeaders(),
-                              const SizedBox(height: 20),
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5))),
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(color: blueColor),
-                                // ),
-                                child: Column(
-                                  children: data.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    bool isExpanded = expandedIndex == index;
-                                    Data data = entry.value;
-                                    double? surcharge = data?.surcharge;
-                                    double? totalAmount = data?.totalAmount;
-
-                                    String percentage = (surcharge != null &&
-                                            totalAmount != null &&
-                                            totalAmount > 0)
-                                        ? ((surcharge /
-                                                        (totalAmount -
-                                                            surcharge)) *
-                                                    100)
-                                                .toStringAsFixed(2) +
-                                            "%"
-                                        : "N/A";
-                                    final uniqueEntries =
-                                        data.entry?.toSet().toList() ?? [];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 != 0
-                                            ? Colors.white
-                                            : blueColor.withOpacity(0.09),
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5)),
-                                      ),
-                                      // decoration: BoxDecoration(
-                                      //   border: Border.all(color: blueColor),
-                                      // ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(2.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                            ),
+                            // SizedBox(height: 10),
+                            Container(
+                              // width: double.infinity,
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     color: blueColor,
+                              //   ),
+                              //   borderRadius: BorderRadius.circular(10.0),
+                              // ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 2),
+                                child: Form(
+                                  key: _formKey,
+                                  child: screenWidth > 500
+                                      ? Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      padding: !isExpanded
-                                                          ? const EdgeInsets
-                                                              .only(bottom: 10)
-                                                          : const EdgeInsets
-                                                              .only(top: 10),
-                                                      child: FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 20,
-                                                        color: const Color
-                                                            .fromRGBO(
-                                                            21, 43, 83, 1),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                        ' ${data.type}' ?? "",
-                                                        style: TextStyle(
-                                                          color: blueColor,
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('From',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontSize: 15,
                                                           fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
+                                                              FontWeight.w600)),
+                                                  const SizedBox(height: 5),
+                                                  Container(
+                                                    child: TextFormField(
+                                                      controller:
+                                                          _fromDateController,
+                                                      readOnly: true,
+                                                      onTap: () => _selectfromDate(
+                                                          context,
+                                                          _fromDateController),
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        hintText: 'yyyy-mm-dd',
+                                                        suffixIcon: Icon(Icons
+                                                            .calendar_today),
+                                                        border:
+                                                            OutlineInputBorder(),
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 40),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('To',
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  const SizedBox(height: 5),
+                                                  TextFormField(
+                                                    controller:
+                                                        _toDateController,
+                                                    readOnly: true,
+                                                    onTap: () => _selectendDate(
+                                                        context,
+                                                        _toDateController),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText: 'dd-mm-yyyy',
+                                                      suffixIcon: Icon(
+                                                          Icons.calendar_today),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                    ),
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Text('From',
+                                                        //     style: TextStyle(
+                                                        //         color: blueColor,
+                                                        //         fontSize: 15,
+                                                        //         fontWeight: FontWeight.w600)),
+                                                        // SizedBox(height: 4),
+
+                                                        Material(
+                                                          elevation: 0,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          child: Container(
+                                                            height: 50,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10.0,
+                                                                    vertical:
+                                                                        0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              border: Border.all(
+                                                                  color: const Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child:
+                                                                TextFormField(
+                                                              controller:
+                                                                  _fromDateController,
+                                                              // initialValue: fdate,
+                                                              readOnly: true,
+                                                              onTap: () =>
+                                                                  _selectfromDate(
+                                                                      context,
+                                                                      _fromDateController),
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                // contentPadding: EdgeInsets.all(8.0),
+                                                                // contentPadding: EdgeInsets.symmetric(),
+                                                                suffixIconConstraints:
+                                                                    const BoxConstraints(
+                                                                        maxWidth:
+                                                                            20,
+                                                                        maxHeight:
+                                                                            20,
+                                                                        minHeight:
+                                                                            20,
+                                                                        minWidth:
+                                                                            20),
+                                                                hintStyle: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color:
+                                                                        blueColor),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                hintText:
+                                                                    'From date',
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          1),
+                                                                  iconSize: 20,
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .calendar_today,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 16,
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Text('To',
+                                                        //     style: TextStyle(
+                                                        //         color: blueColor,
+                                                        //         fontSize: 15,
+                                                        //         fontWeight: FontWeight.w600)),
+                                                        // SizedBox(height: 4),
+
+                                                        Material(
+                                                          elevation: 0,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          child: Container(
+                                                            height: 50,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10.0,
+                                                                    vertical:
+                                                                        0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              border: Border.all(
+                                                                  color: const Color(
+                                                                      0xFF8A95A8)),
+                                                            ),
+                                                            child:
+                                                                TextFormField(
+                                                              controller:
+                                                                  _toDateController,
+                                                              readOnly: true,
+                                                              onTap: () {
+                                                                _selectendDate(
+                                                                    context,
+                                                                    _toDateController);
+                                                              },
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                // contentPadding: EdgeInsets.all(8.0),
+                                                                // contentPadding: EdgeInsets.symmetric(),
+                                                                suffixIconConstraints:
+                                                                    const BoxConstraints(
+                                                                        maxWidth:
+                                                                            20,
+                                                                        maxHeight:
+                                                                            20,
+                                                                        minHeight:
+                                                                            20,
+                                                                        minWidth:
+                                                                            20),
+                                                                hintStyle: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color:
+                                                                        blueColor),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                hintText:
+                                                                    'To date',
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          1),
+                                                                  iconSize: 20,
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .calendar_today,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {},
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ),
+                            // SizedBox(height: 5),
+                            if (data.isNotEmpty)
+                              if (currentPageData.length > 0) _buildHeaders(),
+                            const SizedBox(height: 10),
+                            Container(
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(
+                              //         color:
+                              //             const Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(color: blueColor),
+                              // ),
+                              child: Column(
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  Data data = entry.value;
+
+                                  double? surcharge = data?.surcharge;
+                                  double? totalAmount = data?.totalAmount;
+
+                                  String percentage = (surcharge != null &&
+                                          totalAmount != null &&
+                                          totalAmount > 0)
+                                      ? ((surcharge /
+                                                      (totalAmount -
+                                                          surcharge)) *
+                                                  100)
+                                              .toStringAsFixed(2) +
+                                          "%"
+                                      : "N/A";
+                                  final uniqueEntries =
+                                      data.entry?.toSet().toList() ?? [];
+                                  return Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? const Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex = null;
+                                                      } else {
+                                                        expandedIndex = index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    padding: !isExpanded
+                                                        ? const EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : const EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 20,
+                                                      color: blueColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      ' ${data.type}' ?? "",
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                if (data.balance! >= 0)
                                                   Expanded(
                                                     child: Text(
                                                       ' \$${data.balance!.abs().toStringAsFixed(2)}',
@@ -1648,17 +2525,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
-                                                  ),
+                                                if (data.balance! < 0)
                                                   Expanded(
                                                     child: Text(
-                                                      formatDate(
-                                                          '${data.entry!.first.date}'),
+                                                      ' -\$${data.balance!.abs().toStringAsFixed(2)}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -1667,239 +2537,197 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02,
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    dateProvider.formatCurrentDate(
+                                                        '${data.entry!.first.date}'),
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .02,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          if (isExpanded)
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              margin: EdgeInsets.only(
-                                                  bottom:
-                                                      (data.type != "Refund")
-                                                          ? 2
-                                                          : 20),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 30,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: EdgeInsets.only(
+                                                bottom: (data.type != "Refund")
+                                                    ? 2
+                                                    : 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 30,
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Description : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            blueColor), // Bold and black
+                                                                  ),
+                                                                  if (data.type != "Charge" &&
+                                                                      data.response !=
+                                                                          "VOID" &&
+                                                                      data.state !=
+                                                                          "settling")
                                                                     TextSpan(
                                                                       text:
-                                                                          'Description : ',
+                                                                          '${data.paymenttype} ${data.type} ${data.response} ',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
-                                                                              .bold,
+                                                                              .w700,
                                                                           color:
-                                                                              blueColor), // Bold and black
+                                                                              grey), // Light and grey
                                                                     ),
-                                                                    if (data.type !=
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Manual ${data.type} ${data.response} For ${data.paymenttype}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                    if (data.type ==
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${data.entry?.first.memo}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    const TextSpan(
-                                                                      text:
-                                                                          'Amount : ',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
-                                                                      ),
-                                                                    ),
+                                                                  if (data.type != "Charge" &&
+                                                                      data.response !=
+                                                                          "VOID" &&
+                                                                      data.state ==
+                                                                          "settling")
                                                                     TextSpan(
-                                                                      text: data.type == "Refund" ||
-                                                                              data.type == "Charge"
-                                                                          ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                          : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color:
-                                                                            grey,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    const TextSpan(
                                                                       text:
-                                                                          'Tenant : ',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
-                                                                      ),
+                                                                          '${data.paymenttype} ${data.type} ${data.response}  :Awaiting Settlement ',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              grey), // Light and grey
                                                                     ),
+                                                                  if (data.type !=
+                                                                          "Charge" &&
+                                                                      data.response ==
+                                                                          "VOID")
                                                                     TextSpan(
-                                                                      text: data.tenantData !=
-                                                                              null
-                                                                          ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
-                                                                          : 'N/A',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color:
-                                                                            grey,
-                                                                      ),
+                                                                      text:
+                                                                          'Card Payment VOID ${data.responseText}',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              grey), // Light and grey
                                                                     ),
-                                                                  ],
-                                                                ),
+                                                                  if (data.type ==
+                                                                      "Charge")
+                                                                    TextSpan(
+                                                                      text:
+                                                                          '${data.entry?.first.memo}',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              grey), // Light and grey
+                                                                    ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if (data.type ==
-                                                            "Payment" ||
-                                                        data.type == "Charge")
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10.0,
-                                                                top: 10),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color: Colors
-                                                                  .transparent,
                                                             ),
-                                                            Expanded(
-                                                              flex: 4,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Account : ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                            const SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Amount : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: data.type ==
+                                                                                "Refund" ||
+                                                                            data.type ==
+                                                                                "Charge"
+                                                                        ? '\$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey,
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              '  Amount : ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Tenant : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: data.tenantData !=
+                                                                            null
+                                                                        ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey,
                                                                     ),
                                                                   ),
                                                                 ],
@@ -1908,92 +2736,181 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    if (data.type ==
-                                                            "Payment" ||
-                                                        data.type == "Charge")
-                                                      Column(
-                                                        children: uniqueEntries
-                                                            .map((entry) {
-                                                          return Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0,
-                                                                    bottom: 10),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
+                                                    ],
+                                                  ),
+                                                  if (data.type == "Payment" ||
+                                                      data.type == "Charge")
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0,
+                                                              top: 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            flex: 4,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
                                                                       .start,
-                                                              children: [
-                                                                FaIcon(
-                                                                  isExpanded
-                                                                      ? FontAwesomeIcons
-                                                                          .sortUp
-                                                                      : FontAwesomeIcons
-                                                                          .sortDown,
-                                                                  size: 20,
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 4,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: '${entry.account ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Account : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 15,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 2,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: ' \$ ${entry.amount ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      // Add additional fields if needed
                                                                     ],
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          );
-                                                        }).toList(),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '  Amount : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    /* if (data.paymenttype ==
+                                                    ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  if (data.type == "Payment" ||
+                                                      data.type == "Charge")
+                                                    Column(
+                                                      children: uniqueEntries
+                                                          .map((entry) {
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 10.0,
+                                                                  bottom: 10),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 4,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '${entry.account ?? "N/A"}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 15,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                ' \$ ${entry.amount ?? "N/A"}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    // Add additional fields if needed
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  if (data.type == "Payment" ||
+                                                      data.type == "Charge")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                  /* if (data.paymenttype ==
                                                         "Card" &&  data.type == "Payment")
                                                       Padding(
                                                         padding:
@@ -2073,701 +2990,1386 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                    if (data.type != "Refund" &&
-                                                        data.type != "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          // SizedBox(width: 5,),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _amountController
-                                                                      .text = (data
-                                                                              .totalAmount! -
-                                                                          data.surcharge!)
-                                                                      .toString();
-                                                                  _dateController
-                                                                      .text = formatDate(DateTime
+                                                  if (data.type != "Refund" &&
+                                                      data.type != "Charge" &&
+                                                      (data.paymenttype ==
+                                                              "Card" ||
+                                                          data.paymenttype ==
+                                                              "ACH") &&
+                                                      data.response ==
+                                                          "SUCCESS" &&
+                                                      data.state == "settled")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              _amountController
+                                                                  .text = (data
+                                                                      .totalAmount!)
+                                                                  .toString();
+                                                              _dateController
+                                                                      .text =
+                                                                  formatDate(DateTime
                                                                           .now()
                                                                       .toString());
-                                                                });
-                                                                _showRefundDialog(
-                                                                    context,
-                                                                    data);
-                                                                // Navigator.of(context)
-                                                                //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Icon(Icons
-                                                                        .wallet),
-                                                                    // FaIcon(
-                                                                    //   FontAwesomeIcons.trashCan,
-                                                                    //   size: 15,
-                                                                    //   color:blueColor,
-                                                                    // ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                      "Refund",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
+                                                            });
+                                                            _showRefundDialog(
+                                                                context, data);
+                                                            // Navigator.of(context)
+                                                            //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .blue
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .wallet,
+                                                                  size: 15,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                              ),
+                                                              ],
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    if (data.type == "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                final value = await Navigator.push(
+                                                          // Container(
+                                                          //   height: 40,
+                                                          //   decoration:
+                                                          //       BoxDecoration(
+                                                          //           color: Colors
+                                                          //                   .grey[
+                                                          //               350]),
+                                                          //   child: Row(
+                                                          //     mainAxisAlignment:
+                                                          //         MainAxisAlignment
+                                                          //             .center,
+                                                          //     crossAxisAlignment:
+                                                          //         CrossAxisAlignment
+                                                          //             .center,
+                                                          //     children: [
+                                                          //       const SizedBox(
+                                                          //         width: 5,
+                                                          //       ),
+                                                          //       const Icon(Icons
+                                                          //           .wallet),
+                                                          //       // FaIcon(
+                                                          //       //   FontAwesomeIcons.trashCan,
+                                                          //       //   size: 15,
+                                                          //       //   color:blueColor,
+                                                          //       // ),
+                                                          //       const SizedBox(
+                                                          //         width: 8,
+                                                          //       ),
+                                                          //       Text(
+                                                          //         "Refund",
+                                                          //         style: TextStyle(
+                                                          //             fontSize:
+                                                          //                 12,
+                                                          //             color:
+                                                          //                 blueColor,
+                                                          //             fontWeight:
+                                                          //                 FontWeight.bold),
+                                                          //       )
+                                                          //     ],
+                                                          //   ),
+                                                          // ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final value = await Navigator
+                                                                .push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder: (context) => enterCharge(
+                                                                        builder: (context) =>
+                                                                            EditMakePayment(
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: data.tenantData["tenant_id"],
+                                                                              isEdit: true,
+                                                                              data: data,
+                                                                            )));
+                                                            if (value == true) {
+                                                              setState(() {
+                                                                _leaseLedgerFuture =
+                                                                    LeaseRepository().fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                              });
+                                                            }
+                                                            // var check = await Navigator.push(
+                                                            //   context,
+                                                            //   MaterialPageRoute(
+                                                            //     builder: (context) => Edit_properties(
+                                                            //       properties: rentals,
+                                                            //       rentalId: rentals.rentalId!,
+                                                            //     ),
+                                                            //   ),
+                                                            // );
+                                                            // if (check == true) {
+                                                            //   setState(() {
+                                                            //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                            //
+                                                            //   });
+                                                            //   // Update State
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type != "Refund" &&
+                                                      data.type != "Charge" &&
+                                                      (data.paymenttype ==
+                                                              "Card" ||
+                                                          data.paymenttype ==
+                                                              "ACH") &&
+                                                      data.response ==
+                                                          "SUCCESS" &&
+                                                      data.state == "settled")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                  if (data.type == "Charge")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final value = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            enterCharge(
                                                                               leaseId: widget.leaseId,
                                                                               chargeid: data.chargeId,
                                                                             )));
-                                                                if (value ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(widget.leaseId);
-                                                                  });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
+                                                            if (value == true) {
+                                                              setState(() {
+                                                                _leaseLedgerFuture =
+                                                                    LeaseRepository().fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                              });
+                                                            }
+                                                            // var check = await Navigator.push(
+                                                            //   context,
+                                                            //   MaterialPageRoute(
+                                                            //     builder: (context) => Edit_properties(
+                                                            //       properties: rentals,
+                                                            //       rentalId: rentals.rentalId!,
+                                                            //     ),
+                                                            //   ),
+                                                            // );
+                                                            // if (check == true) {
+                                                            //   setState(() {
+                                                            //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                            //
+                                                            //   });
+                                                            //   // Update State
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
                                                                 ),
-                                                              ),
+                                                              ],
                                                             ),
                                                           ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                _showAlert(
-                                                                    context,
-                                                                    data.chargeId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            _showAlert(context,
+                                                                data.chargeId!);
+                                                            //   _showAlert(context, rentals.rentalId!);
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade50),
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .red,
                                                                 ),
-                                                              ),
+                                                              ],
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-              if (MediaQuery.of(context).size.width > 500)
-                FutureBuilder<LeaseLedger?>(
-                  future: _leaseLedgerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: SpinKitSpinningLines(
-                          color: Colors.black,
-                          size: 55.0,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData) {
-                      return const Center(child: Text('No data available'));
-                    } else {
-                      _tableData = snapshot.data!.data!;
-                      totalrecords = _tableData.length;
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 5),
-                                child: Column(
-                                  children: [
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Container(
-                                        child: Table(
-                                          defaultColumnWidth:
-                                              const IntrinsicColumnWidth(),
-                                          children: [
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    // color: blueColor
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                      ],
                                                     ),
-                                              ),
-                                              children: [
-                                                _buildHeader(
-                                                    'Type',
-                                                    0,
-                                                    (property) => property!
-                                                        .totalAmount
-                                                        .toString()),
-                                                _buildHeader(
-                                                    'Tenant',
-                                                    1,
-                                                    (property) => property!
-                                                        .totalAmount
-                                                        .toString()),
-                                                _buildHeader(
-                                                    'Transaction', 2, null),
-                                                _buildHeader(
-                                                    'Increase', 3, null),
-                                                _buildHeader(
-                                                    'Decrease', 3, null),
-                                                _buildHeader(
-                                                    'Balance', 4, null),
-                                                _buildHeader('Date', 4, null),
-                                              ],
-                                            ),
-                                            TableRow(
-                                              decoration: const BoxDecoration(
-                                                border: Border.symmetric(
-                                                    horizontal:
-                                                        BorderSide.none),
-                                              ),
-                                              children: List.generate(
-                                                  7,
-                                                  (index) => TableCell(
-                                                      child: Container(
-                                                          height: 20))),
-                                            ),
-                                            for (var i = 0;
-                                                i < _pagedData.length;
-                                                i++)
-                                              TableRow(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    left: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    right: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    top: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    bottom: i ==
-                                                            _pagedData.length -
-                                                                1
-                                                        ? const BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1))
-                                                        : BorderSide.none,
-                                                  ),
-                                                ),
-                                                children: [
-                                                  _buildDataCell(_pagedData[i]!
-                                                      .type
-                                                      .toString()),
-                                                  _buildDataCell(
-                                                      '${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
-                                                  _buildDataCell(
-                                                      'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!.type ==
-                                                                "Refund" &&
-                                                            _pagedData[i]!
-                                                                    .type ==
-                                                                "Charge"
-                                                        ? _pagedData[i]!
-                                                            .totalAmount
-                                                            .toString()
-                                                        : 'N/A',
-                                                  ),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!.type !=
-                                                                "Refund" &&
-                                                            _pagedData[i]!
-                                                                    .type !=
-                                                                "Charge"
-                                                        ? _pagedData[i]!
-                                                            .totalAmount
-                                                            .toString()
-                                                        : 'N/A',
-                                                  ),
-                                                  _buildDataCell(
-                                                    _pagedData[i]!
-                                                        .balance!
-                                                        .abs()
-                                                        .toStringAsFixed(2),
-                                                  ),
-                                                  _buildDataCell(
-                                                    formatDate3(_pagedData[i]!
-                                                        .createdAt
-                                                        .toString()),
-                                                  ),
+                                                  if (data.type == "Charge")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.response ==
+                                                          "PENDING")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final value = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            EditMakePayment(
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: data.tenantData["tenant_id"],
+                                                                              isEdit: true,
+                                                                              data: data,
+                                                                            )));
+                                                            if (value == true) {
+                                                              setState(() {
+                                                                _leaseLedgerFuture =
+                                                                    LeaseRepository().fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                              });
+                                                            }
+                                                            // var check = await Navigator.push(
+                                                            //   context,
+                                                            //   MaterialPageRoute(
+                                                            //     builder: (context) => Edit_properties(
+                                                            //       properties: rentals,
+                                                            //       rentalId: rentals.rentalId!,
+                                                            //     ),
+                                                            //   ),
+                                                            // );
+                                                            // if (check == true) {
+                                                            //   setState(() {
+                                                            //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                            //
+                                                            //   });
+                                                            //   // Update State
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            _showAlertpayment(
+                                                                context,
+                                                                data.paymentId!);
+                                                            //   _showAlert(context, rentals.rentalId!);
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade50),
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .red,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.response ==
+                                                          "PENDING")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.response ==
+                                                          "SUCCESS" &&
+                                                      data.state == "settling")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            _showAlertvoid(
+                                                                context,
+                                                                data.paymentId!);
+                                                            //   _showAlert(context, rentals.rentalId!);
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .blue
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                // FaIcon(
+                                                                //   FontAwesomeIcons
+                                                                //       .edit,
+                                                                //   size: 15,
+                                                                //   color: Colors
+                                                                //       .green,
+                                                                // ),
+                                                                Icon(
+                                                                  Icons
+                                                                      .money_off,
+                                                                  size: 20,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          // Container(
+                                                          //   height: 40,
+                                                          //   decoration:
+                                                          //       BoxDecoration(
+                                                          //           color: Colors
+                                                          //                   .grey[
+                                                          //               350]),
+                                                          //   child: Row(
+                                                          //     mainAxisAlignment:
+                                                          //         MainAxisAlignment
+                                                          //             .center,
+                                                          //     crossAxisAlignment:
+                                                          //         CrossAxisAlignment
+                                                          //             .center,
+                                                          //     children: [
+                                                          //       Icon(
+                                                          //         Icons
+                                                          //             .money_off,
+                                                          //         size: 20,
+                                                          //         color:
+                                                          //             blueColor,
+                                                          //       ),
+                                                          //       const SizedBox(
+                                                          //         width: 10,
+                                                          //       ),
+                                                          //       Text(
+                                                          //         "Void",
+                                                          //         style: TextStyle(
+                                                          //             color:
+                                                          //                 blueColor,
+                                                          //             fontWeight:
+                                                          //                 FontWeight
+                                                          //                     .bold),
+                                                          //       )
+                                                          //     ],
+                                                          //   ),
+                                                          // ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final value = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            EditMakePayment(
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: data.tenantData["tenant_id"],
+                                                                              isEdit: true,
+                                                                              data: data,
+                                                                            )));
+                                                            if (value == true) {
+                                                              setState(() {
+                                                                _leaseLedgerFuture =
+                                                                    LeaseRepository().fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                              });
+                                                            }
+                                                            // var check = await Navigator.push(
+                                                            //   context,
+                                                            //   MaterialPageRoute(
+                                                            //     builder: (context) => Edit_properties(
+                                                            //       properties: rentals,
+                                                            //       rentalId: rentals.rentalId!,
+                                                            //     ),
+                                                            //   ),
+                                                            // );
+                                                            // if (check == true) {
+                                                            //   setState(() {
+                                                            //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                            //
+                                                            //   });
+                                                            //   // Update State
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.response ==
+                                                          "SUCCESS" &&
+                                                      data.state == "settling")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.paymenttype !=
+                                                          "Card" &&
+                                                      data.paymenttype != "ACH")
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final value = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            EditMakePayment(
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: data.tenantData["tenant_id"],
+                                                                              isEdit: true,
+                                                                              data: data,
+                                                                            )));
+                                                            if (value == true) {
+                                                              setState(() {
+                                                                _leaseLedgerFuture =
+                                                                    LeaseRepository().fetchLeaseLedger(
+                                                                        leaseId:
+                                                                            widget.leaseId);
+                                                              });
+                                                            }
+                                                            // var check = await Navigator.push(
+                                                            //   context,
+                                                            //   MaterialPageRoute(
+                                                            //     builder: (context) => Edit_properties(
+                                                            //       properties: rentals,
+                                                            //       rentalId: rentals.rentalId!,
+                                                            //     ),
+                                                            //   ),
+                                                            // );
+                                                            // if (check == true) {
+                                                            //   setState(() {
+                                                            //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                            //
+                                                            //   });
+                                                            //   // Update State
+                                                            // }
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade50), // color:Colors.grey[100],
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  if (data.type == "Payment" &&
+                                                      data.paymenttype !=
+                                                          "Card" &&
+                                                      data.paymenttype != "ACH")
+                                                    SizedBox(
+                                                      height: 14,
+                                                    ),
                                                 ],
                                               ),
-                                          ],
-                                        ),
-                                      ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 25),
-                                    _buildPaginationControls(),
-                                  ],
-                                ),
+                                  );
+                                }).toList(),
                               ),
                             ),
-                            const SizedBox(height: 25),
+                            if (data.isEmpty)
+                              Container(
+                                height: MediaQuery.of(context).size.height * .3,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 100,
+                                        width: 100,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "No Data Available",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 20),
+                            if (data.isNotEmpty)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Text('Rows per page:'),
+                                      const SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: data.length >
+                                                      itemsPerPageOptions
+                                                          .first // Condition to check if dropdown should be enabled
+                                                  ? (newValue) {
+                                                      setState(() {
+                                                        itemsPerPage =
+                                                            newValue!;
+                                                        currentPage =
+                                                            0; // Reset to first page when items per page change
+                                                      });
+                                                    }
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_back),
+                                      //   onPressed: currentPage > 0
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage--;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_forward),
+                                      //   onPressed: currentPage < totalPages - 1
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage++;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       );
                     }
                   },
                 ),
-              if (MediaQuery.of(context).size.width > 500)
-                FutureBuilder<LeaseLedger?>(
-                  future: _leaseLedgerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
-                    } else {
-                      _tableData = snapshot.data!.data!;
-                      totalrecords = _tableData.length;
-                      return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 5),
-                          child: Column(
-                            children: [
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Table(
-                                  defaultColumnWidth:
-                                      const IntrinsicColumnWidth(),
-                                  //border: TableBorder.all(),
-                                  children: [
-                                    // Header Row
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SpinKitSpinningLines(
+                        color: Colors.black,
+                        size: 55.0,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data?.data ?? [];
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 5),
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      child: Table(
+                                        defaultColumnWidth:
+                                            const IntrinsicColumnWidth(),
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  // color: blueColor
+                                                  ),
+                                            ),
+                                            children: [
+                                              _buildHeader(
+                                                  'Type',
+                                                  0,
+                                                  (property) => property!
+                                                      .totalAmount
+                                                      .toString()),
+                                              _buildHeader(
+                                                  'Tenant',
+                                                  1,
+                                                  (property) => property!
+                                                      .totalAmount
+                                                      .toString()),
+                                              _buildHeader(
+                                                  'Transaction', 2, null),
+                                              _buildHeader('Increase', 3, null),
+                                              _buildHeader('Decrease', 3, null),
+                                              _buildHeader('Balance', 4, null),
+                                              _buildHeader('Date', 4, null),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            decoration: const BoxDecoration(
+                                              border: Border.symmetric(
+                                                  horizontal: BorderSide.none),
+                                            ),
+                                            children: List.generate(
+                                                7,
+                                                (index) => TableCell(
+                                                    child:
+                                                        Container(height: 20))),
+                                          ),
+                                          for (var i = 0;
+                                              i < _pagedData.length;
+                                              i++)
+                                            TableRow(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide(
+                                                      color: blueColor),
+                                                  right: BorderSide(
+                                                      color: blueColor),
+                                                  top: BorderSide(
+                                                      color: blueColor),
+                                                  bottom: i ==
+                                                          _pagedData.length - 1
+                                                      ? const BorderSide(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1))
+                                                      : BorderSide.none,
+                                                ),
+                                              ),
+                                              children: [
+                                                _buildDataCell(_pagedData[i]!
+                                                    .type
+                                                    .toString()),
+                                                _buildDataCell(
+                                                    '${_pagedData[i]!.tenantData["tenant_firstName"].toString()} ${_pagedData[i]!.tenantData["tenant_lastName"].toString()}'),
+                                                _buildDataCell(
+                                                    'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})'),
+                                                _buildDataCell(
+                                                  _pagedData[i]!.type ==
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type ==
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
+                                                      : 'N/A',
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!.type !=
+                                                              "Refund" &&
+                                                          _pagedData[i]!.type !=
+                                                              "Charge"
+                                                      ? _pagedData[i]!
+                                                          .totalAmount
+                                                          .toString()
+                                                      : 'N/A',
+                                                ),
+                                                _buildDataCell(
+                                                  _pagedData[i]!
+                                                      .balance!
+                                                      .abs()
+                                                      .toStringAsFixed(2),
+                                                ),
+                                                _buildDataCell(
+                                                  formatDate3(_pagedData[i]!
+                                                      .createdAt
+                                                      .toString()),
+                                                ),
+                                              ],
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+                                  _buildPaginationControls(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<LeaseLedger?>(
+                future: _leaseLedgerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      (snapshot.data?.data?.isEmpty ?? true)) {
+                    return const Center(child: Text('No data available'));
+                  } else {
+                    _tableData = snapshot.data?.data ?? [];
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Table(
+                                defaultColumnWidth:
+                                    const IntrinsicColumnWidth(),
+                                //border: TableBorder.all(),
+                                children: [
+                                  // Header Row
+                                  TableRow(
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    children: List.generate(7, (index) {
+                                      switch (index) {
+                                        case 0:
+                                          return _buildHeader(
+                                              'Type',
+                                              0,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 1:
+                                          return _buildHeader(
+                                              'Tenant',
+                                              1,
+                                              (property) => property!
+                                                  .totalAmount
+                                                  .toString());
+                                        case 2:
+                                          return _buildHeader(
+                                              'Description', 2, null);
+                                        case 3:
+                                          return _buildHeader(
+                                              'Increase', 3, null);
+                                        case 4:
+                                          return _buildHeader(
+                                              'Decrease', 4, null);
+                                        case 5:
+                                          return _buildHeader(
+                                              'Balance', 5, null);
+                                        case 6:
+                                          return _buildHeader('Date', 6, null);
+                                        default:
+                                          return Container();
+                                      }
+                                    }),
+                                  ),
+                                  // Empty Row for spacing
+                                  TableRow(
+                                    decoration: const BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none)),
+                                    children: List.generate(
+                                        7,
+                                        (index) => TableCell(
+                                            child: Container(height: 20))),
+                                  ),
+                                  // Data Rows
+                                  for (var i = 0;
+                                      i < _pagedData.length;
+                                      i++) ...[
                                     TableRow(
-                                      decoration:
-                                          BoxDecoration(border: Border.all()),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          left: BorderSide(color: blueColor),
+                                          right: BorderSide(color: blueColor),
+                                          top: BorderSide(color: blueColor),
+                                          bottom: i == _pagedData.length - 1
+                                              ? BorderSide(color: blueColor)
+                                              : BorderSide.none,
+                                        ),
+                                      ),
                                       children: List.generate(7, (index) {
                                         switch (index) {
                                           case 0:
-                                            return _buildHeader(
-                                                'Type',
-                                                0,
-                                                (property) => property!
-                                                    .totalAmount
-                                                    .toString());
+                                            return _buildInteractiveCells(
+                                                _pagedData[i]!.type.toString(),
+                                                () => _toggleExpansion(i));
                                           case 1:
-                                            return _buildHeader(
-                                                'Tenant',
-                                                1,
-                                                (property) => property!
-                                                    .totalAmount
-                                                    .toString());
+                                            return _buildInteractiveCells(
+                                              '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 2:
-                                            return _buildHeader(
-                                                'Description', 2, null);
+                                            return _buildInteractiveCells(
+                                              'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 3:
-                                            return _buildHeader(
-                                                'Increase', 3, null);
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type ==
+                                                          "Refund" ||
+                                                      _pagedData[i]!.type ==
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 4:
-                                            return _buildHeader(
-                                                'Decrease', 4, null);
+                                            return _buildInteractiveCells(
+                                              (_pagedData[i]!.type !=
+                                                          "Refund" &&
+                                                      _pagedData[i]!.type !=
+                                                          "Charge")
+                                                  ? _pagedData[i]!
+                                                      .totalAmount
+                                                      .toString()
+                                                  : 'N/A',
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 5:
-                                            return _buildHeader(
-                                                'Balance', 5, null);
+                                            return _buildInteractiveCells(
+                                              _pagedData[i]!
+                                                  .balance!
+                                                  .abs()
+                                                  .toStringAsFixed(2),
+                                              () => _toggleExpansion(i),
+                                            );
                                           case 6:
-                                            return _buildHeader(
-                                                'Date', 6, null);
+                                            return _buildInteractiveCells(
+                                              formatDate3(_pagedData[i]!
+                                                  .createdAt
+                                                  .toString()),
+                                              () => _toggleExpansion(i),
+                                            );
                                           default:
                                             return Container();
                                         }
                                       }),
                                     ),
-                                    // Empty Row for spacing
-                                    TableRow(
-                                      decoration: const BoxDecoration(
-                                          border: Border.symmetric(
-                                              horizontal: BorderSide.none)),
-                                      children: List.generate(
-                                          7,
-                                          (index) => TableCell(
-                                              child: Container(height: 20))),
-                                    ),
-                                    // Data Rows
-                                    for (var i = 0;
-                                        i < _pagedData.length;
-                                        i++) ...[
+                                    // Expanded Row (if any)
+                                    if (_expandedIndex != null &&
+                                        _expandedIndex == i)
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
-                                            right: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
-                                            top: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
-                                            bottom: i == _pagedData.length - 1
-                                                ? const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1))
+                                            left: BorderSide(
+                                              color: blueColor,
+                                              width: 1.0,
+                                            ),
+                                            bottom: (i == _pagedData.length - 1)
+                                                ? BorderSide(
+                                                    color: blueColor,
+                                                    width: 1.0,
+                                                  )
                                                 : BorderSide.none,
                                           ),
                                         ),
                                         children: List.generate(7, (index) {
-                                          switch (index) {
-                                            case 0:
-                                              return _buildInteractiveCells(
-                                                  _pagedData[i]!
-                                                      .type
-                                                      .toString(),
-                                                  () => _toggleExpansion(i));
-                                            case 1:
-                                              return _buildInteractiveCells(
-                                                '${_pagedData[i]!.tenantData["tenant_firstName"]} ${_pagedData[i]!.tenantData["tenant_lastName"]}',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 2:
-                                              return _buildInteractiveCells(
-                                                'Manual ${_pagedData[i]!.type.toString()} ${_pagedData[i]!.response} for ${_pagedData[i]!.paymenttype} (#${_pagedData[i]!.transactionid})',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 3:
-                                              return _buildInteractiveCells(
-                                                (_pagedData[i]!.type ==
-                                                            "Refund" ||
-                                                        _pagedData[i]!.type ==
-                                                            "Charge")
-                                                    ? _pagedData[i]!
-                                                        .totalAmount
-                                                        .toString()
-                                                    : 'N/A',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 4:
-                                              return _buildInteractiveCells(
-                                                (_pagedData[i]!.type !=
-                                                            "Refund" &&
-                                                        _pagedData[i]!.type !=
-                                                            "Charge")
-                                                    ? _pagedData[i]!
-                                                        .totalAmount
-                                                        .toString()
-                                                    : 'N/A',
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 5:
-                                              return _buildInteractiveCells(
-                                                _pagedData[i]!
-                                                    .balance!
-                                                    .abs()
-                                                    .toStringAsFixed(2),
-                                                () => _toggleExpansion(i),
-                                              );
-                                            case 6:
-                                              return _buildInteractiveCells(
-                                                formatDate3(_pagedData[i]!
-                                                    .createdAt
-                                                    .toString()),
-                                                () => _toggleExpansion(i),
-                                              );
-                                            default:
-                                              return Container();
+                                          if (index == 1) {
+                                            return TableCell(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text('Account',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            16,
+                                                                        color:
+                                                                            blueColor)),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: grey, fontSize: 16)),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              30),
+                                                                  child: Text(
+                                                                      'Amount',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor)),
+                                                                ),
+                                                                ...?_pagedData[
+                                                                            _expandedIndex!]!
+                                                                        .entry
+                                                                        ?.map((entry) =>
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(left: 5),
+                                                                                    child: Center(
+                                                                                      child: Text('${entry.amount ?? "N/A"}',
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: grey,
+                                                                                            fontSize: 15,
+                                                                                          )),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                                // Add more details as needed
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return TableCell(
+                                                child:
+                                                    Container()); // Empty cells for alignment
                                           }
                                         }),
                                       ),
-                                      // Expanded Row (if any)
-                                      if (_expandedIndex != null &&
-                                          _expandedIndex == i)
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                width: 1.0,
-                                              ),
-                                              bottom:
-                                                  (i == _pagedData.length - 1)
-                                                      ? BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1),
-                                                          width: 1.0,
-                                                        )
-                                                      : BorderSide.none,
-                                            ),
-                                          ),
-                                          children: List.generate(7, (index) {
-                                            if (index == 1) {
-                                              return TableCell(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                      'Account',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              blueColor)),
-                                                                  ...?_pagedData[
-                                                                              _expandedIndex!]!
-                                                                          .entry
-                                                                          ?.map((entry) =>
-                                                                              Row(
-                                                                                children: [
-                                                                                  Expanded(
-                                                                                    child: Text('${entry.account ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: grey, fontSize: 16)),
-                                                                                  ),
-                                                                                ],
-                                                                              ))
-                                                                          .toList() ??
-                                                                      [],
-                                                                  // Add more details as needed
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            30),
-                                                                    child: Text(
-                                                                        'Amount',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor)),
-                                                                  ),
-                                                                  ...?_pagedData[
-                                                                              _expandedIndex!]!
-                                                                          .entry
-                                                                          ?.map((entry) =>
-                                                                              Row(
-                                                                                children: [
-                                                                                  Expanded(
-                                                                                    child: Padding(
-                                                                                      padding: const EdgeInsets.only(left: 5),
-                                                                                      child: Center(
-                                                                                        child: Text('${entry.amount ?? "N/A"}',
-                                                                                            style: TextStyle(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: grey,
-                                                                                              fontSize: 15,
-                                                                                            )),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ))
-                                                                          .toList() ??
-                                                                      [],
-                                                                  // Add more details as needed
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return TableCell(
-                                                  child:
-                                                      Container()); // Empty cells for alignment
-                                            }
-                                          }),
-                                        ),
-                                    ],
                                   ],
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    }
-                  },
-                ),
-              SizedBox(
-                height: 20,
+                      ),
+                    );
+                  }
+                },
               ),
-            ],
-          ),
+            const SizedBox(
+              height: 20,
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  void _showAlertvoid(BuildContext context, String id) {
+    print("calling");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure you want to void this payment?",
+      desc: "A void can be issued on this payment until it is settled",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for void',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+        ],
+      ),
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Void",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            if (reason.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              var data = await PaymentCronjobRepository().VoidCron(
+                  pay_id: id, void_reason: reason.text, context: context);
+              // Add your delete logic here
+              if (data != null) {
+                setState(() {
+                  _leaseLedgerFuture = LeaseRepository()
+                      .fetchLeaseLedger(leaseId: widget.leaseId);
+                });
+              }
+              Navigator.of(context).pop();
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
   }
 
   Widget _buildInteractiveCell(String text, VoidCallback onTap) {

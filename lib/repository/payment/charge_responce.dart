@@ -27,14 +27,14 @@ class ChargeRepositorys {
   //   }
   // }
 
-  Future<List<Entrycharge>?> fetchChargesTable(String leaseId, String tenantId) async {
+  Future<List<Entrycharge>?> fetchChargesTable(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    print(tenantId);
+  //  print(tenantId);
     try{
       final response = await http.get(
-        Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId/$tenantId'),
+        Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
@@ -42,9 +42,44 @@ class ChargeRepositorys {
       );
 
       print('chargesssssss ${response.body}');
-      print('$Api_url/api/charge/tenant_charges/$leaseId/$tenantId');
+      print('$Api_url/api/charge/tenant_charges/$leaseId');
       print(jsonEncode.hashCode);
 
+      // if (response.statusCode == 200) {
+      //   Map<String, dynamic> jsonResponse = json.decode(response.body);
+      //   //  log(jsonResponse.toString());
+      //   print("jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List ${jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List}");
+      //   // Check if 'totalCharges' exists in the response
+      //   if (jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List) {
+      //     List<Entrycharge> allEntries = [];
+      //
+      //     // Extract 'totalCharges'
+      //     List<dynamic> totalCharges = jsonResponse['totalCharges'];
+      //     print("totalCharges ${totalCharges.length}");
+      //     // Loop through 'totalCharges' to get all 'entry' objects
+      //     for (var charge in totalCharges) {
+      //       print("charge.containsKey('entry') && charge['entry'] is List ${charge.containsKey('entry') && charge['entry'] is List}");
+      //       if (charge.containsKey('entry') && charge['entry'] is List) {
+      //         List<dynamic> entryList = charge['entry'];
+      //         print("entryList......${entryList.length}");
+      //         // Loop through the entry list and add each entry to allEntries
+      //         for (var entry in entryList) {
+      //           print("Entries......${allEntries.length} ${entry["entry_id"]}");
+      //           allEntries.add(Entrycharge.fromJson(entry));
+      //
+      //         }
+      //
+      //         print("allEntries......${allEntries.length}");
+      //       }
+      //     }
+      //     print("Total entry charges: ${allEntries.length}");
+      //     return allEntries;
+      //   } else {
+      //     throw Exception('No charges found');
+      //   }
+      // } else {
+      //   throw Exception('Failed to load');
+      // }
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         //  log(jsonResponse.toString());
@@ -58,20 +93,20 @@ class ChargeRepositorys {
           print("totalCharges ${totalCharges.length}");
           // Loop through 'totalCharges' to get all 'entry' objects
           for (var charge in totalCharges) {
-            print("charge.containsKey('entry') && charge['entry'] is List ${charge.containsKey('entry') && charge['entry'] is List}");
-            if (charge.containsKey('entry') && charge['entry'] is List) {
-              List<dynamic> entryList = charge['entry'];
-              print("entryList......${entryList.length}");
-              // Loop through the entry list and add each entry to allEntries
-              for (var entry in entryList) {
-                print("Entries......${allEntries.length} ${entry["entry_id"]}");
-                allEntries.add(Entrycharge.fromJson(entry));
-
-              }
-
-              print("allEntries......${allEntries.length}");
-            }
+            //    print("charge.containsKey('entry') && charge['entry'] is List ${charge.containsKey('entry') && charge['entry'] is List}");
+            // //  if (charge.containsKey('entry') && charge['entry'] is List) {
+            //      List<dynamic> entryList = charge['entry'];
+            //      print("entryList......${entryList.length}");
+            //      // Loop through the entry list and add each entry to allEntries
+            //      for (var entry in entryList) {
+            //        print("Entries......${allEntries.length} ${entry["entry_id"]}");
+            //
+            //
+            //      }
+            allEntries.add(Entrycharge.fromJson(charge));
+            print("allEntries......${allEntries.length}");
           }
+          //}
           print("Total entry charges: ${allEntries.length}");
           return allEntries;
         } else {
@@ -80,6 +115,8 @@ class ChargeRepositorys {
       } else {
         throw Exception('Failed to load');
       }
+
+
     }
     catch(e){
       print(e);

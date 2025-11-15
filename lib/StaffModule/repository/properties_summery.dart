@@ -10,6 +10,8 @@ import 'package:three_zero_two_property/model/properties_summery.dart';
 
 import '../../../constant/constant.dart';
 import '../../../model/properties_workorders.dart';
+import '../../Model/Properties_revenue_model.dart';
+import '../../Model/properties_Lease_model.dart';
 import '../../model/unitsummery_propeties.dart';
 
 // class Properies_summery_Repo{
@@ -125,45 +127,75 @@ class Properies_summery_Repo{
   Future<Map<String, dynamic>> addappliances({
     String? adminId,
     String? unitId,
-    String? applianceid,
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
-
+    String? type,
+    String? brand,
+    String? model,
+    String? serialNumber,
+    String? warrantyExpiry,
+    String? lastMaintenanceDate,
+    String? maintenanceNotes,
+    String? status,
+    String? categoryId,
+    List<dynamic>? filters,
+    String? appliance_image, // Add this parameter
   }) async {
-    final Map<String, dynamic> data = {
-      'admin_id': adminId,
-      'unit_id': unitId,
-      'appliance_id': applianceid,
-      'appliance_name': appliancename,
-      'appliance_description': appliancedescription,
-      'installed_date': installeddate,
-
-    };
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
+
+    // Convert filters to JSON string
+    String filtersJson = json.encode(filters ?? []);
+    print('Filters as JSON string: $filtersJson');
+
+    // Create FormData
+    var formData = {
+      'admin_id': adminId,
+      'unit_id': unitId,
+      'appliance_name': appliancename,
+      'appliance_description': appliancedescription,
+      'installed_date': installeddate,
+      'type': type,
+      'brand': brand,
+      'model': model,
+      'serial_number': serialNumber,
+      'warranty_expiry': warrantyExpiry,
+      'last_maintenance_date': lastMaintenanceDate,
+      'maintenance_notes': maintenanceNotes,
+      'status': status,
+      'category_id': categoryId,
+      'filters': filtersJson,
+      'appliance_id': "",
+      'appliance_image': appliance_image, // Add this field
+    };
+
+    print('Sending form data: ${json.encode(formData)}');
+
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/appliance/appliance'),
       headers: <String, String>{
-        "authorization" : "CRM $token",
-        'Content-Type': 'application/json; charset=UTF-8',
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        'Content-Type':
+        'application/x-www-form-urlencoded', // Changed content type
+        "id": "CRM $id",
       },
-      body: jsonEncode(data),
+      body: formData, // Send as form data
     );
-    print(response.body);
+
+    print("Add appliances response: ${response.body}");
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg:"add appliances successfully");
+      Fluttertoast.showToast(msg: "add appliances successfully");
       return json.decode(response.body);
     } else {
       Fluttertoast.showToast(msg: "Failed to add appliances");
       throw Exception('Failed to add appliances');
     }
   }
+
   Future<Map<String, dynamic>> Editappliances({
     String? adminId,
     String? unitId,
@@ -171,41 +203,71 @@ class Properies_summery_Repo{
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
-
+    String? type,
+    String? brand,
+    String? model,
+    String? serialNumber,
+    String? warrantyExpiry,
+    String? lastMaintenanceDate,
+    String? maintenanceNotes,
+    String? status,
+    String? categoryId,
+    List<dynamic>? filters,
+    String? appliance_image, // Add this parameter
   }) async {
-    final Map<String, dynamic> data = {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+
+    // Convert filters to JSON string
+    String filtersJson = json.encode(filters ?? []);
+    print('Filters as JSON string edit : $filtersJson');
+
+    // Create form data
+    var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
       'appliance_id': applianceid,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
-
+      'type': type,
+      'brand': brand,
+      'model': model,
+      'serial_number': serialNumber,
+      'warranty_expiry': warrantyExpiry,
+      'last_maintenance_date': lastMaintenanceDate,
+      'maintenance_notes': maintenanceNotes,
+      'status': status,
+      'category_id': categoryId,
+      'filters': filtersJson,
+      'appliance_image': appliance_image, // Add this field
     };
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? adminid = prefs.getString("adminId");
-    String? id = prefs.getString("staff_id");
+    print('Sending form data for edit: ${json.encode(formData)}');
+
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
       headers: <String, String>{
-        "authorization" : "CRM $token",
-        'Content-Type': 'application/json; charset=UTF-8',
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        'Content-Type':
+        'application/x-www-form-urlencoded', // Changed content type
+        "id": "CRM $id",
       },
-      body: jsonEncode(data),
-
+      body: formData, // Send as form data
     );
-    print(applianceid);
-    print('hii api${response.body}');
+
+    print('Edit appliance response: ${response.body}');
+
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg:"edit appliances successfully");
+      Fluttertoast.showToast(msg: "Appliance updated successfully");
       return json.decode(response.body);
     } else {
-      Fluttertoast.showToast(msg: "Failed to edit appliances");
-      throw Exception('Failed to edit appliances');
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Failed to update appliance");
+      throw Exception('Failed to update appliance');
     }
   }
 
@@ -367,7 +429,56 @@ class Properies_summery_Repo{
       throw Exception('Failed to load rental');
     }
   }
-
+  Future<List<Properties_lease_model>> fetchrLeaseDetails(String unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //String? id = prefs.getString("rentalid");
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    print(id);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/leases/leases/$adminid/$unitId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(" get summery lease details ${response.body}");
+    print("lease  api for calling ${'${Api_url}/api/leases/leases/$adminid/$unitId'}");
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Properties_lease_model.fromJson(data)).toList();
+    } else {
+      print('Failed to fetch lease table properties: ${response.body}');
+      return [];
+      //throw Exception('Failed to load data');
+    }
+  }
+  Future<List<Properties_Revenu_model>> fetchrRevenueDetails(String unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //String? id = prefs.getString("rentalid");
+    String? adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    print(id);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/leases/revenue/$adminid/$unitId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(" get summery lease details ${response.body}");
+    print("lease  api for calling ${'${Api_url}/api/leases/revenue/$adminid/$unitId'}");
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Properties_Revenu_model.fromJson(data)).toList();
+    } else {
+      print('Failed to fetch lease revenue table properties: ${response.body}');
+      return [];
+      //throw Exception('Failed to load data');
+    }
+  }
   Future<List<propertiesworkData>> fetchWorkOrders(String rentalId) async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();

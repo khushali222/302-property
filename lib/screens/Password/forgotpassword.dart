@@ -31,6 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   String companymessage = "";
   String emailmessage = "";
   String rolemessage = "";
+  String? userId;
   bool get isEmailSubmitted => _isEmailSubmitted;
   bool get hasMultipleCompanies => _hasMultipleCompanies;
   List<Map<String, String>> get companies => _companies;
@@ -39,7 +40,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("Calling  ${email.text}");
     // Make API call to check email
     final response = await http.post(
-      Uri.parse('${Api_url}/api/admin/check_role'),
+      Uri.parse('${Api_url}/api/auth/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
     );
@@ -58,7 +59,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 .map<Map<String, String>>((role) => {
                       'company': role['company_name'],
                       'admin_id': role['admin_id'],
-                      'role': role['role']
+                      'role': role['role'],
+              'user_id': role['user_id'],
                     })
                 .toList();
             _isEmailSubmitted = true;
@@ -70,6 +72,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               //_selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               admin_id = roles[0]['admin_id'];
+              userId = roles[0]["user_id"];
               _isEmailSubmitted = true;
             } else {
               print(roles[0]['role']);
@@ -77,6 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               _selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               admin_id = roles[0]['admin_id'];
+              userId = roles[0]["user_id"];
               _isEmailSubmitted = true;
             }
           });
@@ -84,7 +88,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         }
       }
     } else {
-      Fluttertoast.showToast(msg: "Email is not exist");
+      Fluttertoast.showToast(msg: "Email does not exist");
     }
   }
 
@@ -99,7 +103,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     final response = await http.post(
       Uri.parse('${Api_url}/api/admin/sendOTP'),
-      body: {'email': email, 'admin_id': admin_id, 'role': selectedrole},
+      body: {'email': email, 'admin_id': admin_id, 'role': selectedrole,'user_id':userId},
     );
     print(response.body);
     setState(() {
@@ -116,6 +120,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   email: email,
                   admin_id: admin_id,
                   role: selectedrole,
+                  userId: userId!,
+
                 )),
       );
       Fluttertoast.showToast(msg: "OTP sent successfully");
@@ -130,10 +136,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-  void selectCompany(String company, String role, String adminid) {
+  void selectCompany(String company, String role, String adminid,String user_id) {
     _selectedCompany = company;
     selectedrole = role; // Set role when selecting company
     admin_id = adminid;
+    userId = user_id;
     print(selectedrole);
     print(selectedCompany);
     setState(() {});
@@ -151,6 +158,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
             Image(
               image: AssetImage('assets/images/logo.png'),
               height: MediaQuery.of(context).size.height * 0.05,
@@ -160,16 +170,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               height: MediaQuery.of(context).size.height * 0.02,
             ),
             // Welcome
-            Center(
-              child: Text(
-                "Welcome to 302 Rentals",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     "Welcome to 302 Rentals",
+            //     style: TextStyle(
+            //       color: Colors.black,
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: MediaQuery.of(context).size.width * 0.05,
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.01,
             ),
@@ -192,7 +202,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 Expanded(
                   child: Text(
-                    "Enter your email address below, and we'll sent you the link to reset your password",
+                    "Enter your email address below, and we'll send you the link to reset your password.",
                     style: TextStyle(
                         color: Colors.black38,
                         fontSize:
@@ -232,7 +242,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               });
                             },
                             controller: email,
-                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor: blueColor,
                             decoration: InputDecoration(
                               enabledBorder: emailerror
                                   ? OutlineInputBorder(
@@ -294,7 +304,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         selectCompany(
                             companies[index]["company"]!,
                             companies[index]["role"]!,
-                            companies[index]["admin_id"]!);
+                            companies[index]["admin_id"]!,
+                            companies[index]["user_id"]!,
+
+
+
+                        );
+
+
                       },
                     ),
                   ],
@@ -315,12 +332,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (email.text.isEmpty) {
+                        if (email.text.trim().isEmpty) {
                           setState(() {
                             emailerror = true;
                             emailmessage = "Email is required";
                           });
-                        } else if (!EmailValidator.validate(email.text)) {
+                        } else if (!EmailValidator.validate(email.text.trim())) {
                           setState(() {
                             emailerror = true;
                             emailmessage = "Email is not valid";
@@ -338,7 +355,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       }
                       else if (!emailerror) {
                         // If email is valid, send OTP
-                        sendOTP(email.text);
+                        sendOTP(email.text.trim());
                       }
                     },
                     child: Center(
@@ -346,7 +363,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: MediaQuery.of(context).size.height * 0.06,
                         width: MediaQuery.of(context).size.width * 0.8,
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color:  Color(0xFF152B51),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
@@ -413,7 +430,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: MediaQuery.of(context).size.height * 0.06,
                         width: MediaQuery.of(context).size.width * 0.8,
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color:  Color(0xFF152B51),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(

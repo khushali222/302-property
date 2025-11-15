@@ -92,7 +92,7 @@ class LeaseLedgerProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _leaseLedger = await _apiService.fetchLeaseLedger(id);
+      _leaseLedger = await _apiService.fetchLeaseLedger(leaseId: id);
       _errorMessage = null;
     } catch (error) {
       _errorMessage = error.toString();

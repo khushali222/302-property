@@ -82,6 +82,7 @@ class AddCardService {
             customerVaultId: customvaultId, responseCode: responseCode);
       } else {
         print('Failed to submit card details: ${response.statusCode}');
+
         return null;
       }
     } catch (e) {
@@ -103,7 +104,7 @@ class AddCardService {
     };
 
     final body = jsonEncode(addCard.toJson());
-
+    print(body);
     try {
       final response = await http.post(
         Uri.parse('$Api_url/api/creditcard/addCreditCard'),

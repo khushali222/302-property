@@ -1,9 +1,13 @@
 
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-
+import 'dart:developer' as developer;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_provider.dart';
@@ -12,9 +16,11 @@ import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
+import '../../VendorModule/repository/vendor_permission.dart';
 import '../../VendorModule/screen/dashboard.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../provider/dateProvider.dart';
 import '../Login/login_screen.dart';
 import '../Plans/PlansPurcharCard.dart'; // Import your login screen file
 
@@ -25,18 +31,46 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool? isPlanActive;
+
+  ConnectivityResult? _connectivityResult ;
+
   @override
   void initState() {
     super.initState();
+
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     _navigateToCorrectScreen();
   }
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+
+
+  bool? isPlanActive;
+
   _navigateToCorrectScreen() async {
 
     await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     String role = prefs.getString("role") ??"";
+    if(role != ""){
+      final dateProvider = Provider.of<DateProvider>(context,listen: false);
+
+    }
     if(role == "Admin") {
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
           .fetchPlanPurchaseDetail();
@@ -66,17 +100,26 @@ class _SplashScreenState extends State<SplashScreen> {
         print('The plan is not active.');
       }
 
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => isAuthenticated == true
+      //         ? isPlanActive!
+      //         ? Dashboard()
+      //         : PlanPurchaseCard()
+      //         : Login_Screen(),
+      //   ),
+      // );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => isAuthenticated == true
               ? isPlanActive!
               ? Dashboard()
-              : PlanPurchaseCard()
+              : provider.checkplanpurchaseModel != null ? PlanPurchaseCard() : Login_Screen()
               : Login_Screen(),
         ),
       );
-
 
 
 
@@ -106,6 +149,7 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
     else if(role == "Vendor"){
+      await Provider.of<VendorPermission>(context, listen: false).fetchPermissions();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -140,7 +184,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      Container(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -151,13 +198,38 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 300,
               ),
               SizedBox(height: 30),
-              Lottie.asset('assets/images/loader.json',height: 130,width: 100),
+              Lottie.asset('assets/images/loader.json',height: 130,width: 100,
+               ),
               // LoadingAnimationWidget.fourRotatingDots(
               //  color: blueColor,
               //   size: 40,
               // ),
             ],
           ),
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );

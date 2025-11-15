@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../constant/constant.dart';
+import '../provider/dateProvider.dart';
 
 class CustomDateField extends StatefulWidget {
   final String hintText;
@@ -7,6 +11,7 @@ class CustomDateField extends StatefulWidget {
   final void Function(DateTime?)? onDateSelected;
   final IconData? prefixIcon;
   final bool readOnly;
+  final void Function(dynamic)? onChanged;
 
   CustomDateField({
     Key? key,
@@ -16,6 +21,7 @@ class CustomDateField extends StatefulWidget {
     this.validator,
     this.onDateSelected,
     this.prefixIcon,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -32,13 +38,14 @@ class CustomDateFieldState extends State<CustomDateField> {
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
+      // lastDate:  DateTime.now(),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Color.fromRGBO(21, 43, 83, 1),
+            primaryColor: blueColor,
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1),
+              primary: blueColor,
             ),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
@@ -51,14 +58,18 @@ class CustomDateFieldState extends State<CustomDateField> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
         widget.controller?.text =
-            _selectedDate!.toLocal().toString().split(' ')[0];
+            dateProvider.formatCurrentDate(_selectedDate!.toString());
         _errorMessage = widget.validator != null
             ? widget.validator!(widget.controller?.text)
             : null;
       });
       if (widget.onDateSelected != null) {
         widget.onDateSelected!(_selectedDate);
+      }
+      if (widget.onChanged != null) {
+        widget.onChanged!(_selectedDate);
       }
       // Notify the FormField state of the change
       state.didChange(widget.controller?.text);
@@ -70,7 +81,18 @@ class CustomDateFieldState extends State<CustomDateField> {
     return FormField<String>(
       validator: (value) {
         if (widget.validator != null) {
-          return widget.validator!(value);
+          final error = widget.validator!(value);
+          if (error != null) {
+            setState(() {
+              _errorMessage = error;
+            });
+          }
+          return error;
+        } else if ((widget.controller?.text ?? '').isEmpty) {
+          setState(() {
+            _errorMessage = 'Please select a date';
+          });
+          return _errorMessage;
         }
         return null;
       },

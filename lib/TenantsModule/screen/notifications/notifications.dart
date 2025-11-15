@@ -1,11 +1,17 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:three_zero_two_property/TenantsModule/screen/financial/financial_table.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constant/constant.dart';
+import '../../../screens/Maintenance/Workorder/workorder_summery.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
@@ -22,7 +28,7 @@ class notifications extends StatefulWidget {
 
 class _notificationsState extends State<notifications> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
-
+  late Future<List<Map<String,dynamic>>> fetchnoti;
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
     print("calling");
@@ -47,10 +53,116 @@ class _notificationsState extends State<notifications> {
     }
   }
 
+  ConnectivityResult? _connectivityResult ;
+  void initState() {
+    super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+    fetchnoti = fetchNotifications()!;
+  }
+
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+  String formatNotificationDateTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(Duration(days: 1));
+    final difference = now.difference(dateTime);
+
+    if (dateTime.isAfter(today)) {
+      // For today
+      return 'Today | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (dateTime.isAfter(yesterday)) {
+      // For yesterday
+      return 'Yesterday | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (difference.inDays < 31) {
+      // For days ago (less than a month)
+      return '${difference.inDays} days ago | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (difference.inDays < 365) {
+      // For more than a month ago
+      return '${(difference.inDays / 30).floor()} months ago';
+    } else {
+      // For more than a year ago
+      return DateFormat('dd-MM-yyyy').format(dateTime);
+    }
+  }
+
   String formatDateTime(String dateTime) {
     DateTime parsedDateTime = DateTime.parse(dateTime);
     return DateFormat('dd-MM-yyyy hh:mm a').format(parsedDateTime);
   }
+
+  Future<void> handleNotificationTap(
+      BuildContext context, bool isWorkOrder, String notificationId) async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("tenant_id");
+    String? token = prefs.getString('token');
+    String apiUrl =
+        '${Api_url}/api/notification/tenant_notification/$notificationId';
+
+    print("Notification ID: $notificationId");
+
+    try {
+      // Make the PUT request to the API
+      var response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: json.encode({'is_workorder': isWorkOrder}),
+      );
+
+      final jsonData = json.decode(response.body);
+
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        print("API call successful");
+
+        final responseData = jsonData['data'];
+
+        // Check if it's a work order or payment
+        if (responseData['is_workorder'] == true) {
+          print("Navigating to Edit Work Order...");
+          String workOrderId =
+          responseData['notification_type']['workorder_id'];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Workorder_summery(workorder_id: workOrderId)));
+        } else {
+          print("Navigating to Property...");
+          // String rentalId = responseData['rental_id'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FinancialTable(),
+            ),
+          );
+        }
+      } else {
+        print(
+            "Failed to update notification. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,9 +174,14 @@ class _notificationsState extends State<notifications> {
         key.currentState!.openDrawer();
         // Scaffold.of(context).openDrawer();
       },),
-      body: SingleChildScrollView(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 10,),
+           // Center(child: Text("Notification",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold,),)),
+
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: titleBar(
@@ -75,10 +192,18 @@ class _notificationsState extends State<notifications> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: FutureBuilder<List<Map<String,dynamic>>>(
-                future: fetchNotifications(),
+                future: fetchnoti,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return  Container(
+                      height: MediaQuery.of(context).size.height *.7,
+                      child: Center(
+                        child: SpinKitFadingCircle(
+                          color: blueColor,
+                          size: 50.0,
+                        ),
+                      ),
+                    );
                    // return ColabShimmerLoadingWidget();
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
@@ -98,10 +223,10 @@ class _notificationsState extends State<notifications> {
                   } else
                  {
                    List<Map<String, dynamic>> notifications = snapshot.data!;
-        
+
                    return SingleChildScrollView(
                      child: Padding(
-                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                        child: Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: notifications.map((notification) {
@@ -110,28 +235,75 @@ class _notificationsState extends State<notifications> {
                              child: Column(
                                crossAxisAlignment: CrossAxisAlignment.start,
                                children: [
-                                 Text(
-                                   notification['notification_title'],
-                                   style: TextStyle(
-                                     fontSize: 18.0,
-                                     fontWeight: FontWeight.bold,
-                                     color: blueColor
-                                   ),
+                                 Row(
+                                   children: [
+                             CircleAvatar(
+                             radius: 20,
+                                 backgroundColor: Colors.blue.shade100,
+
+                                 child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                                     SizedBox(width: 14.0),
+
+                                     Column(
+                                       mainAxisAlignment: MainAxisAlignment.start,
+                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                       children: [
+                                         Text(
+                                           notification['notification_title'],
+                                           style: TextStyle(
+                                               fontSize: 16.0,
+                                               fontWeight: FontWeight.bold,
+                                               color: blueColor
+                                           ),
+                                         ),
+                                         Text(  notification['createdAt']?.isEmpty ?? true
+                                             ? 'No date available'
+                                             : timeago.format(DateTime.parse(notification['createdAt']).toLocal(), locale: 'en_custom'), style: TextStyle(
+                                             color: Colors.black.withOpacity(.7),
+                                           fontSize: 14
+
+                                         ),)
+                                       ],
+                                     ),
+                                     Spacer(),
+                                     GestureDetector(
+                                       onTap: () {
+                                         print("calling");
+                                         handleNotificationTap(
+                                             context,
+                                             notification['is_workorder'],
+                                             notification['notification_id']);
+                                         print(
+                                             "noti id gest ${notification['notification_id']}");
+                                       },
+                                       child: Container(
+                                           height: 40,
+                                           width: 40,
+                                           decoration: BoxDecoration(
+                                             color: Colors.grey.shade200,
+                                             borderRadius: BorderRadius.circular(6)
+                                           ),
+                                           child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,))),
+                                     )
+                                   ],
                                  ),
-                                 SizedBox(height: 4.0),
-                                 Text(
-                                   notification['notification_detail'],
-                                   style: TextStyle(
-                                     fontSize: 16.0,
-                                     color: Colors.grey[700],
+                                 SizedBox(height: 14.0),
+                                 Padding(
+                                   padding: const EdgeInsets.only(left: 8.0),
+                                   child: Text(
+                                     notification['notification_detail'],
+                                     style: TextStyle(
+                                       fontSize: 14.0,
+                                       color: Colors.black,
+                                     ),
                                    ),
                                  ),
                                  SizedBox(height: 8.0),
-                                 Row(
+                                /* Row(
                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                    children: [
                                      Text(
-                                       formatDateTime(notification['createdAt']),
+                                       formatNotificationDateTime(notification['createdAt']),
                                        style: TextStyle(
                                          fontSize: 14.0,
                                          color:blueColor,
@@ -140,19 +312,21 @@ class _notificationsState extends State<notifications> {
                                      ),
                                      ElevatedButton(
                                        onPressed: () {
-                                      /*   if(notification['notification_title'] =="Workorder Created"){
+                                        *//* if(notification['notification_title'] =="Workorder Created"){
                                            Navigator.of(context).push(MaterialPageRoute(
                                                builder: (context) =>  ResponsiveEditWorkOrder(workorderId: notification['notification_type']['workorder_id'],)));
-                                         }else{
+                                         }else if(notification['notification_title'] =="New Payment"){
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                               builder: (context) =>  SummeryPageLease(leaseId: notification['notification_type']['lease_id'],isredirectpayment: true,)));
 
-                                         }*/
+                                         }*//*
 
                                          // Handle view button press
                                        },
                                        child: Text('View'),
                                      ),
                                    ],
-                                 ),
+                                 ),*/
                                  Divider(thickness: 1.0),
                                ],
                              ),
@@ -164,6 +338,133 @@ class _notificationsState extends State<notifications> {
                  }
                 },
               ),
+            ),
+          /*  Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),*/
+
+
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ],
         ),

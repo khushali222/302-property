@@ -162,6 +162,9 @@ class EditLease {
   final String createdAt;
   final String updatedAt;
   final bool isDelete;
+  final bool? creditCardAccepted;
+  final bool? debitCardAccepted;
+  final bool? leasePaymentSettings;
   final List<dynamic> moveoutTenant;
   final int v;
 
@@ -181,6 +184,9 @@ class EditLease {
     required this.createdAt,
     required this.updatedAt,
     required this.isDelete,
+    this.creditCardAccepted,
+    this.debitCardAccepted,
+    this.leasePaymentSettings,
     required this.moveoutTenant,
     required this.v,
   });
@@ -204,6 +210,9 @@ class EditLease {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
+      creditCardAccepted: json['creditCardAccepted'],
+      debitCardAccepted: json['debitCardAccepted'],
+      leasePaymentSettings: json['leasePaymentSettings'],
       moveoutTenant: List<dynamic>.from(json['moveout_tenant']),
       v: json['__v'],
     );

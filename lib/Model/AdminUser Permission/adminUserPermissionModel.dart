@@ -161,6 +161,7 @@ class StaffPermission {
   bool? workorderView;
   bool? workorderAdd;
   bool? workorderDelete;
+  bool? setting;
 
   // New fields
   bool? propertytypeView;
@@ -204,6 +205,7 @@ class StaffPermission {
     this.workorderView,
     this.workorderAdd,
     this.workorderDelete,
+    this.setting,
     // New fields
     this.propertytypeView,
     this.propertytypeAdd,
@@ -247,7 +249,7 @@ class StaffPermission {
     workorderView = json['workorder_view'];
     workorderAdd = json['workorder_add'];
     workorderDelete = json['workorder_delete'];
-
+    setting = json['setting_view'];
     // New fields
     propertytypeView = json['propertytype_view'];
     propertytypeAdd = json['propertytype_add'];
@@ -292,6 +294,7 @@ class StaffPermission {
     data['workorder_view'] = this.workorderView;
     data['workorder_add'] = this.workorderAdd;
     data['workorder_delete'] = this.workorderDelete;
+    data['setting_view'] = this.setting;
 
     // New fields
     data['propertytype_view'] = this.propertytypeView;

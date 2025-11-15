@@ -6,20 +6,46 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import '../../../Model/CompletedWorkOrdersModel.dart';
 
 class CompletedWorkOrderService {
-  Future<List<CompletedWorkData>> fetchCompletedWorkOrders() async {
+  Future<List<CompletedWorkData>> fetchCompletedWorkOrders({
+    String? fromDate,
+    String? toDate,
+    String? status,
+  }) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
+    String url = '$Api_url/api/work-order/complete-work-orders/$adminid';
+
+    // Add query parameters if provided
+    Map<String, String> queryParams = {};
+    if (fromDate != null) queryParams['selectedDate'] = fromDate;
+    if (toDate != null) queryParams['selectedToDate'] = toDate;
+    if (status != null) queryParams['status'] = status;
+    queryParams['caseInsensitive'] = 'true';
+
+    if (queryParams.isNotEmpty) {
+      url += '?' +
+          queryParams.entries
+              .map((e) =>
+                  '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+              .join('&');
+    }
+
+    // Print the final API URL for debugging
+    print('=== API CALL DEBUG (COMPLETED STAFF) ===');
+    print('Final URL: $url');
+    print('Query Params: $queryParams');
+    print('Headers: authorization: CRM $token, id: CRM $id');
+    print('=======================================');
+
     try {
-      final response = await http.get(
-          Uri.parse('$Api_url/api/work-order/complete-work-orders/$adminid'),
-          headers: {
-            "authorization": "CRM $token",
-            "id": "CRM $id",
-          });
+      final response = await http.get(Uri.parse(url), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);

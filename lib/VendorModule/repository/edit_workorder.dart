@@ -163,6 +163,7 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     print(parts!.length);
     // Constructing the request data
@@ -187,6 +188,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
 
@@ -194,7 +196,7 @@ class WorkOrderRepository {
     String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
 
-
+    print(" workorder data $data");
 
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
@@ -203,7 +205,11 @@ class WorkOrderRepository {
         "id": "CRMss $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"workOrder": data,'parts': parts,}),
+      body: jsonEncode({
+        "workOrder": data,
+        'parts': parts,
+        'notificationTime':notificationTime,
+      }),
     );
 
     print('data length${data.length}');

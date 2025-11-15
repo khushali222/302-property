@@ -3,20 +3,23 @@ import 'package:three_zero_two_property/StaffModule/repository/staffpermission_r
 
 import '../model/staffpermission.dart';
 
-
 class StaffPermissionProvider with ChangeNotifier {
   StaffPermission? _permissions;
   bool _isLoading = true;
 
   StaffPermission? get permissions => _permissions;
   bool get isLoading => _isLoading;
-
+  StaffPermissionProvider() {
+    fetchPermissions();
+  }
   Future<void> fetchPermissions() async {
     try {
-      StaffPermission fetchedPermissions = await StaffPermissionService.fetchPermissions();
+      StaffPermission fetchedPermissions =
+          await StaffPermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
-      // Handle error
+      // Handle error - set default permissions if fetch fails
+      _permissions = StaffPermission();
     } finally {
       _isLoading = false;
       notifyListeners();

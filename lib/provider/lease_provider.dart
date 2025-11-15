@@ -4,6 +4,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 
 import '../Model/tenants.dart';
+import '../model/ApplicantModel.dart';
 import '../model/LeaseLedgerModel.dart';
 import '../model/cosigner.dart';
 import '../repository/lease.dart';
@@ -16,10 +17,67 @@ class SelectedTenantsProvider extends ChangeNotifier {
   List<Tenant> get selectedTenants => _selectedTenants;
   List<TextEditingController> get rentShareControllers => _rentShareControllers;
   String? get validationMessage => _validationMessage;
+  // void addTenant(Tenant tenant) {
+  //   print("Add Tenant is calling ");
+  //   if (_selectedTenants.isEmpty) {
+  //     // Set rent share to 100 for the first tenant
+  //     _rentShareControllers.add(TextEditingController(text: '100'));
+  //   } else {
+  //     _rentShareControllers.add(TextEditingController());
+  //   }
+  //   for(var i=0;i< _selectedTenants.length;i++){
+  //     print("Tenants ${_selectedTenants[i].tenantFirstName} ${_selectedTenants[i].tenantLastName} ${_selectedTenants[i].tenantId}");
+  //   }
+  //   // Check if the tenant is already in the selected tenants
+  //   if (_selectedTenants.any((existingTenant) => existingTenant.tenantLastName == tenant.tenantLastName)) {
+  //     print("Tenant ${tenant.tenantLastName} is already added.");
+  //     return; // Exit the method if the tenant is already added
+  //   }
+  //
+  //
+  //
+  //   print("add before length ${tenant.tenantLastName}");
+  //   _selectedTenants.add(tenant);
+  //   print("add after length ${_selectedTenants.length}");
+  //   notifyListeners();
+  // }
+
   void addTenant(Tenant tenant) {
+    print("Add Tenant is calling ${tenant.tenantId} ${tenant.tenantFirstName}");
+    for(var tenants  in _selectedTenants){
+
+      print(tenants.tenantFirstName);
+      print(tenants.tenantId);
+      print(tenants.tenantId);
+    }
+
+//    Check if the tenant is already in the selected tenants
+    if (_selectedTenants.any((existingTenant) => tenant.tenantId != null ?  existingTenant.tenantId == tenant.tenantId:existingTenant.applicantId == tenant.applicantId)) {
+      print("Tenant ${tenant.tenantFirstName} is already added.");
+      return; // Exit the method if the tenant is already added
+    }
+
+
+
+    // Add a new controller for the tenant
+    if (_selectedTenants.isEmpty || _selectedTenants.length == 0) {
+      // Set rent share to 100 for the first tenant
+      print("calling");
+      _rentShareControllers.add(TextEditingController(text: '100'));
+    } else {
+      print("calling 2");
+      _rentShareControllers.add(TextEditingController()); // Subsequent tenants get 0
+    }
+
+    print("add before length ${_selectedTenants.length}");
     _selectedTenants.add(tenant);
-    _rentShareControllers.add(TextEditingController()); // Add corresponding TextEditingController
+    print("add after length ${_selectedTenants.length}");
     notifyListeners();
+  }
+  void AddEditTenant(){
+    for(var i=0;i< _selectedTenants.length;i++){
+      print("Tenants ${_selectedTenants[i].tenantFirstName} ${_selectedTenants[i].tenantLastName} ${_selectedTenants[i].tenantId}");
+    }
   }
 
   void setTenants(List<Tenant> tenants) {
@@ -39,6 +97,9 @@ class SelectedTenantsProvider extends ChangeNotifier {
     }
   }
 
+  void clearonlyTenant(){
+    _selectedTenants.clear();
+  }
   void clearTenant() {
     _selectedTenants.clear();
     _rentShareControllers.forEach((controller) => controller.dispose()); // Dispose all controllers
@@ -88,21 +149,20 @@ class SelectedTenantsProvider extends ChangeNotifier {
       }
     }
 
-    if (totalRentShare > 100) {
-      _validationMessage = "Total rent share cannot exceed 100%";
-      notifyListeners();
-      return false;
-    }
+   //  if (totalRentShare > 100) {
+   //    _validationMessage = "Total rent share cannot exceed 100%";
+   //    notifyListeners();
+   //    return false;
+   //  }
+   // else if (totalRentShare < 100) {
+   //    _validationMessage = allFieldsEmpty
+   //        ? "Tenants must enter rent share values."
+   //        : "Total rent share must equal 100%";
+   //    notifyListeners();
+   //    return false;
+   //  }
 
-    if (totalRentShare < 100) {
-      _validationMessage = allFieldsEmpty
-          ? "Tenants must enter rent share values."
-          : "Total rent share must equal 100%";
-      notifyListeners();
-      return false;
-    }
-
-    _validationMessage = null;
+   _validationMessage = null;
     notifyListeners();
     return true;
   }
@@ -168,7 +228,7 @@ class LeaseLedgerProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _leaseLedger = await _apiService.fetchLeaseLedger(id);
+      _leaseLedger = await _apiService.fetchLeaseLedger(leaseId: id);
       _errorMessage = null;
     } catch (error) {
       _errorMessage = error.toString();
@@ -177,4 +237,149 @@ class LeaseLedgerProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+}
+
+
+class SelectedApplicantProvider extends ChangeNotifier {
+  List<Datum> _selectedApplicant = [];
+  List<TextEditingController> _rentShareControllers = [];
+  String? _validationMessage;
+  List<Datum> get selectedApplicant => _selectedApplicant;
+  List<TextEditingController> get rentShareControllers => _rentShareControllers;
+  String? get validationMessage => _validationMessage;
+  // void addApplicant(Datum applicant) {
+  //   print("Add Tenant is calling ");
+  //   if (_selectedApplicant.isEmpty) {
+  //     // Set rent share to 100 for the first tenant
+  //     _rentShareControllers.add(TextEditingController(text: '100'));
+  //   } else {
+  //     _rentShareControllers.add(TextEditingController());
+  //   }
+  //   for(var i=0;i< _selectedApplicant.length;i++){
+  //     print("Tenants ${_selectedApplicant[i].applicantFirstName} ${_selectedApplicant[i].applicantLastName} ${_selectedApplicant[i].applicantId}");
+  //   }
+  //   // Check if the tenant is already in the selected tenants
+  //   if (_selectedApplicant.any((existingTenant) => existingTenant.applicantFirstName == applicant.applicantLastName)) {
+  //     print("Tenant ${applicant.applicantFirstName} is already added.");
+  //     return; // Exit the method if the tenant is already added
+  //   }
+  //
+  //
+  //
+  //   print("add before length ${applicant.applicantLastName}");
+  //   _selectedApplicant.add(applicant);
+  //   print("add after length ${_selectedApplicant.length}");
+  //   notifyListeners();
+  // }
+  void addApplicant(Datum applicant) {
+    print("Add Applicant is calling");
+
+    // Check if the applicant is already in the selected applicants
+    if (_selectedApplicant.any((existingApplicant) => existingApplicant.applicantId == applicant.applicantId)) {
+      print("Applicant ${applicant.applicantFirstName} is already added.");
+      return; // Exit the method if the applicant is already added
+    }
+
+    // Add a new controller for the applicant
+    if (_selectedApplicant.isEmpty) {
+      // Set rent share to 100 for the first applicant
+      _rentShareControllers.add(TextEditingController(text: '100'));
+    } else {
+      _rentShareControllers.add(TextEditingController(text: '0')); // Subsequent applicants get 0
+    }
+
+    print("add before length ${applicant.applicantLastName}");
+    _selectedApplicant.add(applicant);
+    print("add after length ${_selectedApplicant.length}");
+    notifyListeners();
+  }
+  void AddEditApplicant(){
+    for(var i=0;i< _selectedApplicant.length;i++){
+      print("Applicant ${_selectedApplicant[i].applicantFirstName} ${_selectedApplicant[i].applicantLastName} ${_selectedApplicant[i].applicantId}");
+    }
+  }
+
+  void setApplicant(List<Datum> applicant) {
+    _selectedApplicant = applicant;
+    _rentShareControllers = List.generate(
+        applicant.length, (index) => TextEditingController()); // Generate controllers for each tenant
+    notifyListeners();
+  }
+
+  void removeApplicant(Datum applicant) {
+    int index = _selectedApplicant.indexOf(applicant);
+    if (index != -1) {
+      _selectedApplicant.removeAt(index);
+      _rentShareControllers[index].dispose(); // Dispose the controller to avoid memory leaks
+      _rentShareControllers.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  // bool validateRentShares() {
+  //   double totalRentShare = 0;
+  //
+  //   for (var controller in _rentShareControllers) {
+  //     double rentShare = double.tryParse(controller.text) ?? 0;
+  //     totalRentShare += rentShare;
+  //   }
+  //
+  //   if (totalRentShare > 100) {
+  //     _validationMessage = "Total rent share cannot exceed 100%";
+  //     notifyListeners();
+  //     return false;
+  //   }
+  //
+  //   _validationMessage = null; // Reset validation message if valid
+  //   notifyListeners();
+  //   return true;
+  // }
+
+  void setValidationMessage(String message) {
+    _validationMessage = message;
+    notifyListeners();
+  }
+
+
+  void clearValidationMessage() {
+    _validationMessage = null;
+    notifyListeners(); // Update listeners to clear the error in the UI
+  }
+
+  bool validateRentShares() {
+    double totalRentShare = 0;
+    bool allFieldsEmpty = true;
+
+    for (var controller in _rentShareControllers) {
+      double rentShare = double.tryParse(controller.text) ?? 0;
+      totalRentShare += rentShare;
+
+      if (rentShare > 0) {
+        allFieldsEmpty = false;
+      }
+    }
+
+    //  if (totalRentShare > 100) {
+    //    _validationMessage = "Total rent share cannot exceed 100%";
+    //    notifyListeners();
+    //    return false;
+    //  }
+    // else if (totalRentShare < 100) {
+    //    _validationMessage = allFieldsEmpty
+    //        ? "Tenants must enter rent share values."
+    //        : "Total rent share must equal 100%";
+    //    notifyListeners();
+    //    return false;
+    //  }
+
+    _validationMessage = null;
+    notifyListeners();
+    return true;
+  }
+  void clearApplicant() {
+    _selectedApplicant.clear();
+    notifyListeners();
+  }
+
+
 }

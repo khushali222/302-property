@@ -10,21 +10,23 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../widgets/VideoPlayerWidget.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/TenantsModule/repository/workorder.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
 
-
 import '../../../constant/constant.dart';
 import '../../../screens/Maintenance/Vendor/add_vendor.dart';
 import '../../../widgets/titleBar.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import '../../../Model/All_categories_model.dart';
+import '../../../repository/fetch_allcategories.dart';
 
 import '../../widgets/custom_drawer.dart';
 
@@ -55,7 +57,8 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     final String uploadUrl = '$image_upload_url/api/images/upload';
     print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    request.files.add(await http.MultipartFile.fromPath('files', imageFile.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await request.send();
     var responseData = await http.Response.fromStream(response);
@@ -95,9 +98,11 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
       setState(() {
         selectedImages = [];
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Images uploaded successfully')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to upload images')));
     } finally {
       setState(() {
         isLoading = false;
@@ -140,7 +145,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                  backgroundColor: blueColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -165,7 +170,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                  backgroundColor: blueColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -221,9 +226,10 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   String? _selectedProperty;
   String? _selectedUnitId;
   String? _selectedUnit;
+  String? _selectedRentaId;
   Future<void> selectImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+      type: FileType.media,
       allowMultiple: true,
     );
 
@@ -237,32 +243,34 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   Future<void> uploadSelectedImages() async {
     setState(() {
-    //  isLoading = true;
+      //  isLoading = true;
     });
 
     try {
       for (File image in selectedImages) {
-       var image_name =  await uploadImage(image);
-       print(image_name);
-       uploaded_images.add(image_name);
+        var image_name = await uploadImage(image);
+        print(image_name);
+        uploaded_images.add(image_name);
       }
       setState(() {
         selectedImages = [];
       });
-   //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
     } catch (e) {
-     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
     } finally {
       setState(() {
-       // isLoading = false;
+        // isLoading = false;
       });
     }
   }
+
   Future<String?> uploadImage(File imageFile) async {
     final String uploadUrl = '$image_upload_url/api/images/upload';
     print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    request.files.add(await http.MultipartFile.fromPath('files', imageFile.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await request.send();
     var responseData = await http.Response.fromStream(response);
@@ -276,7 +284,9 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
   }
+
   Future<void> _loadProperties() async {
+    print("Calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
@@ -289,16 +299,29 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       final response =
       await http.get(Uri.parse('${Api_url}/api/tenant/tenant_property/$id'),
           //api/tenant/tenant_property
-          headers: {"authorization" : "CRM $token","id":"CRM $id",}
-      );
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
       print('${Api_url}/api/rentals/rentals/$id');
-
+      print("${response.body}");
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
+        // jsonResponse.forEach((data) {
+        //   addresses[data['rental_id'].toString()] =
+        //       data['rental_adress'].toString();
+        // });
+        // jsonResponse.forEach((data) {
+        //   addresses[data['rental_id'].toString()] =
+        //   '${data['rental_adress']} (${data['status']})';
+        // });
         jsonResponse.forEach((data) {
-          addresses[data['rental_id'].toString()] =
-              data['rental_adress'].toString();
+          // Combine rental_id and address to create a unique key
+          String key =
+              '${data['rental_id']} - ${data['rental_adress']} - ${data['status']}';
+          addresses[key] =
+          '${data['rental_adress']} - ${data['status']}'; // Value remains the rental_id
         });
 
         setState(() {
@@ -306,16 +329,25 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           _isLoading = false;
         });
       } else {
-        throw Exception('Failed to load data');
+        //  throw Exception('Failed to load data');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to fetch properties: $e')),
+      // );
     }
+  }
+
+  void _showVideoDialog(String videoFile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Container(child: VideoPlayerDialog(videoUrl: videoFile));
+      },
+    );
   }
 
   Future<void> _loadUnits(String rentalId) async {
@@ -327,8 +359,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+      final response = await http.get(
+          Uri.parse(
+              '$Api_url/api/unit/rental_unit_dropdown/$rentalId?tenant_id=$id'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -344,47 +381,76 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           _isLoading = false;
         });
       } else {
-        throw Exception('Failed to load units');
+        //throw Exception('Failed to load units');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to fetch units: $e')),
+      // );
     }
   }
 
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
     _loadProperties();
+    _loadDropdownCategories();
   }
-  String? _selectedCategory;
-  final List<String> _category = ['Complaint', 'Contribution Request', 'Feedback/Suggestion', 'General inquiry','Maintenance Request','Other'];
+
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in TenantsModule: ' + cats.toString());
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories in TenantsModule: ' + e.toString());
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
+  }
+
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
   String? _selectedEntry;
-  final List<String> _entry = ['Yes', 'No', ];
+  final List<String> _entry = [
+    'Yes',
+    'No',
+  ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
   String renderId = '';
   String unitId = '';
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+  String? _propertyErrorMessage;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-         // print("calling appbar");
-    key.currentState!.openDrawer();
-    // Scaffold.of(context).openDrawer();
-    }),
+      appBar: widget_302.App_Bar(
+          context: context,
+          onDrawerIconPressed: () {
+            // print("calling appbar");
+            key.currentState!.openDrawer();
+            // Scaffold.of(context).openDrawer();
+          }),
       backgroundColor: Colors.white,
-      drawer:  CustomDrawer(currentpage: 'Work Order',),
+      drawer: CustomDrawer(
+        currentpage: 'Work Order',
+      ),
       body: Form(
         key: _formkey,
         child: Container(
@@ -422,7 +488,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -444,24 +510,28 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
                           Container(
-                            height: 50,
-                            width: 150,
+                            height: 45,
+                            width: 120,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
                               onPressed: () async {
+                                // _pickImage().then((_) {
+                                //   setState(
+                                //           () {}); // Rebuild the widget after selecting the image
+                                // });
                                 await selectImages();
                               },
                               child: isLoading
@@ -473,38 +543,93 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               )
                                   : Text(
                                 'Upload here',
-                                style: TextStyle(color: Color(0xFFf7f8f9)),
+                                style:
+                                TextStyle(color: Color(0xFFf7f8f9)),
                               ),
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
                             children: uploaded_images.map((imageUrl) {
+                              bool isMp4 = isVideo(imageUrl!);
                               return Container(
-                                width:  uploaded_images.length == 1
+                                width: uploaded_images.length == 1
                                     ? MediaQuery.of(context).size.width / 4
-                                    : (MediaQuery.of(context).size.width / 4) - 10,
+                                    : (MediaQuery.of(context).size.width / 4) -
+                                    10,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: InkWell(
-                                  onLongPress: (){
+                                  onLongPress: () {
                                     setState(() {
                                       uploaded_images.remove(imageUrl);
                                     });
                                   },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: CachedNetworkImage(
-                                      imageUrl: "$image_url$imageUrl",
-                                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error){
-                                        print(error);
-                                        return Container();
+                                  child: isMp4
+                                      ? Container(
+                                    height: 80,
+                                    width: 80,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        _showVideoDialog(
+                                            '$image_url${imageUrl}');
                                       },
-                                      fit: BoxFit.cover,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Image.file(
+                                          //   File(snapshot.data!),
+                                          //   height:80,
+                                          //   width: 80,
+                                          //   fit: BoxFit.cover,
+                                          // ),
+                                          VideoItem(
+                                              url:
+                                              '$image_url${imageUrl}'),
+                                          Icon(Icons.play_circle_fill,
+                                              color: Colors.white,
+                                              size: 40),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                      : Container(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 68),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  uploaded_images
+                                                      .remove(imageUrl);
+                                                });
+                                              },
+                                              child: Icon(
+                                                Icons.close,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Image.network(
+                                          "$image_url${imageUrl}",
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error,
+                                              stackTrace) {
+                                            return Icon(Icons
+                                                .error); // Placeholder for errors
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -518,24 +643,17 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
-                          _isLoading
-                              ? const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 50.0,
-                            ),
-                          )
-                              : Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField2<String>(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none),
+                                  decoration:
+                                  InputDecoration(border: InputBorder.none),
                                   isExpanded: true,
                                   hint: const Row(
                                     children: [
@@ -556,7 +674,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     return DropdownMenuItem<String>(
                                       value: rentalId,
                                       child: Text(
-                                        properties[rentalId]!,
+                                        '${properties[rentalId]!}',
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
@@ -569,16 +687,129 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   value: _selectedPropertyId,
                                   onChanged: (value) {
                                     setState(() {
+                                      _propertyErrorMessage = null;
                                       _selectedUnitId = null;
                                       _selectedPropertyId = value;
                                       _selectedProperty = properties[
                                       value]; // Store selected rental_adress
+                                      //  _selectedProperty = properties[value]; // Store selected rental_adress
+                                      String? selectedKey = value;
+                                      List<String> splitValue =
+                                      selectedKey!.split(' - ');
 
+                                      _selectedRentaId = splitValue[0];
+                                      String status = splitValue[2];
+                                      // print('rentalid ${rentalId}');
+                                      print('rental status ${status}');
                                       renderId = value.toString();
                                       print(
-                                          'Selected Property: $_selectedProperty');
+                                          'Selected Property: $_selectedPropertyId');
+
                                       _loadUnits(
-                                          value!); // Fetch units for the selected property
+                                          _selectedRentaId!); // Fetch units for the selected propert
+                                      if (status.contains('Expired')) {
+                                        _propertyErrorMessage =
+                                        'Your lease for this property has expired. The work order will appear only on the admin/staff dashboard.';
+                                      }
+                                    });
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 45,
+                                    width: 160,
+                                    padding: const EdgeInsets.only(
+                                        left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                    ),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                    padding:
+                                    EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select an option';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              units.isNotEmpty
+                                  ? Text('Unit',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor))
+                                  : Container(),
+                              const SizedBox(height: 0),
+                              units.isNotEmpty
+                                  ? DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField2<String>(
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none),
+                                  isExpanded: true,
+                                  hint: const Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Select Unit',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFFb0b6c3),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  items: units.keys.map((unitId) {
+                                    return DropdownMenuItem<String>(
+                                      value: unitId,
+                                      child: Text(
+                                        units[unitId]!,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  value: _selectedUnitId,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      unitId = value.toString();
+                                      _selectedUnitId = value;
+                                      _selectedUnit = units[
+                                      value]; // Store selected rental_unit
+
+                                      print(
+                                          'Selected Unit: $_selectedUnit');
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
@@ -594,9 +825,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     elevation: 2,
                                   ),
                                   iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                    ),
+                                    icon: Icon(Icons.arrow_drop_down),
                                     iconSize: 24,
                                     iconEnabledColor: Color(0xFFb0b6c3),
                                     iconDisabledColor: Colors.grey,
@@ -628,118 +857,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     return null;
                                   },
                                 ),
-                              ),
-                              units.isNotEmpty
-                                  ? const Text('Unit',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey))
-                                  : Container(),
-                              const SizedBox(height: 0),
-                              units.isNotEmpty
-                                  ? DropdownButtonHideUnderline(
-                                child:
-                                DropdownButtonFormField2<String>(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none),
-                                  isExpanded: true,
-                                  hint: const Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Select Unit',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight:
-                                            FontWeight.w400,
-                                            color: Color(0xFFb0b6c3),
-                                          ),
-                                          overflow:
-                                          TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  items: units.keys.map((unitId) {
-                                    return DropdownMenuItem<String>(
-                                      value: unitId,
-                                      child: Text(
-                                        units[unitId]!,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow:
-                                        TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  }).toList(),
-                                  value: _selectedUnitId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      unitId = value.toString();
-                                      _selectedUnitId = value;
-                                      _selectedUnit = units[
-                                      value]; // Store selected rental_unit
-
-                                      print(
-                                          'Selected Unit: $_selectedUnit');
-                                    });
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 24,
-                                    iconEnabledColor:
-                                    Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData:
-                                  DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme:
-                                    ScrollbarThemeData(
-                                      radius:
-                                      const Radius.circular(6),
-                                      thickness:
-                                      MaterialStateProperty.all(
-                                          6),
-                                      thumbVisibility:
-                                      MaterialStateProperty.all(
-                                          true),
-                                    ),
-                                  ),
-                                  menuItemStyleData:
-                                  const MenuItemStyleData(
-                                    height: 40,
-                                    padding: EdgeInsets.only(
-                                        left: 14, right: 14),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty) {
-                                      return 'Please select an option';
-                                    }
-                                    return null;
-                                  },
-                                ),
                               )
                                   : Container(),
                             ],
@@ -751,69 +868,115 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: Text('Select Category'),
-                              value: _selectedCategory,
-                              items: _category.map((method) {
-                                return DropdownMenuItem<String>(
-                                  value: method,
-                                  child: Text(method),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedCategory = newValue;
-                                  _showTextField = _selectedCategory == 'Other';
-
-                                });
-                                print('Selected category: $_selectedCategory');
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 50,
-                                width: 250,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
+                          FormField<String>(
+                            validator: (value) {
+                              if (_selectedDropdownCategory == null) {
+                                return 'Please select a category';
+                              }
+                              return null;
+                            },
+                            builder: (FormFieldState<String> state) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton2<allcategories_model>(
+                                      isExpanded: true,
+                                      hint: Text(_isLoadingCategories
+                                          ? 'Loading categories...'
+                                          : 'Select Category'),
+                                      value: _dropdownCategories.contains(
+                                          _selectedDropdownCategory)
+                                          ? _selectedDropdownCategory
+                                          : null,
+                                      items: _dropdownCategories.map((cat) {
+                                        return DropdownMenuItem<
+                                            allcategories_model>(
+                                          value: cat,
+                                          child: Text(cat.name ?? ''),
+                                        );
+                                      }).toList(),
+                                      onChanged: _isLoadingCategories
+                                          ? null // disables dropdown while loading
+                                          : (allcategories_model? newValue) {
+                                        setState(() {
+                                          _selectedDropdownCategory =
+                                              newValue;
+                                          _showTextField =
+                                              newValue?.name == 'Other';
+                                          state.didChange(newValue?.name);
+                                        });
+                                        print(
+                                            'Selected category: ${newValue?.name}');
+                                        state.reset();
+                                        // Notify FormField of value change
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness:
+                                          MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                  if (state.hasError)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 5, top: 8),
+                                      child: Text(
+                                        state.errorText!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                           _showTextField
                               ? Padding(
-                                padding: const EdgeInsets.only(top: 10,bottom: 10),
-                                child: buildTextField('Other Category', 'Enter Other Category',other),
-                              )
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10),
+                            child: buildTextField('Other Category',
+                                'Enter Other Category', other),
+                          )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -822,7 +985,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -843,14 +1006,14 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   //_selectedPaymentMethod = addRow();
                                   // if(_selectedCategory == 'Other')
                                   // addRow();
-
                                 });
                                 print('Selected category: $_selectedEntry');
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
-                                width: 200,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                //  width: 200,
+                                padding:
+                                const EdgeInsets.only(left: 1, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -873,7 +1036,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
+                                  thumbVisibility:
+                                  MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -885,11 +1049,11 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Welcome To Be Performed',
+                          Text('Work To Be Performed',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
+                                  color: blueColor)),
                           SizedBox(
                             height: 10,
                           ),
@@ -897,18 +1061,19 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             keyboardType: TextInputType.emailAddress,
                             hintText: 'Enter here',
                             controller: perform,
+                            optional: true,
                           ),
                           SizedBox(
                             height: 10,
                           ),
-
                         ],
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(
+                      top: 16, right: 16, left: 16, bottom: 5),
                   child: Row(
                     children: [
                       Container(
@@ -919,13 +1084,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
                           onPressed: _submitForm,
-                          child: isLoading
+                          child: isloading
                               ? Center(
                             child: SpinKitFadingCircle(
                               color: Colors.white,
@@ -962,6 +1127,24 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                     ],
                   ),
                 ),
+                if (_propertyErrorMessage !=
+                    null) // Display error message if present
+                  Padding(
+                    padding:
+                    const EdgeInsets.only(top: 8.0, left: 16, right: 16),
+                    child: Text(
+                      _propertyErrorMessage!,
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                SizedBox(
+                  height: 30,
+                ),
               ],
             ),
           ),
@@ -969,11 +1152,18 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       ),
     );
   }
-  Widget buildTextField(String label, String hintText, TextEditingController controller) {
+
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4");
+  }
+
+  Widget buildTextField(
+      String label, String hintText, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey)),
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
         SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -997,7 +1187,9 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       ],
     );
   }
+
   bool isLoading = false;
+  bool isloading = false;
   bool formValid = true;
 
   void _submitForm() async {
@@ -1006,7 +1198,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     String? lastName = prefs.getString("last_name");
     if (_formkey.currentState!.validate()) {
       setState(() {
-        isLoading = true;
+        isloading = true;
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("tenant_id");
@@ -1019,17 +1211,18 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         final workOrder = await WorkOrderRepository().addWorkOrder(
           adminId: admin_id,
           workOrder_images: uploaded_images,
-          workSubject: subject.text,
-
-          workCategory: _selectedCategory!,
-          workPerformed: perform.text,
-          status: 'Pending',
-          rentalAddress: properties[_selectedPropertyId]!,
-          rentalUnit: units[_selectedUnitId]!,
+          workSubject: subject.text.trim(),
+          workCategory: _selectedDropdownCategory?.name,
+          workPerformed: perform.text.trim(),
+          status: 'New',
+          rentalAddress: _selectedRentaId ?? "",
+          rentalUnit: units[_selectedUnitId] ?? "",
           tenant: "${firstName} ${lastName}(Tenant)",
-          rentalid: rentalId,
+          rentalid: _selectedRentaId,
           unitid: unitId,
           entry: _selectedEntry == 'Yes',
+          notificationTime:
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         Fluttertoast.showToast(
@@ -1039,8 +1232,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.green,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
         Navigator.pop(context, true);
         // Handle success: Maybe navigate to another screen or reset the form
       } catch (e) {
@@ -1051,14 +1243,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
 
         // Handle error: Log the error, show a dialog, etc.
         print(e);
       } finally {
         setState(() {
-          isLoading = false;
+          isloading = false;
         });
       }
     } else {
@@ -1068,7 +1259,4 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       print('Form is invalid');
     }
   }
-
 }
-
-

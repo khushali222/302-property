@@ -98,7 +98,7 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-
+    print(addCard.toJson());
     final body = jsonEncode(addCard.toJson());
 
     try {
@@ -167,7 +167,7 @@ class AddCardService {
   }
 
 //if there is the only card there so fire this api from the our database
-  Future<void> deleteOneCardfromdatabase(String customerVaultId) async {
+  Future<void> deleteOneCardfromdatabase(String customerVaultId,String? tenant_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -182,6 +182,9 @@ class AddCardService {
       final response = await http.delete(
         Uri.parse('$Api_url/api/creditcard/deleteCardVault/$customerVaultId'),
         headers: headers,
+          body: jsonEncode({
+            "tenant_id":tenant_id
+          })
       );
 
       print('Response status: ${response.statusCode}');
@@ -237,7 +240,7 @@ class AddCardService {
     return 0;
   }
 
-  Future<void> deletefromdatabaseCard(String billingId) async {
+  Future<void> deletefromdatabaseCard(String billingId,String? tenant_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -247,11 +250,14 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-
+    print(tenant_id);
     try {
       final response = await http.delete(
         Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
         headers: headers,
+        body: jsonEncode({
+          "tenant_id":tenant_id
+        })
       );
 
       print('Response status: ${response.statusCode}');

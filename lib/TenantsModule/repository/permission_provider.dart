@@ -14,6 +14,7 @@ class PermissionProvider with ChangeNotifier {
       UserPermissions fetchedPermissions = await PermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
+      print(e);
       // Handle error
     } finally {
       _isLoading = false;

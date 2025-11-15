@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/change_password.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
-import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
-import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
-import 'package:three_zero_two_property/widgets/test.dart';
+import 'package:badges/badges.dart' as badges;
+import '../../provider/notification_provider.dart';
+import '../../screens/Profile/ContactUsScreen.dart';
+import '../screen/profile.dart';
+import '../model/staffpermission.dart';
+import '../repository/staffpermission_provider.dart';
+import '../screen/notifications/notifications.dart';
 
-class widget_302 {
+class widget_302_Staff {
   static App_Bar({
     var suffixIcon,
     var leading,
@@ -20,12 +23,16 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
+    Provider.of<NotificationProvider>(context, listen: false)
+        .fetchNotificationsStaff(context);
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return AppBar(
       iconTheme: IconThemeData(color: Colors.black),
       elevation: 1,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
-      titleSpacing:05,
+      titleSpacing: 05,
       //automaticallyImplyLeading: false,
       // title: Image(
       //   image: AssetImage('assets/images/applogo.png'),
@@ -64,7 +71,7 @@ class widget_302 {
             margin: EdgeInsets.symmetric(vertical: 12),
             width: 50,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
               borderRadius: BorderRadius.circular(5),
             ),
             child: Center(
@@ -77,18 +84,66 @@ class widget_302 {
         SizedBox(
           width: 10,
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: FaIcon(
-            FontAwesomeIcons.solidBell,
-            size: 25,
-            color: blueColor,
-          ),
+        Consumer<NotificationProvider>(
+          builder: (context, notificationProvider, child) {
+            if (notificationProvider.isLoading) {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            } else if (notificationProvider.notifications.isNotEmpty) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const notifications(),
+                  ));
+                },
+                child: Center(
+                  child: badges.Badge(
+                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Colors.red,
+                    ),
+                    child: FaIcon(
+                      FontAwesomeIcons.bell,
+                      size: 20,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Center(
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
+                ),
+              );
+            }
+          },
         ),
+        // GestureDetector(
+        //   onTap: (){
+        //     Navigator.of(context).push(MaterialPageRoute(
+        //         builder: (context) => const notifications()));
+        //   },
+        //   child:  Padding(
+        //     padding: const EdgeInsets.only(top: 15.0),
+        //     child: FaIcon(
+        //       FontAwesomeIcons.solidBell,
+        //       size: 25,
+        //       color: blueColor,
+        //     ),
+        //   ),
+        // ),
         //   FaIcon(
         //     FontAwesomeIcons.bell,
         //     size: 20,
-        //     color: Color.fromRGBO(21, 43, 81, 1),
+        //     color: blueColor,
         //   ),
         SizedBox(
           width: 10,
@@ -101,7 +156,7 @@ class widget_302 {
                   margin: EdgeInsets.symmetric(vertical: 12),
                   width: 30,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: PopupMenuButton(
@@ -130,10 +185,36 @@ class widget_302 {
                           style: TextStyle(color: blueColor),
                         ),
                       ),
-                    /*  PopupMenuItem(
+                      PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.person),
+                            Icon(
+                              Icons.person,
+                              color: blueColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "My Profile",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Profile_screen()));
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.key,
+                              color: blueColor,
+                            ),
                             //  FaIcon(
                             //    FontAwesomeIcons.user,
                             //    size: 20,
@@ -142,37 +223,58 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("My Profile"),
+                            Text(
+                              "Change Password",
+                              style: TextStyle(color: blueColor),
+                            ),
                           ],
                         ),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Profile_screen()));
+                              builder: (context) => Change_password()));
                         },
                       ),
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            FaIcon(
-                              FontAwesomeIcons.cog,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text("Settings"),
+                            Icon(Icons.contact_mail, color: blueColor),
+                            SizedBox(width: 10),
+                            Text("Contact Us",
+                                style: TextStyle(color: blueColor)),
                           ],
                         ),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => TabBarExample()));
+                              builder: (context) => ContactUsScreen()));
                         },
-                      ),*/
+                      ),
+                      // if(permissions!.settingView!)
+                      // PopupMenuItem(
+                      //    child: Row(
+                      //      children: [
+                      //        FaIcon(
+                      //          FontAwesomeIcons.cog,
+                      //          size: 20,
+                      //          color: blueColor,
+                      //        ),
+                      //        SizedBox(
+                      //          width: 10,
+                      //        ),
+                      //        Text("Settings",style: TextStyle(color: blueColor)),
+                      //      ],
+                      //    ),
+                      //    onTap: () {
+                      //      Navigator.of(context).push(MaterialPageRoute(
+                      //          builder: (context) => TabBarExample()));
+                      //    },
+                      //  ),
                       PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.directions_run_rounded,color: blueColor,),
+                            Icon(
+                              Icons.directions_run_rounded,
+                              color: blueColor,
+                            ),
                             //  FaIcon(
                             //    FontAwesomeIcons,
                             //    size: 20,
@@ -181,19 +283,66 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Logout",style: TextStyle(color: blueColor),),
+                            Text(
+                              "Logout",
+                              style: TextStyle(color: blueColor),
+                            ),
                           ],
                         ),
                         onTap: () async {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
+
+                          // Preserve Remember Me credentials
+                          bool? rememberMe = prefs.getBool('rememberMe');
+                          String? savedEmail = prefs.getString('savedEmail');
+                          String? savedPassword =
+                              prefs.getString('savedPassword');
+
+                          // Clear all preferences
                           prefs.clear();
+
+                          // Restore Remember Me credentials if they exist
+                          if (rememberMe == true &&
+                              savedEmail != null &&
+                              savedPassword != null) {
+                            await prefs.setBool('rememberMe', true);
+                            await prefs.setString('savedEmail', savedEmail);
+                            await prefs.setString(
+                                'savedPassword', savedPassword);
+                          }
+
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Login_Screen()),
                               (route) => false);
                         },
+                      ),
+                      PopupMenuItem(
+                        height: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "v${snapshot.data!.version}",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ));
@@ -225,19 +374,19 @@ class widget_302 {
     }
     return combinationName ?? "L"; // Default to "L" if name is not available
   }
-  // static Future<String> _getNameFromSharedPreferences() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? firstName = prefs.getString("first_name");
-  //   String? lastName = prefs.getString("last_name");
-  //   String combinationName = '';
-  //
-  //   if (firstName != null && firstName.isNotEmpty) {
-  //     combinationName += firstName[0].toUpperCase();
-  //   }
-  //
-  //   if (lastName != null && lastName.isNotEmpty) {
-  //     combinationName += lastName[0].toUpperCase();
-  //   }
-  //   return combinationName ?? "L"; // Default to "L" if name is not available
-  // }
+// static Future<String> _getNameFromSharedPreferences() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? firstName = prefs.getString("first_name");
+//   String? lastName = prefs.getString("last_name");
+//   String combinationName = '';
+//
+//   if (firstName != null && firstName.isNotEmpty) {
+//     combinationName += firstName[0].toUpperCase();
+//   }
+//
+//   if (lastName != null && lastName.isNotEmpty) {
+//     combinationName += lastName[0].toUpperCase();
+//   }
+//   return combinationName ?? "L"; // Default to "L" if name is not available
+// }
 }

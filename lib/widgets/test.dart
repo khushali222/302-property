@@ -151,7 +151,7 @@ class MyApp extends StatelessWidget {
           fontFamily: "Poppins",
           iconTheme: const IconThemeData(color: Colors.black),
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromRGBO(21, 43, 83, 1)),
+              seedColor: blueColor),
           useMaterial3: false,
         ),
       home: LoginScreen(),
@@ -427,7 +427,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   });
                                 },
                                 controller: email,
-                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                cursorColor: blueColor,
                                 decoration: InputDecoration(
                                   enabledBorder: emailerror
                                       ? OutlineInputBorder(
@@ -627,7 +627,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                     controller: password,
                                     obscureText: visiable_password,
-                                    cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                    cursorColor: blueColor,
                                     decoration: InputDecoration(
                                       enabledBorder: passworderror
                                           ? OutlineInputBorder(

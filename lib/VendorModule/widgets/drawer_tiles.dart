@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
 
+import '../../constant/constant.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/work_order/workorder_table.dart';
@@ -17,7 +18,7 @@ Widget buildListTile(
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
-      color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+      color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -84,7 +85,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     margin: EdgeInsets.symmetric(horizontal: 20),
     padding: EdgeInsets.symmetric(horizontal: 16),
     // decoration: BoxDecoration(
-    //   color: subTopics.contains(selectedOption) ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+    //   color: subTopics.contains(selectedOption) ? blueColor : Colors.transparent,
     //   borderRadius: BorderRadius.circular(10),
     // ),
     child: ExpansionTile(
@@ -100,7 +101,7 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
           child: Container(
             decoration: BoxDecoration(
               color:
-                  active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+                  active ? blueColor : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(

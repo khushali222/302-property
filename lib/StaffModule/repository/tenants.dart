@@ -27,13 +27,29 @@ class TenantsRepository {
     );
     print(response.body);
     print('${Api_url}/api/tenant/tenants/$id');
+    // if (response.statusCode == 200) {
+    //   List jsonResponse = json.decode(response.body)['data'];
+    //   return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+    // } else {
+    //   print('Failed to fetch tenants: ${response.body}');
+    //   return [];
+    //  // throw Exception('Failed to load data');
+    // }
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+      // Decode the JSON response
+      final jsonResponse = json.decode(response.body);
+
+      // Access the 'data' object and then the 'tenants' list
+      if (jsonResponse['data'] != null && jsonResponse['data']['tenants'] != null) {
+        List tenantsJson = jsonResponse['data']['tenants']; // Access the tenants list
+        return tenantsJson.map((data) => Tenant.fromJson(data)).toList(); // Map to Tenant objects
+      } else {
+        print('No tenants found in the response.');
+        return [];
+      }
     } else {
       print('Failed to fetch tenants: ${response.body}');
       return [];
-     // throw Exception('Failed to load data');
     }
   }
 
@@ -256,7 +272,7 @@ class TenantsRepository {
     required String tenantEmail,
     required String tenantAlternativeEmail,
     required String tenantPassword,
-    required String tenantBirthDate,
+     String? tenantBirthDate,
     required String taxPayerId,
     required String comments,
     required String emergencyContactName,
@@ -311,6 +327,9 @@ class TenantsRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
+    } else if (responseData["statusCode"] == 201) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Email already exists');
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to edit property type');
@@ -321,6 +340,7 @@ class TenantsRepository {
     required String tenantId,
     required String companyName,
     required String tenantEmail,
+    String? reason
   }) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/tenant/tenant/$tenantId')
@@ -339,6 +359,9 @@ class TenantsRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
+          body: jsonEncode({
+            "reason":reason
+          })
       );
 
       var responseData = json.decode(response.body);

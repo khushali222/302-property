@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -220,7 +221,7 @@ class _enterChargeState extends State<enterCharge> {
   List<FocusNode> focusNodes = [];
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
-
+  bool isChecked = false;
   @override
   void initState() {
     super.initState();
@@ -253,8 +254,8 @@ class _enterChargeState extends State<enterCharge> {
       setState(() {
         selectedTenantId = fetchedCharge!.tenantId;
         Amount.text = fetchedCharge.totalAmount.toString();
-        _startDate.text =
-            formatDate(fetchedCharge.entry!.first!.date.toString());
+        _startDate.text = intl.DateFormat('yyyy-MM-dd')
+            .format(fetchedCharge.entry!.first!.date!);
         Memo.text = fetchedCharge.entry!.first.memo!;
         double total = 0;
 
@@ -426,7 +427,8 @@ class _enterChargeState extends State<enterCharge> {
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      //allowedExtensions: ['pdf'],
       allowMultiple: true,
     );
 
@@ -477,7 +479,7 @@ class _enterChargeState extends State<enterCharge> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -503,9 +505,9 @@ class _enterChargeState extends State<enterCharge> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: "Rent Roll",
           dropdown: true,
         ),
@@ -534,7 +536,7 @@ class _enterChargeState extends State<enterCharge> {
                         //Same as `blurRadius` i guess
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.grey,
@@ -720,7 +722,7 @@ class _enterChargeState extends State<enterCharge> {
                               );
                               if (pickedDate != null) {
                                 String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
                                   _startDate.text = formattedDate;
                                 });
@@ -737,7 +739,7 @@ class _enterChargeState extends State<enterCharge> {
                               return null;
                             },
                             keyboardType: TextInputType.text,
-                            hintText: 'dd-mm-yyyy',
+                            hintText: 'yyyy-MM-dd',
                             controller: _startDate,
                           ),
                         if (MediaQuery.of(context).size.width < 500)
@@ -957,7 +959,7 @@ class _enterChargeState extends State<enterCharge> {
                                           );
                                           if (pickedDate != null) {
                                             String formattedDate =
-                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                             setState(() {
                                               _startDate.text = formattedDate;
                                             });
@@ -975,7 +977,7 @@ class _enterChargeState extends State<enterCharge> {
                                           return null;
                                         },
                                         keyboardType: TextInputType.text,
-                                        hintText: 'dd-mm-yyyy',
+                                        hintText: 'yyyy-MM-dd',
                                         controller: _startDate,
                                       ),
                                       SizedBox(height: 5),
@@ -1053,13 +1055,13 @@ class _enterChargeState extends State<enterCharge> {
                       2: FlexColumnWidth(1),
                     },
                     children: [
-                      const TableRow(children: [
+                      TableRow(children: [
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Center(
                             child: Text('Account',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1068,7 +1070,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Amount',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1077,7 +1079,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Actions',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1086,91 +1088,342 @@ class _enterChargeState extends State<enterCharge> {
                         int index = entry.key;
                         Map<String, dynamic> row = entry.value;
                         return TableRow(children: [
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: DropdownButtonHideUnderline(
+                          //     child: DropdownButton2<String>(
+                          //       isExpanded: true,
+                          //       style: TextStyle(fontSize: 14),
+                          //       value: row['account'],
+                          //       items: [
+                          //         ...categorizedData.entries.expand((entry) {
+                          //           return [
+                          //             DropdownMenuItem<String>(
+                          //               enabled: false,
+                          //               child: Text(
+                          //                 entry.key,
+                          //                 style:  TextStyle(
+                          //                   fontWeight: FontWeight.bold,
+                          //                   color: blueColor,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             ...entry.value.map((item) {
+                          //               return DropdownMenuItem<String>(
+                          //                 value: item,
+                          //                 child: Padding(
+                          //                   padding: const EdgeInsets.only(left: 0.0),
+                          //                   child: Text(
+                          //                     item,
+                          //                     style: const TextStyle(
+                          //                       color: Colors.black,
+                          //                       fontWeight: FontWeight.w400,
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               );
+                          //             }).toList(),
+                          //           ];
+                          //         }).toList(),
+                          //         // Add an "Other" category if the selected account is not in the list
+                          //         if (row['account'] != null && !categorizedData.values.expand((v) => v).contains(row['account']))
+                          //           DropdownMenuItem<String>(
+                          //             value: row['account'],
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.only(left: 0.0),
+                          //               child: Text(
+                          //                 row['account']!,
+                          //                 style: const TextStyle(
+                          //                   color: Colors.black,
+                          //                   fontWeight: FontWeight.w400,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //       ],
+                          //       onChanged: (value) {
+                          //         String? chargeType;
+                          //         // Find the charge type for the selected account
+                          //         for (var entry in categorizedData.entries) {
+                          //           if (entry.value.contains(value)) {
+                          //             chargeType = entry.key;
+                          //             break;
+                          //           }
+                          //         }
+                          //
+                          //         // If the value is not in the list, assign it to "Uncategorized" or any custom group
+                          //         if (chargeType == null && value != null) {
+                          //           chargeType = 'Uncategorized';
+                          //           categorizedData.putIfAbsent(chargeType, () => []).add(value);
+                          //         }
+                          //
+                          //         setState(() {
+                          //           rows[index]['account'] = value;
+                          //           rows[index]['charge_type'] = chargeType;
+                          //         });
+                          //       },
+                          //       buttonStyleData: ButtonStyleData(
+                          //         height: 50,
+                          //         width: 220,
+                          //         padding: const EdgeInsets.only(left: 8, right: 5),
+                          //         decoration: BoxDecoration(
+                          //           borderRadius: BorderRadius.circular(6),
+                          //           color: Colors.white,
+                          //         ),
+                          //         elevation: 2,
+                          //       ),
+                          //       iconStyleData: const IconStyleData(
+                          //         icon: Icon(Icons.arrow_drop_down),
+                          //         iconSize: 24,
+                          //         iconEnabledColor: Color(0xFFb0b6c3),
+                          //         iconDisabledColor: Colors.grey,
+                          //       ),
+                          //       dropdownStyleData: DropdownStyleData(
+                          //         width: 250,
+                          //         decoration: BoxDecoration(
+                          //           borderRadius: BorderRadius.circular(6),
+                          //           color: Colors.white,
+                          //         ),
+                          //         scrollbarTheme: ScrollbarThemeData(
+                          //           radius: const Radius.circular(6),
+                          //           thickness: MaterialStateProperty.all(6),
+                          //           thumbVisibility: MaterialStateProperty.all(true),
+                          //         ),
+                          //       ),
+                          //       hint: const Text('Select an account'),
+                          //     ),
+                          //   ),
+                          // ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                style: TextStyle(fontSize: 14),
-                                value: row['account'],
-                                items: [
-                                  ...categorizedData.entries.expand((entry) {
-                                    return [
-                                      DropdownMenuItem<String>(
-                                        enabled: false,
-                                        child: Text(
-                                          entry.key,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1),
-                                          ),
-                                        ),
-                                      ),
-                                      ...entry.value.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 0.0),
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ];
-                                  }).toList(),
-                                ],
-                                onChanged: (value) {
-                                  String? chargeType;
-                                  for (var entry in categorizedData.entries) {
-                                    if (entry.value.contains(value)) {
-                                      chargeType = entry.key;
-                                      break;
+                              child: FormField<String>(
+                                validator: (value) {
+                                  if (rows[index]['account'] == null) {
+                                    return 'Please select an account';
+                                  }
+                                  return null;
+                                },
+                                builder: (FormFieldState<String> state) {
+                                  String? selectedAccount = row['account'];
+
+                                  String? selectedCharge = row['charge_type'];
+                                  // List of all dropdown items, including missing ones
+                                  Map<String, List<String>>
+                                      categorizedDataCopy =
+                                      Map.from(categorizedData);
+
+                                  // Ensure the selected value is present in the list
+                                  if (selectedAccount != null &&
+                                      !categorizedData.values
+                                          .expand((list) => list)
+                                          .contains(selectedAccount)) {
+                                    if (categorizedDataCopy['Other'] == null) {
+                                      categorizedDataCopy['Other'] = [];
+                                    }
+                                    categorizedDataCopy['Other']!
+                                        .add(selectedAccount);
+                                  }
+
+                                  List<String> liabilityAccounts = [
+                                    "Late Fee Income",
+                                    "Pre-payments",
+                                    "Security Deposit",
+                                    'Rent Income'
+                                  ];
+                                  String? surchargetype;
+                                  if (selectedCharge == "Surcharge") {
+                                    for (var entry in categorizedData.entries) {
+                                      if (entry.value
+                                          .contains(selectedAccount)) {
+                                        print(
+                                            "Account found: $selectedAccount in category: ${entry.key}");
+                                        surchargetype = entry.key;
+                                        break;
+                                      }
+                                    }
+                                  }
+                                  bool nosurcharge = false;
+                                  if (row["charge_type"] == "Surcharge") {
+                                    print("Surcharge calling");
+
+                                    for (var entry in categorizedData.entries) {
+                                      if (entry.value
+                                          .contains(row['account'])) {
+                                        print(
+                                            "Account found: ${row['account']} in category: ${entry.key}");
+                                        surchargetype = entry.key;
+                                      }
+                                    }
+                                    if (surchargetype == "") {
+                                      nosurcharge = true;
                                     }
                                   }
 
-                                  setState(() {
-                                    rows[index]['account'] = value;
-                                    rows[index]['charge_type'] = chargeType;
-                                  });
+                                  // Prepare the dropdown items
+                                  List<DropdownMenuItem<String>> dropdownItems =
+                                      [
+                                    ...categorizedDataCopy.entries
+                                        .expand((entry) {
+                                      return [
+                                        DropdownMenuItem<String>(
+                                          enabled: false,
+                                          child: Text(
+                                            entry.key,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1),
+                                            ),
+                                          ),
+                                        ),
+                                        ...entry.value.map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: "${item}_${entry.key}",
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10, bottom: 1),
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ];
+                                    }).toList(),
+                                    if (row['account'] != null &&
+                                        !categorizedData.values
+                                            .expand((v) => v)
+                                            .contains(row['account']))
+                                      DropdownMenuItem<String>(
+                                        value:
+                                            "${row['account']}_${row['charge_type']}",
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 0.0),
+                                          child: Text(
+                                            row['account']!,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ];
+
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 5),
+                                      DropdownButton2<String>(
+                                        isExpanded: true,
+                                        // value: (row['account'] !=
+                                        //             null &&
+                                        //         row['charge_type'] !=
+                                        //             null)
+                                        //     ? (liabilityAccounts
+                                        //             .contains(row[
+                                        //                 'account'])
+                                        //         ? "${row['account']}_Liability Account"
+                                        //         : "${row['account']}_${row['charge_type']}")
+                                        //     : null,
+                                        // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
+                                        //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
+                                        //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
+                                        value: row['account'] != null
+                                            ? (liabilityAccounts
+                                                    .contains(row['account'])
+                                                ? "${row['account']}_Liability Account"
+                                                : (row['charge_type'] ==
+                                                            "Surcharge" &&
+                                                        surchargetype != null
+                                                    ? "${row['account']}_$surchargetype"
+                                                    : "${row['account']}_${row['charge_type']}"))
+                                            : null,
+                                        items: dropdownItems,
+                                        onChanged: (value) {
+                                          dynamic? chargeType;
+                                          for (var entry
+                                              in categorizedData.entries) {
+                                            if (entry.value.contains(value)) {
+                                              chargeType = entry.key;
+                                              break;
+                                            }
+                                          }
+                                          setState(() {
+                                            final parts = value!.split('_');
+                                            final selectedChargeType = parts[0];
+                                            final selectedValue =
+                                                parts.sublist(1).join('_');
+                                            rows[index]['account'] =
+                                                selectedChargeType;
+                                            rows[index]['charge_type'] =
+                                                selectedValue;
+                                            state.didChange(
+                                                value); // Update the FormField state
+                                          });
+                                          state.reset();
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          padding: const EdgeInsets.only(
+                                              left: 0, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          width: 250,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        hint: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 7, right: 5, bottom: 2),
+                                          child: Text('Select an account'),
+                                        ),
+                                      ),
+                                      if (state
+                                          .hasError) // Display the validation error
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16.0, top: 5.0),
+                                          child: Text(
+                                            state.errorText ?? '',
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  );
                                 },
-                                buttonStyleData: ButtonStyleData(
-                                  height: 50,
-                                  width: 220,
-                                  padding:
-                                      const EdgeInsets.only(left: 8, right: 5),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 2,
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 24,
-                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                  iconDisabledColor: Colors.grey,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  width: 250,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(6),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                hint: const Text('Select an account'),
                               ),
                             ),
                           ),
@@ -1254,7 +1507,7 @@ class _enterChargeState extends State<enterCharge> {
                                       MediaQuery.of(context).size.width < 500
                                           ? 16
                                           : 18,
-                                  color: Color.fromRGBO(21, 43, 83, 1),
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -1282,7 +1535,7 @@ class _enterChargeState extends State<enterCharge> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(
@@ -1294,11 +1547,11 @@ class _enterChargeState extends State<enterCharge> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Upload Files',
+                          Text('Upload Files',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51))),
+                                  color: blueColor)),
                           const SizedBox(
                             height: 20,
                           ),
@@ -1310,7 +1563,7 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -1392,7 +1645,7 @@ class _enterChargeState extends State<enterCharge> {
                       Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? 130
+                              ? 150
                               : 150,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0)),
@@ -1426,7 +1679,10 @@ class _enterChargeState extends State<enterCharge> {
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date: reverseFormatDate(
+                                              row['date'] != ""
+                                                  ? row['date']
+                                                  : _startDate.text),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
@@ -1435,7 +1691,7 @@ class _enterChargeState extends State<enterCharge> {
 
                                       print("amount ${Amount.text}");
                                       int totalAmount =
-                                          int.tryParse(Amount.text) ?? 0;
+                                          int.tryParse(Amount.text.trim()) ?? 0;
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,
@@ -1485,7 +1741,10 @@ class _enterChargeState extends State<enterCharge> {
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date: reverseFormatDate(
+                                              row['date'] != ""
+                                                  ? row['date']
+                                                  : _startDate.text),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
@@ -1601,6 +1860,38 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 20,
                   ),
+                  if (widget.chargeid == null)
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        SizedBox(
+                          width: 24.0, // Standard width for checkbox
+                          height: 24.0,
+                          child: Checkbox(
+                            value: isChecked,
+                            onChanged: (value) {
+                              setState(() {
+                                isChecked = value ?? false;
+                              });
+                            },
+                            activeColor: isChecked ? blueColor : Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Add Another Charge",
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 50,
+                  )
                 ],
               ),
             ),

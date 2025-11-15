@@ -3,6 +3,7 @@ import 'dart:developer';
 class WorkOrderData_summery {
   String? id;
   String? workOrderId;
+  String? ticketNumber;
   String? adminId;
   String? rentalId;
   String? unitId;
@@ -35,6 +36,7 @@ class WorkOrderData_summery {
   WorkOrderData_summery(
       {this.id,
         this.workOrderId,
+        this.ticketNumber,
         this.adminId,
         this.rentalId,
         this.unitId,
@@ -68,6 +70,7 @@ class WorkOrderData_summery {
     log(json.toString());
     id = json['_id'];
     workOrderId = json['workOrder_id'];
+    ticketNumber = json['ticket_number'];
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -311,18 +314,24 @@ class PropertyData {
 class UnitData {
   String? id;
   String? unitName;
-
-  UnitData({this.id, this.unitName});
+  String? rental_unit;
+  String? unit_id;
+  UnitData({this.id, this.unitName,this.rental_unit,this.unit_id});
 
   UnitData.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     unitName = json['rental_unit_adress'];
+    rental_unit = json['rental_unit'];
+    unit_id = json['unit_id'];
+
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.id;
     data['unit_name'] = this.unitName;
+    data['rental_unit'] = this.rental_unit;
+    data['unit_id'] = this.unit_id;
     return data;
   }
 }

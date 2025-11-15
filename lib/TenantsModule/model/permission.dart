@@ -6,11 +6,11 @@ class UserPermissions {
   final bool workorderView;
   final bool workorderAdd;
   final bool workorderEdit;
-  final bool workorderDelete;
+   bool? workorderDelete;
   final bool documentsView;
   final bool documentsAdd;
   final bool documentsEdit;
-  final bool documentsDelete;
+   bool? documentsDelete;
 
   UserPermissions({
     required this.propertyView,
@@ -20,11 +20,11 @@ class UserPermissions {
     required this.workorderView,
     required this.workorderAdd,
     required this.workorderEdit,
-    required this.workorderDelete,
+     this.workorderDelete,
     required this.documentsView,
     required this.documentsAdd,
     required this.documentsEdit,
-    required this.documentsDelete,
+     this.documentsDelete,
   });
 
   factory UserPermissions.fromJson(Map<String, dynamic> json) {
@@ -36,11 +36,11 @@ class UserPermissions {
       workorderView: json['workorder_view'],
       workorderAdd: json['workorder_add'],
       workorderEdit: json['workorder_edit'],
-      workorderDelete: json['workorder_delete'],
+    //  workorderDelete: json['workorder_delete'],
       documentsView: json['documents_view'],
       documentsAdd: json['documents_add'],
       documentsEdit: json['documents_edit'],
-      documentsDelete: json['documents_delete'],
+     // documentsDelete: json['documents_delete'],
     );
   }
 }

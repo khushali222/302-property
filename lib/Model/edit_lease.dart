@@ -32,9 +32,11 @@ class LeaseDetails {
   });
 
   factory LeaseDetails.fromJson(Map<String, dynamic> json) {
-    print(json['rent_charge_data']);
+    print(json['tenant'] != null);
+    print(json['cosigner'] != null);
+
     return LeaseDetails(
-      lease: EditLease.fromJson(json['leases']),
+
       cosigner: json['cosigner'] != null
           ? (json['cosigner'] as List)
               .map((tenant) => Cosigner.fromJson(tenant))
@@ -45,10 +47,11 @@ class LeaseDetails {
               .map((tenant) => Tenant.fromJson(tenant))
               .toList()
           : null,
+
       rental: EditRental.fromJson(json['rental']),
       unitData: unit_lease.fromJson(json['unit_data'] ?? {}),
-      one_charge_data: json["one_charge_data"],
-      rec_charge_data: json['rec_charge_data'],
+      one_charge_data: json["one_charge_data"] != null ?   json["one_charge_data"]:[],
+      rec_charge_data: json['rec_charge_data']!=null ? json['rec_charge_data']:[],
       rentCharges: json['rent_charge_data'] != null
           ? (json['rent_charge_data'] as List<dynamic>)
               .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
@@ -59,6 +62,7 @@ class LeaseDetails {
               .map((charge) => Entry.fromJson(charge as Map<String, dynamic>))
               .toList()
           : [],
+      lease: EditLease.fromJson(json['leases']),
     );
   }
 }
@@ -167,7 +171,9 @@ class EditLease {
   final List<Entry> entry;
   final String createdAt;
   final String updatedAt;
-  final bool isDelete;
+  final bool? creditCardAccepted;
+  final bool? debitCardAccepted;
+  final bool? leasePaymentSettings;
   final List<dynamic> moveoutTenant;
   final int v;
 
@@ -186,35 +192,43 @@ class EditLease {
     required this.entry,
     required this.createdAt,
     required this.updatedAt,
-    required this.isDelete,
+    this.creditCardAccepted,
+    this.debitCardAccepted,
+    this.leasePaymentSettings,
     required this.moveoutTenant,
     required this.v,
   });
 
   factory EditLease.fromJson(Map<String, dynamic> json) {
-    print('\n\nlease data');
+    print('\n\nlease data ${json}');
+
     json.forEach((key, value) {
       print('$key: $value');
     });
+
+
+   // print(json["moveout_tenant"] != null);
     return EditLease(
       id: json['_id'],
-      leaseId: json['lease_id'],
-      tenantId: List<String>.from(json['tenant_id']),
-      adminId: json['admin_id'],
-      rentalId: json['rental_id'],
-      unitId: json['unit_id'],
-      leaseType: json['lease_type'],
-      startDate: json['start_date'],
-      endDate: json['end_date'],
-      leaseAmount: json['lease_amount'].toDouble(),
-      uploadedFile: List<dynamic>.from(json['uploaded_file']),
-      entry: (json['entry'] as List)
+      leaseId: json['lease_id']??"",
+      tenantId: json['tenant_id'] != null ? List<String>.from(json['tenant_id']):[],
+      adminId: json['admin_id']??"",
+      rentalId: json['rental_id']??"",
+      unitId: json['unit_id']??"",
+      leaseType: json['lease_type']??"",
+      startDate: json['start_date']??"",
+      endDate: json['end_date']??"",
+      leaseAmount: json['lease_amount'] is String ? double.parse(json['lease_amount']) : (json['lease_amount'] as num?)?.toDouble() ?? 0.0,
+      uploadedFile: json['uploaded_file'] != null ? List<dynamic>.from(json['uploaded_file']):[],
+      entry: json['entry'] != null ? (json['entry'] as List)
           .map((entry) => Entry.fromJson(entry))
-          .toList(),
+          .toList(): [],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
-      isDelete: json['is_delete'],
-      moveoutTenant: List<dynamic>.from(json['moveout_tenant']),
+      creditCardAccepted: json['creditCardAccepted'],
+      debitCardAccepted: json['debitCardAccepted'],
+      leasePaymentSettings: json['leasePaymentSettings'],
+      moveoutTenant: json['moveout_tenant'] != null ?  List<dynamic>.from(json['moveout_tenant']) : [],
       v: json['__v'],
     );
   }

@@ -152,8 +152,8 @@ class _SummaryContentState extends State<SummaryContent> {
                 flex: 2,
                 child: Text(
                   status.applicantNotes ?? '',
-                  style: const TextStyle(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                  style:  TextStyle(
+                      color: blueColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                   softWrap: true,
@@ -165,8 +165,8 @@ class _SummaryContentState extends State<SummaryContent> {
                 flex: 2,
                 child: Text(
                   status.applicantFile ?? 'N/A',
-                  style: const TextStyle(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                  style:  TextStyle(
+                      color: blueColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                   softWrap: true,
@@ -177,8 +177,8 @@ class _SummaryContentState extends State<SummaryContent> {
               Expanded(
                 flex: 1,
                 child: IconButton(
-                  icon: const Icon(Icons.clear,
-                      color: Color.fromRGBO(21, 43, 83, 1)),
+                  icon:  Icon(Icons.clear,
+                      color: blueColor),
                   onPressed: () {
                     deleteNoteAndFile(
                         i, widget.summery.applicantId!, status.sId!);
@@ -250,7 +250,7 @@ class _SummaryContentState extends State<SummaryContent> {
     //               child: Text(
     //                 status.applicantFile ?? 'N/A',
     //                 style: TextStyle(
-    //                     color: Color.fromRGBO(21, 43, 83, 1),
+    //                     color: blueColor,
     //                     fontSize: 14,
     //                     fontWeight: FontWeight.w500),
     //                 softWrap: true,
@@ -261,7 +261,7 @@ class _SummaryContentState extends State<SummaryContent> {
     //             Expanded(
     //               flex: 1,
     //               child: Icon(Icons.clear,
-    //                   color: const Color.fromRGBO(21, 43, 83, 1)),
+    //                   color: blueColor),
     //             ),
     //           ],
     //         ),
@@ -280,12 +280,12 @@ class _SummaryContentState extends State<SummaryContent> {
           children: [
             Column(
               children: applicantCheckedChecklist.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: 20.0, // Standard width for checkbox
+                      height: 40.0,
+                      child: Checkbox(
                         value: widget.summery.applicantCheckedChecklist!
                             .contains(item),
                         onChanged: (bool? value) {
@@ -300,12 +300,23 @@ class _SummaryContentState extends State<SummaryContent> {
                               applicantChecklist.remove(item);
                             }
                           });
-                          updatecheckBox();
+                          //  updatecheckBox();
                         },
+                        activeColor: blueColor,
+                        // Disable checkbox if amount is not entered
                       ),
-                      Text(displayNames[item].toString()),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      displayNames[item].toString(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 15),
+                    ),
+                  ],
                 );
               }).toList(),
             ),
@@ -315,29 +326,65 @@ class _SummaryContentState extends State<SummaryContent> {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
-                      Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
-                        value: widget.summery.applicantCheckedChecklist!
-                            .contains(item),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value != false) {
-                              widget.summery.applicantCheckedChecklist!
-                                  .add(item);
-                              applicantChecklist.add(item);
-                            } else {
-                              widget.summery.applicantCheckedChecklist!
-                                  .remove(item);
-                              applicantChecklist.remove(item);
-                            }
-                          });
-                          updatecheckBox();
-                        },
+                      SizedBox(
+                        width: 20.0, // Standard width for checkbox
+                        height: 40.0,
+                        child: Checkbox(
+                          value: widget.summery.applicantCheckedChecklist!
+                              .contains(item),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value != false) {
+                                widget.summery.applicantCheckedChecklist!
+                                    .add(item);
+                                applicantChecklist.add(item);
+                              } else {
+                                widget.summery.applicantCheckedChecklist!
+                                    .remove(item);
+                                applicantChecklist.remove(item);
+                              }
+                            });
+                            //updatecheckBox();
+                          },
+                          activeColor:
+                          blueColor, // Disable checkbox if amount is not entered
+                        ),
                       ),
-                      Text(item),
+                      // Checkbox(
+                      //   activeColor:  blueColor,
+                      //   value: widget.summery.applicantCheckedChecklist!
+                      //       .contains(item),
+                      //   onChanged: (bool? value) {
+                      //     setState(() {
+                      //       if (value != false) {
+                      //         widget.summery.applicantCheckedChecklist!
+                      //             .add(item);
+                      //         applicantChecklist.add(item);
+                      //       } else {
+                      //         widget.summery.applicantCheckedChecklist!
+                      //             .remove(item);
+                      //         applicantChecklist.remove(item);
+                      //       }
+                      //     });
+                      //     updatecheckBox();
+                      //   },
+                      // ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(item , style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 15),),
+                      SizedBox(
+                        width: 5,
+                      ),
                       InkWell(
                           onTap: () {
-                            widget.summery.applicantChecklist!.remove(item);
+                            setState(() {
+                              widget.summery.applicantChecklist!.remove(item);
+
+                            });
                             updatecheckBoxnew(
                                 widget.summery.applicantChecklist!);
                           },
@@ -351,101 +398,136 @@ class _SummaryContentState extends State<SummaryContent> {
               }).toList(),
             ),
             if (addcheckbox)
-              Row(
+              Column(
                 children: [
-                  SizedBox(
-                    height: 50,
-                    width: 150,
-                    child: TextFormField(
-                      controller: checkvalue,
-                      decoration: const InputDecoration(
-                          hintText: "Enter Value",
-                          border: OutlineInputBorder()),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        widget.summery.applicantChecklist!.add(checkvalue.text);
-                        checkvalue.text = "";
-                        addcheckbox = false;
-                      });
-                      updatecheckBoxnew(widget.summery.applicantChecklist!);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green)),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.green,
+                  SizedBox(height: 5,),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          hintText: 'Enter Value',
+                          controller: checkvalue,
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        checkvalue.text = "";
-                      });
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration:
+                      SizedBox(
+                        width: 15,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            widget.summery.applicantChecklist!.add(checkvalue.text);
+                            //newItems.add(checkvalue.text);
+                            checkvalue.text = "";
+
+                            addcheckbox = false;
+                          });
+                          updatecheckBoxnew(widget.summery.applicantChecklist!);
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green)),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            checkvalue.text = "";
+                            addcheckbox = false;
+                          });
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration:
                           BoxDecoration(border: Border.all(color: Colors.red)),
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.red,
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.red,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             GestureDetector(
               onTap: () {
                 setState(() {
                   addcheckbox = !addcheckbox;
+                  print(  widget.summery.applicantChecklist);
+                  print(  applicantChecklist);
                 });
                 //  Navigator.pop(context);
               },
               child: Material(
                 elevation: 3,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
+                  Radius.circular(3),
                 ),
                 child: Container(
-                  height: 40,
+                  height: 42,
                   width: 150,
-                  decoration: const BoxDecoration(
-                    //color: Color.fromRGBO(21, 43, 81, 1),
+                  decoration: BoxDecoration(
+                    //color: blueColor,
+                    border: Border.all(color: grey),
                     borderRadius: BorderRadius.all(
-                      Radius.circular(5),
+                      Radius.circular(3),
                     ),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(
+                        width: 5,
+                      ),
                       Icon(Icons.add),
+                      SizedBox(
+                        width: 3,
+                      ),
                       Center(
                           child: Text(
-                        "Add Checklist",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
-                      )),
+                            "Add Checklist",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize: 14),
+                          )),
                     ],
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            GestureDetector(
+              onTap: (){
+                List<String> stringList = widget.summery.applicantCheckedChecklist
+                !.map((item) => item.toString()) // Convert each item to String
+                    .toList();
+                updatecheckBox();
+                // updatecheckBoxnew(stringList );
+              },
+              child: Container(
+                height: 45,
+                width: 150,
+                decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(6)
+                ),
+                child: Center(child: Text("Save Changes",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),)),
               ),
             ),
             const SizedBox(
@@ -473,7 +555,7 @@ class _SummaryContentState extends State<SummaryContent> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                          color:blueColor),
                     ),
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -490,19 +572,19 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 child: Form(
                   key: formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                       Text(
                         'Notes',
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       ),
                       const SizedBox(
                         height: 5,
@@ -512,11 +594,14 @@ class _SummaryContentState extends State<SummaryContent> {
                         controller: noteController,
                       ),
                       const SizedBox(height: 10),
-                      const Text('Upload File',
+                       Text('Upload File',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF152b51))),
+                              color: blueColor
+
+
+)),
                       const SizedBox(
                         height: 20,
                       ),
@@ -528,7 +613,10 @@ class _SummaryContentState extends State<SummaryContent> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF152b51),
+                            backgroundColor:  blueColor
+
+
+,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -544,12 +632,12 @@ class _SummaryContentState extends State<SummaryContent> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  const Color.fromRGBO(21, 43, 83, 1),
+                                  blueColor,
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
                                 NoteFile noteFiles = NoteFile(
-                                    note: noteController.text,
+                                    note: noteController.text.trim(),
                                     files: _uploadedFileName ?? '');
                                 setState(() {
                                   isNotePost = true;
@@ -601,7 +689,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: const Text('Cancel'),
                             ),
@@ -625,20 +713,20 @@ class _SummaryContentState extends State<SummaryContent> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1)),
+                            color:blueColor),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 20),
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
                               "Notes And Files",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
-                                  color: Color.fromRGBO(21, 43, 83, 1)),
+                                  color: blueColor),
                             ),
                           ),
                           Padding(
@@ -669,8 +757,10 @@ class _SummaryContentState extends State<SummaryContent> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color: blueColor
+
+
+),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -698,21 +788,21 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 //width: ,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         "Updates",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color:blueColor),
                       ),
                     ),
                     DataTable(
@@ -745,7 +835,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 81, 1)),
+                                         blueColor),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -772,7 +862,7 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -782,16 +872,16 @@ class _SummaryContentState extends State<SummaryContent> {
                     children: [
                       Text(
                           '${widget.summery.applicantFirstName} ${widget.summery.applicantLastName}',
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(
                         height: 5,
                       ),
-                      const Text('Applicant',
+                       Text('Applicant',
                           style: TextStyle(
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.normal)),
                       const SizedBox(
                         height: 10,
@@ -806,10 +896,11 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
-                            style: const TextStyle(
+                            formatPhoneNumber('${widget.summery.applicantHomeNumber ?? "N/A"}'),
+                           // "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -827,10 +918,11 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
-                            style: const TextStyle(
+                            formatPhoneNumber('${widget.summery.applicantBusinessNumber}'),
+                            //"${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -848,10 +940,11 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
-                            style: const TextStyle(
+                            formatPhoneNumber('${widget.summery.applicantPhoneNumber}'),
+                            // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -870,9 +963,9 @@ class _SummaryContentState extends State<SummaryContent> {
                           ),
                           Text(
                             "${widget.summery.applicantEmail ?? 'N/A'}",
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -894,23 +987,110 @@ class _SummaryContentState extends State<SummaryContent> {
     );
   }
 
+  // updatecheckBox() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   String? id = prefs.getString("adminId");
+  //   String? token = prefs.getString('token');
+  //   var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
+  //   final response = await http.put(
+  //     Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
+  //     headers: <String, String>{
+  //       "id": "CRM $id",
+  //       "authorization": "CRM $token",
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(checkvalue),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
+  //
+  //     setState(() {});
+  //   } else {
+  //     // Log the response body for debugging
+  //     print('Failed to update data: ${response.body}');
+  //     throw Exception('Failed to update applicant data');
+  //   }
+  // }
+  //
+  // updatecheckBoxnew(List applicant) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   String? id = prefs.getString("adminId");
+  //   String? token = prefs.getString('token');
+  //   var checkvalue = {"applicant_checklist": applicant};
+  //   final response = await http.put(
+  //     Uri.parse(
+  //         '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
+  //     headers: <String, String>{
+  //       "id": "CRM $id",
+  //       "authorization": "CRM $token",
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(checkvalue),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
+  //
+  //     setState(() {});
+  //   } else {
+  //     // Log the response body for debugging
+  //     print('Failed to update data: ${response.body}');
+  //     throw Exception('Failed to update applicant data');
+  //   }
+  // }
   updatecheckBox() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? id = prefs.getString("adminId");
+   String? id = prefs.getString("adminId");
+
+    String? idstaff = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
+    ///var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
+
+    var checkvalue = {"applicant":
+    {
+      "applicant_checkedChecklist": applicantChecklist,
+      "applicant_id": widget.summery.applicantId,
+      // Replace with appropriate ID
+      "admin_id": id,
+      " staff_id": idstaff,
+
+      "applicant_firstName": widget.summery.applicantFirstName,
+      "applicant_lastName": widget.summery.applicantLastName,
+      "applicant_email": widget.summery.applicantEmail,
+      "applicant_phoneNumber": widget.summery.applicantPhoneNumber,
+      "applicant_homeNumber": widget.summery.applicantHomeNumber,
+      "applicant_businessNumber": widget.summery.applicantBusinessNumber,
+      "applicant_telephoneNumber": widget.summery.applicantTelephoneNumber,
+      "isMovedin": widget.summery.isMovedin,
+      "createdAt": widget.summery.createdAt,
+      "updatedAt": widget.summery.updatedAt,
+      "isApplicantDataEmpty": widget.summery.isApplicantDataEmpty,
+      "applicant_emailsend_date": widget.summery.applicantEmailsendDate,
+      "lease_data": widget.summery.leaseData?.toJson(),
+      // Serialize nested object
+      "applicant_NotesAndFile": widget.summery.applicantNotesAndFile
+          ?.map((note) => note.toJson()) // Map notes to JSON
+          .toList(),
+      "applicant_status": widget.summery.applicantStatus
+          ?.map((status) => status.toJson()) // Map status to JSON
+          .toList(),
+    }
+    };
+    // print(checkvalue);
+
     final response = await http.put(
       Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
       headers: <String, String>{
-        "id": "CRM $id",
+        "id": "CRM $idstaff",
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(checkvalue),
     );
     if (response.statusCode == 200) {
-      // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
+      Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
 
       setState(() {});
     } else {
@@ -924,13 +1104,15 @@ class _SummaryContentState extends State<SummaryContent> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? id = prefs.getString("adminId");
+    String? idstaff = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     var checkvalue = {"applicant_checklist": applicant};
+    print(applicant);
     final response = await http.put(
       Uri.parse(
           '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
       headers: <String, String>{
-        "id": "CRM $id",
+        "id": "CRM $idstaff",
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },

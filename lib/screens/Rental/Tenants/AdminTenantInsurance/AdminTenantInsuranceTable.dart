@@ -223,13 +223,18 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
-          child: const Text(
+         DialogButton(
+          child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
           child: const Text(
@@ -248,7 +253,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
               });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         )
       ],
     ).show();
@@ -417,7 +422,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                :  blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -437,8 +442,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -498,7 +505,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                         ? MediaQuery.of(context).size.width * 0.4
                         : MediaQuery.of(context).size.width * 0.3,
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color:blueColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
@@ -659,8 +666,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -744,15 +753,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 50,
-                                                      color: Colors.transparent,
-                                                    ),
+
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
@@ -764,7 +765,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Liability Coverage : ',
+                                                                      'Liability Coveragedd : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -845,16 +846,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                       child: Column(
                                                         children: [
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed:
                                                                 () async {
@@ -879,16 +878,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                             },
                                                           ),
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed: () {
                                                               //handleDelete(Propertytype);
@@ -999,20 +996,28 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                left:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                right:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                top:  BorderSide(
+                                                    color: blueColor
+
+
+),
                                                 bottom: i ==
                                                         _pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
+                                                    ?  BorderSide(
+                                                        color: blueColor
+
+
+)
                                                     : BorderSide.none,
                                               ),
                                             ),

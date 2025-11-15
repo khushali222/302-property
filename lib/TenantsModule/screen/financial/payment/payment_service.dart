@@ -23,6 +23,9 @@ class PaymentService {
     required String company_name,
     required bool future_Date,
     required List<Map<String, dynamic>> entries,
+    String? notificationTime,
+    required String paymentAmountType,
+
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -46,6 +49,9 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
+        'notificationTime':notificationTime,
+        'lease_id': leaseid,
+        'entry':entries,
       };
       print(paymentDetails);
 
@@ -58,6 +64,9 @@ class PaymentService {
         },
         body: jsonEncode({"paymentDetails": paymentDetails}),
       );
+
+      print(response.statusCode);
+      print(" payment responce ${response.body}");
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
@@ -72,16 +81,18 @@ class PaymentService {
               adminId: adminId,
               tenantId: tenantId,
               leaseId: leaseid,
+              paymentAmountType: paymentAmountType,
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-              entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: "",
+              date: date,
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
+              responseText: "SUCCESS",
               surcharge: surcharge,
+                notificationTime: notificationTime
             ),
           ]);
           return "Payment Success";
@@ -102,13 +113,16 @@ class PaymentService {
           paymentType: "Card",
           customerVaultId: customerVaultId,
           billingId: billingId,
-          entries: entries,
+          paymentAmountType: paymentAmountType,
           totalAmount: amount,
           isLeaseAdded: false,
           uploadedFile: "",
           transactionId: "",
+          date: date,
           responseText: "PENDING",
           surcharge: surcharge,
+
+            notificationTime: notificationTime
         );
         return "Payment Scheduled Successfully";
       } catch (e) {
@@ -126,19 +140,22 @@ class PaymentService {
     required String paymentType,
     required String customerVaultId,
     required String billingId,
-    required List<Map<String, dynamic>> entries,
+    String? notificationTime,
     required String totalAmount,
     required bool isLeaseAdded,
     required String uploadedFile,
     required String transactionId,
     required String responseText,
     required String surcharge,
+    required String paymentAmountType,
+    required String date,
   }) async {
-    final String baseUrl = '$Api_url/api/payment/payment';
+    final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    print(entries);
+    print(totalAmount);
+    print((double.parse(totalAmount) - double.parse(surcharge)).toString());
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -152,16 +169,18 @@ class PaymentService {
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,
+        'paymentAmountType': paymentAmountType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
-        'entry': entries,
+        'notificationTime':notificationTime,
         'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)).toString(),
-        'surcharge': surcharge,
+            double.parse(totalAmount) ,
+        'surcharge': double.parse(surcharge),
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'date': date,
       }),
     );
 
@@ -220,6 +239,7 @@ class PaymentService {
         'amount': amount,
         'tenantId': tenantId,
         'date': date,
+        'lease_id': leaseid,
         'address1': address1,
         'processor_id': processorId,
       };
@@ -374,6 +394,7 @@ class PaymentService {
         'first_name': firstName,
         'last_name': lastName,
         'email_name': emailName,
+        'lease_id': leaseid,
         /*'checkname': checkname,
         'account_type': account_type,
         'checkaccount': checkaccount,

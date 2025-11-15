@@ -56,6 +56,7 @@ class PropertyTypeRepository {
           "id":"CRM $id",
         }
     );
+    print("property type  ${response.body}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
@@ -102,12 +103,13 @@ class PropertyTypeRepository {
 
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add property type');
+      throw Exception('Failed to edit property type');
     }
   }
 
   Future<Map<String, dynamic>> DeletePropertyType({
-    required String? pro_id
+    required String? pro_id,
+    String? reason
   }) async {
 
     //print('$apiUrl/$id');
@@ -123,6 +125,9 @@ class PropertyTypeRepository {
         "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode({
+        "reason":reason
+      })
     );
     var responseData = json.decode(response.body);
     print(response.body);

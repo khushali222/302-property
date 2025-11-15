@@ -4,35 +4,77 @@ import 'dart:core';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../Model/tenants.dart';
 import '../constant/constant.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart' as http;
 
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
-  Future<List<Tenant>> fetchTenants() async {
+  Future<Map<String, List<Tenant>>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/tenant/tenants/$id'),
+      Uri.parse('${Api_url}/api/tenant/tenants/v2/$id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
-    print(response.body);
+    print('get tenant ${response.body}');
     print('${Api_url}/api/tenant/tenants/$id');
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+      // Decode the JSON response
+      final jsonResponse = json.decode(response.body);
+
+      // Access the 'data' object
+      if (jsonResponse['data'] != null) {
+        Map<String, List<Tenant>> categorizedTenants = {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
+
+        // Add currentTenants if they exist
+        if (jsonResponse['data']['currentTenants'] != null) {
+          List currentTenantsJson = jsonResponse['data']['currentTenants'];
+          categorizedTenants['currentTenants'] =
+              currentTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add formerTenants if they exist
+        if (jsonResponse['data']['formerTenants'] != null) {
+          List formerTenantsJson = jsonResponse['data']['formerTenants'];
+          categorizedTenants['formerTenants'] =
+              formerTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add currentApplicants if they exist
+        if (jsonResponse['data']['currentApplicants'] != null) {
+          List currentApplicantsJson =
+              jsonResponse['data']['currentApplicants'];
+          categorizedTenants['currentApplicants'] = currentApplicantsJson
+              .map((data) => Tenant.fromJson(data))
+              .toList();
+        }
+
+        return categorizedTenants;
+      } else {
+        print('No data found in the response.');
+        return {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
+      }
     } else {
       print('Failed to fetch tenants: ${response.body}');
-      return [];
-     // throw Exception('Failed to load data');
+      return {
+        'currentTenants': [],
+        'formerTenants': [],
+        'currentApplicants': [],
+      };
     }
   }
 
@@ -77,7 +119,7 @@ class TenantsRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
+      print(" add tenant $responseData");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
@@ -243,6 +285,7 @@ class TenantsRepository {
   //     throw Exception('Failed to update tenant');
   //   }
   // }
+
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
     required String adminId,
@@ -253,7 +296,7 @@ class TenantsRepository {
     required String tenantEmail,
     required String tenantAlternativeEmail,
     required String tenantPassword,
-    required String tenantBirthDate,
+    String? tenantBirthDate,
     required String taxPayerId,
     required String comments,
     required String emergencyContactName,
@@ -302,22 +345,25 @@ class TenantsRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print(response.body);
+    print('edit tenant ${response.body}');
     print(responseData);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
+    } else if (responseData["statusCode"] == 201) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Email already exists');
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to edit property type');
+      throw Exception('Failed to edit tenant type');
     }
   }
 
-  Future<Map<String, dynamic>> deleteTenant({
-    required String tenantId,
-    required String companyName,
-    required String tenantEmail,
-  }) async {
+  Future<Map<String, dynamic>> deleteTenant(
+      {required String tenantId,
+      required String companyName,
+      required String tenantEmail,
+      String? reason}) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/tenant/tenant/$tenantId')
           .replace(queryParameters: {
@@ -327,14 +373,13 @@ class TenantsRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(
-        uri,
-        headers: <String, String>{
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+      final http.Response response = await http.delete(uri,
+          headers: <String, String>{
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({"reason": reason}));
 
       var responseData = json.decode(response.body);
       print(response.body);

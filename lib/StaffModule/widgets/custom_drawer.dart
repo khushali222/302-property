@@ -3,25 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import '../repository/staffpermission_provider.dart';
 import 'drawer_tiles.dart';
 
 import '../model/staffpermission.dart';
-class CustomDrawer extends StatefulWidget {
+
+class CustomDrawerStaff extends StatefulWidget {
   final String currentpage;
   final bool dropdown;
 
-  CustomDrawer({required this.currentpage,required this.dropdown});
+  CustomDrawerStaff({required this.currentpage, required this.dropdown});
 
   @override
-  _CustomDrawerState createState() => _CustomDrawerState();
+  _CustomDrawerStaffState createState() => _CustomDrawerStaffState();
 }
 
-class _CustomDrawerState extends State<CustomDrawer> {
-
+class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
   bool isLoading = true;
 
   @override
@@ -29,8 +28,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
     super.initState();
     // _loadPermissions();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +41,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
 */
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
-
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topRight: Radius.circular(80),
@@ -81,124 +77,212 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
-              buildListTile(
-                context,
-                Icon(
-                  CupertinoIcons.person,
-                  color:widget.currentpage == "Profile" ?Colors.white:blueColor,
-                ),
-                "Profile",
-                widget.currentpage == "Profile",),
-              if (permissions!.propertytypeView == true)
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.house,
-                  size: 20,
-                  color: widget.currentpage == "Add Property Type"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Property Type",
-                widget.currentpage == "Add Property Type",
-              ),
-              /*buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.userClock,
-                  size: 20,
-                  color: widget.currentpage == "Add Staff Member"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Staff Member",
-                widget.currentpage == "Add Staff Member",
-              ),*/
-          buildDropdownListTile(
-            context,
-            FaIcon(
-              FontAwesomeIcons.key,
-              size: 20,
-              color: blueColor,
-            ),
-            "Rental",
-            // Filter the options based on permissions
-            [
-              if (permissions!.propertyView == true) "Properties",
-              if (permissions!.rentalownerView == true) "RentalOwner",
-              if (permissions!.tenantView == true) "Tenants",
 
-            ],
-            // Filter the icons based on permissions in the same order
-            [
-              if (permissions.propertyView == true)
-                FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties" ? Colors.white : blueColor), // Icon for Properties
-              if (permissions.tenantView == true)
-                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "Tenants" ? Colors.white : blueColor), // Icon for Tenants
-              if (permissions.rentalownerView == true)
-                FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20, color: widget.currentpage == "RentalOwner" ? Colors.white : blueColor), // Icon for RentalOwner
-            ],
-            selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
-          ),
+              // Only show Rentals section if staff has any rental-related permissions
+              if (permissions != null &&
+                  (permissions.propertyView == true ||
+                      permissions.rentalownerView == true ||
+                      permissions.tenantView == true ||
+                      permissions.propertytypeView == true))
+                buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.key,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                  "Rentals",
+                  // Filter the options based on permissions
+                  [
+                    if (permissions.propertyView == true) "Properties",
+                    if (permissions.rentalownerView == true) "Rental Owner",
+                    if (permissions.tenantView == true) "Tenants",
+                    if (permissions.propertytypeView == true) "Property Type",
+                    "Mortgage",
+                  ],
+                  // Filter the icons based on permissions in the same order
+                  [
+                    if (permissions.propertyView == true)
+                      FaIcon(FontAwesomeIcons.buildingUser,
+                          size: 20,
+                          color: widget.currentpage == "Properties"
+                              ? Colors.white
+                              : blueColor), // Icon for Properties
+                    if (permissions.rentalownerView == true)
+                      FaIcon(FontAwesomeIcons.users,
+                          size: 20,
+                          color: widget.currentpage == "Rental Owner"
+                              ? Colors.white
+                              : blueColor), // Icon for RentalOwner
 
-          buildDropdownListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.thumbsUp,
-                  size: 20,
-                  color: blueColor,
+                    if (permissions.tenantView == true)
+                      FaIcon(FontAwesomeIcons.houseChimneyUser,
+                          size: 20,
+                          color: widget.currentpage == "Tenants"
+                              ? Colors.white
+                              : blueColor), // Icon for Tenants
+                    if (permissions.propertytypeView == true)
+                      FaIcon(
+                        FontAwesomeIcons.house,
+                        size: 20,
+                        color: widget.currentpage == "Property Type"
+                            ? Colors.white
+                            : blueColor,
+                      ),
+                    // if (permissions!.propertytypeView == true)
+                    FaIcon(
+                      FontAwesomeIcons.handHoldingDollar,
+                      size: 20,
+                      color: widget.currentpage == "Mortgage"
+                          ? Colors.white
+                          : blueColor,
+                    ),
+                  ],
+                  selectedSubtopic:
+                  !widget.dropdown ? null : widget.currentpage,
                 ),
-                "Leasing",
-                [
-                  if (permissions.leaseView ?? false) "Rent Roll",
-                  if (permissions.applicantView ?? false) "Applicants",
-                ],
-                [
-                  if (permissions.leaseView ?? false)
+              // Only show Leasing section if staff has leasing-related permissions
+              if (permissions != null &&
+                  (permissions.leaseView == true ||
+                      permissions.applicantView == true))
+                buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                  "Leasing",
+                  [
+                    if (permissions.leaseView == true) "Leases",
+                    if (permissions.applicantView == true) "Applicants",
+                    "Upcoming Renewal",
+                    "Scheduled Payment",
+                    "Scheduled Charges",
+                  ],
+                  [
                     FaIcon(
                       FontAwesomeIcons.wallet,
                       size: 20,
-                      color: widget.currentpage == "Rent Roll"
+                      color: widget.currentpage == "Leases"
                           ? Colors.white
                           : blueColor,
-                    ), // Icon for Rent Roll
-                  if (permissions.applicantView ?? false)
+                    ), // Icon for Properties
                     FaIcon(
                       FontAwesomeIcons.addressCard,
                       size: 20,
                       color: widget.currentpage == "Applicants"
                           ? Colors.white
                           : blueColor,
-                    ),  // Icon for RentalOwner
-                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-                ],
-                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
-              ),
+                    ),
+
+                    widget.currentpage == "Upcoming Renewal"
+                        ? SvgPicture.asset(
+                      "assets/images/upcoming white.svg",
+                      fit: BoxFit.cover,
+                      height: 27,
+                      width: 27,
+                    )
+                        : SvgPicture.asset(
+                      "assets/images/upcoming renewal.svg",
+                      fit: BoxFit.cover,
+                      height: 27,
+                      width: 27,
+                      color: blueColor,
+                    ),
+                    FaIcon(
+                      FontAwesomeIcons.clock,
+                      size: 20,
+                      color: widget.currentpage == "Scheduled Payment"
+                          ? Colors.white
+                          : blueColor,
+                    ),
+                    Icon(
+                      Icons.calendar_month,
+                      size: 25,
+                      color: widget.currentpage == "Scheduled Charges"
+                          ? Colors.white
+                          : blueColor,
+                    ) // Icon for RentalOwner
+                    //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+                  ],
+                  selectedSubtopic:
+                  !widget.dropdown ? null : widget.currentpage,
+                ),
+              // Only show Maintenance section if staff has maintenance-related permissions
+              if (permissions != null &&
+                  (permissions.vendorView == true ||
+                      permissions.workorderView == true))
+                buildDropdownListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.screwdriverWrench,
+                    size: 20,
+                    color: blueColor,
+                  ),
+                  "Maintenance",
+                  [
+                    if (permissions.vendorView == true) "Vendor",
+                    if (permissions.workorderView == true) "Work Order",
+                  ],
+                  [
+                    if (permissions.vendorView ?? false)
+                      FaIcon(
+                        FontAwesomeIcons.solidCircleUser,
+                        size: 20,
+                        color: widget.currentpage == "Vendor"
+                            ? Colors.white
+                            : blueColor,
+                      ), // Icon for Vendor
+                    if (permissions.workorderView ?? false)
+                      FaIcon(
+                        FontAwesomeIcons.bookBookmark,
+                        size: 20,
+                        color: widget.currentpage == "Work Order"
+                            ? Colors.white
+                            : blueColor,
+                      ), // Icon for RentalOwner
+                    //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+                  ],
+                  selectedSubtopic:
+                  !widget.dropdown ? null : widget.currentpage,
+                ),
               buildDropdownListTile(
                 context,
-                FaIcon(FontAwesomeIcons.screwdriverWrench, size: 20,  color:  blueColor,),
-                "Maintenance",
+                FaIcon(
+                  FontAwesomeIcons.comments,
+                  size: 20,
+                  color: blueColor,
+                ),
+                "Communication",
                 [
-                  if (permissions.vendorView ?? false) "Vendor",
-                  if (permissions.workorderView ?? false) "Work Order",
+                  "Send E-mail",
+                  "E-mail Logs",
+                  "Templates",
                 ],
                 [
-                  if (permissions.vendorView ?? false)
-                    FaIcon(
-                      FontAwesomeIcons.solidCircleUser,
-                      size: 20,
-                      color: widget.currentpage == "Vendor"
-                          ? Colors.white
-                          : blueColor,
-                    ), // Icon for Vendor
-                  if (permissions.workorderView ?? false)
-                    FaIcon(
-                      FontAwesomeIcons.bookBookmark,
-                      size: 20,
-                      color: widget.currentpage == "Work Order"
-                          ? Colors.white
-                          : blueColor,
-                    ),  // Icon for RentalOwner
+                  FaIcon(
+                    FontAwesomeIcons.envelopeCircleCheck,
+                    size: 20,
+                    color: widget.currentpage == "Send E-mail"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for Properties
+                  FaIcon(
+                    FontAwesomeIcons.envelopeOpenText,
+                    size: 20,
+                    color: widget.currentpage == "E-mail Logs"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+
+                  FaIcon(
+                    FontAwesomeIcons.wallet,
+                    size: 20,
+                    color: widget.currentpage == "Templates"
+                        ? Colors.white
+                        : blueColor,
+                  ), // Icon for RentalOwner
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
@@ -214,6 +298,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Reports",
                 widget.currentpage == "Reports",
               ),
+              // Only show Settings if staff has settings permission
+              if (permissions != null && permissions.settingView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.cog,
+                    color: widget.currentpage == "Settings"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Settings",
+                  widget.currentpage == "Settings",
+                ),
             ],
           ),
         ),

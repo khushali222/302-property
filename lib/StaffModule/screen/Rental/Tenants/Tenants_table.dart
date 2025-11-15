@@ -1,11 +1,18 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../provider/dateProvider.dart';
+import '../../../model/staffpermission.dart';
+import '../../../repository/staffpermission_provider.dart';
 import '../../../repository/tenants.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/AdminTenantInsuranceTable.dart';
 import 'add_tenants.dart';
@@ -43,15 +50,24 @@ class _Tenants_tableState extends State<Tenants_table> {
   ]; // Options for items per page
 
   void sortData(List<Tenant> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.tenantFirstName!.compareTo(b.tenantFirstName!)
           : b.tenantFirstName!.compareTo(a.tenantFirstName!));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.rentalAddress!.compareTo(b.rentalAddress!)
           : b.rentalAddress!.compareTo(a.rentalAddress!));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.tenantPhoneNumber!.compareTo(b.tenantPhoneNumber!)
           : b.tenantPhoneNumber!.compareTo(a.tenantPhoneNumber!));
@@ -72,19 +88,16 @@ class _Tenants_tableState extends State<Tenants_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -117,19 +130,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                     width < 400
                         ? Text("Name ",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Name",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -137,61 +152,61 @@ class _Tenants_tableState extends State<Tenants_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Phone", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   flex: 3,
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting2) {
+            //           sorting1 = false;
+            //           sorting2 = sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = !sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         }
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("   Phone", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+            //         SizedBox(width: 5),
+            //         ascending2
+            //             ? Padding(
+            //           padding: const EdgeInsets.only(top: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortUp,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         )
+            //             : Padding(
+            //           padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //           child: FaIcon(
+            //             FontAwesomeIcons.sortDown,
+            //             size: 20,
+            //             color: Colors.white,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
               flex: 2,
               child: InkWell(
@@ -218,10 +233,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At",
+                    Text("            Property",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
-                    SizedBox(width: 5),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -238,9 +254,27 @@ class _Tenants_tableState extends State<Tenants_table> {
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     futureTenants = TenantsRepository().fetchTenants();
     fetchtenantsadded();
     fetchCompany();
+  }
+
+  ConnectivityResult? _connectivityResult;
+  void checkInternet() async {
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+    Provider.of<StaffPermissionProvider>(context, listen: false)
+        .fetchPermissions();
   }
 
   void handleEdit(Tenant tenants) async {
@@ -271,37 +305,68 @@ class _Tenants_tableState extends State<Tenants_table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this Tenants!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await TenantsRepository().deleteTenant(
-                tenantId: id, companyName: companyName, tenantEmail: '');
-            setState(() {
-              futureTenants = TenantsRepository().fetchTenants();
-            });
-            Navigator.pop(context);
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await TenantsRepository().deleteTenant(
+                  tenantId: id,
+                  companyName: companyName,
+                  tenantEmail: '',
+                  reason: reason.text);
+              setState(() {
+                futureTenants = TenantsRepository().fetchTenants();
+              });
+              Navigator.pop(context);
+            }
           },
-          color: Colors.red,
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -448,7 +513,7 @@ class _Tenants_tableState extends State<Tenants_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -467,23 +532,22 @@ class _Tenants_tableState extends State<Tenants_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -495,7 +559,7 @@ class _Tenants_tableState extends State<Tenants_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -503,8 +567,7 @@ class _Tenants_tableState extends State<Tenants_table> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -556,19 +619,19 @@ class _Tenants_tableState extends State<Tenants_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding tenants according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -613,414 +676,432 @@ class _Tenants_tableState extends State<Tenants_table> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Tenants",
         dropdown: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            //add propertytype
-            Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
+      body: _connectivityResult != ConnectivityResult.none
+          ? SingleChildScrollView(
+              child: Column(
                 children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
-                      title: 'Tenants',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (rentalCount < propertyCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => AddTenant()));
-                        if (result == true) {
-                          setState(() {
-                            futureTenants = TenantsRepository().fetchTenants();
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                        }
-                      } else {
-                        _showAlertforLimit(context);
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.05,
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 16
-                                        : 20,
-                              ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Tenants',
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            //propertytype
-            // Padding(
-            //   padding: const EdgeInsets.all(5.0),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.circular(5.0),
-            //     child: Container(
-            //       height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-            //       padding: EdgeInsets.only(top: 8, left: 10),
-            //       width: MediaQuery.of(context).size.width * .91,
-            //       margin: const EdgeInsets.only(
-            //           bottom: 6.0), //Same as `blurRadius` i guess
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(5.0),
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //         boxShadow: [
-            //           BoxShadow(
-            //             color: Colors.grey,
-            //             offset: Offset(0.0, 1.0), //(x,y)
-            //             blurRadius: 6.0,
-            //           ),
-            //         ],
-            //       ),
-            //       child: Text(
-            //         "Tenants",
-            //         style: TextStyle(
-            //           color: Colors.white,
-            //           fontWeight: FontWeight.bold,
-            //           // fontSize:22,
-            //           fontSize: MediaQuery.of(context).size.width < 500
-            //               ? 22
-            //               : MediaQuery.of(context).size.width * 0.035,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            // SizedBox(height: 10),
-            //search
-            Padding(
-              padding: const EdgeInsets.only(left: 11, right: 11),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 2),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 24),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 12
-                                          : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => AddTenant()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureTenants =
+                                        TenantsRepository().fetchTenants();
+                                  });
+                                }
                               },
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 14
-                                            : 18),
-                                contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 10, top: 5)),
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "+ Add",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  // Row(
-                  //   children: [
-                  //     Text(
-                  //       'Added : ${rentalCount.toString()}',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                  //       ),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 5,
-                  //     ),
-                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                  //     Text(
-                  //       'Total: ${propertyCountLimit.toString()}',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
                         ),
-                      ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 3),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 18),
+                      ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
-              //for phone
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<Tenant>>(
-                  future: futureTenants,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 20),
+                        Expanded(
+                          child: Material(
+                            elevation: 3,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              // height: 40,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              width: MediaQuery.of(context).size.width < 500
+                                  ? MediaQuery.of(context).size.width * .52
+                                  : MediaQuery.of(context).size.width * .49,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  // border: Border.all(color: Colors.grey),
+                                  border: Border.all(color: Color(0xFF8A95A8))),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: TextField(
+                                      style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 12
+                                              : 14),
+                                      // onChanged: (value) {
+                                      //   setState(() {
+                                      //     cvverror = false;
+                                      //   });
+                                      // },
+                                      // controller: cvv,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                          if (currentPage != 0) currentPage = 0;
+                                        });
+                                      },
+                                      cursorColor: blueColor,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            // fontWeight: FontWeight.bold,
+                                            color: Color(0xFF8A95A8),
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 14
+                                                : 18),
+                                        contentPadding: (EdgeInsets.only(
+                                            left: 8, bottom: 10, top: 5)),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      if (searchvalue == null || searchvalue!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (searchvalue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchvalue!.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((rentals) =>
-                                rentals.tenantFirstName!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                rentals.tenantLastName!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
-                            .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((rentals) =>
-                                rentals.tenantFirstName == searchvalue)
-                            .toList();
-                      }
-                      sortData(data);
-                      data = data.reversed.toList();
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 10),
-                            _buildHeaders(),
-                            SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
+                        // Spacer(),
+                        // Expanded(
+                        //   child: Container(
+                        //     child: Text(
+                        //       'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
+                        //       style: TextStyle(
+                        //         fontWeight: FontWeight.bold,
+                        //         color: Color(0xFF8A95A8),
+                        //         fontSize:
+                        //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   crossAxisAlignment: CrossAxisAlignment.end,
+                        //   children: [
+                        //     Container(
+                        //       child: Text(
+                        //         'Added : ${rentalCount.toString()}',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Color(0xFF8A95A8),
+                        //           fontSize:
+                        //           MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(
+                        //       height: 5,
+                        //     ),
+                        //     Container(
+                        //       child: Text(
+                        //         'Total : ${propertyCountLimit.toString()}',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: Color(0xFF8A95A8),
+                        //           fontSize:
+                        //           MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 8),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  //for phone
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 10 : 28),
+                    child: FutureBuilder<List<Tenant>>(
+                      future: futureTenants,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
                               child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  Tenant tenants = entry.value;
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
-                                    ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (searchvalue == null || searchvalue!.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (searchvalue == "All") {
+                            data = snapshot.data!;
+                          } else if (searchvalue!.isNotEmpty) {
+                            data = snapshot.data!.where((rentals) {
+                              // Combine first and last name for full name search
+                              String fullName =
+                                  '${rentals.tenantFirstName} ${rentals.tenantLastName}'
+                                      .toLowerCase();
+                              String searchTerm = searchvalue!.toLowerCase();
+
+                              return fullName.contains(searchTerm) ||
+                                  rentals.tenantPhoneNumber!
+                                      .toLowerCase()
+                                      .contains(searchTerm) ||
+                                  rentals.tenantEmail!
+                                      .toLowerCase()
+                                      .contains(searchTerm) ||
+                                  rentals.rentalAddress!
+                                      .toLowerCase()
+                                      .contains(searchTerm);
+                            }).toList();
+                          } else {
+                            data = snapshot.data!.where((rentals) {
+                              String fullName =
+                                  '${rentals.tenantFirstName} ${rentals.tenantLastName}'
+                                      .toLowerCase();
+                              return fullName == searchvalue!.toLowerCase();
+                            }).toList();
+                          }
+                          sortData(data);
+                          print(
+                              'table password ${snapshot.data?.first.tenantPassword}');
+                          // data = data.reversed.toList();
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Container(
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Tenant tenants = entry.value;
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: blueColor),
+                                        // ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // setState(() {
+                                                        //    isExpanded = !isExpanded;
+                                                        // //  expandedIndex = !expandedIndex;
+                                                        //
+                                                        // });
+                                                        // setState(() {
+                                                        //   if (isExpanded) {
+                                                        //     expandedIndex = null;
+                                                        //     isExpanded = !isExpanded;
+                                                        //   } else {
+                                                        //     expandedIndex = index;
+                                                        //   }
+                                                        // });
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10.0),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10.0),
+                                                          child: Text(
+                                                            '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .12),
+                                                    Expanded(
+                                                      flex: 2,
                                                       child: Text(
-                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}',
+                                                        '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
+                                                        textAlign:
+                                                            TextAlign.end,
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1029,737 +1110,643 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
-                                                            .03),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Text(
-                                                    '${tenants.tenantPhoneNumber}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
+                                                            .05),
+                                                  ],
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-
-                                                    '${formatDate(tenants.createdAt!) ?? ''}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Email: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${tenants.tenantEmail}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color:
-                                                                            grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rental Adress: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color:
-                                                                            grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      // SizedBox(width: 5),
-                                                      // Expanded(
-                                                      //   child: Column(
-                                                      //     crossAxisAlignment:
-                                                      //     CrossAxisAlignment.start,
-                                                      //     children: <Widget>[
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Created At: ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: formatDate('${tenants.createdAt}'),
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
-                                                      // Container(
-                                                      //   width: 40,
-                                                      //   child: Column(
-                                                      //     children: [
-                                                      //       IconButton(
-                                                      //         icon: FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .edit,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed:
-                                                      //             () async {
-                                                      //           // handleEdit(Propertytype);
-                                                      //           var check = await Navigator.push(
-                                                      //               context,
-                                                      //               MaterialPageRoute(
-                                                      //                   builder: (context) => EditTenants(
-                                                      //                         tenants: tenants,
-                                                      //                         tenantId: '',
-                                                      //                       )));
-                                                      //           if (check ==
-                                                      //               true) {
-                                                      //             setState(
-                                                      //                 () {});
-                                                      //           }
-                                                      //         },
-                                                      //       ),
-                                                      //       IconButton(
-                                                      //         icon: FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .trashCan,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed: () {
-                                                      //           //handleDelete(Propertytype);
-                                                      //           _showDeleteAlert(
-                                                      //               context,
-                                                      //               tenants
-                                                      //                   .tenantId!);
-                                                      //         },
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            var check = await Navigator
-                                                                .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            EditTenants(
-                                                                              tenants: tenants,
-                                                                              tenantId: '',
-                                                                            )));
-                                                            if (check == true) {
-                                                              setState(() {});
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            _showDeleteAlert(
-                                                                context,
-                                                                tenants
-                                                                    .tenantId!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Delete",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => ResponsiveTenantSummary(
-                                                                        tenants:
-                                                                            tenants,
-                                                                        tenantId:
-                                                                            tenants.tenantId!)));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                    'assets/icons/view.png'),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
                                               ),
                                             ),
-                                          ),
-                                        //SizedBox(height: 13,),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  }
-                                                : null,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            if (MediaQuery.of(context).size.width > 500)
-              //for teblet
-              FutureBuilder<List<Tenant>>(
-                future: futureTenants,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ShimmerTabletTable();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    List<Tenant>? filteredData = [];
-                    _tableData = snapshot.data!;
-                    if (selectedRole == null && searchvalue == "") {
-                      filteredData = snapshot.data;
-                    } else if (selectedRole == "All") {
-                      filteredData = snapshot.data;
-                    } else if (searchvalue.isNotEmpty) {
-                      filteredData = snapshot.data!
-                          .where((rentals) =>
-                              rentals.tenantFirstName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()) ||
-                              rentals.tenantLastName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()))
-                          .toList();
-                    }
-                    _tableData = _tableData.reversed.toList();
-                    _tableData = filteredData!;
-                    totalrecords = _tableData.length;
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
-                              child: Column(
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 20),
-                                      child: Container(
-                                        // width: MediaQuery.of(context).size.width *
-                                        //     .91,
-                                        child: Table(
-                                          defaultColumnWidth:
-                                              IntrinsicColumnWidth(),
-                                          children: [
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    // color: blueColor
-                                                    ),
-                                              ),
-                                              children: [
-                                                // _buildHeader(
-                                                //     'Tenant Name',
-                                                //     0,
-                                                //     (tenants) =>
-                                                //         tenants.tenantFirstName! ) ,
-                                                _buildHeader(
-                                                    'Tenant Name',
-                                                    0,
-                                                    (tenants) =>
-                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'
-                                                            .trim()),
-                                                _buildHeader(
-                                                    'Property',
-                                                    1,
-                                                    (tenants) =>
-                                                        tenants.rentalAddress!),
-                                                _buildHeader(
-                                                    'Phone',
-                                                    2,
-                                                    (tenants) => tenants
-                                                        .tenantPhoneNumber!),
-                                                _buildHeader(
-                                                    'Email',
-                                                    3,
-                                                    (tenants) => tenants
-                                                        .tenantAlternativeEmail!),
-                                                _buildHeader(
-                                                    'Created At',
-                                                    4,
-                                                    (tenants) =>
-                                                        tenants.createdAt!),
-                                                _buildHeader(
-                                                    'Actions', 5, null),
-                                              ],
-                                            ),
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border.symmetric(
-                                                    horizontal:
-                                                        BorderSide.none),
-                                              ),
-                                              children: List.generate(
-                                                  6,
-                                                  (index) => TableCell(
-                                                      child: Container(
-                                                          height: 20))),
-                                            ),
-                                            for (var i = 0;
-                                                i < _pagedData.length;
-                                                i++)
-                                              TableRow(
-                                                decoration: BoxDecoration(
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(16),
+                                                decoration: const BoxDecoration(
                                                   border: Border(
-                                                    left: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    right: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
                                                     top: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    bottom: i ==
-                                                            _pagedData.length -
-                                                                1
-                                                        ? BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1))
-                                                        : BorderSide.none,
+                                                        color:
+                                                            Color(0xFFDBE0E5),
+                                                        width: 1),
                                                   ),
                                                 ),
-                                                children: [
-                                                  _buildDataCell(
-                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
-                                                          .trim(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                              .rentalAddress! ??
-                                                          '',
-                                                      _pagedData[i]),
-                                                  // _buildDataCell(''),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .tenantPhoneNumber!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .tenantAlternativeEmail!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .createdAt!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildActionsCell(
-                                                      _pagedData[i]),
-                                                ],
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 40,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Email : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${tenants.tenantEmail}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Created On : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${dateProvider.formatCurrentDate(tenants.createdAt ?? DateTime.now().toString()) ?? ''}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Phone : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: formatPhoneNumber(
+                                                                            '${tenants.tenantPhoneNumber}'),
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  tenants
+                                                                      .tenantId!);
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              var check = await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => EditTenants(
+                                                                            tenants:
+                                                                                tenants,
+                                                                            tenantId:
+                                                                                '',
+                                                                          )));
+                                                              if (check ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureTenants =
+                                                                      TenantsRepository()
+                                                                          .fetchTenants();
+                                                                });
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .green
+                                                                      .shade50), // color:Colors.grey[100],
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .green,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => ResponsiveTenantSummary(
+                                                                          tenants:
+                                                                              tenants,
+                                                                          tenantId:
+                                                                              tenants.tenantId!)));
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .eye,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
+                                            //SizedBox(height: 13,),
                                           ],
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  SizedBox(height: 25),
-                                  _buildPaginationControls(),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 20),
+                                if (data.length > itemsPerPage)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Text('Rows per page:'),
+                                          const SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: data.length >
+                                                          itemsPerPageOptions
+                                                              .first // Condition to check if dropdown should be enabled
+                                                      ? (newValue) {
+                                                          setState(() {
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage =
+                                                                0; // Reset to first page when items per page change
+                                                          });
+                                                        }
+                                                      : null,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
+                                          ),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_back),
+                                          //   onPressed: currentPage > 0
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage--;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_forward),
+                                          //   onPressed: currentPage < totalPages - 1
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage++;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 25),
-                        ],
-                      ),
-                    );
-                  }
-                },
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   //for teblet
+                  //   FutureBuilder<List<Tenant>>(
+                  //     future: futureTenants,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         List<Tenant>? filteredData = [];
+                  //         _tableData = snapshot.data!;
+                  //         if (selectedRole == null && searchvalue == "") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (selectedRole == "All") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (searchvalue.isNotEmpty) {
+                  //           filteredData = snapshot.data!
+                  //               .where((rentals) =>
+                  //                   rentals.tenantFirstName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()) ||
+                  //                   rentals.tenantLastName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()))
+                  //               .toList();
+                  //         }
+                  //         _tableData = _tableData.reversed.toList();
+                  //         _tableData = filteredData!;
+                  //         totalrecords = _tableData.length;
+                  //         return SingleChildScrollView(
+                  //           child: Column(
+                  //             children: [
+                  //               Container(
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 20.0, vertical: 5),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       SingleChildScrollView(
+                  //                         scrollDirection: Axis.horizontal,
+                  //                         child: Padding(
+                  //                           padding: const EdgeInsets.only(
+                  //                               left: 20, right: 20),
+                  //                           child: Container(
+                  //                             // width: MediaQuery.of(context).size.width *
+                  //                             //     .91,
+                  //                             child: Table(
+                  //                               defaultColumnWidth:
+                  //                                   const IntrinsicColumnWidth(),
+                  //                               children: [
+                  //                                 TableRow(
+                  //                                   decoration: BoxDecoration(
+                  //                                     border: Border.all(
+                  //                                         // color: blueColor
+                  //                                         ),
+                  //                                   ),
+                  //                                   children: [
+                  //                                     // _buildHeader(
+                  //                                     //     'Tenant Name',
+                  //                                     //     0,
+                  //                                     //     (tenants) =>
+                  //                                     //         tenants.tenantFirstName! ) ,
+                  //                                     _buildHeader(
+                  //                                         'Tenant Name',
+                  //                                         0,
+                  //                                         (tenants) =>
+                  //                                             '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'
+                  //                                                 .trim()),
+                  //                                     _buildHeader(
+                  //                                         'Property',
+                  //                                         1,
+                  //                                         (tenants) => tenants
+                  //                                             .rentalAddress!),
+                  //                                     _buildHeader(
+                  //                                         'Phone',
+                  //                                         2,
+                  //                                         (tenants) => tenants
+                  //                                             .tenantPhoneNumber!),
+                  //                                     _buildHeader(
+                  //                                         'Email',
+                  //                                         3,
+                  //                                         (tenants) => tenants
+                  //                                             .tenantAlternativeEmail!),
+                  //                                     _buildHeader(
+                  //                                         'Created At',
+                  //                                         4,
+                  //                                         (tenants) => tenants
+                  //                                             .createdAt!),
+                  //                                     _buildHeader(
+                  //                                         'Actions', 5, null),
+                  //                                   ],
+                  //                                 ),
+                  //                                 TableRow(
+                  //                                   decoration: const BoxDecoration(
+                  //                                     border: Border.symmetric(
+                  //                                         horizontal:
+                  //                                             BorderSide.none),
+                  //                                   ),
+                  //                                   children: List.generate(
+                  //                                       6,
+                  //                                       (index) => TableCell(
+                  //                                           child: Container(
+                  //                                               height: 20))),
+                  //                                 ),
+                  //                                 for (var i = 0;
+                  //                                     i < _pagedData.length;
+                  //                                     i++)
+                  //                                   TableRow(
+                  //                                     decoration: BoxDecoration(
+                  //                                       border: Border(
+                  //                                         left: BorderSide(
+                  //                                             color: blueColor),
+                  //                                         right: BorderSide(
+                  //                                             color: blueColor),
+                  //                                         top: BorderSide(
+                  //                                             color: blueColor),
+                  //                                         bottom: i ==
+                  //                                                 _pagedData
+                  //                                                         .length -
+                  //                                                     1
+                  //                                             ? const BorderSide(
+                  //                                                 color: Color
+                  //                                                     .fromRGBO(
+                  //                                                         21,
+                  //                                                         43,
+                  //                                                         81,
+                  //                                                         1))
+                  //                                             : BorderSide.none,
+                  //                                       ),
+                  //                                     ),
+                  //                                     children: [
+                  //                                       _buildDataCell(
+                  //                                           '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
+                  //                                               .trim(),
+                  //                                           _pagedData[i]),
+                  //                                       _buildDataCell(
+                  //                                           _pagedData[i]
+                  //                                                   .rentalAddress! ??
+                  //                                               '',
+                  //                                           _pagedData[i]),
+                  //                                       // _buildDataCell(''),
+                  //                                       _buildDataCell(
+                  //                                           _pagedData[i]
+                  //                                               .tenantPhoneNumber!
+                  //                                               .toString(),
+                  //                                           _pagedData[i]),
+                  //                                       _buildDataCell(
+                  //                                           _pagedData[i]
+                  //                                               .tenantAlternativeEmail!
+                  //                                               .toString(),
+                  //                                           _pagedData[i]),
+                  //                                       _buildDataCell(
+                  //                                           _pagedData[i]
+                  //                                               .createdAt!
+                  //                                               .toString(),
+                  //                                           _pagedData[i]),
+                  //                                       _buildActionsCell(
+                  //                                           _pagedData[i]),
+                  //                                     ],
+                  //                                   ),
+                  //                               ],
+                  //                             ),
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 25),
+                  //                       _buildPaginationControls(),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
+                ],
               ),
-          ],
-        ),
-      ),
+            )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  const Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../widgets/navigation_helper.dart';
+
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/lease_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
@@ -7,18 +9,18 @@ import 'package:three_zero_two_property/StaffModule/screen/Property_Type/Propert
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Properties_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Rentalowner/Rentalowner_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/Tenants_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
-
-
-
+import '../../screens/Profile/Settings_screen.dart';
+import '../screen/Communications/E-mail Logs/email_log_table.dart';
+import '../screen/Communications/Send E-mail/Send_email_table.dart';
+import '../screen/Communications/Templates/Templet_table.dart';
+import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
+import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
-
-
-
+import '../screen/upcoming_renewal/upcoming_renewal.dart';
 
 Widget buildListTile(
     BuildContext context,
@@ -29,25 +31,36 @@ Widget buildListTile(
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
-      color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+      color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
         if (title == "Dashboard" && active != true) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
-        } else if (title == "Property Type" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PropertyTable()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => Dashboard_staff(),
+            "Dashboard",
+          );
+        } else if (title == "Profile") {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => Profile_screen(),
+            "Profile",
+          );
         } else if (title == "Reports" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
-        }
-        else if (title == "Profile") {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Profile_screen()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => ReportsMainScreen(),
+            "Reports",
+          );
+        } else if (title == "Settings") {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => TabBarExample(),
+            "Settings",
+          );
         }
       },
       leading: leadingIcon,
@@ -63,26 +76,31 @@ Widget buildListTile(
 }
 
 void navigateToOption(BuildContext context, String option, bool isActive) {
-  int index = 0;
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
-    "RentalOwner": (context) => Rentalowner_table(),
+    "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
+    "Property Type": (context) => PropertyTable(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
-    "Rent Roll": (context) => Lease_table(),
+    "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
-    "Vendor": (context) => Vendor_table(),
-    // "Work Order": (context) => Cardpayment(leaseId: '',),
-
+    "Upcoming Renewal": (context) => Upcomingrenewal(),
+    "Templates": (context) => TempletTable(),
+    "E-mail Logs": (context) => Email_log_tablee(),
+    "Send E-mail": (context) => Send_Email_table(),
+    "Scheduled Payment": (context) => Scheduled_Payments_table(),
+    "Scheduled Charges": (context) => ScheduledChargeTable(),
+    "Mortgage": (context) => MortgageTable()
   };
 
-  // if (isActive != true) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: routes[option]!),
-  );
-  // }
+  if (routes.containsKey(option)) {
+    NavigationHelper.navigateWithValidationBuilder(
+      context,
+      routes[option]!,
+      option,
+    );
+  }
 }
 
 Widget buildDropdownListTile(
@@ -95,10 +113,11 @@ Widget buildDropdownListTile(
       bool? initvalue,
     }) {
   // Check if the selectedSubtopic is in the list of subTopics
-  bool isExpanded = selectedSubtopic != null && subTopics.contains(selectedSubtopic);
+  bool isExpanded =
+      selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,
@@ -116,7 +135,7 @@ Widget buildDropdownListTile(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-              color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+              color: active ? blueColor : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
@@ -139,4 +158,3 @@ Widget buildDropdownListTile(
     ),
   );
 }
-

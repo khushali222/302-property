@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,8 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
+import '../../../../Model/ApplicantModel.dart';
+import '../../../../model/edit_lease.dart';
 import '../../../repository/lease.dart';
 import '../../../repository/properties.dart';
 
@@ -32,12 +35,16 @@ import '../../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 import '../../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../provider/dateProvider.dart';
+
 class addLease3 extends StatefulWidget {
   final String? applicantId;
   final String? rentalId;
   final String? unitId;
+  String? leaseId;
 
-  const addLease3({Key? key, this.applicantId, this.rentalId, this.unitId})
+  addLease3(
+      {Key? key, this.applicantId, this.rentalId, this.unitId, this.leaseId})
       : super(key: key);
 
   @override
@@ -47,7 +54,9 @@ class addLease3 extends StatefulWidget {
 class _addLease3State extends State<addLease3>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
+  final TextEditingController proRatedRentController = TextEditingController();
 
+  List<String> applicantIds = [];
   @override
   void initState() {
     super.initState();
@@ -55,7 +64,7 @@ class _addLease3State extends State<addLease3>
     print(widget.unitId);
 
     // Delay execution of setting values and loading units
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       // Ensure that renderId is properly set before proceeding
       if (widget.rentalId != null && widget.rentalId!.isNotEmpty) {
         setState(() {
@@ -70,9 +79,289 @@ class _addLease3State extends State<addLease3>
       }
     });
 
+    if (widget.leaseId != null && widget.leaseId!.isNotEmpty) {
+      print('idi3 ${widget.leaseId}');
+      setState(() {
+        fetchDetails(widget.leaseId!);
+      }); // Using widget.leaseId safely
+    }
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
+    _updateProRatedRent(_selectedRent ?? 'Monthly');
+  }
+
+  Future<void> fetchDetails(String leaseId) async {
+    try {
+      // Fetch lease details from the repository
+      LeaseDetails fetchedDetails =
+          await LeaseRepository().fetchLeaseDetails(leaseId);
+      print('Lease type: ${fetchedDetails.lease.leaseType}');
+
+      // Optional delay for demonstration purposes
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          print('Rental Address: ${fetchedDetails.rental.rentalAddress}');
+
+          // Update state variables
+          _selectedProperty = fetchedDetails.rental.rentalId ?? "";
+          renderId = fetchedDetails.rental.rentalId ?? "";
+          //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
+          print("calling stage 1");
+          if (fetchedDetails.lease.startDate != null) {
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            startDateController.text =
+                dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
+          }
+          print("calling stage 2");
+          if (fetchedDetails.lease.endDate != null) {
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            endDateController.text =
+                dateProvider.formatCurrentDate(fetchedDetails.lease.endDate);
+          }
+          print("calling stage 3");
+          // Calculate rent cycle items
+          if (fetchedDetails.lease.startDate != null &&
+              fetchedDetails.lease.startDate != null)
+            // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
+            //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
+            //     .inDays);
+            print("calling stage 4");
+          // Update rent charges
+          //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
+          // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
+          if (fetchedDetails.tenant != null) {
+            for (var t in fetchedDetails.tenant!) {
+              applicantIds.add(t.applicantId!);
+              print("Appllicant id  ${t.applicantId}");
+            }
+          }
+          print(applicantIds);
+
+          // Handle uploaded files
+          if (fetchedDetails.lease.uploadedFile != null &&
+              fetchedDetails.lease.uploadedFile.isNotEmpty) {
+            _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+          }
+
+          Provider.of<SelectedTenantsProvider>(context, listen: false)
+              .clearTenant();
+
+          // Update tenants
+          if (fetchedDetails.tenant != null) {
+            for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
+              fetchedDetails.tenant![i].tenantId =
+                  fetchedDetails.tenant![i].applicantId;
+              Provider.of<SelectedTenantsProvider>(context, listen: false)
+                  .addTenant(fetchedDetails.tenant![i]);
+              // Provider.of<SelectedTenantsProvider>(context, listen: false)
+              //     .rentShareControllers[i].text = fetchedDetails.tenant![i].rentshare.toString();
+            }
+          }
+
+          // Update cosigners
+          if (fetchedDetails.cosigner != null) {
+            for (int i = 0; i < fetchedDetails.cosigner!.length; i++) {
+              Provider.of<SelectedCosignersProvider>(context, listen: false)
+                  .addCosigner(fetchedDetails.cosigner![i]);
+            }
+          }
+        });
+
+        // Load units after setting state
+        _loadUnits(renderId);
+
+        // Update selected unit
+        if (mounted) {
+          setState(() {
+            _selectedUnit = fetchedDetails.lease.unitId;
+          });
+        }
+      }
+    } catch (e) {
+      // Handle any errors that occur during the fetch
+      print('Failed to fetch lease details: $e');
+    }
+  }
+
+  void _updateProRatedRent(String frequency) {
+    if (isProRent &&
+        isAmountEntered &&
+        rentNextDueDate.text.isNotEmpty &&
+        startDateController.text.isNotEmpty &&
+        endDateController.text.isNotEmpty) {
+      try {
+        // Parse the start date from the TextField (instead of using current date)
+        // Convert display format to API format for parsing
+        String convertToApiFormat(String displayDate) {
+          if (displayDate.isEmpty) return "";
+          try {
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            // Parse the display format and convert to yyyy-MM-dd
+            DateTime date =
+                DateFormat(dateProvider.dateFormat).parse(displayDate);
+            return DateFormat('yyyy-MM-dd').format(date);
+          } catch (e) {
+            return displayDate; // Return as is if parsing fails
+          }
+        }
+
+        DateTime currentDate = DateFormat('yyyy-MM-dd')
+            .parse(convertToApiFormat(startDateController.text));
+        DateTime nextDueDate = DateFormat('yyyy-MM-dd')
+            .parse(convertToApiFormat(rentNextDueDate.text));
+
+        double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
+
+        // Debug prints
+        print("Start Date (current date): $currentDate");
+        print("Next Due Date: $nextDueDate");
+        print("Total Rent Entered: $totalRent");
+
+        // Validate rent and dates
+        if (totalRent <= 0 || !nextDueDate.isAfter(currentDate)) {
+          setState(() {
+            proRatedRentController.text = "0.00";
+          });
+          print(
+              "Validation failed: Either rent is <= 0 or next due date is not after start date.");
+          return;
+        }
+
+        // Calculate days left, including the current day
+        int daysLeft = nextDueDate.difference(currentDate).inDays;
+        print("Days Left: $daysLeft");
+
+        // Calculate pro-rated rent
+        double proRatedRent = 0.0;
+
+        // Get total days in the current month
+        int totalDaysInMonth =
+            _getDaysInMonth(nextDueDate.year, currentDate.month);
+        // print("Total Days in Month: $totalDaysInMonth");
+
+        // Define total days in other periods
+        int totalDaysInYear = 365; // For non-leap years
+        int totalDaysInQuarter = totalDaysInMonth * 3; // 3 months period
+
+        switch (frequency) {
+          case 'Daily':
+            proRatedRent = (totalRent / 1) * daysLeft;
+            break;
+          case 'Weekly':
+            proRatedRent = (totalRent / 7) * daysLeft;
+            break;
+          case 'Every two weeks':
+            proRatedRent = (totalRent / 14) * daysLeft;
+            break;
+          // case 'Monthly':
+          //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+          //   break;
+          case 'Monthly':
+            int totalDaysInMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month);
+            print("Total Days in Month: $totalDaysInMonth");
+            proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+            break;
+          case 'Every two months':
+            // Calculate total days in the 2-month period
+            int totalDaysInTwoMonths =
+                _getDaysInMonth(currentDate.year, currentDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month);
+            print("Total Days in Two Months: $totalDaysInTwoMonths");
+
+            // Adjust the calculation to ensure rent remains at totalRent
+            proRatedRent = totalRent;
+            break;
+          case 'Quarterly':
+            // Calculate total days in the quarter (3 months)
+            int totalDaysInQuarter =
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+
+            // Calculate pro-rated rent
+            if (totalDaysInQuarter > 0) {
+              proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
+              proRatedRent =
+                  proRatedRent.roundToDouble(); // Round to nearest whole number
+            } else {
+              proRatedRent = 0.0; // Fallback in case of an error
+            }
+            break;
+          case 'Semi Monthly':
+            // Calculate the semi-monthly due date
+            int midMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month) > 30
+                    ? 15
+                    : 14; // Handle shorter months like February
+
+            // If today is before or on the mid-month date, calculate for the first half
+            if (currentDate.day <= midMonth) {
+              // First half of the month (1st to mid-month)
+              proRatedRent = (totalRent / midMonth) * daysLeft;
+            } else {
+              // Second half of the month (after mid-month)
+              int remainingDays =
+                  _getDaysInMonth(currentDate.year, currentDate.month) -
+                      midMonth;
+              proRatedRent = (totalRent / remainingDays) * daysLeft;
+            }
+            break;
+          case 'Yearly':
+            proRatedRent = (totalRent / totalDaysInYear) * daysLeft;
+            break;
+          default:
+            proRatedRent = 0.0;
+        }
+
+        // Update text field with calculated value
+        setState(() {
+          proRatedRentController.text = proRatedRent.toStringAsFixed(2);
+        });
+        print("Calculated Pro-Rated Rent: $proRatedRent");
+      } catch (e) {
+        // Handle unexpected errors
+        setState(() {
+          proRatedRentController.text = "Error";
+        });
+        print("Error occurred while calculating pro-rated rent: $e");
+      }
+    }
+  }
+
+  int _getDaysInMonth(int year, int month) {
+    // Get the number of days in the month considering leap years for February
+    switch (month) {
+      case 1: // January
+      case 3: // March
+      case 5: // May
+      case 7: // July
+      case 8: // August
+      case 10: // October
+      case 12: // December
+        return 31;
+      case 4: // April
+      case 6: // June
+      case 9: // September
+      case 11: // November
+        return 30;
+      case 2: // February
+        return _isLeapYear(year) ? 29 : 28;
+      default:
+        return 30;
+    }
+  }
+
+  bool _isLeapYear(int year) {
+    // Leap year is divisible by 4, but not divisible by 100 unless divisible by 400
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
   }
 
 //first container variable
@@ -93,7 +382,10 @@ class _addLease3State extends State<addLease3>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
-
+  DateTime? _endDate;
+  String selectedFrequency = 'Monthly';
+  bool isProRent = false;
+  bool isAmountEntered = false;
   //second container variables
   String? _selectedRent;
   final TextEditingController rentAmount = TextEditingController();
@@ -145,9 +437,15 @@ class _addLease3State extends State<addLease3>
     }
   }
 
+  bool _showUnitDropdown = false;
+
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
+      _showUnitDropdown = false;
+      // Clear units and selection when loading new units
+      units = [];
+      _selectedUnit = null;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -162,25 +460,45 @@ class _addLease3State extends State<addLease3>
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
-        List jsonResponse = json.decode(response.body)['data'];
+        Map<String, dynamic> responses = jsonDecode(response.body);
+        if (responses["statusCode"] == 200) {
+          List jsonResponse = json.decode(response.body)['data'];
 
-        List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
-          return {
-            'unit_id': data['unit_id'].toString(),
-            'rental_unit': data['rental_unit'].toString(),
-          };
-        }).toList();
+          List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
+            return {
+              'unit_id': data['unit_id'].toString(),
+              'rental_unit': data['rental_unit'].toString(),
+            };
+          }).toList();
 
-        setState(() {
-          units = unitAddresses;
-          _isLoading = false;
-        });
+          // Filter out any null or empty unit names
+          unitAddresses = unitAddresses.where((unit) {
+            String unitId = unit['unit_id'] ?? '';
+            String unitName = unit['rental_unit'] ?? '';
+            return unitId.isNotEmpty && unitName.trim().isNotEmpty;
+          }).toList();
+
+          print('Found ${unitAddresses.length} valid units');
+
+          setState(() {
+            units = unitAddresses;
+            _isLoading = false;
+            _showUnitDropdown = units.isNotEmpty;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+            _showUnitDropdown = false;
+          });
+        }
       } else {
         throw Exception('Failed to load units');
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
+        units = [];
+        _selectedUnit = null;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch units: $e')),
@@ -257,6 +575,9 @@ class _addLease3State extends State<addLease3>
   GlobalKey<SfSignaturePadState> _signaturePadKey = GlobalKey();
 
   bool _selectedResidentsEmail = false; // Initialize the boolean variable
+  bool _leasePaymentSettings = false; // Enable payment settings
+  bool _creditCardAccepted = false; // Credit card checkbox
+  bool _debitCardAccepted = false; // Debit card checkbox
   Widget _buildDataCell(String text) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -266,7 +587,8 @@ class _addLease3State extends State<addLease3>
         child: TableCell(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+            child:
+                Center(child: Text(text, style: const TextStyle(fontSize: 18))),
           ),
         ),
       ),
@@ -278,7 +600,7 @@ class _addLease3State extends State<addLease3>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-  final List<String> rentCycleitems = [
+  List<String> rentCycleitems = [
     'Daily',
     'Weekly',
     'Every two weeks',
@@ -286,15 +608,75 @@ class _addLease3State extends State<addLease3>
     'Every two months',
     'Quarterly',
     'Yearly',
+    'Semi Monthly'
   ];
+
+  rentCycleItemsDynamic(int days) {
+    print("days = $days");
+    if (days == 1) {
+      rentCycleitems = ['Daily'];
+    } else if (days >= 365) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+        'Yearly',
+        'Semi Monthly',
+      ];
+    } else if (days >= 93) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+      ];
+    } else if (days >= 62) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+      ];
+    } else if (days >= 32) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+      ];
+    } else if (days >= 15) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+      ];
+    } else if (days >= 7) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+      ];
+    }
+    setState(() {});
+  }
+
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
-        return startDate.add(Duration(days: 1));
+        return startDate.add(const Duration(days: 1));
       case 'Weekly':
-        return startDate.add(Duration(days: 7));
+        return startDate.add(const Duration(days: 7));
       case 'Every two weeks':
-        return startDate.add(Duration(days: 14));
+        return startDate.add(const Duration(days: 14));
       case 'Monthly':
         return DateTime(startDate.year, startDate.month + 1, startDate.day);
       case 'Every two months':
@@ -303,6 +685,24 @@ class _addLease3State extends State<addLease3>
         return DateTime(startDate.year, startDate.month + 3, startDate.day);
       case 'Yearly':
         return DateTime(startDate.year + 1, startDate.month, startDate.day);
+      case 'Semi Monthly':
+        // Get the number of days in the current month
+        int lastDayOfMonth =
+            DateTime(startDate.year, startDate.month + 1, 0).day;
+        // Determine the middle of the month
+        int middleOfMonth = (lastDayOfMonth / 2).floor();
+
+        if (startDate.day <= middleOfMonth) {
+          // If today is in the first half (1st to mid-month), set the next due date to the middle of this month
+          return DateTime(startDate.year, startDate.month, middleOfMonth);
+        } else {
+          // If today is in the second half (mid+1 to end of month), set the next due date to the middle of next month
+          if (startDate.month == 12) {
+            // Special case for December, next due date should be January 1st
+            return DateTime(startDate.year + 1, 1, middleOfMonth);
+          }
+          return DateTime(startDate.year, startDate.month + 1, middleOfMonth);
+        }
       default:
         return startDate;
     }
@@ -312,10 +712,119 @@ class _addLease3State extends State<addLease3>
     if (_startDate != null && _selectedRent != null) {
       DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
       String formattedNextDueDate =
-          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
 
       setState(() {
-        rentNextDueDate.text = formattedNextDueDate;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        rentNextDueDate.text =
+            dateProvider.formatCurrentDate(formattedNextDueDate);
+      });
+    }
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _startDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _startDate) {
+      setState(() {
+        _startDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        startDateController.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
+
+        // Auto-set end date to one year later
+        DateTime endDate = DateTime(picked.year + 1, picked.month, picked.day);
+        _endDate = endDate;
+        endDateController.text =
+            DateFormat(dateProvider.dateFormat).format(endDate);
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate ?? DateTime.now(),
+      firstDate: _startDate ?? DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _endDate) {
+      setState(() {
+        _endDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        endDateController.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
+      });
+    }
+  }
+
+  Future<void> _selectNextDueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        rentNextDueDate.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -377,14 +886,6 @@ class _addLease3State extends State<addLease3>
         return AlertDialog(
           backgroundColor: Colors.white,
           contentPadding: EdgeInsets.zero,
-          title: const Text(
-            'Add One Time Charge Content',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(21, 43, 83, 1),
-            ),
-          ),
           content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: OneTimeChargePopUp(
@@ -401,7 +902,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -422,7 +923,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Suessfully');
         } else {
           formDataOneTimeList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -439,14 +940,6 @@ class _addLease3State extends State<addLease3>
         return AlertDialog(
           backgroundColor: Colors.white,
           contentPadding: EdgeInsets.zero,
-          title: const Text(
-            'Add Recurring content',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(21, 43, 83, 1),
-            ),
-          ),
           content: Padding(
             padding: const EdgeInsets.all(8.0),
             child: RecurringChargePopUp(
@@ -463,7 +956,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataRecurringList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -484,7 +977,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
         } else {
           formDataRecurringList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -498,7 +991,8 @@ class _addLease3State extends State<addLease3>
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      // allowedExtensions: ['pdf'],
       allowMultiple: true,
     );
 
@@ -558,7 +1052,7 @@ class _addLease3State extends State<addLease3>
 
   String renderId = '';
   String unitId = '';
- //for rentshare
+  //for rentshare
   String? _errorMessage;
   @override
   Widget build(BuildContext context) {
@@ -583,14 +1077,12 @@ class _addLease3State extends State<addLease3>
     final tenants =
         Provider.of<SelectedTenantsProvider>(context).selectedTenants;
     Map<int, Map<String, String>> tenantsMap =
-    tenants.asMap().map((index, tenant) {
-
+        tenants.asMap().map((index, tenant) {
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
         'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
         'lastName': tenant.tenantLastName ?? "",
-        'passWord': tenant.tenantPassword ?? '',
         'passWord': tenant.tenantPassword ?? '',
         'phoneNumber': tenant.tenantPhoneNumber ?? "",
         'workNumber': tenant.tenantAlternativeNumber ?? "",
@@ -600,10 +1092,10 @@ class _addLease3State extends State<addLease3>
         'comments': tenant.comments ?? '',
         'dob': tenant.tenantBirthDate ?? '',
         'taxPayerId': tenant.taxPayerId ?? '',
-        'emergencyContactName': tenant.emergencyContact!.name ?? '',
-        'emergencyRelation': tenant.emergencyContact!.relation ?? '',
-        'emergencyEmail': tenant.emergencyContact!.email ?? '',
-        'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
+        'emergencyContactName': tenant.emergencyContact?.name ?? '',
+        'emergencyRelation': tenant.emergencyContact?.relation ?? '',
+        'emergencyEmail': tenant.emergencyContact?.email ?? '',
+        'emergencyPhoneNumber': tenant.emergencyContact?.phoneNumber ?? '',
         'city': '', // Add city if available
         'country': '', // Add country if available
         'postalCode': '', // Add postal code if available
@@ -614,17 +1106,25 @@ class _addLease3State extends State<addLease3>
         Provider.of<SelectedTenantsProvider>(context, listen: false);
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
+    bool hasSelectedTenants = Provider.of<SelectedTenantsProvider>(context)
+        .selectedTenants
+        .isNotEmpty;
+    bool hasSelectedApplicants = Provider.of<SelectedApplicantProvider>(context)
+        .selectedApplicant
+        .isNotEmpty;
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
+      drawer: CustomDrawerStaff(
+        currentpage: "Leases",
+        dropdown: true,
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child:
-          Column(
+          child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               Padding(
@@ -639,7 +1139,7 @@ class _addLease3State extends State<addLease3>
                     //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.grey,
@@ -658,23 +1158,25 @@ class _addLease3State extends State<addLease3>
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Padding(
-                padding:  EdgeInsets.only(left:  MediaQuery.of(context).size.width < 500 ? 15 :35, right:  MediaQuery.of(context).size.width < 500 ? 15 :35),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width < 500 ? 15 : 35,
+                    right: MediaQuery.of(context).size.width < 500 ? 15 : 35),
                 child: Container(
                   child: Column(
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -703,11 +1205,13 @@ class _addLease3State extends State<addLease3>
                                     },
                                     builder: (FormFieldState<String> state) {
                                       return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           DropdownButtonHideUnderline(
-                                            child: DropdownButtonFormField2<String>(
-                                              decoration: InputDecoration(
+                                            child: DropdownButtonFormField2<
+                                                String>(
+                                              decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                               ),
                                               isExpanded: true,
@@ -718,10 +1222,13 @@ class _addLease3State extends State<addLease3>
                                                       'Select Property',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w400,
-                                                        color: Color(0xFFb0b6c3),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
                                                       ),
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ],
@@ -733,10 +1240,12 @@ class _addLease3State extends State<addLease3>
                                                     property['rental_adress']!,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: Colors.black87,
                                                     ),
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
@@ -744,52 +1253,71 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
-                                                  _selectedUnit = null; // Optionally reset _selectedUnit
-                                                  state.didChange(value); // Notify the FormField that the value has changed
+                                                  _selectedUnit =
+                                                      null; // Reset _selectedUnit when property changes
+                                                  _showUnitDropdown = false;
+                                                  state.didChange(
+                                                      value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
-                                                  print('Hello Yash:${renderId}');
-                                                  _loadUnits(value!); // Fetch units for the selected property
+
+                                                  _loadUnits(
+                                                      value!); // Fetch units for the selected property
                                                 });
                                                 state.reset();
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
                                                 width: 160,
-                                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
+                                              iconStyleData:
+                                                  const IconStyleData(
                                                 icon: Icon(
                                                   Icons.arrow_drop_down,
                                                 ),
                                                 iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
-                                              dropdownStyleData: DropdownStyleData(
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
-                                                  thumbVisibility: MaterialStateProperty.all(true),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
-                                              menuItemStyleData: const MenuItemStyleData(
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
                                                 height: 40,
-                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
                                               ),
                                             ),
                                           ),
                                           if (state.hasError)
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 14, top: 8),
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, top: 8),
                                               child: Text(
                                                 state.errorText!,
                                                 style: const TextStyle(
@@ -802,9 +1330,13 @@ class _addLease3State extends State<addLease3>
                                       );
                                     },
                                   ),
-                                  if (units.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 16.0),
+                                  if (units.isNotEmpty &&
+                                      units.any((unit) =>
+                                          (unit['rental_unit'] ?? '')
+                                              .trim()
+                                              .isNotEmpty))
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 5.0),
                                       child: Text(
                                         'Unit',
                                         style: TextStyle(
@@ -814,7 +1346,11 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if (units.isNotEmpty)
+                                  if (units.isNotEmpty &&
+                                      units.any((unit) =>
+                                          (unit['rental_unit'] ?? '')
+                                              .trim()
+                                              .isNotEmpty))
                                     FormField<String>(
                                       // initialValue: _selectedUnit,
                                       validator: (value) {
@@ -825,11 +1361,14 @@ class _addLease3State extends State<addLease3>
                                       },
                                       builder: (FormFieldState<String> state) {
                                         return Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             DropdownButtonHideUnderline(
-                                              child: DropdownButtonFormField2<String>(
-                                                decoration: InputDecoration(
+                                              child: DropdownButtonFormField2<
+                                                  String>(
+                                                decoration:
+                                                    const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
@@ -840,29 +1379,56 @@ class _addLease3State extends State<addLease3>
                                                         'Select Unit',
                                                         style: TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
-                                                          color: Color(0xFFb0b6c3),
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color:
+                                                              Color(0xFFb0b6c3),
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                                items: units.map((unit) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: unit['unit_id']!,
-                                                    child: Text(
-                                                      unit['rental_unit']!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w400,
-                                                        color: Colors.black87,
-                                                      ),
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                value: _selectedUnit,
+                                                items: units
+                                                    .map((unit) {
+                                                      String? unitName =
+                                                          unit['rental_unit']
+                                                              ?.trim();
+                                                      if (unitName
+                                                              ?.isNotEmpty !=
+                                                          true) return null;
+
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: unit['unit_id']!,
+                                                        child: Text(
+                                                          unitName!,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      );
+                                                    })
+                                                    .whereType<
+                                                        DropdownMenuItem<
+                                                            String>>()
+                                                    .toList(),
+                                                value: _selectedUnit != null &&
+                                                        _selectedUnit!
+                                                            .isNotEmpty &&
+                                                        units.any((unit) =>
+                                                            unit['unit_id'] ==
+                                                            _selectedUnit)
+                                                    ? _selectedUnit
+                                                    : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnit = value;
@@ -870,44 +1436,65 @@ class _addLease3State extends State<addLease3>
                                                   });
                                                   state.reset();
                                                 },
-                                                buttonStyleData: ButtonStyleData(
+                                                buttonStyleData:
+                                                    ButtonStyleData(
                                                   height: 45,
                                                   width: 160,
-                                                  padding: const EdgeInsets.only(left: 14, right: 14),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
                                                     color: Colors.white,
                                                   ),
                                                   elevation: 2,
                                                 ),
-                                                iconStyleData: const IconStyleData(
+                                                iconStyleData:
+                                                    const IconStyleData(
                                                   icon: Icon(
                                                     Icons.arrow_drop_down,
                                                   ),
                                                   iconSize: 24,
-                                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                                  iconDisabledColor: Colors.grey,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
                                                 ),
-                                                dropdownStyleData: DropdownStyleData(
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
                                                   decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
                                                     color: Colors.white,
                                                   ),
-                                                  scrollbarTheme: ScrollbarThemeData(
-                                                    radius: const Radius.circular(6),
-                                                    thickness: MaterialStateProperty.all(6),
-                                                    thumbVisibility: MaterialStateProperty.all(true),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
                                                   ),
                                                 ),
-                                                menuItemStyleData: const MenuItemStyleData(
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
                                                   height: 40,
-                                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                 ),
                                               ),
                                             ),
                                             if (state.hasError)
                                               Padding(
-                                                padding: const EdgeInsets.only(left: 14, top: 8),
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, top: 8),
                                                 child: Text(
                                                   state.errorText!,
                                                   style: const TextStyle(
@@ -920,7 +1507,6 @@ class _addLease3State extends State<addLease3>
                                         );
                                       },
                                     ),
-
                                 ],
                               ),
                               const SizedBox(
@@ -953,73 +1539,26 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 8,
                               ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const Text('Start Date *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: const ColorScheme.light(
-                                              primary: Color.fromRGBO(21, 43, 83,
-                                                  1), // header background color
-                                              onPrimary:
-                                              Colors.white, // header text color
-                                              onSurface: Color.fromRGBO(
-                                                  21, 43, 83, 1), // body text color
-                                            ),
-                                            textButtonTheme: TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor: const Color.fromRGBO(
-                                                    21,
-                                                    43,
-                                                    83,
-                                                    1), // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-                                    if (pickedDate != null) {
-                                      // String formattedStartDate =
-                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                      DateTime endDate = DateTime(pickedDate.year,
-                                          pickedDate.month + 1, pickedDate.day);
-                                      // String formattedEndDate =
-                                      //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
-
-                                      String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                      setState(() {
-
-                                        startDateController.text = formattedStartDate;
-                                        _startDate = pickedDate;
-                                        endDateController.text = formattedEndDate;
-                                      });
-                                    }
+                                  onTap: () {
+                                    _selectStartDate(context);
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _selectStartDate(context);
+                                    },
                                     icon: const Icon(Icons.date_range_rounded),
                                   ),
                                   validator: (value) {
@@ -1029,51 +1568,55 @@ class _addLease3State extends State<addLease3>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: startDateController,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const Text('End Date *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
                                   onTap: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
+                                      firstDate: _startDate != null
+                                          ? _startDate!
+                                          : DateTime(1900),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme: const ColorScheme.light(
-                                              primary: Color.fromRGBO(21, 43, 83,
-                                                  1), // header background color
-                                              onPrimary:
-                                              Colors.white, // header text color
-                                              onSurface: Color.fromRGBO(
-                                                  21, 43, 83, 1), // body text color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                                  blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                                TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: const Color.fromRGBO(
-                                                    21,
-                                                    43,
-                                                    83,
-                                                    1), // button text color
+                                                backgroundColor:
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1084,15 +1627,75 @@ class _addLease3State extends State<addLease3>
                                     if (pickedDate != null) {
                                       // String formattedDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      String formattedDate =
+                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       setState(() {
                                         endDateController.text = formattedDate;
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
+                                        endDateController.text.isNotEmpty;
+                                        isProRent = false;
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
                                     }
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: _startDate != null
+                                            ? _startDate!
+                                            : DateTime(1900),
+                                        lastDate: DateTime(2101),
+                                        locale: const Locale('en', 'US'),
+                                        builder: (BuildContext context,
+                                            Widget? child) {
+                                          return Theme(
+                                            data: ThemeData.light().copyWith(
+                                              colorScheme: ColorScheme.light(
+                                                primary:
+                                                    blueColor, // header background color
+                                                onPrimary: Colors
+                                                    .white, // header text color
+                                                onSurface:
+                                                    blueColor, // body text color
+                                              ),
+                                              textButtonTheme:
+                                                  TextButtonThemeData(
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  backgroundColor:
+                                                      blueColor, // button text color
+                                                ),
+                                              ),
+                                            ),
+                                            child: child!,
+                                          );
+                                        },
+                                      );
+                                      if (pickedDate != null) {
+                                        // String formattedDate =
+                                        //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                        String formattedDate =
+                                            "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                        setState(() {
+                                          endDateController.text =
+                                              formattedDate;
+                                          rentCycleItemsDynamic(pickedDate
+                                              .difference(_startDate!)
+                                              .inDays);
+                                          endDateController.text.isNotEmpty;
+                                          isProRent = false;
+                                          _updateProRatedRent(
+                                              _selectedRent ?? 'Monthly');
+                                        });
+                                      }
+                                    },
                                     icon: const Icon(Icons.date_range_rounded),
                                   ),
                                   validator: (value) {
@@ -1103,169 +1706,105 @@ class _addLease3State extends State<addLease3>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: endDateController,
                                 ),
-                              if(MediaQuery.of(context).size.width > 500)
+                              if (MediaQuery.of(context).size.width > 500)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       // First Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Start Date *',
+                                            const Text('Start Date *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
-                                                          onPrimary:
-                                                          Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
-                                                        ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: const Color.fromRGBO(
-                                                                21,
-                                                                43,
-                                                                83,
-                                                                1), // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedStartDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  DateTime endDate = DateTime(pickedDate.year,
-                                                      pickedDate.month + 1, pickedDate.day);
-                                                  String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                                  // String formattedEndDate =
-                                                  //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
-                                                  setState(() {
-                                                    startDateController.text = formattedStartDate;
-                                                    _startDate = pickedDate;
-                                                    endDateController.text = formattedEndDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectStartDate(context);
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                onPressed: () {
+                                                  _selectStartDate(context);
+                                                },
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select start date';
                                                 }
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: startDateController,
                                             ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 16),
+                                      const SizedBox(width: 16),
                                       // Second Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('End Date *',
+                                            const Text('End Date *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
-                                                          onPrimary:
-                                                          Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
-                                                        ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: const Color.fromRGBO(
-                                                                21,
-                                                                43,
-                                                                83,
-                                                                1), // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  setState(() {
-                                                    endDateController.text = formattedDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectEndDate(context);
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                onPressed: () {
+                                                  _selectEndDate(context);
+                                                },
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select end date';
                                                 }
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: endDateController,
                                             ),
-                                            SizedBox(height: 5),
-
+                                            const SizedBox(height: 5),
                                           ],
                                         ),
                                       ),
@@ -1284,7 +1823,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -1295,15 +1834,14 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Add lease',
+                              Text('Add lease',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
-
                               FormField<String>(
                                 builder: (FormFieldState<String> state) {
                                   return InkWell(
@@ -1313,157 +1851,190 @@ class _addLease3State extends State<addLease3>
                                         builder: (context) {
                                           return StatefulBuilder(
                                             builder: (context, setState) {
+                                              var cosignerProvider = Provider
+                                                  .of<SelectedCosignersProvider>(
+                                                      context);
+                                              Cosigner? existingCosigner;
+                                              int? existingIndex;
+
+                                              if (cosignerProvider
+                                                  .cosigners.isNotEmpty) {
+                                                existingCosigner = cosignerProvider
+                                                    .cosigners
+                                                    .first; // Get the first cosigner
+                                                existingIndex =
+                                                    0; // Assuming you want to edit the first cosigner
+                                              }
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
-                                                title: const Text(
+                                                title: Text(
                                                   'Add Tenant or Cosigner',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF152b51),
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                                 content: Form(
                                                   key: _addRecurringFormKey,
                                                   child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Container(
                                                       color: Colors.white,
                                                       width: double.infinity,
-                                                      child: SingleChildScrollView(
+                                                      child:
+                                                          SingleChildScrollView(
                                                         child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
                                                           child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: [
                                                               Row(
                                                                 children: [
                                                                   Expanded(
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(() {
-                                                                          isTenantSelected = true;
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          isTenantSelected =
+                                                                              true;
                                                                         });
                                                                       },
-                                                                      child: Container(
-                                                                        decoration: BoxDecoration(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
                                                                           border: isTenantSelected
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
-                                                                            width: 1,
-                                                                          ),
+                                                                                  color: blueColor,
+                                                                                  width: 1,
+                                                                                ),
                                                                           gradient: isTenantSelected
-                                                                              ? const LinearGradient(
-                                                                            colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                            ],
-                                                                          )
+                                                                              ? LinearGradient(
+                                                                                  colors: [
+                                                                                    blueColor,
+                                                                                    blueColor,
+                                                                                  ],
+                                                                                )
                                                                               : null,
-                                                                          borderRadius: const BorderRadius.only(
-                                                                            topLeft: Radius.circular(4),
-                                                                            bottomLeft: Radius.circular(4),
+                                                                          borderRadius:
+                                                                              const BorderRadius.only(
+                                                                            topLeft:
+                                                                                Radius.circular(4),
+                                                                            bottomLeft:
+                                                                                Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment: Alignment.center,
+                                                                        alignment:
+                                                                            Alignment.center,
                                                                         padding: isTenantSelected
                                                                             ? const EdgeInsets.symmetric(vertical: 13)
                                                                             : const EdgeInsets.symmetric(vertical: 12),
                                                                         child: isTenantSelected
                                                                             ? Text(
-                                                                          "Tenant",
-                                                                          style: TextStyle(
-                                                                            color: !isTenantSelected
-                                                                                ? Colors.transparent
-                                                                                : Colors.white,
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        )
+                                                                                "Tenant",
+                                                                                style: TextStyle(
+                                                                                  color: !isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              )
                                                                             : ShaderMask(
-                                                                          shaderCallback: (bounds) {
-                                                                            return const LinearGradient(
-                                                                              colors: [
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                              ],
-                                                                            ).createShader(bounds);
-                                                                          },
-                                                                          child: Text(
-                                                                            "Tenant",
-                                                                            style: TextStyle(
-                                                                              color: isTenantSelected
-                                                                                  ? Colors.transparent
-                                                                                  : Colors.white,
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ),
+                                                                                shaderCallback: (bounds) {
+                                                                                  return LinearGradient(
+                                                                                    colors: [
+                                                                                      blueColor,
+                                                                                      blueColor,
+                                                                                    ],
+                                                                                  ).createShader(bounds);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Tenant",
+                                                                                  style: TextStyle(
+                                                                                    color: isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   Expanded(
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(() {
-                                                                          isTenantSelected = false;
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          isTenantSelected =
+                                                                              false;
                                                                         });
                                                                       },
-                                                                      child: Container(
-                                                                        decoration: BoxDecoration(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
                                                                           border: isTenantSelected == false
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
-                                                                            width: 1,
-                                                                          ),
+                                                                                  color: blueColor,
+                                                                                  width: 1,
+                                                                                ),
                                                                           gradient: isTenantSelected == false
-                                                                              ? const LinearGradient(
-                                                                            colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                            ],
-                                                                          )
+                                                                              ? LinearGradient(
+                                                                                  colors: [
+                                                                                    blueColor,
+                                                                                    blueColor,
+                                                                                  ],
+                                                                                )
                                                                               : null,
-                                                                          borderRadius: const BorderRadius.only(
-                                                                            topRight: Radius.circular(4),
-                                                                            bottomRight: Radius.circular(4),
+                                                                          borderRadius:
+                                                                              const BorderRadius.only(
+                                                                            topRight:
+                                                                                Radius.circular(4),
+                                                                            bottomRight:
+                                                                                Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment: Alignment.center,
+                                                                        alignment:
+                                                                            Alignment.center,
                                                                         padding: isTenantSelected
                                                                             ? const EdgeInsets.symmetric(vertical: 12)
                                                                             : const EdgeInsets.symmetric(vertical: 13),
                                                                         child: !isTenantSelected
                                                                             ? Text(
-                                                                          "Cosigner",
-                                                                          style: TextStyle(
-                                                                            color: isTenantSelected
-                                                                                ? Colors.transparent
-                                                                                : Colors.white,
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        )
+                                                                                "Cosigner",
+                                                                                style: TextStyle(
+                                                                                  color: isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              )
                                                                             : ShaderMask(
-                                                                          shaderCallback: (bounds) {
-                                                                            return const LinearGradient(
-                                                                              colors: [
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                              ],
-                                                                            ).createShader(bounds);
-                                                                          },
-                                                                          child: Text(
-                                                                            "Cosigner",
-                                                                            style: TextStyle(
-                                                                              color: !isTenantSelected
-                                                                                  ? Colors.transparent
-                                                                                  : Colors.white,
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ),
+                                                                                shaderCallback: (bounds) {
+                                                                                  return LinearGradient(
+                                                                                    colors: [
+                                                                                      blueColor,
+                                                                                      blueColor,
+                                                                                    ],
+                                                                                  ).createShader(bounds);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Cosigner",
+                                                                                  style: TextStyle(
+                                                                                    color: !isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -1471,7 +2042,12 @@ class _addLease3State extends State<addLease3>
                                                               ),
                                                               isTenantSelected
                                                                   ? const AddTenant()
-                                                                  : AddCosigner(),
+                                                                  : AddCosigner(
+                                                                      cosigner:
+                                                                          existingCosigner,
+                                                                      index:
+                                                                          existingIndex,
+                                                                    ),
                                                             ],
                                                           ),
                                                         ),
@@ -1496,37 +2072,39 @@ class _addLease3State extends State<addLease3>
                                   );
                                 },
                               ),
-                              SizedBox(height: 8.0),
+                              const SizedBox(height: 8.0),
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 13),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Tenants:',
                                     style: TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 4, right: 4),
+                                  padding:
+                                      const EdgeInsets.only(left: 4, right: 4),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Table(
                                         border: TableBorder.all(
                                           width: 1,
-                                          color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          color: blueColor,
                                         ),
                                         columnWidths: const {
                                           0: FlexColumnWidth(2),
@@ -1536,124 +2114,209 @@ class _addLease3State extends State<addLease3>
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
-                                                  'First Name',
+                                                  'Name',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 14
-                                                        : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Rent share',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 14
-                                                        : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Action',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 14
-                                                        : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          ... Provider.of<SelectedTenantsProvider>(context)
+                                          ...Provider.of<
+                                                      SelectedTenantsProvider>(
+                                                  context)
                                               .selectedTenants
                                               .asMap()
                                               .entries
                                               .map((entry) {
+                                            // final index = entry.key;
+                                            // final tenant = entry.value;
+                                            // final controller = Provider.of<SelectedTenantsProvider>(context).rentShareControllers[index];
                                             final index = entry.key;
                                             final tenant = entry.value;
-                                            final controller = Provider.of<SelectedTenantsProvider>(context).rentShareControllers[index];
 
+                                            print(
+                                                "Controller length:- ${Provider.of<SelectedTenantsProvider>(context).rentShareControllers.length}  $index");
+                                            final controller = Provider.of<
+                                                        SelectedTenantsProvider>(
+                                                    context)
+                                                .rentShareControllers[index];
                                             return TableRow(
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(left: 10, top: 15),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10, top: 15),
                                                   child: Text(
                                                     '${tenant.tenantFirstName} ${tenant.tenantLastName}',
                                                     style: TextStyle(
-                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 18,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.all(8.0),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: Material(
                                                     elevation: 3,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                     child: Container(
-                                                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                                                      width: MediaQuery.of(context).size.width < 500 ? 70 : 400,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 45
+                                                              : 50,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 70
+                                                              : 400,
                                                       decoration: BoxDecoration(
                                                         color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(8),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
                                                         border: Border.all(
-                                                          color: Colors.grey[300]!,
+                                                          color:
+                                                              Colors.grey[300]!,
                                                           width: 1,
                                                         ),
                                                       ),
                                                       child: Center(
                                                         child: Padding(
-                                                          padding: const EdgeInsets.only(left: 10, bottom: 7),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 10,
+                                                                  bottom: 7),
                                                           child: TextField(
-                                                            controller: controller,
+                                                            controller:
+                                                                controller,
                                                             style: TextStyle(
-                                                              fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 16,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 12
+                                                                  : 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.black,
                                                             ),
                                                             onChanged: (value) {
-                                                              double enteredValue = double.tryParse(value) ?? 0;
-                                                              if (enteredValue > 100) {
-                                                                controller.text = '100';
-                                                                controller.selection = TextSelection.fromPosition(
-                                                                  TextPosition(offset: controller.text.length),
-                                                                );
+                                                              //
+                                                              double
+                                                                  totalRentShare =
+                                                                  0.0;
+                                                              for (var controller in Provider.of<
+                                                                          SelectedTenantsProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .rentShareControllers) {
+                                                                double
+                                                                    rentShare =
+                                                                    double.tryParse(controller
+                                                                            .text
+                                                                            .trim()) ??
+                                                                        0.0;
+                                                                totalRentShare +=
+                                                                    rentShare;
                                                               }
-                                                              Provider.of<SelectedTenantsProvider>(context, listen: false)
-                                                                  .validateRentShares();
+                                                              setState(() {
+                                                                if (totalRentShare !=
+                                                                    100.0) {
+                                                                  _errorMessage =
+                                                                      'Total rent share must equal 100';
+                                                                } else {
+                                                                  _errorMessage =
+                                                                      ''; // Clear error when total equals 100
+                                                                }
+                                                              });
                                                             },
-
-                                                            keyboardType: TextInputType.number,
-                                                            decoration: const InputDecoration(
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration:
+                                                                const InputDecoration(
                                                               hintText: "0",
-                                                              border: InputBorder.none,
-                                                              contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                          vertical:
+                                                                              10),
                                                             ),
                                                           ),
                                                         ),
@@ -1662,20 +2325,35 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(top: 15),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 15),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: [
                                                       InkWell(
                                                         onTap: () {
-                                                          Provider.of<SelectedTenantsProvider>(context, listen: false)
-                                                              .removeTenant(tenant);
+                                                          Provider.of<SelectedTenantsProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .removeTenant(
+                                                                  tenant);
                                                         },
                                                         child: Icon(
                                                           Icons.delete,
-                                                          color: const Color.fromRGBO(21, 43, 83, 1),
-                                                          size: MediaQuery.of(context).size.width < 500 ? 18 : 25,
+                                                          color: blueColor,
+                                                          size: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 18
+                                                              : 25,
                                                         ),
                                                       ),
                                                     ],
@@ -1698,19 +2376,25 @@ class _addLease3State extends State<addLease3>
                                       height: 8,
                                     ),
                                     Consumer<SelectedTenantsProvider>(
-                                      builder: (context, selectedTenantsProvider, child) {
-                                        return selectedTenantsProvider.validationMessage != null
+                                      builder: (context,
+                                          selectedTenantsProvider, child) {
+                                        return selectedTenantsProvider
+                                                    .validationMessage !=
+                                                null
                                             ? Padding(
-                                          padding: const EdgeInsets.only(top: 5),
-                                          child: Text(
-                                            selectedTenantsProvider.validationMessage!,
-                                            style: TextStyle(color: Colors.red, fontSize: 16),
-                                          ),
-                                        )
-                                            : SizedBox.shrink();
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(
+                                                  selectedTenantsProvider
+                                                      .validationMessage!,
+                                                  style: const TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 16),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink();
                                       },
                                     ),
-
                                   ],
                                 ),
                               if (_errorMessage != null)
@@ -1718,47 +2402,53 @@ class _addLease3State extends State<addLease3>
                                   padding: const EdgeInsets.only(top: 3.0),
                                   child: Text(
                                     _errorMessage!,
-                                    style: TextStyle(color: Colors.red),
+                                    style: const TextStyle(color: Colors.red),
                                   ),
                                 ),
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                                SizedBox(
+                                const SizedBox(
                                   height: 8,
                                 ),
-                              SizedBox(height: 8.0),
-                              if (Provider.of<SelectedCosignersProvider>(context)
+                              const SizedBox(height: 8.0),
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
                                   .cosigners
                                   .isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 13),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Consigner:',
                                     style: TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              if (Provider.of<SelectedCosignersProvider>(context)
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
                                   .cosigners
                                   .isNotEmpty)
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
-                              if (Provider.of<SelectedCosignersProvider>(context)
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
                                   .cosigners
                                   .isNotEmpty)
-
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5,right: 5),
+                                  padding:
+                                      const EdgeInsets.only(left: 5, right: 5),
                                   child: SingleChildScrollView(
                                     // scrollDirection: Axis.horizontal,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
+                                            border:
+                                                Border.all(color: blueColor),
                                           ),
                                           child: Table(
                                             border: TableBorder.all(
@@ -1774,23 +2464,24 @@ class _addLease3State extends State<addLease3>
                                             children: [
                                               TableRow(
                                                 decoration: BoxDecoration(
-                                                  color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  color: blueColor,
                                                 ),
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                    const EdgeInsets.all(8.0),
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Name',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                            500
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 13
                                                             : 20,
                                                       ),
@@ -1798,17 +2489,19 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                   Padding(
                                                     padding:
-                                                    const EdgeInsets.all(8.0),
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Phone number',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                            500
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 13
                                                             : 20,
                                                       ),
@@ -1816,17 +2509,19 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                   Padding(
                                                     padding:
-                                                    const EdgeInsets.all(8.0),
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Action',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                            500
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
                                                             ? 13
                                                             : 20,
                                                       ),
@@ -1835,8 +2530,8 @@ class _addLease3State extends State<addLease3>
                                                 ],
                                               ),
                                               ...Provider.of<
-                                                  SelectedCosignersProvider>(
-                                                  context)
+                                                          SelectedCosignersProvider>(
+                                                      context)
                                                   .cosigners
                                                   .asMap()
                                                   .entries
@@ -1847,44 +2542,50 @@ class _addLease3State extends State<addLease3>
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsets.all(8.0),
+                                                          const EdgeInsets.all(
+                                                              8.0),
                                                       child: Text(
                                                         '${cosigner.firstName} ${cosigner.lastName}',
-                                                        style:  TextStyle(
-                                                          fontSize: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                              500
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
                                                               ? 13
                                                               : 20,
                                                           fontWeight:
-                                                          FontWeight.w700,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                              FontWeight.w700,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsets.all(8.0),
+                                                          const EdgeInsets.all(
+                                                              8.0),
                                                       child: Text(
                                                         '${cosigner.phoneNumber}',
                                                         style: TextStyle(
-                                                          fontSize: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                              500
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
                                                               ? 13
                                                               : 20,
                                                           fontWeight:
-                                                          FontWeight.w500,
-                                                          color: Colors.grey[500],
+                                                              FontWeight.w500,
+                                                          color:
+                                                              Colors.grey[500],
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsets.only(left: 20,top: 10),
+                                                          const EdgeInsets.only(
+                                                              left: 20,
+                                                              top: 10),
                                                       child: Row(
                                                         children: [
                                                           InkWell(
@@ -1892,34 +2593,40 @@ class _addLease3State extends State<addLease3>
                                                               setState(() {
                                                                 isTenantSelected ==
                                                                     true;
-                                                                tenent_popup(cosigner,index);
+                                                                tenent_popup(
+                                                                    cosigner,
+                                                                    index);
                                                               });
                                                             },
-                                                            child:  Icon(
+                                                            child: Icon(
                                                               Icons.edit,
-                                                              size: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                                  500
+                                                              size: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
                                                                   ? 15
                                                                   : 20,
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 5),
+                                                          const SizedBox(
+                                                              width: 5),
                                                           InkWell(
                                                             onTap: () {
                                                               Provider.of<SelectedCosignersProvider>(
-                                                                  context,
-                                                                  listen: false)
+                                                                      context,
+                                                                      listen:
+                                                                          false)
                                                                   .removeConsigner(
-                                                                  cosigner);
+                                                                      cosigner);
                                                             },
-                                                            child:  Icon(
+                                                            child: Icon(
                                                               Icons.delete,
-                                                              size: MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                                  500
+                                                              size: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
                                                                   ? 15
                                                                   : 20,
                                                             ),
@@ -1949,7 +2656,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -1960,31 +2667,34 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Rent',
+                              Text('Rent',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
-                              if(MediaQuery.of(context).size.width > 500)
+                              if (MediaQuery.of(context).size.width > 500)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       // First Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Rent Cycle *',
+                                            const Text('Rent Cycle *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomDropdown(
                                               validator: (value) {
                                                 if (_selectedRent == null) {
@@ -1998,90 +2708,58 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (String? value) {
                                                 setState(() {
                                                   _selectedRent = value;
+
+                                                  _updateProRatedRent(
+                                                      _selectedRent ??
+                                                          'Monthly');
                                                 });
                                                 _updateNextDueDate();
                                               },
                                             ),
-                                            SizedBox(height: 5),
-
+                                            const SizedBox(height: 5),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 16),
+                                      const SizedBox(width: 16),
                                       // Second Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Next Due Date ',
+                                            const Text('Next Due Date ',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
-                                                          onPrimary:
-                                                          Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
-                                                        ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: const Color.fromRGBO(
-                                                                21,
-                                                                43,
-                                                                83,
-                                                                1), // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-                                                if (pickedDate != null) {
-                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
-
-                                                  DateTime nextDueDate = calculateNextDueDate(
-                                                      pickedDate, _selectedRent ?? 'Daily');
-                                                  String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}/${nextDueDate.month.toString().padLeft(2, '0')}/${nextDueDate.year}";
-
-                                                  setState(() {
-                                                    rentNextDueDate.text = formattedNextDueDate;
-                                                    rentNextDueDate.text = formattedDate;
-                                                  });
-
-                                                  print(rentNextDueDate.text);
-                                                }
+                                              onTap: () {
+                                                _selectNextDueDate(context);
                                               },
                                               readOnnly: true,
                                               optional: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                onPressed: () {
+                                                  _selectNextDueDate(context);
+                                                },
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select Next Due Date';
                                                 }
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'dd-mm-yyyy',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -2090,18 +2768,19 @@ class _addLease3State extends State<addLease3>
                                     ],
                                   ),
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const Text('Rent Cycle *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 CustomDropdown(
+                                  key: UniqueKey(),
                                   validator: (value) {
                                     if (_selectedRent == null) {
                                       return 'Please select a rent cycle';
@@ -2114,8 +2793,11 @@ class _addLease3State extends State<addLease3>
                                   onChanged: (String? value) {
                                     setState(() {
                                       _selectedRent = value;
+                                      _selectedRent != null;
+                                      isProRent = false;
+                                      _updateProRatedRent(
+                                          _selectedRent ?? 'Monthly');
                                     });
-
                                     _updateNextDueDate();
                                   },
                                 ),
@@ -2137,6 +2819,14 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
+                                onChanged: (value) {
+                                  setState(() {
+                                    isAmountEntered = value.isNotEmpty;
+                                    isProRent = false;
+                                    _updateProRatedRent(_selectedRent ??
+                                        'Monthly'); // Reset checkbox when amount changes
+                                  });
+                                },
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
@@ -2144,70 +2834,26 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 8,
                               ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const Text('Next Due Date',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if(MediaQuery.of(context).size.width < 500)
+                              if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: const ColorScheme.light(
-                                              primary: Color.fromRGBO(21, 43, 83,
-                                                  1), // header background color
-                                              onPrimary:
-                                              Colors.white, // header text color
-                                              onSurface: Color.fromRGBO(
-                                                  21, 43, 83, 1), // body text color
-                                            ),
-                                            textButtonTheme: TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor: const Color.fromRGBO(
-                                                    21,
-                                                    43,
-                                                    83,
-                                                    1), // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-                                    if (pickedDate != null) {
-                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-
-
-                                      DateTime nextDueDate = calculateNextDueDate(
-                                          pickedDate, _selectedRent ?? 'Daily');
-                                      String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
-
-                                      setState(() {
-                                        rentNextDueDate.text = formattedNextDueDate;
-                                        rentNextDueDate.text = formattedDate;
-                                      });
-
-                                      print(rentNextDueDate.text);
-                                    }
+                                  onTap: () {
+                                    _selectNextDueDate(context);
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _selectNextDueDate(context);
+                                    },
                                     icon: const Icon(Icons.date_range_rounded),
                                   ),
                                   validator: (value) {
@@ -2218,7 +2864,10 @@ class _addLease3State extends State<addLease3>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'dd-mm-yyyy',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -2242,6 +2891,113 @@ class _addLease3State extends State<addLease3>
                                 keyboardType: TextInputType.text,
                                 hintText: 'Enter Memo',
                                 controller: rentMemo,
+                                optional: true,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  // SizedBox(
+                                  //   width: 24.0, // Standard width for checkbox
+                                  //   height: 24.0,
+                                  //   child: Checkbox(
+                                  //     value: isProRent,
+                                  //     onChanged: (value) {
+                                  //       setState(() {
+                                  //         isProRent = value ?? false;
+                                  //       });
+                                  //     },
+                                  //     activeColor: isProRent
+                                  //         ? blueColor
+                                  //         : Colors.black,
+                                  //   ),
+                                  // ),
+
+                                  SizedBox(
+                                    width: 24.0, // Standard width for checkbox
+                                    height: 24.0,
+                                    child: Checkbox(
+                                      value: isProRent,
+                                      onChanged: isAmountEntered &&
+                                              rentNextDueDate.text.isNotEmpty &&
+                                              _selectedRent != null &&
+                                              startDateController
+                                                  .text.isNotEmpty &&
+                                              endDateController.text.isNotEmpty
+                                          ? (value) {
+                                              setState(() {
+                                                isProRent = value ?? false;
+                                                _updateProRatedRent(
+                                                    _selectedRent ?? 'Monthly');
+                                              });
+                                            }
+                                          : null,
+                                      activeColor:
+                                          blueColor, // Disable checkbox if amount is not entered
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Charge pro-rated rent for current month",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const Text('Pro-rated Rent',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                CustomTextField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter rent';
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  hintText: 'Enter rent',
+                                  controller: proRatedRentController,
+                                  optional: true,
+                                ),
+                              const SizedBox(
+                                height: 20,
                               ),
                             ],
                           ),
@@ -2255,7 +3011,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                           ),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -2267,12 +3023,12 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
+                              Text(
                                 'Charges (Optional)',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51),
+                                  color: blueColor,
                                 ),
                               ),
                               const SizedBox(
@@ -2292,7 +3048,7 @@ class _addLease3State extends State<addLease3>
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if(MediaQuery.of(context).size.width < 500)
+                                  if (MediaQuery.of(context).size.width < 500)
                                     InkWell(
                                       onTap: () {
                                         _showRecurringPopupForm(
@@ -2307,11 +3063,11 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if(MediaQuery.of(context).size.width < 500)
+                                  if (MediaQuery.of(context).size.width < 500)
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                  if(MediaQuery.of(context).size.width < 500)
+                                  if (MediaQuery.of(context).size.width < 500)
                                     InkWell(
                                       onTap: () {
                                         _showPopupForm(
@@ -2326,27 +3082,33 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if(MediaQuery.of(context).size.width > 500)
+                                  if (MediaQuery.of(context).size.width > 500)
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 2.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           // First Column
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 InkWell(
                                                   onTap: () {
                                                     _showRecurringPopupForm(
-                                                        context, _selectedRent.toString());
+                                                        context,
+                                                        _selectedRent
+                                                            .toString());
                                                   },
                                                   child: const Text(
                                                     ' + Add Recurring Charge',
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Color(0xFF2ec433),
                                                     ),
                                                   ),
@@ -2354,22 +3116,26 @@ class _addLease3State extends State<addLease3>
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 16),
+                                          const SizedBox(width: 16),
                                           // Second Column
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 InkWell(
                                                   onTap: () {
                                                     _showPopupForm(
-                                                        context, _selectedRent.toString());
+                                                        context,
+                                                        _selectedRent
+                                                            .toString());
                                                   },
                                                   child: const Text(
                                                     ' + Add One Time Charge',
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Color(0xFF2ec433),
                                                     ),
                                                   ),
@@ -2389,36 +3155,35 @@ class _addLease3State extends State<addLease3>
                                       height: 10,
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
-                                    const Text(
+                                    Text(
                                       'Recurring Information',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
                                     const SizedBox(
                                       height: 5,
                                     ),
-
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
-                                    columnWidths: {
-                                      0: const FlexColumnWidth(2),
-                                      1: const FlexColumnWidth(2),
-                                      2: const FlexColumnWidth(1.3),
+                                    columnWidths: const {
+                                      0: FlexColumnWidth(2),
+                                      1: FlexColumnWidth(2),
+                                      2: FlexColumnWidth(1.3),
                                     },
                                     children: [
                                       if (formDataRecurringList.isNotEmpty)
-                                        const TableRow(
+                                        TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
-                                            children: [
+                                            children: const [
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
                                                 child: Text(
@@ -2461,11 +3226,10 @@ class _addLease3State extends State<addLease3>
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               '${item['account']}',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w700,
-                                                color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
@@ -2481,19 +3245,21 @@ class _addLease3State extends State<addLease3>
                                             ),
                                           ),
                                           Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Row(children: [
                                                 InkWell(
                                                   onTap: () {
-                                                    _showRecurringPopupForm(context,
-                                                        _selectedRent.toString(),
+                                                    _showRecurringPopupForm(
+                                                        context,
+                                                        _selectedRent
+                                                            .toString(),
                                                         initialData: item,
                                                         index: index);
                                                   },
-                                                  child: const Icon(
+                                                  child: Icon(
                                                     Icons.edit,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2505,10 +3271,9 @@ class _addLease3State extends State<addLease3>
                                                           .removeAt(index);
                                                     });
                                                   },
-                                                  child: const Icon(
+                                                  child: Icon(
                                                     Icons.delete,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 )
@@ -2521,29 +3286,27 @@ class _addLease3State extends State<addLease3>
                                     const SizedBox(
                                       height: 10,
                                     ),
-
                                   if (formDataOneTimeList.isNotEmpty)
                                     const SizedBox(
                                       height: 5,
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
-                                    const Text(
+                                    Text(
                                       'One Time Information',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
                                     const SizedBox(
                                       height: 5,
                                     ),
-
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
                                     columnWidths: const {
                                       0: FlexColumnWidth(2),
@@ -2552,11 +3315,11 @@ class _addLease3State extends State<addLease3>
                                     },
                                     children: [
                                       if (formDataOneTimeList.isNotEmpty)
-                                        const TableRow(
+                                        TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
-                                            children: [
+                                            children: const [
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
                                                 child: Text(
@@ -2599,11 +3362,10 @@ class _addLease3State extends State<addLease3>
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               '${item['account']}',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w700,
-                                                color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
@@ -2619,21 +3381,23 @@ class _addLease3State extends State<addLease3>
                                             ),
                                           ),
                                           Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Row(children: [
                                                 InkWell(
                                                   onTap: () {
-                                                    _showPopupForm(context,
-                                                        _selectedRent.toString(),
+                                                    _showPopupForm(
+                                                        context,
+                                                        _selectedRent
+                                                            .toString(),
                                                         initialData: item,
                                                         index: index);
 
                                                     // Implement edit functionality here
                                                   },
-                                                  child: const Icon(
+                                                  child: Icon(
                                                     Icons.edit,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2645,10 +3409,9 @@ class _addLease3State extends State<addLease3>
                                                           .removeAt(index);
                                                     });
                                                   },
-                                                  child: const Icon(
+                                                  child: Icon(
                                                     Icons.delete,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 )
@@ -2657,8 +3420,6 @@ class _addLease3State extends State<addLease3>
                                       })
                                     ],
                                   ),
-
-
                                 ],
                               ),
                             ],
@@ -2672,7 +3433,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2683,11 +3444,11 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Security Deposit (Optional)',
+                              Text('Security Deposit (Optional)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -2709,6 +3470,7 @@ class _addLease3State extends State<addLease3>
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
+                                optional: true,
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(10.0),
@@ -2733,7 +3495,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2745,11 +3507,11 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Upload Files (Maximum of 10)',
+                              Text('Upload Files (Maximum of 10)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -2762,13 +3524,13 @@ class _addLease3State extends State<addLease3>
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF152b51),
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
                                   onPressed: _pickPdfFiles,
-                                  child: Text('Upload'),
+                                  child: const Text('Upload'),
                                 ),
                               ),
 
@@ -2778,7 +3540,7 @@ class _addLease3State extends State<addLease3>
                                 child: Column(
                                   children: _uploadedFileNames.map((fileName) {
                                     int index =
-                                    _uploadedFileNames.indexOf(fileName);
+                                        _uploadedFileNames.indexOf(fileName);
                                     return ListTile(
                                       title: Text(
                                         fileName,
@@ -2818,12 +3580,113 @@ class _addLease3State extends State<addLease3>
                       const SizedBox(
                         height: 10,
                       ),
+                      // Container(
+                      //   width: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(
+                      //         color: blueColor,
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10.0)),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(12.0),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         const SizedBox(
+                      //           height: 10,
+                      //         ),
+                      //         Text('Lease Payment Settings',
+                      //             style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.w500,
+                      //                 color: blueColor)),
+                      //         //     .toList(),
+                      //         const SizedBox(height: 5),
+                      //         Text(
+                      //             "When enabled, these payment settings will override the rental owner's payment settings for this specific lease.  If disabled, the lease will automatically apply the rental owner's default payment settings.",
+                      //             textAlign: TextAlign.justify,
+                      //             style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.w300,
+                      //                 color: Colors.grey)),
+                      //         const SizedBox(height: 10),
+                      //         Row(
+                      //           children: [
+                      //             Checkbox(
+                      //               activeColor: blueColor,
+                      //               value: _leasePaymentSettings,
+                      //               onChanged: (newValue) {
+                      //                 setState(() {
+                      //                   _leasePaymentSettings =
+                      //                       newValue ?? false;
+                      //                   if (!_leasePaymentSettings) {
+                      //                     _creditCardAccepted = false;
+                      //                     _debitCardAccepted = false;
+                      //                   }
+                      //                 });
+                      //               },
+                      //             ),
+                      //             Text('Enable Lease Payment Settings',
+                      //                 style: TextStyle(
+                      //                     fontSize: 14,
+                      //                     fontWeight: FontWeight.w500,
+                      //                     color: blueColor)),
+                      //           ],
+                      //         ),
+                      //         if (_leasePaymentSettings) ...[
+                      //           const SizedBox(
+                      //             height: 5,
+                      //           ),
+                      //           Row(
+                      //             children: [
+                      //               Checkbox(
+                      //                 activeColor: blueColor,
+                      //                 value: _creditCardAccepted,
+                      //                 onChanged: (bool? value) {
+                      //                   setState(() {
+                      //                     _creditCardAccepted = value ?? false;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //               const Text('Accepted Credit Card',
+                      //                   style: TextStyle(
+                      //                       fontSize: 14,
+                      //                       fontWeight: FontWeight.w500,
+                      //                       color: Color(0xFF748097))),
+                      //             ],
+                      //           ),
+                      //           Row(
+                      //             children: [
+                      //               Checkbox(
+                      //                 activeColor: blueColor,
+                      //                 value: _debitCardAccepted,
+                      //                 onChanged: (bool? value) {
+                      //                   setState(() {
+                      //                     _debitCardAccepted = value ?? false;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //               const Text('Accepted Debit Card',
+                      //                   style: TextStyle(
+                      //                       fontSize: 14,
+                      //                       fontWeight: FontWeight.w500,
+                      //                       color: Color(0xFF748097))),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
 
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2835,18 +3698,19 @@ class _addLease3State extends State<addLease3>
                                 height: 10,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  const Text('Residents center Welcome Email',
+                                  Text('Residents center Welcome Email',
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xFF152b51))),
+                                          color: blueColor)),
                                   const SizedBox(
                                     width: 5,
                                   ),
                                   Switch(
-                                    activeColor: const Color(0xFF152b51),
+                                    activeColor: blueColor,
                                     value: _selectedResidentsEmail,
                                     onChanged: (newValue) {
                                       setState(() {
@@ -2869,9 +3733,11 @@ class _addLease3State extends State<addLease3>
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 16, bottom: 16),
+                        padding: const EdgeInsets.only(top: 16, bottom: 16),
                         child: Row(
                           children: [
                             Container(
@@ -2880,453 +3746,495 @@ class _addLease3State extends State<addLease3>
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: blueColor,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(8.0))),
-                                    onPressed: () async
-                                    {
-                                      if (_formKey.currentState?.validate() ??
-                                          false) {
-                                        final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
-                                        final rentShareControllers = provider.rentShareControllers;
-                                        // for (int i = 0; i < rentShareControllers.length; i++) {
-                                        //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
-                                        // }
-                                        // bool hasError = false;
-                                        // if (hasError || provider.validationMessage != null) {
-                                        //   setState(() {
-                                        //
-                                        //   });
-                                        //   return;
-                                        // }
-                                        // provider.clearValidationMessage();
-                                        //charges
-                                        if (rentShareControllers.length <1 ) {
-                                          setState(() {
-                                            _errorMessage = "required tenants";
-                                            // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
-                                            // _errorMessage = null;
-                                          });
-                                          return;
-                                        }
-
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: blueColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0))),
+                                  onPressed: () async {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      setState(() {
+                                        isLoading = true; // Stop loading
+                                      });
+                                      final provider =
+                                          Provider.of<SelectedTenantsProvider>(
+                                              context,
+                                              listen: false);
+                                      final rentShareControllers =
+                                          provider.rentShareControllers;
+                                      // for (int i = 0; i < rentShareControllers.length; i++) {
+                                      //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
+                                      // }
+                                      // bool hasError = false;
+                                      // if (hasError || provider.validationMessage != null) {
+                                      //   setState(() {
+                                      //
+                                      //   });
+                                      //   return;
+                                      // }
+                                      // provider.clearValidationMessage();
+                                      //charges
+                                      if (rentShareControllers.length < 1) {
                                         setState(() {
-                                          // _errorMessagetenants = null;
-                                          _errorMessage = null;
+                                          _errorMessage = "required tenants";
+                                          // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
+                                          // _errorMessage = null;
                                         });
-
-                                        double totalRentShare = 0.0;
-                                        for (var controller in rentShareControllers) {
-                                          double rentShare = double.tryParse(controller.text) ?? 0.0;
-                                          totalRentShare += rentShare;
-                                        }
-                                        if (totalRentShare != 100.0){
-                                          setState(() {
-                                            _errorMessage = 'Total rent share must equal 100';
-
-                                          });
-                                          return;
-                                        }
-                                        else{
-
-                                          SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                          String adminId =
-                                          prefs.getString("adminId")!;
-                                          bool _isLeaseAdded = false;
-                                          // // Printing ChargeData object
-                                          //Changes
-                                          List<Map<String, String>>
-                                          mergedFormDataList = [
-                                            ...formDataOneTimeList,
-                                            ...formDataRecurringList,
-                                          ];
-                                          String leaseStartDate =
-                                              startDateController.text;
-                                          String leaseEndDate =
-                                              endDateController.text;
-                                          print(
-                                              'ends date : ${endDateController.text}');
-                                          // Creating Entry objects from the merged list
-                                          // List<Entry> chargeEntries =
-                                          //     mergedFormDataList.map((data) {
-                                          //   print(data['account']);
-                                          //   return Entry(
-                                          //     account: data['account'] ?? '',
-                                          //     amount: double.tryParse(
-                                          //             data['amount'] ?? '0.0') ??
-                                          //         0.0,
-                                          //     chargeType: data['charge_type'] ?? '',
-                                          //     date: rentNextDueDate.text,
-                                          //     isRepeatable: data['is_repeatable']
-                                          //             ?.toLowerCase() ==
-                                          //         'true',
-                                          //     memo: data['memo'] ?? '',
-                                          //     rentCycle: data[
-                                          //         'rent_cycle'], // Assuming this field might be present
-                                          //     tenantId: data[
-                                          //         'tenant_id'], // Assuming this field might be present
-                                          //   );
-                                          // }).toList();
-
-                                          // // Creating ChargeData object
-                                          // ChargeData chargeData = ChargeData(
-                                          //   adminId: adminId,
-                                          //   entry: chargeEntries,
-                                          //   isLeaseAdded: _isLeaseAdded,
-                                          // );
-                                          print(
-                                              'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
-                                          List<Entry> chargeEntries =
-                                          mergedFormDataList.map((data) {
-                                            print(data['account']);
-                                            return Entry(
-                                              account: data['account'] ?? '',
-                                              amount: double.tryParse(
-                                                  data['amount'] ?? '0.0') ??
-                                                  0.0,
-                                              chargeType: data['charge_type'] ?? '',
-                                              date:  reverseFormatDate(rentNextDueDate.text),
-                                              isRepeatable: data['is_repeatable']
-                                                  ?.toLowerCase() ==
-                                                  'true',
-                                              memo: data['memo'] ?? '',
-                                              rentCycle: data[
-                                              'rent_cycle'], // Assuming this field might be present
-                                              tenantId: data[
-                                              'tenant_id'], // Assuming this field might be present
-                                            );
-                                          }).toList();
-                                          // print(ne)
-                                          chargeEntries.add(Entry(
-                                            account: "Rent Income",
-                                            amount:
-                                            double.tryParse(rentAmount.text) ??
-                                                0.0,
-                                            chargeType: 'Rent',
-                                            date:  reverseFormatDate(rentNextDueDate.text),
-                                            isRepeatable:
-                                            false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: rentMemo.text,
-                                            rentCycle:
-                                            _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          chargeEntries.add(Entry(
-                                            account: "Security Deposit",
-                                            amount: double.tryParse(
-                                                securityDepositeAmount.text) ??
-                                                0.0,
-                                            chargeType: 'Security Deposit',
-                                            date:  reverseFormatDate(rentNextDueDate.text),
-                                            isRepeatable:
-                                            false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: 'Last Month\'s Rent',
-                                            rentCycle:
-                                            _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          ChargeData chargeData = ChargeData(
-                                            adminId: adminId,
-                                            entry: chargeEntries,
-                                            isLeaseAdded: _isLeaseAdded,
-                                          );
-                                          print('${chargeEntries}');
-                                          //Tenant
-                                          List<TenantData> tenants = [];
-                                          Map<String, String>? firstCosigner =
-                                          cosignersMap.isNotEmpty
-                                              ? cosignersMap[0]
-                                              : {};
-                                          print(
-                                              'tenant\'s length ${tenantsMap.length}');
-                                          String currentDate =
-                                          DateTime.now().toString();
-                                          List<TenantData> tenantDataList =
-                                          tenantsMap.entries.map((entry) {
-                                            int index = entry.key;
-                                            final tenantMap = entry.value;
-                                            print(tenantMap['firstName']);
-                                            print(tenantMap['firstName']);
-                                            return TenantData(
-                                              adminId: adminId,
-                                              comments: tenantMap['comments'] ?? '',
-                                              emergencyContact: EmergencyContacts(
-                                                name: tenantMap[
-                                                'emergencyContactName'] ??
-                                                    '',
-                                                relation:
-                                                tenantMap['emergencyRelation'] ??
-                                                    '',
-                                                email:
-                                                tenantMap['emergencyEmail'] ?? '',
-                                                phoneNumber: tenantMap[
-                                                'emergencyPhoneNumber'] ??
-                                                    '',
-                                              ),
-                                              isDelete:
-                                              tenantMap['isDelete'] == 'true',
-                                              taxPayerId:
-                                              tenantMap['taxPayerId'] ?? '',
-                                              tenantAlternativeEmail:
-                                              tenantMap['alterEmail'] ?? '',
-                                              tenantAlternativeNumber:
-                                              tenantMap['workNumber'] ?? '',
-                                              tenantBirthDate:
-                                              tenantMap['dob'].toString() ?? '',
-                                              tenantEmail: tenantMap['email'] ?? '',
-                                              tenantFirstName:
-                                              tenantMap['firstName'] ?? '',
-                                              tenantId: tenantMap['tenantId'] ?? '',
-                                              tenantLastName:
-                                              tenantMap['lastName'] ?? '',
-                                              tenantPassword:
-                                              tenantMap['passWord'] ?? '',
-                                              tenantPhoneNumber:
-                                              tenantMap['phoneNumber'] ?? '',
-                                              updatedAt:
-                                              tenantMap['updatedAt'].toString() ??
-                                                  '',
-                                              rentShare: rentShareControllers[index].text,
-                                            );
-                                          }).toList();
-                                          print(tenantDataList.length);
-                                          // Assuming tenantDataList is a List<TenantData>
-                                          List<String> tenantIds = tenantDataList
-                                              .map((tenant) => tenant.tenantId ?? '')
-                                              .toList();
-
-                                          print('tenant ids :${tenantIds.length}');
-
-                                          //print all data
-                                          print(firstCosigner);
-                                          print('Tenant Data List:');
-                                          for (var tenant in tenantDataList) {
-                                            print('admin ID: ${tenant.adminId}');
-                                            print(
-                                                'Tenant First Name: ${tenant.tenantFirstName}');
-                                            print(
-                                                'Tenant Last Name: ${tenant.tenantLastName}');
-                                            print(
-                                                'Tenant Email: ${tenant.tenantEmail}');
-                                            print(
-                                                'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
-                                            print(
-                                                'Tenant Birth Date: ${tenant.tenantBirthDate}');
-                                            print(
-                                                'Rental Address: ${tenant.rentalAddress}');
-                                            print(
-                                                'Rental Unit: ${tenant.rentalUnit}');
-                                            print(
-                                                'Tax Payer ID: ${tenant.taxPayerId}');
-                                            print(
-                                                'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
-                                            print(
-                                                'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
-                                            print('Created At: ${tenant.createdAt}');
-                                            print('Updated At: ${tenant.updatedAt}');
-                                            print('Is Delete: ${tenant.isDelete}');
-                                            print('Comments: ${tenant.comments}');
-                                            print('Admin ID: ${tenant.adminId}');
-
-                                            print('v: ${tenant.v}');
-                                            print('ID: ${tenant.id}');
-                                            print('-----------------------');
-                                          }
-                                          print(_selectedResidentsEmail);
-                                          print('unit id data :${unitId}');
-                                          Lease lease = Lease(
-                                            chargeData: ChargeData(
-                                              adminId: adminId ?? "",
-                                              entry: chargeEntries,
-                                              isLeaseAdded: true,
-                                            ),
-                                            cosignerData: CosignerData(
-                                              adminId: adminId,
-                                              cosignerFirstName:
-                                              firstCosigner?['firstName'] ?? '',
-                                              cosignerLastName:
-                                              firstCosigner?['lastName'] ?? '',
-                                              cosignerPhoneNumber:
-                                              firstCosigner?['phoneNumber'] ?? '',
-                                              cosignerEmail:
-                                              firstCosigner?['email'] ?? '',
-                                              cosignerAlternativeEmail:
-                                              firstCosigner?['alterEmail'] ?? '',
-                                              cosignerAddress:
-                                              firstCosigner?['streetAddress'] ??
-                                                  '',
-                                              cosignerCity:
-                                              firstCosigner?['city'] ?? '',
-                                              cosignerCountry:
-                                              firstCosigner?['country'] ?? '',
-                                              cosignerPostalcode:
-                                              firstCosigner?['postalCode'] ?? '',
-                                            ),
-                                            leaseData: LeaseData(
-                                              adminId: adminId ?? "",
-                                              companyName: companyName,
-                                              endDate: leaseEndDate,
-                                              entry: chargeEntries,
-                                              leaseAmount: rentAmount.text,
-                                              leaseType: _selectedLeaseType ?? "",
-                                              rentalId: renderId,
-                                              startDate: reverseFormatDate(leaseStartDate),
-                                              tenantId: tenantDataList
-                                                  .map((tenant) =>
-                                              tenant.tenantId ?? '')
-                                                  .toList(),
-                                              tenantResidentStatus:
-                                              _selectedResidentsEmail,
-                                              unitId: unitId,
-                                              uploadedFile: _uploadedFileNames,
-                                            ),
-                                            tenantData: tenantDataList,
-                                          );
-                                          addLeaseAndNavigate(lease);
-                                          if (widget.applicantId != null &&
-                                              widget.applicantId!.isNotEmpty) {
-                                            print(
-                                                'applicant id is: ${widget.applicantId}');
-                                            ifApplicantMoveIn(widget.applicantId!);
-                                          } else {
-                                            print('No applicant id provided');
-                                          }
-
-                                          print('valid');
-
-
-                                        }
+                                        return;
                                       }
-                                      else {
-                                        String leaseStartDate =
-                                            startDateController.text;
-                                        String leaseEndDate =
-                                            endDateController.text;
-                                        print(reverseFormatDate(leaseStartDate));
 
-                                        print('Form validation failed');
-                                        print(reverseFormatDate(endDateController.text));
-                                        print(reverseFormatDate(startDateController.text));
-                                        print(
-                                            'ends date : ${endDateController.text}');
-                                        print(
-                                            'start date : ${startDateController.text}');
+                                      setState(() {
+                                        // _errorMessagetenants = null;
+                                        _errorMessage = null;
+                                      });
+
+                                      double totalRentShare = 0.0;
+                                      for (var controller
+                                          in rentShareControllers) {
+                                        double rentShare = double.tryParse(
+                                                controller.text.trim()) ??
+                                            0.0;
+                                        totalRentShare += rentShare;
+                                      }
+                                      if (totalRentShare != 100.0) {
+                                        setState(() {
+                                          _errorMessage =
+                                              'Total rent share must equal 100';
+                                        });
+                                        return;
+                                      } else {
                                         SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                            await SharedPreferences
+                                                .getInstance();
                                         String adminId =
-                                        prefs.getString("adminId")!;
-
+                                            prefs.getString("adminId")!;
                                         bool _isLeaseAdded = false;
-
                                         // // Printing ChargeData object
                                         //Changes
                                         List<Map<String, String>>
-                                        mergedFormDataList = [
+                                            mergedFormDataList = [
                                           ...formDataOneTimeList,
                                           ...formDataRecurringList,
                                         ];
+                                        String leaseStartDate =
+                                            reverseFormatDate(
+                                                startDateController.text
+                                                    .trim());
+                                        String leaseEndDate = reverseFormatDate(
+                                            endDateController.text);
+                                        print(
+                                            'ends date : ${endDateController.text}');
 
-                                        // Creating Entry objects from the merged list
+                                        print(
+                                            'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                         List<Entry> chargeEntries =
-                                        mergedFormDataList.map((data) {
+                                            mergedFormDataList.map((data) {
                                           print(data['account']);
                                           return Entry(
                                             account: data['account'] ?? '',
                                             amount: double.tryParse(
-                                                data['amount'] ?? '0.0') ??
+                                                    data['amount'] ?? '0.0') ??
                                                 0.0,
-                                            chargeType: data['charge_type'] ?? '',
-                                            date: reverseFormatDate(rentNextDueDate.text),
+                                            chargeType:
+                                                data['charge_type'] ?? '',
+                                            date: data['charge_type'] ==
+                                                    'Recurring Charge'
+                                                ? (data['date'] ??
+                                                    '') // Ensuring data['date'] is not null
+                                                : rentNextDueDate.text.trim(),
                                             isRepeatable: data['is_repeatable']
-                                                ?.toLowerCase() ==
+                                                    ?.toLowerCase() ==
                                                 'true',
                                             memo: data['memo'] ?? '',
                                             rentCycle: data[
-                                            'rent_cycle'], // Assuming this field might be present
+                                                'rent_cycle'], // Assuming this field might be present
                                             tenantId: data[
-                                            'tenant_id'], // Assuming this field might be present
+                                                'tenant_id'], // Assuming this field might be present
                                           );
                                         }).toList();
-                                        // Creating ChargeData object
+                                        // print(ne)
+                                        chargeEntries.add(Entry(
+                                          account: "Rent Income",
+                                          amount: double.tryParse(
+                                                  rentAmount.text.trim()) ??
+                                              0.0,
+                                          chargeType: 'Rent',
+                                          date: rentNextDueDate.text.trim(),
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: rentMemo.text.trim(),
+                                          rentCycle:
+                                              _selectedRent, // Set default value or adjust as needed
+                                        ));
+                                        chargeEntries.add(Entry(
+                                          account: "Security Deposit",
+                                          amount: double.tryParse(
+                                                  securityDepositeAmount
+                                                      .text) ??
+                                              0.0,
+                                          chargeType: 'Security Deposit',
+                                          date: rentNextDueDate.text.trim(),
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: 'Last Month\'s Rent',
+                                          rentCycle:
+                                              _selectedRent, // Set default value or adjust as needed
+                                        ));
                                         ChargeData chargeData = ChargeData(
                                           adminId: adminId,
                                           entry: chargeEntries,
                                           isLeaseAdded: _isLeaseAdded,
                                         );
-                                        print(
-                                            'ChargeData: ${jsonEncode(chargeData.toJson())}');
-                                        //consiger
+                                        print('${chargeEntries}');
+                                        //Tenant
+                                        List<TenantData> tenants = [];
                                         Map<String, String>? firstCosigner =
-                                        cosignersMap.isNotEmpty
-                                            ? cosignersMap[0]
-                                            : {};
+                                            cosignersMap.isNotEmpty
+                                                ? cosignersMap[0]
+                                                : {};
+                                        print(
+                                            'tenant\'s length ${tenantsMap.length}');
+                                        String currentDate =
+                                            DateTime.now().toString();
                                         List<TenantData> tenantDataList =
-                                        tenantsMap.entries.map((entry) {
+                                            tenantsMap.entries.map((entry) {
+                                          int index = entry.key;
                                           final tenantMap = entry.value;
+                                          print(tenantMap['firstName']);
+                                          print(tenantMap['firstName']);
                                           return TenantData(
-                                            adminId: tenantMap['adminId'] ?? '',
-                                            comments: tenantMap['comments'] ?? '',
-                                            createdAt: tenantMap['createdAt'] ?? '',
+                                            adminId: adminId,
+                                            comments:
+                                                tenantMap['comments'] ?? '',
                                             emergencyContact: EmergencyContacts(
                                               name: tenantMap[
-                                              'emergencyContactName'] ??
+                                                      'emergencyContactName'] ??
                                                   '',
                                               relation: tenantMap[
-                                              'emergencyContactRelation'] ??
+                                                      'emergencyRelation'] ??
                                                   '',
-                                              email: tenantMap[
-                                              'emergencyContactEmail'] ??
-                                                  '',
+                                              email:
+                                                  tenantMap['emergencyEmail'] ??
+                                                      '',
                                               phoneNumber: tenantMap[
-                                              'emergencyContactPhoneNumber'] ??
+                                                      'emergencyPhoneNumber'] ??
                                                   '',
                                             ),
                                             isDelete:
-                                            tenantMap['isDelete'] == 'true',
-                                            rentalAddress:
-                                            tenantMap['rentalAddress'] ?? '',
-                                            rentalUnit:
-                                            tenantMap['rentalUnit'] ?? '',
+                                                tenantMap['isDelete'] == 'true',
                                             taxPayerId:
-                                            tenantMap['taxPayerId'] ?? '',
-                                            tenantAlternativeEmail: tenantMap[
-                                            'tenantAlternativeEmail'] ??
-                                                '',
-                                            tenantAlternativeNumber: tenantMap[
-                                            'tenantAlternativeNumber'] ??
-                                                '',
-                                            tenantBirthDate: tenantMap['dob'] ?? '',
+                                                tenantMap['taxPayerId'] ?? '',
+                                            tenantAlternativeEmail:
+                                                tenantMap['alterEmail'] ?? '',
+                                            tenantAlternativeNumber:
+                                                tenantMap['workNumber'] ?? '',
+                                            tenantBirthDate:
+                                                tenantMap['dob'].toString() ??
+                                                    '',
                                             tenantEmail:
-                                            tenantMap['tenantEmail'] ?? '',
+                                                tenantMap['email'] ?? '',
                                             tenantFirstName:
-                                            tenantMap['tenantFirstName'] ?? '',
-                                            tenantId: tenantMap['tenantId'] ?? '',
+                                                tenantMap['firstName'] ?? '',
+                                            tenantId:
+                                                tenantMap['tenantId'] ?? '',
                                             tenantLastName:
-                                            tenantMap['tenantLastName'] ?? '',
+                                                tenantMap['lastName'] ?? '',
                                             tenantPassword:
-                                            tenantMap['tenantPassword'] ?? '',
+                                                tenantMap['passWord'] ?? '',
                                             tenantPhoneNumber:
-                                            tenantMap['tenantPhoneNumber'] ??
+                                                tenantMap['phoneNumber'] ?? '',
+                                            tenant_residentStatus:
+                                                _selectedResidentsEmail
+                                                    .toString(),
+                                            updatedAt: tenantMap['updatedAt']
+                                                    .toString() ??
                                                 '',
-                                            updatedAt: tenantMap['updatedAt'] ?? '',
-                                            v: int.tryParse(
-                                                tenantMap['v'] ?? '0') ??
-                                                0,
-                                            id: tenantMap['id'] ?? '',
+                                            rentShare:
+                                                rentShareControllers[index]
+                                                    .text
+                                                    .trim(),
                                           );
                                         }).toList();
+                                        print(tenantDataList.length);
+                                        // Assuming tenantDataList is a List<TenantData>
+                                        List<String> tenantIds = tenantDataList
+                                            .map((tenant) =>
+                                                tenant.tenantId ?? '')
+                                            .toList();
 
+                                        print(
+                                            'tenant ids :${tenantIds.length}');
 
+                                        //print all data
+                                        print(firstCosigner);
+                                        print('Tenant Data List:');
+                                        for (var tenant in tenantDataList) {
+                                          print('admin ID: ${tenant.adminId}');
+                                          print(
+                                              'Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              'Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              'Tenant Email: ${tenant.tenantEmail}');
+                                          print(
+                                              'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
+                                          print(
+                                              'Tenant Birth Date: ${tenant.tenantBirthDate}');
+                                          print(
+                                              'Rental Address: ${tenant.rentalAddress}');
+                                          print(
+                                              'Rental Unit: ${tenant.rentalUnit}');
+                                          print(
+                                              'Tax Payer ID: ${tenant.taxPayerId}');
+                                          print(
+                                              'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
+                                          print(
+                                              'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
+                                          print(
+                                              'Created At: ${tenant.createdAt}');
+                                          print(
+                                              'Updated At: ${tenant.updatedAt}');
+                                          print(
+                                              'Is Delete: ${tenant.isDelete}');
+                                          print('Comments: ${tenant.comments}');
+                                          print('Admin ID: ${tenant.adminId}');
+
+                                          print('v: ${tenant.v}');
+                                          print('ID: ${tenant.id}');
+                                          print('-----------------------');
+                                        }
+                                        print(_selectedResidentsEmail);
+                                        print('unit id data :${unitId}');
+                                        Lease lease = Lease(
+                                          chargeData: ChargeData(
+                                            adminId: adminId ?? "",
+                                            entry: chargeEntries,
+                                            isLeaseAdded: true,
+                                          ),
+                                          cosignerData: CosignerData(
+                                            adminId: adminId,
+                                            cosignerFirstName:
+                                                firstCosigner?['firstName'] ??
+                                                    '',
+                                            cosignerLastName:
+                                                firstCosigner?['lastName'] ??
+                                                    '',
+                                            cosignerPhoneNumber:
+                                                firstCosigner?['phoneNumber'] ??
+                                                    '',
+                                            cosignerEmail:
+                                                firstCosigner?['email'] ?? '',
+                                            cosignerAlternativeEmail:
+                                                firstCosigner?['alterEmail'] ??
+                                                    '',
+                                            cosignerAddress: firstCosigner?[
+                                                    'streetAddress'] ??
+                                                '',
+                                            cosignerCity:
+                                                firstCosigner?['city'] ?? '',
+                                            cosignerCountry:
+                                                firstCosigner?['country'] ?? '',
+                                            cosignerPostalcode:
+                                                firstCosigner?['postalCode'] ??
+                                                    '',
+                                          ),
+                                          leaseData: LeaseData(
+                                            adminId: adminId ?? "",
+                                            isProRent: isProRent,
+                                            proRatedRent: isProRent
+                                                ? proRatedRentController.text
+                                                    .trim()
+                                                : null,
+                                            companyName: companyName,
+                                            endDate: leaseEndDate,
+                                            entry: chargeEntries,
+                                            leaseAmount: rentAmount.text.trim(),
+                                            leaseType: _selectedLeaseType ?? "",
+                                            rentalId: renderId,
+                                            startDate: leaseStartDate,
+                                            tenantId: tenantDataList
+                                                .map((tenant) =>
+                                                    tenant.tenantId ?? '')
+                                                .toList(),
+                                            tenantResidentStatus:
+                                                _selectedResidentsEmail,
+                                            unitId: _selectedUnit,
+                                            uploadedFile: _uploadedFileNames,
+                                            creditCardAccepted:
+                                                _creditCardAccepted,
+                                            debitCardAccepted:
+                                                _debitCardAccepted,
+                                            leasePaymentSettings:
+                                                _leasePaymentSettings,
+                                          ),
+                                          tenantData: tenantDataList,
+                                        );
+                                        String jsonBody =
+                                            jsonEncode(chargeData.toJson());
+                                        print('Serialized JSON: $jsonBody');
+
+                                        print(
+                                            "Pro-rated Rent Value: ${proRatedRentController.text.trim()}");
+                                        print('${lease}');
+                                        await addLeaseAndNavigate(lease);
+
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
+                                        // if (widget.applicantId != null &&
+                                        //     widget.applicantId!.isNotEmpty) {
+                                        //   print(
+                                        //       'applicant id is: ${widget.applicantId}');
+                                        //   ifApplicantMoveIn(
+                                        //       widget.applicantId!);
+                                        // } else {
+                                        //   print('No applicant id provided');
+                                        // }
+                                        if (applicantIds != null &&
+                                            applicantIds!.isNotEmpty) {
+                                          print(
+                                              'applicant id is: ${widget.applicantId}');
+                                          ifApplicantMoveIn(widget.applicantId!,
+                                              applicantIds);
+                                        } else {
+                                          print('No applicant id provided');
+                                        }
+                                        print('valid');
                                       }
+                                    } else {
+                                      print("faild");
+                                      String leaseStartDate = reverseFormatDate(
+                                          startDateController.text);
+                                      String leaseEndDate = reverseFormatDate(
+                                          endDateController.text);
 
-                                    },
-                                    child: const Text(
-                                      'Create Lease',
-                                      style: TextStyle(color: Color(0xFFf7f8f9),
-                                          fontSize: 16
-                                      ),
-                                    ))),
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String adminId =
+                                          prefs.getString("adminId")!;
+
+                                      bool _isLeaseAdded = false;
+
+                                      // // Printing ChargeData object
+                                      //Changes
+                                      List<Map<String, String>>
+                                          mergedFormDataList = [
+                                        ...formDataOneTimeList,
+                                        ...formDataRecurringList,
+                                      ];
+
+                                      // Creating Entry objects from the merged list
+                                      List<Entry> chargeEntries =
+                                          mergedFormDataList.map((data) {
+                                        print(data['account']);
+                                        return Entry(
+                                          account: data['account'] ?? '',
+                                          amount: double.tryParse(
+                                                  data['amount'] ?? '0.0') ??
+                                              0.0,
+                                          chargeType: data['charge_type'] ?? '',
+                                          date: rentNextDueDate.text,
+                                          isRepeatable: data['is_repeatable']
+                                                  ?.toLowerCase() ==
+                                              'true',
+                                          memo: data['memo'] ?? '',
+                                          rentCycle: data[
+                                              'rent_cycle'], // Assuming this field might be present
+                                          tenantId: data[
+                                              'tenant_id'], // Assuming this field might be present
+                                        );
+                                      }).toList();
+                                      // Creating ChargeData object
+                                      ChargeData chargeData = ChargeData(
+                                        adminId: adminId,
+                                        entry: chargeEntries,
+                                        isLeaseAdded: _isLeaseAdded,
+                                      );
+                                      print(
+                                          'ChargeData: ${jsonEncode(chargeData.toJson())}');
+                                      //consiger
+                                      Map<String, String>? firstCosigner =
+                                          cosignersMap.isNotEmpty
+                                              ? cosignersMap[0]
+                                              : {};
+                                      List<TenantData> tenantDataList =
+                                          tenantsMap.entries.map((entry) {
+                                        final tenantMap = entry.value;
+                                        return TenantData(
+                                          adminId: tenantMap['adminId'] ?? '',
+                                          comments: tenantMap['comments'] ?? '',
+                                          createdAt:
+                                              tenantMap['createdAt'] ?? '',
+                                          emergencyContact: EmergencyContacts(
+                                            name: tenantMap[
+                                                    'emergencyContactName'] ??
+                                                '',
+                                            relation: tenantMap[
+                                                    'emergencyContactRelation'] ??
+                                                '',
+                                            email: tenantMap[
+                                                    'emergencyContactEmail'] ??
+                                                '',
+                                            phoneNumber: tenantMap[
+                                                    'emergencyContactPhoneNumber'] ??
+                                                '',
+                                          ),
+                                          isDelete:
+                                              tenantMap['isDelete'] == 'true',
+                                          rentalAddress:
+                                              tenantMap['rentalAddress'] ?? '',
+                                          rentalUnit:
+                                              tenantMap['rentalUnit'] ?? '',
+                                          taxPayerId:
+                                              tenantMap['taxPayerId'] ?? '',
+                                          tenantAlternativeEmail: tenantMap[
+                                                  'tenantAlternativeEmail'] ??
+                                              '',
+                                          tenantAlternativeNumber: tenantMap[
+                                                  'tenantAlternativeNumber'] ??
+                                              '',
+                                          tenantBirthDate:
+                                              tenantMap['dob'] ?? '',
+                                          tenantEmail:
+                                              tenantMap['tenantEmail'] ?? '',
+                                          tenantFirstName:
+                                              tenantMap['tenantFirstName'] ??
+                                                  '',
+                                          tenantId: tenantMap['tenantId'] ?? '',
+                                          tenantLastName:
+                                              tenantMap['tenantLastName'] ?? '',
+                                          tenantPassword:
+                                              tenantMap['tenantPassword'] ?? '',
+                                          tenantPhoneNumber:
+                                              tenantMap['tenantPhoneNumber'] ??
+                                                  '',
+                                          tenant_residentStatus:
+                                              _selectedResidentsEmail
+                                                  .toString(),
+                                          updatedAt:
+                                              tenantMap['updatedAt'] ?? '',
+                                          v: int.tryParse(
+                                                  tenantMap['v'] ?? '0') ??
+                                              0,
+                                          id: tenantMap['id'] ?? '',
+                                        );
+                                      }).toList();
+                                    }
+                                  },
+                                  child: Center(
+                                      child: isLoading
+                                          ? const SpinKitFadingCircle(
+                                              color: Colors.white,
+                                              size: 25.0,
+                                            )
+                                          : const Text(
+                                              'Create Lease',
+                                              style: TextStyle(
+                                                  color: Color(0xFFf7f8f9),
+                                                  fontSize: 16),
+                                            )),
+                                )),
                             const SizedBox(
                               width: 10,
                             ),
@@ -3337,16 +4245,18 @@ class _addLease3State extends State<addLease3>
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFFffffff),
+                                        backgroundColor:
+                                            const Color(0xFFffffff),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                                BorderRadius.circular(8.0))),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
                                       'Cancel',
-                                      style: TextStyle(color: Color(0xFF748097)),
+                                      style:
+                                          TextStyle(color: Color(0xFF748097)),
                                     )))
                           ],
                         ),
@@ -3357,7 +4267,6 @@ class _addLease3State extends State<addLease3>
               ),
             ],
           ),
-
         ),
       ),
     );
@@ -3367,16 +4276,28 @@ class _addLease3State extends State<addLease3>
     bool success = await LeaseRepository().postLease(lease);
 
     if (success) {
-      Navigator.pop(context,true); // Replace with the actual navigation logic
+      Navigator.pop(context, true); // Replace with the actual navigation logic
     } else {
       // Handle the failure case, maybe show a message
     }
   }
 
+  //
+  // Future<void> ifApplicantMoveIn(String applicantId) async {
+  //   bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+  //
+  //   if (success) {
+  //     Navigator.pop(context); // Replace with the actual navigation logic
+  //   } else {
+  //     // Handle the failure case, maybe show a message
+  //     print('Failed to update applicant status');
+  //   }
+  // }
 
-
-  Future<void> ifApplicantMoveIn(String applicantId) async {
-    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId);
+  Future<void> ifApplicantMoveIn(
+      String applicantId, List<String> apnt_Id) async {
+    bool success =
+        await LeaseRepository().ifApplicantMoveInTrue(applicantId, apnt_Id);
 
     if (success) {
       Navigator.pop(context); // Replace with the actual navigation logic
@@ -3471,11 +4392,11 @@ class _addLease3State extends State<addLease3>
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title: const Text('Add Tenant or Cosigner',
+              title: Text('Add Tenant or Cosigner',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF152b51))),
+                      color: blueColor)),
               content: Form(
                 key: _addRecurringFormKey,
                 child: Padding(
@@ -3503,14 +4424,12 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected
-                                            ? const LinearGradient(
+                                            ? LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
+                                                  blueColor,
                                                 ],
                                               )
                                             : null,
@@ -3537,12 +4456,9 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    blueColor,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -3571,14 +4487,12 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
-                                                width: 1),
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected == false
-                                            ? const LinearGradient(
+                                            ? LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
+                                                  blueColor,
                                                 ],
                                               )
                                             : null,
@@ -3605,12 +4519,9 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    blueColor,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -3647,11 +4558,10 @@ class _addLease3State extends State<addLease3>
                     height: 50,
                     width: 90,
                     decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-
+                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF152b51),
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         onPressed: () {
@@ -3717,6 +4627,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
   List<String> accountTypeItems = [
     'Income',
     'Non Operating Income ',
+    'Liability Account',
   ]; // Example items
   List<String> fundTypeItems = [
     'Reverse',
@@ -3725,7 +4636,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   bool _isLoading = true;
   List<String> accounts = [];
-
 
   @override
   void initState() {
@@ -3747,10 +4657,11 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -3773,536 +4684,624 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     }
   }
 
+  bool _showAccountError = false;
+  TextEditingController startDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
-        key: _formKey,
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              child: Container(
-                  color: Colors.white,
-                  height: _isInvalid ? 326 : 350,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Account *',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        _isLoading
-                            ? const Center(
-                                child: SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 50.0,
-                              ))
-                            : DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Select',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFFb0b6c3),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          child: Container(
+            color: Colors.white,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 2),
+                  Text(
+                    'Add One Time Charge',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    'Account *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFFb0b6c3),
                                   ),
-                                  items: [
-                                    ...items.map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          items: [
+                            ...items
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )),
+                            DropdownMenuItem<String>(
+                              value: 'button_item',
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        backgroundColor: Colors.white,
+                                        surfaceTintColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: 500,
+                                            maxHeight: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.8,
                                           ),
-                                        )),
-                                    //updated
-
-                                    DropdownMenuItem<String>(
-                                      value: 'button_item',
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(0)),
-                                            elevation: 0,
-                                            backgroundColor: Colors.white),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StatefulBuilder(
-                                                  builder: (context, setState) {
-                                                return AlertDialog(
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  backgroundColor: Colors.white,
-                                                  title: const Text(
-                                                    'Add Account',
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                    ),
-                                                  ),
-                                                  content: Container(
-                                                    height: 450,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      child: Form(
-                                                        key: _subFormKey,
-                                                        child: ListView(
-                                                          children: [
-                                                            const Text(
-                                                              'Account Name *',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomTextField(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter Account Name';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              hintText:
-                                                                  'Enter Account Name',
-                                                              controller:
-                                                                  _accountNameController,
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Account Type',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomDropdown(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please select a Account Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                                  'Select Account Type',
-                                                              items:
-                                                                  accountTypeItems,
-                                                              selectedValue:
-                                                                  _selectedAccountType,
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                setState(() {
-                                                                  _selectedAccountType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Fund Type',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomDropdown(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please select a Fund Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                                  'Select Fund Type',
-                                                              items:
-                                                                  fundTypeItems,
-                                                              selectedValue:
-                                                                  _selectedFundType,
-                                                              onChanged:
-                                                                  (String?
-                                                                      value) {
-                                                                setState(() {
-                                                                  _selectedFundType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 8),
-                                                            const Text(
-                                                              'Notes',
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            CustomTextField(
-                                                              validator:
-                                                                  (value) {
-                                                                if (value ==
-                                                                        null ||
-                                                                    value
-                                                                        .isEmpty) {
-                                                                  return 'Please enter Notes';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              hintText:
-                                                                  'Enter Notes',
-                                                              controller:
-                                                                  _notesController,
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            RichText(
-                                                              text:
-                                                                  const TextSpan(
-                                                                children: <TextSpan>[
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'We stores this information ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Privately',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        ' and ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Securely',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 90,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8.0)),
-                                                                    child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF152b51), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                        onPressed: () {
-                                                                          _submitSubForm();
-                                                                        },
-                                                                        child: const Text(
-                                                                          'Add',
-                                                                          style:
-                                                                              TextStyle(color: Color(0xFFf7f8f9)),
-                                                                        ))),
-                                                                const SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 94,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8.0)),
-                                                                    child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                        onPressed: () {
-                                                                          Navigator.pop(
-                                                                              context);
-                                                                        },
-                                                                        child: const Text(
-                                                                          'Cancel',
-                                                                          style:
-                                                                              TextStyle(color: Color(0xFF748097)),
-                                                                        )))
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
+                                          child: SingleChildScrollView(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
+                                              child: Form(
+                                                key: _subFormKey,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Add account',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
                                                       ),
                                                     ),
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                          );
-                                        },
-                                        child: const Text(
-                                          'Add New Account',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
+                                                    const SizedBox(height: 20),
+                                                    Text(
+                                                      'Account Name *',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    CustomTextField(
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return 'Please enter Account Name';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      hintText:
+                                                          'Enter Account Name',
+                                                      controller:
+                                                          _accountNameController,
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      'Account Type',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    CustomDropdown(
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return 'Please select a Account Type';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      labelText:
+                                                          'Select Account Type',
+                                                      items: accountTypeItems,
+                                                      selectedValue:
+                                                          _selectedAccountType,
+                                                      onChanged:
+                                                          (String? value) {
+                                                        setState(() {
+                                                          _selectedAccountType =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      'Fund Type',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    CustomDropdown(
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return 'Please select a Fund Type';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      labelText:
+                                                          'Select Fund Type',
+                                                      items: fundTypeItems,
+                                                      selectedValue:
+                                                          _selectedFundType,
+                                                      onChanged:
+                                                          (String? value) {
+                                                        setState(() {
+                                                          _selectedFundType =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      'Notes',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    CustomTextField(
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return 'Please enter Notes';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      hintText: 'Enter Notes',
+                                                      controller:
+                                                          _notesController,
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: <TextSpan>[
+                                                          const TextSpan(
+                                                            text:
+                                                                'We stores this information ',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: ' Privately ',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: blueColor,
+                                                            ),
+                                                          ),
+                                                          const TextSpan(
+                                                            text: ' and ',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: ' Securely ',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: blueColor,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Container(
+                                                            height: 50,
+                                                            width: 90,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0)),
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            blueColor,
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                8.0))),
+                                                                    onPressed:
+                                                                        () {
+                                                                      _submitSubForm();
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Add',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Color(0xFFf7f8f9)),
+                                                                    ))),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        Container(
+                                                            height: 50,
+                                                            width: 94,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0)),
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            const Color(
+                                                                                0xFFffffff),
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                8.0))),
+                                                                    onPressed:
+                                                                        () {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        _selectedProperty =
+                                                                            null;
+                                                                      });
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Cancel',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Color(0xFF748097)),
+                                                                    )))
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      '+ Add New Account',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
-                                  value: _selectedProperty,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedProperty = value;
-                                    });
-                                    // widget.onChanged(value);
-                                    // state.didChange(value);
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                    ),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                    ),
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ],
+                          value: _selectedProperty,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedProperty = value;
+                              _showAccountError =
+                                  false; // clear error on change
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            height: 45,
+                            padding: const EdgeInsets.only(left: 0, right: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            elevation: 2,
+                          ),
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            iconEnabledColor: Color(0xFFb0b6c3),
+                            iconDisabledColor: Colors.grey,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(6),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility: MaterialStateProperty.all(true),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.only(left: 14, right: 14),
+                          ),
+                        ),
+                      ),
+                      if (_showAccountError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6, left: 4),
+                          child: Text(
+                            'Please select an account',
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Amount *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter amount';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                    hintText: 'Enter Amount',
+                    controller: _amountController,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Memo *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter memo';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter Memo',
+                    controller: _memoController,
+                    // optional: true,
+                  ),
+                  const SizedBox(height: 20),
+                  if (MediaQuery.of(context).size.width < 500) ...[
+                    Text('Charge Date *',
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor)),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          helpText: "Charge Date",
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                          locale: const Locale('en', 'US'),
+                          builder: (BuildContext context, Widget? child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: blueColor,
+                                  onPrimary: Colors.white,
+                                  onSurface: blueColor,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: blueColor,
                                   ),
                                 ),
                               ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Amount *',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        CustomTextField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter amount';
-                            }
-                            return null;
+                              child: child!,
+                            );
                           },
-                          keyboardType: TextInputType.number,
-                          hintText: 'Enter Amount',
-                          controller: _amountController,
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Memo',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        CustomTextField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter memo';
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          hintText: 'Enter Memo',
-                          controller: _memoController,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                                height: 50,
-                                width: 90,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF152b51),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0))),
-                                    onPressed: () {
-                                      _submitForm();
-                                    },
-                                    child: const Text(
-                                      'Add',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ))),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                height: 50,
-                                width: 94,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFFffffff),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0))),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text(
-                                      'Cancel',
-                                      style:
-                                          TextStyle(color: Color(0xFF748097)),
-                                    )))
-                          ],
-                        ),
-                      ])),
-            )));
+                        );
+                        if (pickedDate != null) {
+                          String formattedStartDate =
+                              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                          setState(() {
+                            startDateController.text = formattedStartDate;
+                          });
+                        }
+                      },
+                      readOnnly: true,
+                      suffixIcon: IconButton(
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            helpText: "Charge Date",
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                            locale: const Locale('en', 'US'),
+                            builder: (BuildContext context, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  colorScheme: ColorScheme.light(
+                                    primary: blueColor,
+                                    onPrimary: Colors.white,
+                                    onSurface: blueColor,
+                                  ),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: blueColor,
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (pickedDate != null) {
+                            String formattedStartDate =
+                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                            setState(() {
+                              startDateController.text = formattedStartDate;
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.date_range_rounded),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'select start date';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.text,
+                      hintText: 'YYYY-MM-DD',
+                      label: "select start date",
+                      controller: startDateController,
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          height: 50,
+                          width: 90,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
+                              onPressed: () {
+                                _submitForm();
+                              },
+                              child: const Text(
+                                'Add',
+                                style: TextStyle(color: Color(0xFFf7f8f9)),
+                              ))),
+                      const SizedBox(width: 10),
+                      Container(
+                          height: 50,
+                          width: 94,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: Color(0xFF748097)),
+                              )))
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _submitForm() {
@@ -4312,8 +5311,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       });
       final formData = {
         'account': _selectedProperty ?? '',
-        'amount': _amountController.text,
-        'memo': _memoController.text,
+        'amount': _amountController.text.trim(),
+        'memo': _memoController.text.trim(),
         'charge_type': 'One Time Charge',
       };
       widget.onSave(formData);
@@ -4334,10 +5333,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
-        'account': _accountNameController.text,
+        'account': _accountNameController.text.trim(),
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
-        'notes': _notesController.text,
+        'notes': _notesController.text.trim(),
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -4400,6 +5399,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   List<String> accountTypeItems = [
     'Income',
     'Non Operating Income ',
+    'Liability Account',
   ]; // Example items
   List<String> fundTypeItems = [
     'Reverse',
@@ -4456,9 +5456,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
+      _selectedProperty = widget.initialData!['account'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
+      String dateString = widget.initialData!['date'] ?? "";
+      if (dateString.isNotEmpty) {
+        DateTime date = DateTime.parse(dateString);
+        selectedDay = date.day.toString(); // Extracts only the day
+      } else {
+        selectedDay = ""; // Handle empty case
+      }
     }
     fetchData();
   }
@@ -4473,10 +5480,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -4499,6 +5507,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     }
   }
 
+  String? selectedDay;
+  TextEditingController startDateController = TextEditingController();
+  bool _showAccountError = false;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -4508,409 +5519,479 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 326 : 350,
+            // height: _isInvalid ? 460 : 475,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                const SizedBox(height: 2),
+                Text(
+                  'Add Recurring Charge',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
                   'Account *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
-                _isLoading
-                    ? const Center(
-                        child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
-                      ))
-                    : DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Select',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFFb0b6c3),
+                FormField<String>(
+                  validator: (value) {
+                    if (_selectedProperty == null ||
+                        _selectedProperty!.isEmpty) {
+                      setState(() {
+                        _showAccountError = true;
+                      });
+                      return 'Please select an account';
+                    }
+                    setState(() {
+                      _showAccountError = false;
+                    });
+                    return null;
+                  },
+                  builder: (FormFieldState<String> state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Select',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFFb0b6c3),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
-                          ),
-                          items: [
-                            ...items
-                                .map((String item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            //updated
-
-                            DropdownMenuItem<String>(
-                              value: 'button_item',
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0)),
-                                    elevation: 0,
-                                    backgroundColor: Colors.white),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return AlertDialog(
-                                          contentPadding: EdgeInsets.zero,
-                                          backgroundColor: Colors.white,
-                                          title: const Text(
-                                            'Add Account',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                            ),
+                              ],
+                            ),
+                            items: [
+                              ...items.map(
+                                  (String item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black87,
                                           ),
-                                          content: Container(
-                                            height: 450,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Form(
-                                                key: _subFormKey,
-                                                child: ListView(
-                                                  children: [
-                                                    const Text(
-                                                      'Account Name *',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Account Name';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText:
-                                                          'Enter Account Name',
-                                                      controller:
-                                                          _accountNameController,
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Account Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Account Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Account Type',
-                                                      items: accountTypeItems,
-                                                      selectedValue:
-                                                          _selectedAccountType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedAccountType =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Fund Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Fund Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Fund Type',
-                                                      items: fundTypeItems,
-                                                      selectedValue:
-                                                          _selectedFundType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedFundType =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Notes',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Notes';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText: 'Enter Notes',
-                                                      controller:
-                                                          _notesController,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    RichText(
-                                                      text: const TextSpan(
-                                                        children: <TextSpan>[
-                                                          TextSpan(
-                                                            text:
-                                                                'We stores this information ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: 'Privately',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: ' and ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: 'Securely',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Row(
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                              //updated
+                              DropdownMenuItem<String>(
+                                value: 'button_item',
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                          return Dialog(
+                                            backgroundColor: Colors.white,
+                                            surfaceTintColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10.0)),
+                                            child: SingleChildScrollView(
+                                              child: Container(
+                                                // height: 450,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: Form(
+                                                    key: _subFormKey,
+                                                    child: Column(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        Container(
-                                                            height: 50,
-                                                            width: 90,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
-                                                                                0xFF152b51),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _submitSubForm();
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Add',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFFf7f8f9)),
-                                                                    ))),
-                                                        const SizedBox(
-                                                          width: 10,
+                                                        Text(
+                                                          'Add account',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
                                                         ),
-                                                        Container(
-                                                            height: 50,
-                                                            width: 94,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        Text(
+                                                          'Account Name *',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        CustomTextField(
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please enter Account Name';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                          hintText:
+                                                              'Enter Account Name',
+                                                          controller:
+                                                              _accountNameController,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        Text(
+                                                          'Account Type',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        CustomDropdown(
+                                                          validator: (value) {
+                                                            if (_selectedAccountType ==
+                                                                    null ||
+                                                                _selectedAccountType!
+                                                                    .isEmpty) {
+                                                              return 'Please select a Account Type';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          labelText:
+                                                              'Select Account Type',
+                                                          items:
+                                                              accountTypeItems,
+                                                          selectedValue:
+                                                              _selectedAccountType,
+                                                          onChanged:
+                                                              (String? value) {
+                                                            setState(() {
+                                                              _selectedAccountType =
+                                                                  value;
+                                                            });
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        Text(
+                                                          'Fund Type',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        CustomDropdown(
+                                                          validator: (value) {
+                                                            if (_selectedFundType ==
+                                                                    null ||
+                                                                _selectedFundType!
+                                                                    .isEmpty) {
+                                                              return 'Please select a Fund Type';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          labelText:
+                                                              'Select Fund Type',
+                                                          items: fundTypeItems,
+                                                          selectedValue:
+                                                              _selectedFundType,
+                                                          onChanged:
+                                                              (String? value) {
+                                                            setState(() {
+                                                              _selectedFundType =
+                                                                  value;
+                                                            });
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        Text(
+                                                          'Notes',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        CustomTextField(
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please enter Notes';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                          hintText:
+                                                              'Enter Notes',
+                                                          controller:
+                                                              _notesController,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: <TextSpan>[
+                                                              const TextSpan(
+                                                                text:
+                                                                    'We stores this information ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    ' Privately ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              const TextSpan(
+                                                                text: ' and ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    ' Securely ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Container(
+                                                                height: 50,
+                                                                width: 90,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor:
+                                                                                blueColor,
+                                                                            shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                    8.0))),
+                                                                        onPressed:
+                                                                            () {
+                                                                          _submitSubForm(
+                                                                              context);
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Add',
+                                                                          style:
+                                                                              TextStyle(color: Color(0xFFf7f8f9)),
+                                                                        ))),
+                                                            const SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Container(
+                                                                height: 50,
+                                                                width: 94,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0)),
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: const Color(
                                                                                 0xFFffffff),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Cancel',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFF748097)),
-                                                                    )))
+                                                                            shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                    8.0))),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            Navigator.pop(context);
+                                                                            _selectedProperty =
+                                                                                null;
+                                                                          });
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Cancel',
+                                                                          style:
+                                                                              TextStyle(color: Color(0xFF748097)),
+                                                                        )))
+                                                          ],
+                                                        ),
                                                       ],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      });
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  'Add New Account',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                          );
+                                        });
+                                      },
+                                    );
+                                  },
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '+ Add New Account',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
+                            ],
+                            value: _selectedProperty,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedProperty = value;
+                                state.didChange(value);
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 45,
+                              // width: 160,
+                              padding:
+                                  const EdgeInsets.only(left: 0, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
                             ),
-                          ],
-                          value: _selectedProperty,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedProperty = value;
-                            });
-                            // widget.onChanged(value);
-                            // state.didChange(value);
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            width: 160,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                              ),
+                              iconSize: 24,
+                              iconEnabledColor: Color(0xFFb0b6c3),
+                              iconDisabledColor: Colors.grey,
                             ),
-                            elevation: 2,
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(6),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                              ),
                             ),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                              padding: EdgeInsets.only(left: 14, right: 14),
                             ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                            padding: EdgeInsets.only(left: 14, right: 14),
                           ),
                         ),
-                      ),
+                        if (_showAccountError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              'Please select an account',
+                              style: TextStyle(
+                                color: Colors.red[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Amount *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -4926,12 +6007,12 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   controller: _amountController,
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Memo',
+                Text(
+                  'Memo *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -4945,10 +6026,215 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   keyboardType: TextInputType.text,
                   hintText: 'Enter Memo',
                   controller: _memoController,
+                  // optional: true,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Recurrence Type *',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FormField<String>(
+                  validator: (value) {
+                    if (selectedDay == null || selectedDay!.isEmpty) {
+                      return 'Please select a recurrence type';
+                    }
+                    return null;
+                  },
+                  builder: (FormFieldState<String> state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            hint: const Text('select'),
+                            isExpanded: true,
+                            value: selectedDay,
+                            items: [
+                              const DropdownMenuItem<String>(
+                                value: 'Weekly',
+                                child: Text('Weekly'),
+                              ),
+                              const DropdownMenuItem<String>(
+                                value: 'Monthly',
+                                child: Text('Monthly'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDay = value;
+                                state.didChange(value);
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 45,
+                              padding:
+                                  const EdgeInsets.only(left: 0, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: Colors.white,
+                              ),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(6),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (state.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              state.errorText!,
+                              style: TextStyle(
+                                color: Colors.red[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
+                if (MediaQuery.of(context).size.width < 500)
+                  Text('Charge Start From *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: blueColor)),
+                if (MediaQuery.of(context).size.width < 500)
+                  const SizedBox(
+                    height: 8,
+                  ),
+                if (MediaQuery.of(context).size.width < 500)
+                  CustomTextField(
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        helpText: "Charge Start",
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                        locale: const Locale('en', 'US'),
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: blueColor, // header background color
+                                onPrimary: Colors.white, // header text color
+                                onSurface: blueColor, // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor:
+                                      blueColor, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (pickedDate != null) {
+                        // String formattedStartDate =
+                        //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        String formattedStartDate =
+                            "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        DateTime endDate = DateTime(pickedDate.year + 1,
+                            pickedDate.month, pickedDate.day);
+                        // String formattedEndDate =
+                        //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+                        String formattedEndDate =
+                            "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                        print(formattedStartDate);
+                        setState(() {
+                          startDateController.text = formattedStartDate;
+                        });
+                      }
+                    },
+                    readOnnly: true,
+                    suffixIcon: IconButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          helpText: "Charge Start",
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                          locale: const Locale('en', 'US'),
+                          builder: (BuildContext context, Widget? child) {
+                            return Theme(
+                              data: ThemeData.light().copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: blueColor, // header background color
+                                  onPrimary: Colors.white, // header text color
+                                  onSurface: blueColor, // body text color
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor:
+                                        blueColor, // button text color
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (pickedDate != null) {
+                          // String formattedStartDate =
+                          //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                          String formattedStartDate =
+                              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                          DateTime endDate = DateTime(pickedDate.year + 1,
+                              pickedDate.month, pickedDate.day);
+                          // String formattedEndDate =
+                          //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+                          String formattedEndDate =
+                              "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                          print(formattedStartDate);
+                          setState(() {
+                            startDateController.text = formattedStartDate;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.date_range_rounded),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'select start date';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'YYYY-MM-DD',
+                    label: "select start date",
+                    controller: startDateController,
+                  ),
+                if (MediaQuery.of(context).size.width < 500)
+                  const SizedBox(
+                    height: 15,
+                  ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -4959,11 +6245,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
-                              _submitForm();
+                              _submitForm(context);
                             },
                             child: const Text(
                               'Add',
@@ -4999,16 +6285,41 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isInvalid = true;
       });
+      DateTime now = DateTime.now();
+      int selectedYear = now.year;
+      int selectedMonth = now.month;
+
+      // Construct the date using the selected day, current year, and month
+      int selectedDayInt = int.parse(selectedDay!);
+      DateTime currentDate =
+          DateTime(selectedYear, selectedMonth, selectedDayInt);
+
+      // Add one month
+      DateTime nextMonthDate = DateTime(
+        currentDate.year,
+        currentDate.month + 1,
+        currentDate.day,
+      );
+
+      // Format date to always have two-digit months and days
+      String formattedDate = "${nextMonthDate.year}-"
+          "${nextMonthDate.month.toString().padLeft(2, '0')}-"
+          "${nextMonthDate.day.toString().padLeft(2, '0')}";
+      String? id = widget.initialData!['entry_id'] != ""
+          ? widget.initialData!['entry_id']
+          : "";
       final formData = {
         'account': _selectedProperty ?? '',
-        'amount': _amountController.text,
-        'memo': _memoController.text,
+        'amount': _amountController.text.trim(),
+        'memo': _memoController.text.trim(),
+        'entry_id': id!,
         'charge_type': 'Recurring Charge',
+        'date': formattedDate,
       };
       widget.onSave(formData);
       setState(() {
@@ -5021,17 +6332,17 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     }
   }
 
-  Future _submitSubForm() async {
+  Future _submitSubForm(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId').toString();
     print(adminId);
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
-        'account': _accountNameController.text,
+        'account': _accountNameController.text.trim(),
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
-        'notes': _notesController.text,
+        'notes': _notesController.text.trim(),
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -5045,10 +6356,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         },
         body: json.encode(formData),
       );
-
       if (response.statusCode == 200) {
         widget.onSave(formData);
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
@@ -5100,8 +6410,91 @@ class _AddTenantState extends State<AddTenant> {
     filteredTenants = tenants;
     selected = List<bool>.generate(tenants.length, (index) => false);
 
-    fetchTenants();
+    fetchTenantsAndApplicants();
+    filteredApplicant = Applicant;
+    select = List<bool>.generate(Applicant.length, (index) => false);
+// fetchTenants();
   }
+
+  List<Datum> Applicant = [];
+  List<Datum> filteredApplicant = [];
+  List<Datum> selectedApplicant = [];
+  List<bool> select = [];
+// Future<void> fetchTenantsAndApplicants() async {
+//   setState(() {
+//     isLoading = true;
+//   });
+//
+//   try {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? adminid = prefs.getString("adminId");
+//     String? id = prefs.getString("staff_id");
+//     String? token = prefs.getString('token');
+//
+//     // Fetch tenants
+//     final tenantResponse = await http
+//         .get(Uri.parse('${Api_url}/api/tenant/tenants/$adminid'), headers: {
+//       "authorization": "CRM $token",
+//       "id": "CRM $id",
+//     });
+//
+//     if (tenantResponse.statusCode == 200) {
+//       Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
+//       if (tenantData.containsKey('data')) {
+//         List<dynamic> tenantList = tenantData['data']['tenants'];
+//         tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+//       } else {
+//         print("Unexpected tenant response structure: Missing 'data' key");
+//       }
+//     } else {
+//       print("Failed to load tenants: ${tenantResponse.statusCode}");
+//     }
+//
+//     // Fetch applicants
+//     final applicantResponse = await http
+//         .get(Uri.parse('${Api_url}/api/applicant/applicant/$adminid'), headers: {
+//       "authorization": "CRM $token",
+//       "id": "CRM $id",
+//     });
+//
+//     if (applicantResponse.statusCode == 200) {
+//       Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+//       if (applicantData.containsKey('data')) {
+//         List<dynamic> applicantList = applicantData['data'];
+//         List<Tenant> convertedApplicants = applicantList
+//             .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+//             .toList();
+//
+//         // Merge tenants and converted applicants
+//         tenants.addAll(convertedApplicants);
+//       } else {
+//         print("Unexpected applicant response structure: Missing 'data' key");
+//       }
+//     } else {
+//       print("Failed to load applicants: ${applicantResponse.statusCode}");
+//     }
+//
+//     // Update filtered list and selection state
+//     filteredTenants = List.from(tenants);
+//     selected = List<bool>.filled(tenants.length, false);
+//   } catch (e) {
+//     print("Error fetching tenants or applicants: $e");
+//   } finally {
+//     setState(() {
+//       isLoading = false;
+//     });
+//   }
+// }
+//
+// Tenant convertApplicantToTenant(Datum applicant) {
+//   return Tenant(
+//     tenantFirstName: applicant.applicantFirstName,
+//     tenantLastName: applicant.applicantLastName,
+//     tenantEmail: applicant.applicantEmail,
+//     tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
+//     tenantId: null, // Explicitly set tenantId as null
+//   );
+// }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
@@ -5131,7 +6524,7 @@ class _AddTenantState extends State<AddTenant> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }
@@ -5181,7 +6574,7 @@ class _AddTenantState extends State<AddTenant> {
 
         // Check if the response contains the expected keys
         if (responseData.containsKey('data')) {
-          List<dynamic> data = responseData['data'];
+          List<dynamic> data = responseData['data']['tenants'];
           tenants = data.map((item) => Tenant.fromJson(item)).toList();
           filteredTenants = List.from(tenants);
           selected = List<bool>.filled(tenants.length, false);
@@ -5203,6 +6596,86 @@ class _AddTenantState extends State<AddTenant> {
     }
   }
 
+  Future<void> fetchTenantsAndApplicants() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+
+      // Fetch tenants
+      final tenantResponse = await http
+          .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (tenantResponse.statusCode == 200) {
+        Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
+        if (tenantData.containsKey('data')) {
+          List<dynamic> tenantList = tenantData['data']['tenants'];
+          List<dynamic> applicantlist = tenantData['data']['applicants'];
+
+          tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+          tenants.addAll(applicantlist
+              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+              .toList());
+        } else {
+          print("Unexpected tenant response structure: Missing 'data' key");
+        }
+      } else {
+        print("Failed to load tenants: ${tenantResponse.statusCode}");
+      }
+
+      // Fetch applicants
+      // final applicantResponse = await http
+      //     .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+      //   "authorization": "CRM $token",
+      //   "id": "CRM $id",
+      // });
+      //
+      // if (applicantResponse.statusCode == 200) {
+      //   Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+      //   if (applicantData.containsKey('data')) {
+      //     List<dynamic> applicantList = applicantData['data'];
+      //     List<Tenant> convertedApplicants = applicantList
+      //         .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+      //         .toList();
+      //
+      //     // Merge tenants and converted applicants
+      //     tenants.addAll(convertedApplicants);
+      //   } else {
+      //     print("Unexpected applicant response structure: Missing 'data' key");
+      //   }
+      // } else {
+      //   print("Failed to load applicants: ${applicantResponse.statusCode}");
+      // }
+
+      // Update filtered list and selection state
+      filteredTenants = List.from(tenants);
+      selected = List<bool>.filled(tenants.length, false);
+    } catch (e) {
+      print("Error fetching tenants or applicants: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Tenant convertApplicantToTenant(Datum applicant) {
+    return Tenant(
+        tenantFirstName: applicant.applicantFirstName,
+        tenantLastName: applicant.applicantLastName,
+        tenantEmail: applicant.applicantEmail,
+        tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
+        tenantId: null, // Explicitly set tenantId as null
+        applicantId: applicant.applicantId);
+  }
+
   //
   // void filterOwners(String query) {
   //   setState(() {
@@ -5212,6 +6685,7 @@ class _AddTenantState extends State<AddTenant> {
   //     }).toList();
   //   });
   // }
+  List<Tenant> selectedTenantsTemp = [];
   @override
   Widget build(BuildContext context) {
     var selectedTenantsProvider =
@@ -5222,7 +6696,7 @@ class _AddTenantState extends State<AddTenant> {
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             //checked
@@ -5238,44 +6712,39 @@ class _AddTenantState extends State<AddTenant> {
                         isChecked = value ?? false;
                       });
                     },
-                    activeColor: isChecked
-                        ? Color.fromRGBO(21, 43, 81, 1)
-                        : Colors.black,
+                    activeColor: isChecked ? blueColor : Colors.black,
                   ),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             isChecked
                 ? Column(
                     children: [
-                      SizedBox(height: 16.0),
-
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: Colors.grey),
                         ),
                         child: DataTable(
-                          columns: [
+                          columns: const [
                             DataColumn(label: Text('Tenant Name')),
                             DataColumn(label: Text('Select')),
                           ],
                           rows: filteredTenants.map((tenant) {
-                            /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .contains(tenant);*/
                             final matchingTenants =
                                 Provider.of<SelectedTenantsProvider>(context)
                                     .selectedTenants
-                                    .where((test) =>
-                                        test.tenantFirstName ==
-                                        tenant.tenantFirstName)
+                                    .where((test) => tenant.tenantId != null
+                                        ? test.tenantId == tenant.tenantId
+                                        : test.applicantId ==
+                                            tenant.applicantId)
                                     .toList();
                             print(matchingTenants);
+
                             final isSelected =
                                 matchingTenants.length > 0 ? true : false;
                             return DataRow(
@@ -5299,14 +6768,8 @@ class _AddTenantState extends State<AddTenant> {
                                               .removeTenant(tenant);
                                         }
                                         setState(() {});
-                                        /* if (value) {
-                                      selectedTenantsProvider.addTenant(tenant);
-                                    } else {
-                                      selectedTenantsProvider.removeTenant(tenant);
-                                    }*/
                                       },
-                                      activeColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                      activeColor: blueColor,
                                     ),
                                   ),
                                 ),
@@ -5315,60 +6778,32 @@ class _AddTenantState extends State<AddTenant> {
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 30.0),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 30.0,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Add",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
-                                ),
-                              ),
-                            ),
+                          const SizedBox(
+                            width: 2,
                           ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.03),
                           GestureDetector(
                             onTap: () {
+                              setState(() {
+                                for (var tenant in selectedTenantsTemp) {
+                                  selectedTenantsProvider.addTenant(tenant);
+                                }
+                                // Clear the temporary list after adding
+                                selectedTenantsTemp.clear();
+                              });
                               Navigator.pop(context);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 30.0,
-                                width: 50,
+                                height: 40.0,
+                                width: 90,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Colors.white,
-                                  boxShadow: [
+                                  color: blueColor,
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -5376,20 +6811,14 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
+                                child: const Center(
+                                  child: Text(
+                                    "Add",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ),
@@ -5399,108 +6828,85 @@ class _AddTenantState extends State<AddTenant> {
                     ],
                   )
                 : Column(
-              children: [
-                //contact information
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 103, 1),
-                      border: Border.all(
-                        color: const Color.fromRGBO(21, 43, 83, 1),
-                      ),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Contact information tenant',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white)),
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 10,
+                      //contact information
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            border: Border.all(
+                              color: blueColor,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Contact information tenant',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white)),
+                        ),
                       ),
-                      const Text('First Name *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter first name',
-                        controller: firstName,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the first name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Last Name *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter last name',
-                        controller: lastName,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the last name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Phone Number *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.number,
-                        hintText: 'Enter phone number',
-                        controller: phoneNumber,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the phone number';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _showalterNumber
-                          ? Container(
+                      Container(
                         child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('Work Number',
+                            const Text('First Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.name,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
+                              hintText: 'Enter first name',
+                              controller: firstName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the first name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Last Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.name,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
+                              hintText: 'Enter last name',
+                              controller: lastName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the last name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Phone Number *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -5510,63 +6916,94 @@ class _AddTenantState extends State<AddTenant> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
-                              hintText: 'Enter work number',
-                              controller: workNumber,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
+                              hintText: 'Enter phone number',
+                              controller: phoneNumber,
+                              otherController: workNumber,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the phone number';
+                                }
+                                return null;
+                              },
+                              phone: true,
                             ),
-                          ],
-                        ),
-                      )
-                          : Container(),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _showalterNumber = !_showalterNumber;
-                          });
-                        },
-                        child: const Text('+Add alternative Phone',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF2ec433))),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Email *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter Email',
-                        controller: email,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an email';
-                          } else if (!isValidEmail(value)) {
-                            print('!isValidEmail(value) invalid');
-                            return 'Please enter a valid email';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _showalterEmail
-                          ? Container(
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _showalterNumber
+                                ? Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Work Number',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          hintText: 'Enter work number',
+                                          otherController: phoneNumber,
+                                          controller: workNumber,
+                                          optional: true,
+                                          phone: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            if (_showalterNumber == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('+Add alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterNumber == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('Alternative Email',
+                            const Text('Email *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -5575,386 +7012,502 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType:
-                              TextInputType.emailAddress,
-                              hintText: 'Enter alternative email',
-                              controller: alterEmail,
-                            ),
-                          ],
-                        ),
-                      )
-                          : Container(),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _showalterEmail = !_showalterEmail;
-                          });
-                        },
-                        child: const Text('+Add alternative Email',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF2ec433))),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Password *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              keyboardType: TextInputType.text,
-                              obscureText: !_obscureText,
-                              hintText: 'Enter password',
-                              controller: passWord,
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: 'Enter Email',
+                              controller: email,
+                              email: true,
+                              alterController: alterEmail,
                               validator: (value) {
-                                if (value == null) {
-                                  return 'please enter password';
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an email';
+                                } else if (!isValidEmail(value)) {
+                                  print('!isValidEmail(value) invalid');
+                                  return 'Please enter a valid email';
                                 }
                                 return null;
                               },
                             ),
-                          ),
-                          const SizedBox(
-                              width:
-                              10), // Add some space between the widgets
-                          Container(
-                            width: 38,
-                            height: 40,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: _toggleObscureText,
-                                child: FaIcon(
-                                  _obscureText
-                                      ? FontAwesomeIcons.eyeSlash
-                                      : FontAwesomeIcons.eye,
-                                  size: 20,
-                                  color: Colors.black,
-                                ),
-                              ),
+                            const SizedBox(
+                              height: 20,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                const BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(1.0, 1.0),
-                                  blurRadius: 8.0,
-                                  spreadRadius: 1.0,
+                            _showalterEmail
+                                ? Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Alternative Email',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        CustomTextField(
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          hintText: 'Enter alternative email',
+                                          controller: alterEmail,
+                                          optional: true,
+                                          email: true,
+                                          alterController: email,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            if (_showalterEmail == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('+Add alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterEmail == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Password *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    obscureText: !_obscureText,
+                                    hintText: 'Enter password',
+                                    controller: passWord,
+                                    optional: true,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'please enter password';
+                                      }
+                                      return null;
+                                    },
+                                    pass: true,
+                                  ),
+                                ),
+                                const SizedBox(
+                                    width:
+                                        10), // Add some space between the widgets
+                                Container(
+                                  width: 38,
+                                  height: 40,
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: _toggleObscureText,
+                                      child: FaIcon(
+                                        _obscureText
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 20,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 8.0,
+                                        spreadRadius: 1.0,
+                                      ),
+                                    ],
+                                    border: Border.all(
+                                        width: 0, color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
                                 ),
                               ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showPersonalDetail = !_showPersonalDetail;
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: blueColor,
                               border: Border.all(
-                                  width: 0, color: Colors.white),
-                              borderRadius: BorderRadius.circular(6.0),
+                                color: blueColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('+    Personal Information',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      _showPersonalDetail
+                          ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text('Date of Birth',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 46,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.0,
+                                                1.0), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                8.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                0.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                        color: Color(0xFF8898aa), // Text color
+                                        fontSize: 16.0, // Text size
+                                        fontWeight:
+                                            FontWeight.w400, // Text weight
+                                      ),
+                                      controller: _dateController,
+                                      decoration: InputDecoration(
+                                        hintStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 13,
+                                            color: Color(0xFFb0b6c3)),
+                                        border: InputBorder.none,
+                                        // labelText: 'Select Date',
+                                        hintText: 'yyyy-mm-dd',
+                                        suffixIcon: IconButton(
+                                          icon:
+                                              const Icon(Icons.calendar_today),
+                                          onPressed: () {
+                                            _selectDate(context);
+                                          },
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      onTap: () {
+                                        _selectDate(context);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('TaxPayer ID',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(height: 10),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter TaxPayer ID',
+                                    controller: taxPayerId,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Comments',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 90,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.0,
+                                                1.0), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                8.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                0.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        controller: comments,
+                                        maxLines: 5,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          hintText: 'Enter the comment',
+                                        )),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showEmergancyDetail = !_showEmergancyDetail;
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: blueColor,
+                              border: Border.all(
+                                color: blueColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('+    Emergency Contact',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      _showEmergancyDetail
+                          ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text('Contact Name',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.name,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // Allows letters and spaces
+                                    ],
+                                    hintText: 'Enter contact name',
+                                    controller: contactName,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Relationship to Tenant',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter relationship to tenant',
+                                    controller: relationToTenant,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Email',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    hintText: 'Enter email',
+                                    controller: emergencyEmail,
+                                    optional: true,
+                                    email: true,
+                                    emrgencyController: alterEmail,
+                                    alterController: email,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Phone Number',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
+                                    hintText: 'Enter phone number',
+                                    controller: emergencyPhoneNumber,
+                                    optional: true,
+                                    otherController: phoneNumber,
+                                    businessController: workNumber,
+                                    phone: true,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 2,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                final tenant = Tenant(
+                                  tenantFirstName: firstName.text.trim(),
+                                  tenantLastName: lastName.text.trim(),
+                                  tenantPhoneNumber: phoneNumber.text.trim(),
+                                  tenantAlternativeNumber:
+                                      workNumber.text.trim(),
+                                  tenantEmail: email.text.trim(),
+                                  tenantAlternativeEmail:
+                                      alterEmail.text.trim(),
+                                  tenantPassword: passWord.text.trim(),
+                                  tenantBirthDate: _dateController.text.trim(),
+                                  taxPayerId: taxPayerId.text.trim(),
+                                  comments: comments.text.trim(),
+                                  rentshare: rentShareControllers.text.trim(),
+                                  emergencyContact: EmergencyContact(
+                                    name: contactName.text.trim(),
+                                    relation: relationToTenant.text.trim(),
+                                    email: emergencyEmail.text.trim(),
+                                    phoneNumber:
+                                        emergencyPhoneNumber.text.trim(),
+                                  ),
+                                );
+                                Provider.of<SelectedTenantsProvider>(context,
+                                        listen: false)
+                                    .addTenant(tenant);
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 40.0,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: blueColor,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Add",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                     ],
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showPersonalDetail = !_showPersonalDetail;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
-                        border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
-                        ),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('+    Personal Information',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white)),
-                    ),
-                  ),
-                ),
-                _showPersonalDetail
-                    ? Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text('Date of Birth',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 46,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(1.0,
-                                    1.0), // Shadow offset to the bottom right
-                                blurRadius:
-                                8.0, // How much to blur the shadow
-                                spreadRadius:
-                                0.0, // How much the shadow should spread
-                              ),
-                            ],
-                            border: Border.all(
-                                width: 0, color: Colors.white),
-                            borderRadius:
-                            BorderRadius.circular(6.0)),
-                        child: TextFormField(
-                          style: const TextStyle(
-                            color: Color(0xFF8898aa), // Text color
-                            fontSize: 16.0, // Text size
-                            fontWeight:
-                            FontWeight.w400, // Text weight
-                          ),
-                          controller: _dateController,
-                          decoration: InputDecoration(
-                            hintStyle: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 13,
-                                color: Color(0xFFb0b6c3)),
-                            border: InputBorder.none,
-                            // labelText: 'Select Date',
-                            hintText: 'yyyy-mm-dd',
-                            suffixIcon: IconButton(
-                              icon:
-                              const Icon(Icons.calendar_today),
-                              onPressed: () {
-                                _selectDate(context);
-                              },
-                            ),
-                          ),
-                          readOnly: true,
-                          onTap: () {
-                            _selectDate(context);
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('TaxPayer ID',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(height: 10),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter contact name',
-                        controller: taxPayerId,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Comments',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 90,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(1.0,
-                                    1.0), // Shadow offset to the bottom right
-                                blurRadius:
-                                8.0, // How much to blur the shadow
-                                spreadRadius:
-                                0.0, // How much the shadow should spread
-                              ),
-                            ],
-                            border: Border.all(
-                                width: 0, color: Colors.white),
-                            borderRadius:
-                            BorderRadius.circular(6.0)),
-                        child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: comments,
-                            maxLines: 5,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFFb0b6c3)),
-                              hintText: 'Enter the comment',
-                            )),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                )
-                    : Container(),
-                const SizedBox(
-                  height: 10,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showEmergancyDetail = !_showEmergancyDetail;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
-                        border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
-                        ),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('+    Emergency Contact',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white)),
-                    ),
-                  ),
-                ),
-                _showEmergancyDetail
-                    ? Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text('Contact Name',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter contact name',
-                        controller: contactName,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Relationship to Tenant',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter relationship to tenant',
-                        controller: relationToTenant,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('E-Mail',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter email',
-                        controller: emergencyEmail,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Phone Number',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.number,
-                        hintText: 'Enter phone number',
-                        controller: emergencyPhoneNumber,
-                      ),
-                    ],
-                  ),
-                )
-                    : Container(),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
             const SizedBox(
               height: 10,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    final tenant = Tenant(
-                      tenantFirstName: firstName.text,
-                      tenantLastName: lastName.text,
-                      tenantPhoneNumber: phoneNumber.text,
-                      tenantAlternativeNumber: workNumber.text,
-                      tenantEmail: email.text,
-                      tenantAlternativeEmail: alterEmail.text,
-                      tenantPassword: passWord.text,
-                      tenantBirthDate: _dateController.text,
-                      taxPayerId: taxPayerId.text,
-                      comments: comments.text,
-                      rentshare: rentShareControllers.text,
-                      emergencyContact: EmergencyContact(
-                        name: contactName.text,
-                        relation: relationToTenant.text,
-                        email: emergencyEmail.text,
-                        phoneNumber: emergencyPhoneNumber.text,
-                      ),
-                    );
-                    Provider.of<SelectedTenantsProvider>(context, listen: false)
-                        .addTenant(tenant);
-                  }
-                },
-                child: Text("Add")),
           ],
         ),
       ),
@@ -6017,9 +7570,9 @@ class _AddCosignerState extends State<AddCosigner> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                color: const Color.fromRGBO(21, 43, 103, 1),
+                color: blueColor,
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color: blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0)),
             child: const Padding(
@@ -6049,7 +7602,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter first name',
                     controller: firstName,
                     validator: (value) {
@@ -6071,7 +7628,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter last name',
                     controller: lastName,
                     validator: (value) {
@@ -6096,28 +7657,49 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.number,
                     hintText: 'Enter phone number',
                     controller: phoneNumber,
+                    otherController: workNumber,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                      PhoneNumberFormatter(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter the phone number';
                       }
                       return null;
                     },
+                    phone: true,
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showalterNumber = !_showalterNumber;
-                      });
-                    },
-                    child: const Text('+Add alternative Phone',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2ec433))),
-                  ),
+                  if (_showalterNumber == false)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterNumber = !_showalterNumber;
+                        });
+                      },
+                      child: const Text('+Add alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
+                  if (_showalterNumber == true)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterNumber = !_showalterNumber;
+                        });
+                      },
+                      child: const Text('-Remove alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
                   _showalterNumber
                       ? Container(
                           child: Column(
@@ -6135,9 +7717,17 @@ class _AddCosignerState extends State<AddCosigner> {
                                 height: 10,
                               ),
                               CustomTextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,
+                                otherController: phoneNumber,
+                                optional: true,
+                                phone: true,
                               ),
                             ],
                           ),
@@ -6158,6 +7748,8 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: 'Enter Email',
                     controller: email,
+                    email: true,
+                    alterController: alterEmail,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter email';
@@ -6168,18 +7760,32 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 20,
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showalterEmail = !_showalterEmail;
-                      });
-                    },
-                    child: const Text('+Add alternative Email',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2ec433))),
-                  ),
+                  if (_showalterEmail == false)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterEmail = !_showalterEmail;
+                        });
+                      },
+                      child: const Text('+Add alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
+                  if (_showalterEmail == true)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterEmail = !_showalterEmail;
+                        });
+                      },
+                      child: const Text('-Remove alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
                   _showalterEmail
                       ? Container(
                           child: Column(
@@ -6200,6 +7806,9 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                email: true,
+                                alterController: email,
+                                optional: true,
                               ),
                             ],
                           ),
@@ -6216,12 +7825,12 @@ class _AddCosignerState extends State<AddCosigner> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Address',
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(21, 43, 83, 1)),
+                      color: blueColor),
                 ),
                 const SizedBox(
                   height: 10,
@@ -6270,7 +7879,7 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Postal code',
+                const Text('Zip code',
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -6279,12 +7888,21 @@ class _AddCosignerState extends State<AddCosigner> {
                   height: 10,
                 ),
                 CustomTextField(
-                  keyboardType: TextInputType.number,
-                  hintText: 'Enter postal code',
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.toUpperCase(),
+                        selection: newValue.selection,
+                      );
+                    }),
+                  ],
+                  hintText: 'Enter zip code',
                   controller: postalCode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please enter postal code';
+                      return 'please enter zip code';
                     }
                     return null;
                   },
@@ -6292,150 +7910,87 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                //         Row(
-                //           children: [
-                //             SizedBox(
-                //                 width: MediaQuery.of(context).size.width * 0.05),
-                //             GestureDetector(
-                //              onTap: () {
-                // if (_formKey.currentState!.validate()) {
-                //   if(widget.cosigner == null){
-                //     final cosigner = Cosigner(
-                //       c_id : firstName.text,
-                //       firstName: firstName.text,
-                //       lastName: lastName.text,
-                //       phoneNumber: phoneNumber.text,
-                //       workNumber: workNumber.text,
-                //       email: email.text,
-                //       alterEmail: alterEmail.text,
-                //       streetAddress: streetAddrees.text,
-                //       city: city.text,
-                //       country: country.text,
-                //       postalCode: postalCode.text,
-                //     );
-                //     Provider.of<SelectedCosignersProvider>(context,
-                //         listen: false)
-                //         .addCosigner(cosigner);
-                //   }
-                //   else{
-                //     final cosigner = Cosigner(
-                //       //c_id : firstName.text,
-                //       firstName: firstName.text,
-                //       lastName: lastName.text,
-                //       phoneNumber: phoneNumber.text,
-                //       workNumber: workNumber.text,
-                //       email: email.text,
-                //       alterEmail: alterEmail.text,
-                //       streetAddress: streetAddrees.text,
-                //       city: city.text,
-                //       country: country.text,
-                //       postalCode: postalCode.text,
-                //     );
-                //     Provider.of<SelectedCosignersProvider>(context,
-                //         listen: false)
-                //         .updateCosigner(cosigner,widget.index!);
-                //   }
-                // }
-                //              },
-                //               child: ClipRRect(
-                //                 borderRadius: BorderRadius.circular(5.0),
-                //                 child: Container(
-                //                   height: 30.0,
-                //                   width: MediaQuery.of(context).size.width * .4,
-                //                   decoration: BoxDecoration(
-                //                     borderRadius: BorderRadius.circular(5.0),
-                //                     color: Color.fromRGBO(21, 43, 81, 1),
-                //                     boxShadow: [
-                //                       BoxShadow(
-                //                         color: Colors.grey,
-                //                         offset: Offset(0.0, 1.0), //(x,y)
-                //                         blurRadius: 6.0,
-                //                       ),
-                //                     ],
-                //                   ),
-                //                   child: Center(
-                //                     child: isLoading
-                //                         ? SpinKitFadingCircle(
-                //                       color: Colors.white,
-                //                       size: 25.0,
-                //                     )
-                //                         : Text(
-                //                       "Add Property Type",
-                //                       style: TextStyle(
-                //                           color: Colors.white,
-                //                           fontWeight: FontWeight.bold,
-                //                           fontSize: 12),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //             SizedBox(
-                //               width: 15,
-                //             ),
-                //             InkWell(
-                //               onTap: () {
-                //                 Navigator.pop(context);
-                //               },
-                //               child: Material(
-                //                 elevation: 2,
-                //                 child: Container(
-                //                     width: 100,
-                //                     height: 30,
-                //                     color: Colors.white,
-                //                     child: Center(child: Text("Cancel"))),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.cosigner == null) {
-                        final cosigner = Cosigner(
-                          c_id: firstName.text,
-                          firstName: firstName.text,
-                          lastName: lastName.text,
-                          phoneNumber: phoneNumber.text,
-                          workNumber: workNumber.text,
-                          email: email.text,
-                          alterEmail: alterEmail.text,
-                          streetAddress: streetAddrees.text,
-                          city: city.text,
-                          country: country.text,
-                          postalCode: postalCode.text,
-                        );
-                        Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
-                            .addCosigner(cosigner);
-                      } else {
-                        final cosigner = Cosigner(
-                          //c_id : firstName.text,
-                          firstName: firstName.text,
-                          lastName: lastName.text,
-                          phoneNumber: phoneNumber.text,
-                          workNumber: workNumber.text,
-                          email: email.text,
-                          alterEmail: alterEmail.text,
-                          streetAddress: streetAddrees.text,
-                          city: city.text,
-                          country: country.text,
-                          postalCode: postalCode.text,
-                        );
-                        Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
-                            .updateCosigner(cosigner, widget.index!);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => addLease3(cosigner: cosigner),
-                        //   ),
-                        // );
-                      }
-                    }
-                  },
-                  child: Text("add"),
-                )
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          if (widget.cosigner == null) {
+                            final cosigner = Cosigner(
+                              c_id: firstName.text.trim(),
+                              firstName: firstName.text.trim(),
+                              lastName: lastName.text.trim(),
+                              phoneNumber: phoneNumber.text.trim(),
+                              workNumber: workNumber.text.trim(),
+                              email: email.text.trim(),
+                              alterEmail: alterEmail.text.trim(),
+                              streetAddress: streetAddrees.text.trim(),
+                              city: city.text.trim(),
+                              country: country.text.trim(),
+                              postalCode: postalCode.text.trim(),
+                            );
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .addCosigner(cosigner);
+                          } else {
+                            final cosigner = Cosigner(
+                              //c_id : firstName.text,
+                              firstName: firstName.text.trim(),
+                              lastName: lastName.text.trim(),
+                              phoneNumber: phoneNumber.text.trim(),
+                              workNumber: workNumber.text.trim(),
+                              email: email.text.trim(),
+                              alterEmail: alterEmail.text.trim(),
+                              streetAddress: streetAddrees.text.trim(),
+                              city: city.text.trim(),
+                              country: country.text.trim(),
+                              postalCode: postalCode.text.trim(),
+                            );
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .updateCosigner(cosigner, widget.index!);
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => addLease3(cosigner: cosigner),
+                            //   ),
+                            // );
+                          }
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 40.0,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: blueColor,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Add",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -6512,8 +8067,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   state.didChange(value);
                 },
                 buttonStyleData: ButtonStyleData(
-                  height:  MediaQuery.of(context).size.width < 500 ? 45: 55,
-                 // width:  MediaQuery.of(context).size.width < 500 ? 160 :250,
+                  height: MediaQuery.of(context).size.width < 500 ? 45 : 55,
+                  // width:  MediaQuery.of(context).size.width < 500 ? 160 :250,
                   padding: const EdgeInsets.only(left: 14, right: 14),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
@@ -6561,5 +8116,25 @@ class _CustomDropdownState extends State<CustomDropdown> {
         );
       },
     );
+  }
+
+  String reverseFormatDate(String inputDate) {
+    DateTime parsedDate;
+
+    try {
+      // Try parsing the date as yyyy-MM-dd
+      parsedDate = DateFormat('yyyy-MM-dd').parseStrict(inputDate);
+    } catch (e) {
+      try {
+        // If the above fails, try parsing the date as dd-MM-yyyy
+        parsedDate = DateFormat('dd-MM-yyyy').parseStrict(inputDate);
+      } catch (e) {
+        // Handle invalid date format or return an error
+        throw FormatException("Invalid date format");
+      }
+    }
+
+    // Return the date in the yyyy-MM-dd format
+    return DateFormat('yyyy-MM-dd').format(parsedDate);
   }
 }

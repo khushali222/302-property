@@ -12,9 +12,10 @@ import 'changepassword.dart';
 class otp_verify extends StatefulWidget {
   final String admin_id;
   final String role;
+  String userId;
 
   final String email;
-  const otp_verify({super.key,required this.email,required this.admin_id, required this.role});
+   otp_verify({super.key,required this.email,required this.admin_id, required this.role,required this.userId});
 
   @override
   State<otp_verify> createState() => _otp_verifyState();
@@ -48,9 +49,9 @@ class _otp_verifyState extends State<otp_verify> {
       print(jsonData);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,)),
+        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,user_id: widget.userId,)),
       );
-    Fluttertoast.showToast(msg: "OTP sent successfully");
+    Fluttertoast.showToast(msg: "OTP verify successfully");
     } else {
       // Handle error case here, for example:
       showDialog(
@@ -121,26 +122,26 @@ class _otp_verifyState extends State<otp_verify> {
                 height: MediaQuery.of(context).size.height * 0.05,
                 width: MediaQuery.of(context).size.width * 0.9,
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              // Welcome
-              Center(
-                child: Text(
-                  "Welcome to 302 Rentals",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.03,
+              // ),
+              // // Welcome
+              // Center(
+              //   child: Text(
+              //     "Welcome to 302 Rentals",
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width * 0.05,
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
               Center(
                 child: Text(
-                  " Otp Verification",
+                  " OTP Verification",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: MediaQuery.of(context).size.width * 0.048),
@@ -180,9 +181,9 @@ class _otp_verifyState extends State<otp_verify> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don't Recive Otp? ",
+                    "Didn't receive the OTP ? ",
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Color(0xFF152B51),
                         fontSize: MediaQuery.of(context).size.width * 0.04),
                   ),
                   GestureDetector(
@@ -191,10 +192,10 @@ class _otp_verifyState extends State<otp_verify> {
                     },
                     child: Container(
                       child: Text(
-                        "Resend Otp",
+                        " Resend OTP",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            color:  Color(0xFF152B51),
                             fontSize:
                                 MediaQuery.of(context).size.width * 0.037),
                       ),
@@ -217,7 +218,7 @@ class _otp_verifyState extends State<otp_verify> {
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: MediaQuery.of(context).size.width * 0.8,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color:  Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(

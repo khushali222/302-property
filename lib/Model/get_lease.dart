@@ -17,7 +17,8 @@ class Lease1 {
   String? rentalUnit;
   String? createdAt;
   String? updatedAt;
-
+  String? remainingDays;
+  double? totalBalance;
   Lease1({
     this.leaseId,
     this.adminId,
@@ -37,6 +38,8 @@ class Lease1 {
     this.rentalUnit,
     this.createdAt,
     this.updatedAt,
+    this.remainingDays,
+    this.totalBalance
   });
 
   factory Lease1.fromJson(Map<String, dynamic> json) {
@@ -63,6 +66,8 @@ class Lease1 {
       rentalUnit: json['rental_unit'] as String?,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
+      remainingDays: json['remainingDays'].toString() as String?,
+      totalBalance: (json['totalBalance'] as num?)?.toDouble(),
     );
   }
 
@@ -86,6 +91,8 @@ class Lease1 {
       'rental_unit': rentalUnit,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'remainingDays': remainingDays,
+      'totalBalance':totalBalance,
     };
   }
 }

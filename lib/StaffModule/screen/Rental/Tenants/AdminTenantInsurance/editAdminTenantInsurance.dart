@@ -6,6 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,6 +23,8 @@ import '../../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+import 'package:provider/provider.dart';
+import '../../../../../provider/dateProvider.dart';
 
 class editAdminInsurance extends StatefulWidget {
   AdminTenantInsuranceModel data;
@@ -91,25 +94,63 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     print(pdfFile.path);
   }
 
+  DateTime? effectiveDate;
+  DateTime? expirationDate;
+
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } else {
+        return displayDate; // Return original if parsing fails
+      }
+    } catch (e) {
+      return displayDate; // Return original if parsing fails
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate: effectiveDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      //  firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+              primary: blueColor, // header background color
               onPrimary: Colors.white, // header text color
               // onSurface: Colors.blue, // body text color
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                    Color.fromRGBO(21, 43, 83, 1), // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -120,7 +161,63 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
 
     if (selectedDate != null) {
       setState(() {
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        effectiveDate = selectedDate;
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        effective.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If effective date is after expiration date, clear expiration date and show warning
+        if (expirationDate != null && effectiveDate!.isAfter(expirationDate!)) {
+          expirationDate = null;
+          expiration.text = '';
+          Fluttertoast.showToast(
+              msg:
+                  "Effective date cannot be after expiration date. Please select a new expiration date.");
+        }
+      });
+    }
+  }
+
+  Future<void> _selectDateexpiration(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: expirationDate ?? DateTime.now(),
+      firstDate: effectiveDate ?? DateTime.now(),
+      // firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              // onSurface: Colors.blue, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        expirationDate = selectedDate;
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If expiration date is before or same as effective date, show warning
+        if (effectiveDate != null &&
+            (expirationDate!.isBefore(effectiveDate!) ||
+                expirationDate!.isAtSameMomentAs(effectiveDate!))) {
+          Fluttertoast.showToast(
+              msg: "Expiration date must be after effective date.");
+        }
       });
     }
   }
@@ -130,46 +227,46 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     provider.text = widget.data.provider!;
     policy.text = widget.data.policyId!;
 
-    // effective.text = formatDate3(widget.data.effectiveDate!);//
+    // Parse and set DateTime variables from existing data
+    try {
+      effectiveDate = DateTime.parse(widget.data.effectiveDate!);
+      expirationDate = DateTime.parse(widget.data.expirationDate!);
+    } catch (e) {
+      print('Error parsing dates: $e');
+    }
 
-    // expiration.text = formatDate3(widget.data.expirationDate!);
+    // Use DateProvider to format dates for display
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      effective.text =
+          dateProvider.formatCurrentDate(widget.data.effectiveDate!);
+      expiration.text =
+          dateProvider.formatCurrentDate(widget.data.expirationDate!);
+    });
+
     liablity.text = widget.data.liabilityCoverage.toString()!;
-    _uploadedFileNames.add(widget.data.policy!);
+    if (widget.data.policy!.isNotEmpty)
+      _uploadedFileNames.add(widget.data.policy!);
     super.initState();
   }
 
-  Future<void> _selectDateexpiration(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor:
-                    Color.fromRGBO(21, 43, 83, 1), // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (selectedDate != null) {
-      setState(() {
-        expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
-      });
+  bool _validateDates() {
+    // Check if both dates are selected
+    if (effectiveDate == null || expirationDate == null) {
+      Fluttertoast.showToast(
+          msg: "Please select both Effective Date and Expiration Date");
+      return false;
     }
+
+    // Check if expiration date is after effective date
+    if (expirationDate!.isBefore(effectiveDate!) ||
+        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
+      Fluttertoast.showToast(
+          msg: "Expiration Date must be after Effective Date");
+      return false;
+    }
+
+    return true;
   }
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -177,9 +274,9 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: key,
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: "Tenants",
           dropdown: true,
         ),
@@ -196,7 +293,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'New Insurance',
+                    title: 'Edit Insurance Policy',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -272,7 +369,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                                 _selectDate(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: effective,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -301,7 +401,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                                 _selectDateexpiration(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: expiration,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -326,12 +429,21 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
+                              textInputAction: TextInputAction.done,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r'^\d*\.?\d{0,2}')), // allows decimals
+                              ],
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please enter the subject';
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter the liability coverage.';
+                                }
+                                final parsed = double.tryParse(value.trim());
+                                if (parsed == null) {
+                                  return 'Liability Coverage must be a number. Please enter a valid numeric value.';
                                 }
                                 return null;
                               },
@@ -349,13 +461,13 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                             ),
                             Container(
                               height: 40,
-                              width: 125,
+                              width: 140,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF152b51),
+                                  backgroundColor: blueColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -399,27 +511,27 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(left: 13, top: 4),
                     child: Row(
                       children: [
                         Container(
                           height: 50,
-                          width: 150,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                              backgroundColor: blueColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
                             onPressed: () {
-                              //print("calling 111");
                               if (_formkey.currentState!.validate()) {
-                                //  print("calling 22");
-                                editinsurance(widget.data.tenantInsuranceId!);
+                                if (_validateDates()) {
+                                  editinsurance(widget.data.tenantInsuranceId!);
+                                }
                               }
                             },
                             child: isLoading
@@ -440,7 +552,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                         ),
                         Container(
                             height: 50,
-                            width: 120,
+                            width: 100,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0)),
                             child: ElevatedButton(
@@ -472,11 +584,11 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     String? token = prefs.getString('token');
     Map<String, dynamic> values = {
       "admin_id": adminId!,
-      "Provider": provider.text,
-      "policy_id": policy.text,
-      // "EffectiveDate": reverseFormatDate(effective.text),
-      // "ExpirationDate": reverseFormatDate(expiration.text),
-      "LiabilityCoverage": liablity.text,
+      "Provider": provider.text.trim(),
+      "policy_id": policy.text.trim(),
+      "EffectiveDate": _convertToApiFormat(effective.text.trim()),
+      "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
+      "LiabilityCoverage": liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
 

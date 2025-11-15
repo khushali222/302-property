@@ -1,0 +1,1247 @@
+import 'dart:io';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
+import '../../../../widgets/appbar.dart';
+import '../../../../widgets/custom_drawer.dart';
+
+class Add_property_Tax extends StatefulWidget {
+  // pass the mortgage data to this screen from the previous screen
+  final Map<String, dynamic>? taxData;
+  final String? taxId; // For editing existing mortgages
+  final String? propertyId; // Property ID for creating new tax records
+
+  const Add_property_Tax({Key? key, this.taxId, this.taxData, this.propertyId})
+      : super(key: key);
+
+  @override
+  State<Add_property_Tax> createState() => _Add_property_TaxState();
+}
+
+class _Add_property_TaxState extends State<Add_property_Tax> {
+  final _formKey = GlobalKey<FormState>();
+  final _scrollController = ScrollController();
+
+  // Form controllers
+  final _taxAuthorityController = TextEditingController();
+  final _taxAmountController = TextEditingController();
+  final _assessmentController = TextEditingController();
+  final _dueDateController = TextEditingController();
+  final _paidDateController = TextEditingController();
+  final _statusController = TextEditingController();
+  final _taxYearController = TextEditingController();
+  final _notesController = TextEditingController();
+
+  // Selected dates
+  DateTime? _dueDate;
+  DateTime? _paidDate;
+
+  // Status options
+  final List<String> _statusOptions = [
+    'Pending',
+    'Paid',
+    'Overdue',
+    'Cancelled'
+  ];
+
+  // Year options (2000 to current year)
+  List<String> _yearOptions = [];
+
+  bool _isLoading = false;
+  bool _hasValidated = false; // Track if validation has been attempted
+
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy',
+        'dd/MMM/yyyy' // Added for current format
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } else {
+        return displayDate; // Return original if parsing fails
+      }
+    } catch (e) {
+      return displayDate; // Return original if parsing fails
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _generateYearOptions();
+
+    if (widget.taxId != null && widget.taxData != null) {
+      _populateFormWithData(widget.taxData!);
+      // Don't show validation errors for pre-populated data
+      _hasValidated = false;
+    }
+  }
+
+  void dispose() {
+    _taxAuthorityController.dispose();
+    _taxAmountController.dispose();
+    _assessmentController.dispose();
+    _dueDateController.dispose();
+    _paidDateController.dispose();
+    _statusController.dispose();
+    _taxYearController.dispose();
+    _notesController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _generateYearOptions() {
+    int currentYear = DateTime.now().year;
+    _yearOptions = List.generate(
+      currentYear - 1999, // 2000 to current year
+      (index) => (2000 + index).toString(),
+    );
+    _yearOptions = _yearOptions.reversed.toList(); // Most recent first
+  }
+
+  Future<void> _selectDate(BuildContext context,
+      TextEditingController controller, DateTime? initialDate) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              // onSurface: Colors.blue, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        if (controller == _dueDateController) {
+          _dueDate = picked;
+          controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        } else if (controller == _paidDateController) {
+          _paidDate = picked;
+          controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        }
+      });
+    }
+  }
+
+  String? _validateRequired(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return '$fieldName is required';
+    }
+    return null;
+  }
+
+  String? _validateAmount(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'This field is required';
+    }
+    final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+    if (!amountRegex.hasMatch(value)) {
+      return 'Please enter a valid amount';
+    }
+    final amount = double.tryParse(value.replaceAll('\$', ''));
+    if (amount == null || amount <= 0) {
+      return 'Amount must be greater than 0';
+    }
+    return null;
+  }
+
+  void _populateFormWithData(Map<String, dynamic> taxData) {
+    try {
+      setState(() {
+        // Tax Information
+        _taxAuthorityController.text = taxData['tax_authority'] ?? '';
+        _taxAmountController.text = taxData['tax_amount']?.toString() ?? '';
+        _assessmentController.text =
+            taxData['assessment_value']?.toString() ?? '';
+        _taxYearController.text = taxData['tax_year']?.toString() ?? '';
+        _statusController.text = taxData['status'] ?? '';
+        _notesController.text = taxData['notes'] ?? '';
+
+        // Handle existing receipt
+        _existingReceipt = taxData['receipt'];
+        if (_existingReceipt != null && _existingReceipt!.isNotEmpty) {
+          _uploadedFileNames.add(_existingReceipt!);
+        }
+
+        // Handle dates using DateProvider
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final dateProvider =
+              Provider.of<DateProvider>(context, listen: false);
+          if (taxData['due_date'] != null) {
+            try {
+              _dueDate = DateTime.parse(taxData['due_date']);
+              _dueDateController.text =
+                  dateProvider.formatCurrentDate(taxData['due_date']);
+            } catch (e) {
+              // Handle invalid date format
+            }
+          }
+          if (taxData['paid_date'] != null) {
+            try {
+              _paidDate = DateTime.parse(taxData['paid_date']);
+              _paidDateController.text =
+                  dateProvider.formatCurrentDate(taxData['paid_date']);
+            } catch (e) {
+              // Handle invalid date format
+            }
+          }
+        });
+      });
+    } catch (e) {
+      print('Error populating form: $e');
+    }
+  }
+
+  void _saveForm() async {
+    print('=== SAVE FORM STARTED ===');
+
+    // Set validation flag to show error messages
+    setState(() {
+      _hasValidated = true;
+    });
+
+    // Manual validation
+    bool isValid = true;
+
+    // Validate all required fields
+    if (_taxYearController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_taxAuthorityController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_taxAmountController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_assessmentController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_dueDateController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_statusController.text.trim().isEmpty) {
+      isValid = false;
+    }
+
+    // Validate amount fields
+    if (_taxAmountController.text.isNotEmpty) {
+      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+      if (!amountRegex.hasMatch(_taxAmountController.text)) {
+        isValid = false;
+      } else {
+        final amount =
+            double.tryParse(_taxAmountController.text.replaceAll('\$', ''));
+        if (amount == null || amount <= 0) {
+          isValid = false;
+        }
+      }
+    }
+
+    if (_assessmentController.text.isNotEmpty) {
+      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+      if (!amountRegex.hasMatch(_assessmentController.text)) {
+        isValid = false;
+      } else {
+        final amount =
+            double.tryParse(_assessmentController.text.replaceAll('\$', ''));
+        if (amount == null || amount <= 0) {
+          isValid = false;
+        }
+      }
+    }
+
+    if (isValid) {
+      print('=== VALIDATION PASSED ===');
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('token');
+        String? id = prefs.getString('adminId');
+
+        print('Token: ${token != null ? "Present" : "Missing"}');
+        print('Admin ID: ${id != null ? "Present" : "Missing"}');
+
+        // Prepare the tax data according to your API structure
+        final taxData = {
+          'propertyId': widget.propertyId, // Include property ID
+          'admin_id': id, // Add admin_id field
+          'tax_authority': _taxAuthorityController.text.trim(),
+          'tax_amount':
+              double.tryParse(_taxAmountController.text.replaceAll('\$', '')) ??
+                  0.0,
+          'assessment_value': double.tryParse(
+                  _assessmentController.text.replaceAll('\$', '')) ??
+              0.0,
+          'tax_year': _taxYearController.text.trim(),
+          'due_date': _dueDateController.text.isNotEmpty
+              ? _convertToApiFormat(_dueDateController.text.trim())
+              : null,
+          'paid_date': _paidDateController.text.isNotEmpty
+              ? _convertToApiFormat(_paidDateController.text.trim())
+              : null,
+          'status':
+              _statusController.text.trim(), // Keep original capitalization
+          'notes': _notesController.text.trim(),
+          'receipt':
+              _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null,
+        };
+
+        print('=== TAX DATA TO SEND ===');
+        print('Property ID: ${widget.propertyId}');
+        print('Admin ID: $id');
+        print('Tax Authority: ${_taxAuthorityController.text.trim()}');
+        print('Tax Amount: ${_taxAmountController.text}');
+        print('Assessment Value: ${_assessmentController.text}');
+        print('Tax Year: ${_taxYearController.text.trim()}');
+        print('Due Date: ${_dueDateController.text}');
+        print('Paid Date: ${_paidDateController.text}');
+        print('Status: ${_statusController.text.trim()}');
+        print('Notes: ${_notesController.text.trim()}');
+        print(
+            'Receipt: ${_uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "None"}');
+        print('Full Tax Data: $taxData');
+
+        http.Response response;
+        String apiUrl = '$Api_url/api/taxes';
+
+        print('=== API REQUEST ===');
+        print('API URL: $apiUrl');
+        print('Is Edit Mode: ${widget.taxId != null}');
+
+        if (widget.taxId != null) {
+          // Update existing tax (PUT)
+          print('Making PUT request to: $apiUrl/${widget.taxId}');
+          response = await http
+              .put(
+                Uri.parse('$apiUrl/${widget.taxId}'),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': 'CRM $token',
+                  'id': 'CRM $id',
+                },
+                body: json.encode(taxData),
+              )
+              .timeout(const Duration(seconds: 30));
+        } else {
+          // Create new tax (POST)
+          print('Making POST request to: $apiUrl');
+          response = await http
+              .post(
+                Uri.parse(apiUrl),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authorization': 'CRM $token',
+                  'id': 'CRM $id',
+                },
+                body: json.encode(taxData),
+              )
+              .timeout(const Duration(seconds: 30));
+        }
+
+        print('=== API RESPONSE ===');
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          print('=== SUCCESS ===');
+          print(
+              'Tax record ${widget.taxId != null ? "updated" : "created"} successfully!');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(widget.taxId != null
+                    ? 'Tax record updated successfully!'
+                    : 'Tax record created successfully!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            print('=== NAVIGATING BACK ===');
+            Navigator.pop(context);
+          }
+        } else {
+          print('=== ERROR ===');
+          print('Failed to save tax record. Status: ${response.statusCode}');
+          // Reset validation flag if form submission fails
+          setState(() {
+            _hasValidated = false;
+          });
+          if (mounted) {
+            final errorData = json.decode(response.body);
+            final errorMessage =
+                errorData['message'] ?? 'Failed to save tax record';
+            print('Error Message: $errorMessage');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        print('=== EXCEPTION ===');
+        print('Exception occurred: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving tax record: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        print('=== FINALLY BLOCK ===');
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } else {
+      print('=== VALIDATION FAILED ===');
+      print('Form validation failed, not submitting');
+    }
+    print('=== SAVE FORM ENDED ===');
+  }
+
+  //for image
+  File? _image;
+  bool isLoading = false;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  List<String> _imageUrls = [];
+  String? _existingReceipt; // Store existing receipt filename from API
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _pickFile() async {
+    try {
+      // Open file picker directly with all supported file types
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [
+          'pdf',
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'bmp',
+          'tiff',
+          'webp'
+        ],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        File file = File(result.files.single.path!);
+        setState(() {
+          _images.add(file);
+        });
+        _uploadImage(file);
+      }
+    } catch (e) {
+      print('Error picking file: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error selecting file: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  bool _isValidFileType(String fileName) {
+    final supportedExtensions = [
+      '.pdf',
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+      '.tiff',
+      '.webp'
+    ];
+    final extension =
+        fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+    return supportedExtensions.contains(extension);
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      // Validate file type
+      if (!_isValidFileType(imageFile.path)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Unsupported file type. Please select PDF, JPG, PNG, GIF, BMP, TIFF, or WEBP files.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('File upload failed: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  height: 50.0,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(top: 10, left: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: blueColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  //if appliance is not null then show edit else show add
+                  child: Text(
+                    widget.taxId != null ? 'Edit Tax Record' : 'Add Tax Record',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader(widget.taxId != null
+                        ? 'Update tax record details'
+                        : 'Add new tax record for this property'),
+                    const SizedBox(height: 16),
+                    _buildDropdownField(
+                      controller: _taxYearController,
+                      label: 'Tax Year *',
+                      hint: 'Select tax year',
+                      validator: (value) =>
+                          _validateRequired(value, 'Tax year'),
+                      items: _yearOptions,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _taxAuthorityController,
+                      label: 'Tax Authority *',
+                      hint: 'Enter tax authority',
+                      validator: (value) =>
+                          _validateRequired(value, 'Tax authority'),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _taxAmountController,
+                      label: 'Tax Amount *',
+                      hint: '\$Enter Tax amount',
+                      keyboardType: TextInputType.number,
+                      validator: _validateAmount,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _assessmentController,
+                      label: 'Assessment Value *',
+                      hint: '\$Enter assessment value',
+                      keyboardType: TextInputType.number,
+                      validator: _validateAmount,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDateField(
+                      controller: _dueDateController,
+                      label: 'Due Date *',
+                      hint: Provider.of<DateProvider>(context, listen: false)
+                          .dateFormat
+                          .toUpperCase(),
+                      onTap: () =>
+                          _selectDate(context, _dueDateController, _dueDate),
+                      validator: (value) =>
+                          _validateRequired(value, 'Due date'),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDateField(
+                      controller: _paidDateController,
+                      label: 'Paid Date',
+                      hint: Provider.of<DateProvider>(context, listen: false)
+                          .dateFormat
+                          .toUpperCase(),
+                      onTap: () =>
+                          _selectDate(context, _paidDateController, _paidDate),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdownField(
+                      controller: _statusController,
+                      label: 'Status *',
+                      hint: 'Select status',
+                      validator: (value) => _validateRequired(value, 'Status'),
+                      items: _statusOptions,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _notesController,
+                      label: 'Notes',
+                      hint: 'Enter any additional notes (optional)',
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
+                    Text("Receipt (Optional)"),
+                    const SizedBox(height: 8),
+                    if (_images.isEmpty && _existingReceipt == null)
+                      GestureDetector(
+                        onTap: () {
+                          _pickFile().then((_) {
+                            setState(() {});
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.grey.shade300,
+                                style: BorderStyle.solid),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              // Icon(Icons.upload,
+                              //     size: 40, color: Colors.grey[600]),
+                              Image.asset(
+                                'assets/icons/Upload.png',
+                                height: 50,
+                                width: 50,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Click to upload receipt',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'Supported File Types: PDF, JPG, PNG, GIF, BMP, TIFF, WEBP',
+                                textAlign: TextAlign.center,
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (_images.isEmpty && _existingReceipt == null)
+                      SizedBox(height: 16),
+                    if (_images.isNotEmpty || _existingReceipt != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey.shade300,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 15,
+                            ),
+                            // Show receipt filenames as text
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Show existing receipt filename
+                                if (_existingReceipt != null)
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 8),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(6),
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            _existingReceipt!,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _existingReceipt = null;
+                                              _uploadedFileNames.removeWhere(
+                                                  (name) =>
+                                                      name == _existingReceipt);
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                // Show newly uploaded file names
+                                ...List.generate(_images.length, (index) {
+                                  String fileName =
+                                      _uploadedFileNames.length > index
+                                          ? _uploadedFileNames[index]
+                                          : 'File ${index + 1}';
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 8),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(6),
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            fileName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _images.removeAt(index);
+                                              if (index <
+                                                  _uploadedFileNames.length) {
+                                                _uploadedFileNames
+                                                    .removeAt(index);
+                                              }
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 32),
+                    Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                side: BorderSide(color: blueColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _saveForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      ),
+                                    )
+                                  : Text(
+                                      widget.taxId != null ? 'Update' : 'Save',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+
+            // Action Buttons
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: blueColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    List<TextInputFormatter>? inputFormatters,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+    Widget? suffix,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          validator: null, // Remove built-in validation
+          inputFormatters: inputFormatters ?? [],
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: blueColor, width: 2),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            suffixIcon: suffix,
+          ),
+        ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDateField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required VoidCallback onTap,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: controller,
+              validator: null, // Remove built-in validation
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 14,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: blueColor, width: 2),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                suffixIcon: Icon(
+                  Icons.calendar_today,
+                  color: blueColor,
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required List<String> items,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonHideUnderline(
+          child: Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(8),
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              hint: Row(
+                children: [
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      hint,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF8A95A8),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              items: items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              value: controller.text.isEmpty ? null : controller.text,
+              onChanged: (String? newValue) {
+                setState(() {
+                  controller.text = newValue ?? '';
+                });
+              },
+              buttonStyleData: ButtonStyleData(
+                height: 50,
+                padding: const EdgeInsets.only(left: 14, right: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFF8A95A8),
+                  ),
+                  color: Colors.white,
+                ),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 250,
+                width: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                offset: const Offset(-20, 0),
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(40),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 40,
+                padding: EdgeInsets.only(left: 14, right: 14),
+              ),
+            ),
+          ),
+        ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+      ],
+    );
+  }
+}

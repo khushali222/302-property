@@ -13,13 +13,13 @@ class pastPlansHistoryModel {
     if (json['data'] != null) {
       data = <pastPlanData>[];
       json['data'].forEach((v) {
-        data!.add(new pastPlanData.fromJson(v));
+        data!.add(pastPlanData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = {};
     data['statusCode'] = this.statusCode;
     data['message'] = this.message;
     if (this.data != null) {
@@ -34,7 +34,7 @@ class pastPlanData {
   String? adminId;
   String? planId;
   String? purchaseId;
-  int? planAmount;
+  double? planAmount;
   String? purchaseDate;
   String? expirationDate;
   String? status;
@@ -50,7 +50,7 @@ class pastPlanData {
   int? iV;
   bool? isActive;
   String? planName;
-  int? planPrice;
+  double? planPrice;
   String? billingInterval;
   List<Features>? features;
   String? planDays;
@@ -65,49 +65,50 @@ class pastPlanData {
   int? applicantCount;
   int? staffmemberCount;
   bool? paymentFunctionality;
-  dynamic? annualDiscount;
+  double? annualDiscount;
   int? vendorCount;
   String? subscriptionId;
 
-  pastPlanData(
-      {this.sId,
-      this.adminId,
-      this.planId,
-      this.purchaseId,
-      this.planAmount,
-      this.purchaseDate,
-      this.expirationDate,
-      this.status,
-      this.city,
-      this.state,
-      this.postalCode,
-      this.country,
-      this.cardType,
-      this.cardNumber,
-      this.cvv,
-      this.createdAt,
-      this.updatedAt,
-      this.iV,
-      this.isActive,
-      this.planName,
-      this.planPrice,
-      this.billingInterval,
-      this.features,
-      this.planDays,
-      this.dayOfMonth,
-      this.planPeriods,
-      this.billingOption,
-      this.isAnnualDiscount,
-      this.propertyCount,
-      this.tenantCount,
-      this.leaseCount,
-      this.rentalownerCount,
-      this.applicantCount,
-      this.staffmemberCount,
-      this.paymentFunctionality,
-      this.annualDiscount,
-      this.vendorCount,
-      this.subscriptionId});
+  pastPlanData({
+    this.sId,
+    this.adminId,
+    this.planId,
+    this.purchaseId,
+    this.planAmount,
+    this.purchaseDate,
+    this.expirationDate,
+    this.status,
+    this.city,
+    this.state,
+    this.postalCode,
+    this.country,
+    this.cardType,
+    this.cardNumber,
+    this.cvv,
+    this.createdAt,
+    this.updatedAt,
+    this.iV,
+    this.isActive,
+    this.planName,
+    this.planPrice,
+    this.billingInterval,
+    this.features,
+    this.planDays,
+    this.dayOfMonth,
+    this.planPeriods,
+    this.billingOption,
+    this.isAnnualDiscount,
+    this.propertyCount,
+    this.tenantCount,
+    this.leaseCount,
+    this.rentalownerCount,
+    this.applicantCount,
+    this.staffmemberCount,
+    this.paymentFunctionality,
+    this.annualDiscount,
+    this.vendorCount,
+    this.subscriptionId,
+  });
 
   pastPlanData.fromJson(Map<String, dynamic> json) {
     log(json.toString());
@@ -115,7 +116,11 @@ class pastPlanData {
     adminId = json['admin_id'];
     planId = json['plan_id'];
     purchaseId = json['purchase_id'];
-    planAmount = json['plan_amount'];
+
+    planAmount = json['plan_amount'] != null
+        ? (json['plan_amount'] as num).toDouble()
+        : 0.0;
+
     purchaseDate = json['purchase_date'];
     expirationDate = json['expiration_date'];
     status = json['status'];
@@ -131,12 +136,16 @@ class pastPlanData {
     iV = json['__v'];
     isActive = json['is_active'];
     planName = json['plan_name'];
-    planPrice = json['plan_price'];
+
+    planPrice = json['plan_price'] != null
+        ? (json['plan_price'] as num).toDouble()
+        : 0.0;
+
     billingInterval = json['billing_interval'];
     if (json['features'] != null) {
       features = <Features>[];
       json['features'].forEach((v) {
-        features!.add(new Features.fromJson(v));
+        features!.add(Features.fromJson(v));
       });
     }
     planDays = json['plan_days'];
@@ -151,13 +160,17 @@ class pastPlanData {
     applicantCount = json['applicant_count'];
     staffmemberCount = json['staffmember_count'];
     paymentFunctionality = json['payment_functionality'];
-    annualDiscount = json['annual_discount'];
+
+    annualDiscount = json['annual_discount'] != null
+        ? (json['annual_discount'] as num).toDouble()
+        : 0.0;
+
     vendorCount = json['vendor_count'];
     subscriptionId = json['subscription_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = {};
     data['_id'] = this.sId;
     data['admin_id'] = this.adminId;
     data['plan_id'] = this.planId;
@@ -212,7 +225,7 @@ class Features {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = {};
     data['features'] = this.features;
     return data;
   }

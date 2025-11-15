@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../constant/constant.dart';
+
 class DonutChart extends StatelessWidget {
   final int newWorkOrders;
   final int overdueWorkOrders;
@@ -62,7 +64,7 @@ class DonutChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start
           ,
           children: [
-            LegendItem(color: Color.fromRGBO(21, 43, 83, 1), text: 'New Work\nOrders'),
+            LegendItem(color: blueColor, text: 'New Work\nOrders'),
             SizedBox(height: 10),
             LegendItem(color: Color.fromRGBO(41, 134, 213, 1), text: 'Overdue Work\nOrders'),
           ],
@@ -74,7 +76,7 @@ class DonutChart extends StatelessWidget {
   List<PieChartSectionData> showingSections() {
     return [
       PieChartSectionData(
-        color:  Color.fromRGBO(21, 43, 83, 1),
+        color:  blueColor,
         value: newWorkOrders.toDouble(),
         showTitle: false,
         //title: '$newWorkOrders\nNew',

@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
@@ -19,6 +21,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  ConnectivityResult? _connectivityResult ;
   int _selectedIndex = 0;
   String _workOrderFilter = "";
   // List of screens corresponding to each BottomNavigationBarItem
@@ -29,6 +32,13 @@ class _MainScreenState extends State<MainScreen> {
   ];
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     _screens = [
       Dashboard_vendors(
         onWorkOrderSelected: (filter) {
@@ -43,6 +53,15 @@ class _MainScreenState extends State<MainScreen> {
       Profile_screen(),
       WorkOrderTable(),
     ];
+  }
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
   }
   void _onItemTapped(int index) {
     setState(() {
@@ -140,7 +159,31 @@ class _MainScreenState extends State<MainScreen> {
       },
       child: Scaffold(
 
-        body:  _screens[_selectedIndex],// Display the selected screen
+        body:   _connectivityResult !=ConnectivityResult.none ? _screens[_selectedIndex]:SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                'assets/no_internet.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.fill,
+              ),
+              Text(
+                'No Internet',
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Check your internet connection',
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),// Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,

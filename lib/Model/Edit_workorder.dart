@@ -33,6 +33,7 @@ class EditData {
   String? staffmemberId;
   String? workSubject;
   String? workCategory;
+  String? categoryId;
   bool? entryAllowed;
   String? workPerformed;
   List<String>? workOrderImages;
@@ -65,6 +66,7 @@ class EditData {
     this.staffmemberId,
     this.workSubject,
     this.workCategory,
+    this.categoryId,
     this.entryAllowed,
     this.workPerformed,
     this.workOrderImages,
@@ -99,6 +101,7 @@ class EditData {
     staffmemberId = json['staffmember_id'];
     workSubject = json['work_subject'];
     workCategory = json['work_category'];
+    categoryId = json['category_id'];
     entryAllowed = json['entry_allowed'];
     workPerformed = json['work_performed'];
     workOrderImages = json['workOrder_images'] != null ? List<String>.from(json['workOrder_images']) : null;
@@ -143,6 +146,7 @@ class EditData {
     data['staffmember_id'] = staffmemberId;
     data['work_subject'] = workSubject;
     data['work_category'] = workCategory;
+    data['category_id'] = categoryId;
     data['entry_allowed'] = entryAllowed;
     data['work_performed'] = workPerformed;
     if (workOrderImages != null) {

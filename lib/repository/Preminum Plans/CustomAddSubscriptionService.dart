@@ -26,6 +26,8 @@ class CustomAddSubscriptionService {
         body: body,
       );
 
+      print(response.body);
+
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body)['data'];
         print('custom subsciption status code ${response.statusCode}');

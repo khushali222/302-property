@@ -45,7 +45,7 @@ class _unitScreenState extends State<unitScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Padding(
@@ -57,7 +57,7 @@ class _unitScreenState extends State<unitScreen> {
                   borderRadius: BorderRadius.circular(12.0),
                   color: Colors.white,
                   border: Border.all(
-                    color: const Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                     width: 1,
                   ),
                 ),
@@ -65,12 +65,12 @@ class _unitScreenState extends State<unitScreen> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Padding(
@@ -89,7 +89,7 @@ class _unitScreenState extends State<unitScreen> {
                               ),
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(12.0))),
@@ -104,7 +104,7 @@ class _unitScreenState extends State<unitScreen> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(12.0))),
@@ -119,7 +119,7 @@ class _unitScreenState extends State<unitScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     SizedBox(
@@ -186,21 +186,21 @@ class _unitScreenState extends State<unitScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
                         child: Column(
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
+                             Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
                                   'Add Lease',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -224,22 +224,22 @@ class _unitScreenState extends State<unitScreen> {
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
                                 ),
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
+                             Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
                                   'Rental Applicant',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -255,7 +255,7 @@ class _unitScreenState extends State<unitScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                AddApplicant()));
+                                                const AddApplicant()));
                                   },
                                   child: const Text(
                                     'Create Applicant',
@@ -264,7 +264,7 @@ class _unitScreenState extends State<unitScreen> {
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -434,7 +434,7 @@ class _LeasesTableState extends State<LeasesTable> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -453,23 +453,23 @@ class _LeasesTableState extends State<LeasesTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -481,7 +481,7 @@ class _LeasesTableState extends State<LeasesTable> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -489,8 +489,10 @@ class _LeasesTableState extends State<LeasesTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -580,20 +582,25 @@ class _LeasesTableState extends State<LeasesTable> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
+         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -604,7 +611,7 @@ class _LeasesTableState extends State<LeasesTable> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
       ],
     ).show();
@@ -647,7 +654,7 @@ class _LeasesTableState extends State<LeasesTable> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -658,7 +665,7 @@ class _LeasesTableState extends State<LeasesTable> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -688,21 +695,21 @@ class _LeasesTableState extends State<LeasesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Status", style: TextStyle(color: Colors.white))
-                        : Text("Status", style: TextStyle(color: Colors.white)),
+                        ? const Text("Status", style: TextStyle(color: Colors.white))
+                        : const Text("Status", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 5),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 5),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -737,19 +744,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Tenants", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Tenants", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -785,19 +792,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Type", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Type", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -824,15 +831,15 @@ class _LeasesTableState extends State<LeasesTable> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
+           Padding(
+            padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               width: double.infinity,
               child: Text(
                 'Leases',
                 style: TextStyle(
                     fontSize: 16,
-                    color: Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -844,7 +851,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 40.0,
@@ -852,7 +859,7 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
+                    return const Center(
                         child: Text(
                             'You don\'t have any lease for this unit right now ..'));
                   } else {
@@ -866,9 +873,9 @@ class _LeasesTableState extends State<LeasesTable> {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           _buildHeaders(),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: blueColor)),
@@ -921,11 +928,11 @@ class _LeasesTableState extends State<LeasesTable> {
                                                 },
                                                 child: Container(
                                                   margin:
-                                                      EdgeInsets.only(left: 5),
+                                                      const EdgeInsets.only(left: 5),
                                                   padding: !isExpanded
-                                                      ? EdgeInsets.only(
+                                                      ? const EdgeInsets.only(
                                                           bottom: 10)
-                                                      : EdgeInsets.only(
+                                                      : const EdgeInsets.only(
                                                           top: 10),
                                                   child: FaIcon(
                                                     isExpanded
@@ -934,12 +941,14 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 4,
                                               ),
                                               Expanded(
@@ -1006,9 +1015,9 @@ class _LeasesTableState extends State<LeasesTable> {
                                       ),
                                       if (isExpanded)
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0),
-                                          margin: EdgeInsets.only(bottom: 20),
+                                          margin: const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -1047,7 +1056,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${rentals.startDate} - ${rentals.endDate}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -1080,7 +1089,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${rentals.amount}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -1106,19 +1115,19 @@ class _LeasesTableState extends State<LeasesTable> {
                               }).toList(),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Row(
                                 children: [
                                   // Text('Rows per page:'),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Material(
                                     elevation: 3,
                                     child: Container(
                                       height: 40,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.grey),
@@ -1153,7 +1162,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -1189,7 +1198,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -1216,7 +1225,7 @@ class _LeasesTableState extends State<LeasesTable> {
               future: futureLease,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                       child: SpinKitFadingCircle(
                     color: Colors.black,
                     size: 40.0,
@@ -1224,7 +1233,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                       child: Text(
                           'You don\'t have any lease for this unit right now ..'));
                 } else {
@@ -1259,16 +1268,13 @@ class _LeasesTableState extends State<LeasesTable> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * .91,
                             child: Table(
-                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              defaultColumnWidth: const IntrinsicColumnWidth(),
                               children: [
                                 TableRow(
                                   decoration:
                                       BoxDecoration(border: Border.all()),
                                   children: [
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
-                                    // TableCell(child: Text('yash')),
+
                                     _buildHeader('Status', 0,
                                         (rental) => rental.startDate!),
                                     _buildHeader('Start-End', 1,
@@ -1282,7 +1288,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   ],
                                 ),
                                 TableRow(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     border: Border.symmetric(
                                         horizontal: BorderSide.none),
                                   ),
@@ -1297,17 +1303,19 @@ class _LeasesTableState extends State<LeasesTable> {
                                       border: Border(
                                         left: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         right: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         top: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1))
+                                                color: blueColor
+
+
+)
                                             : BorderSide.none,
                                       ),
                                     ),
@@ -1330,8 +1338,8 @@ class _LeasesTableState extends State<LeasesTable> {
                             ),
                           ),
                         ),
-                        if (_tableData.isEmpty) Text("No Search Records Found"),
-                        SizedBox(height: 25),
+                        if (_tableData.isEmpty) const Text("No Search Records Found"),
+                        const SizedBox(height: 25),
                         _buildPaginationControls(),
                       ],
                     ),
@@ -1527,7 +1535,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -1546,23 +1554,23 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1574,7 +1582,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -1582,8 +1590,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1673,20 +1683,25 @@ class _AppliancesPartState extends State<AppliancesPart> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
+         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -1697,7 +1712,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             });
             Navigator.pop(context);
           },
-          color: Colors.red,
+          color: blueColor,
         ),
       ],
     ).show();
@@ -1752,7 +1767,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -1763,7 +1778,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -1793,21 +1808,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
+                        ? const Text("Name", style: TextStyle(color: Colors.white))
+                        : const Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1842,19 +1857,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 },
                 child: Row(
                   children: [
-                    Text("Description", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Description", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1890,19 +1905,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 },
                 child: Row(
                   children: [
-                    Text("   Action", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Action", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1932,11 +1947,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
             children: [
               Row(
                 children: [
-                  const Text(
+                   Text(
                     'Appliances',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                   ),
                   Padding(
@@ -1994,18 +2009,18 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 return Theme(
                                                   data: ThemeData.light()
                                                       .copyWith(
-                                                    // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                    //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                    // primaryColor: blueColor,
+                                                    //  hintColor: blueColor,
                                                     colorScheme:
                                                         ColorScheme.light(
-                                                      primary: Color.fromRGBO(
-                                                          21, 43, 83, 1),
-                                                      // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                      //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                      primary: blueColor
+,
+                                                      // onPrimary:blueColor,
+                                                      //  surface: blueColor,
                                                       onSurface: Colors.black,
                                                     ),
                                                     buttonTheme:
-                                                        ButtonThemeData(
+                                                        const ButtonThemeData(
                                                       textTheme: ButtonTextTheme
                                                           .primary,
                                                     ),
@@ -2054,8 +2069,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 child: ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                           blueColor
+
+
+,
                                                       shape:
                                                           RoundedRectangleBorder(
                                                               borderRadius:
@@ -2203,7 +2220,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ],
                                         ),
                                         if (iserror)
-                                          Text(
+                                          const Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -2221,7 +2238,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -2242,7 +2259,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     future: futureAppliences,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                             child: SpinKitFadingCircle(
                           color: Colors.black,
                           size: 40.0,
@@ -2250,7 +2267,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
+                        return const Center(
                             child: Text(
                                 'You don\'t have any applience for this unit right now ..'));
                       } else {
@@ -2280,9 +2297,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         return SingleChildScrollView(
                           child: Column(
                             children: [
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               _buildHeaders(),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(color: blueColor)),
@@ -2337,12 +2354,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       });
                                                     },
                                                     child: Container(
-                                                      margin: EdgeInsets.only(
+                                                      margin: const EdgeInsets.only(
                                                           left: 5),
                                                       padding: !isExpanded
-                                                          ? EdgeInsets.only(
+                                                          ? const EdgeInsets.only(
                                                               bottom: 10)
-                                                          : EdgeInsets.only(
+                                                          : const EdgeInsets.only(
                                                               top: 10),
                                                       child: FaIcon(
                                                         isExpanded
@@ -2351,8 +2368,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             : FontAwesomeIcons
                                                                 .sortDown,
                                                         size: 20,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -2404,7 +2423,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     child: Container(
                                                       child: Row(
                                                         children: [
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 10,
                                                           ),
                                                           InkWell(
@@ -2426,16 +2445,14 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 FontAwesomeIcons
                                                                     .edit,
                                                                 size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 10,
                                                           ),
                                                           InkWell(
@@ -2450,12 +2467,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 FontAwesomeIcons
                                                                     .trashCan,
                                                                 size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),
@@ -2475,10 +2490,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ),
                                           if (isExpanded)
                                             Container(
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 8.0),
                                               margin:
-                                                  EdgeInsets.only(bottom: 20),
+                                                  const EdgeInsets.only(bottom: 20),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
@@ -2518,7 +2533,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                     TextSpan(
                                                                       text: formatDate(
                                                                           '${rentals.installedDate}'),
-                                                                      style: TextStyle(
+                                                                      style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
                                                                           color:
@@ -2550,19 +2565,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   }).toList(),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Row(
                                     children: [
                                       // Text('Rows per page:'),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Material(
                                         elevation: 3,
                                         child: Container(
                                           height: 40,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
@@ -2598,7 +2613,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           FontAwesomeIcons.circleChevronLeft,
                                           color: currentPage == 0
                                               ? Colors.grey
-                                              : Color.fromRGBO(21, 43, 83, 1),
+                                              : blueColor,
                                         ),
                                         onPressed: currentPage == 0
                                             ? null
@@ -2634,7 +2649,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         icon: FaIcon(
                                           FontAwesomeIcons.circleChevronRight,
                                           color: currentPage < totalPages - 1
-                                              ? Color.fromRGBO(21, 43, 83, 1)
+                                              ? blueColor
                                               : Colors.grey,
                                         ),
                                         onPressed: currentPage < totalPages - 1
@@ -2661,7 +2676,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   future: futureAppliences,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                           child: SpinKitFadingCircle(
                         color: Colors.black,
                         size: 40.0,
@@ -2669,7 +2684,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
+                      return const Center(
                           child: Text(
                               'You don\'t have any applience for this unit right now ..'));
                     } else {
@@ -2702,16 +2717,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * .91,
                                 child: Table(
-                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  defaultColumnWidth: const IntrinsicColumnWidth(),
                                   children: [
                                     TableRow(
                                       decoration:
                                           BoxDecoration(border: Border.all()),
                                       children: [
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
-                                        // TableCell(child: Text('yash')),
+
                                         _buildHeader('Name', 0,
                                             (rental) => rental.applianceName!),
                                         _buildHeader(
@@ -2725,7 +2737,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       ],
                                     ),
                                     TableRow(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         border: Border.symmetric(
                                             horizontal: BorderSide.none),
                                       ),
@@ -2739,18 +2751,26 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         decoration: BoxDecoration(
                                           border: Border(
                                             left: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             right: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             top: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             bottom: i == _pagedData.length - 1
                                                 ? BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1))
+                                                    color: blueColor
+
+
+)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -2770,8 +2790,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               ),
                             ),
                             if (_tableData.isEmpty)
-                              Text("No Search Records Found"),
-                            SizedBox(height: 25),
+                              const Text("No Search Records Found"),
+                            const SizedBox(height: 25),
                             _buildPaginationControls(),
                           ],
                         ),

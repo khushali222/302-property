@@ -338,7 +338,7 @@ class WideScreenLayout extends StatelessWidget {
 //             Container(
 //               height: 50,
 //               decoration: BoxDecoration(
-//                 color: Color.fromRGBO(21, 43, 81, 1),
+//                 color: blueColor,
 //                 borderRadius: BorderRadius.only(
 //                   topLeft: Radius.circular(12.0),
 //                   topRight: Radius.circular(12.0),
@@ -442,7 +442,7 @@ class ReportCard extends StatelessWidget {
             Container(
               height: 50,
               decoration: BoxDecoration(
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),
@@ -463,14 +463,16 @@ class ReportCard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(
-                description,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: blueColor,
+              child: Center(
+                child: Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: blueColor,
+                  ),
+                  textAlign: TextAlign.start,
                 ),
-                textAlign: TextAlign.start,
               ),
             ),
           ],

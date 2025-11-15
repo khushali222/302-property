@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:three_zero_two_property/Model/tenants.dart';
 
 class LeaseSummary {
@@ -32,7 +34,7 @@ class Data {
   String? endDate;
   String? moveout_date;
   String? moveout_notice_given_date;
-
+  bool? is_renewing;
   List<Tenant>? tenantData;
   String? rentalAddress;
   String? rentalImage;
@@ -47,43 +49,46 @@ class Data {
   String? rentalOwnerCompanyName;
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerPhoneNumber;
+  List<RecurringEntry>? entry;
   int? amount;
   String? date;
   List<RenewLeases>? renewLeases;
-  Data({
-    this.leaseId,
-    this.tenantId,
-    this.adminId,
-    this.rentalId,
-    this.unitId,
-    this.leaseType,
-    this.startDate,
-    this.endDate,
-    this.tenantData,
-    this.rentalAddress,
-    this.rentalImage,
-    this.rentalCity,
-    this.rentalCountry,
-    this.rentalPostcode,
-    this.propertySubType,
-    this.rentalUnit,
-    this.rentalUnitAddress,
-    this.rentalSqft,
-    this.rentalOwnerName,
-    this.rentalOwnerCompanyName,
-    this.rentalOwnerPrimaryEmail,
-    this.rentalOwnerPhoneNumber,
-    this.amount,
-    this.date,
-    this.moveout_date,
-    this.moveout_notice_given_date,
-    this.renewLeases
-  });
+  Data(
+      {this.leaseId,
+      this.tenantId,
+      this.adminId,
+      this.rentalId,
+      this.unitId,
+      this.leaseType,
+      this.startDate,
+      this.endDate,
+      this.tenantData,
+      this.rentalAddress,
+      this.rentalImage,
+      this.rentalCity,
+      this.rentalCountry,
+      this.rentalPostcode,
+      this.propertySubType,
+      this.rentalUnit,
+      this.rentalUnitAddress,
+      this.rentalSqft,
+      this.rentalOwnerName,
+      this.rentalOwnerCompanyName,
+      this.rentalOwnerPrimaryEmail,
+      this.rentalOwnerPhoneNumber,
+      this.amount,
+      this.date,
+      this.moveout_date,
+      this.moveout_notice_given_date,
+      this.renewLeases,
+      this.entry});
 
   Data.fromJson(Map<String, dynamic> json) {
-    leaseId = json['lease_id']; 
+    print('tenant id ${json['tenant_id']}');
+    leaseId = json['lease_id'];
     tenantId =
         json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : [];
+
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -108,6 +113,13 @@ class Data {
     rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
     moveout_notice_given_date = json['moveout_notice_given_date'];
     moveout_date = json['moveout_date'];
+    is_renewing = json['is_renewing'];
+    if (json['entry'] != null) {
+      entry = <RecurringEntry>[];
+      json['entry'].forEach((v) {
+        entry!.add(new RecurringEntry.fromJson(v));
+      });
+    }
 
     amount = json['amount'];
     date = json['date'];
@@ -153,6 +165,7 @@ class Data {
     return data;
   }
 }
+
 class LeaseTenant {
   String leaseId;
   String tenantId;
@@ -170,6 +183,8 @@ class LeaseTenant {
   String tenantEmail;
   String rentalAddress;
   String rentalUnit;
+  bool? isSelected;
+  bool? recurring;
 
   LeaseTenant({
     required this.leaseId,
@@ -188,10 +203,13 @@ class LeaseTenant {
     required this.tenantEmail,
     required this.rentalAddress,
     required this.rentalUnit,
+    this.isSelected,
+    this.recurring,
   });
 
   factory LeaseTenant.fromJson(Map<String, dynamic> json) {
     print(json);
+    log(json.toString());
     return LeaseTenant(
       leaseId: json['lease_id'],
       tenantId: json['tenant_id'],
@@ -199,16 +217,17 @@ class LeaseTenant {
       rentalId: json['rental_id'],
       moveoutNoticeGivenDate: json['moveout_notice_given_date'] ?? "",
       moveoutDate: json['moveout_date'] ?? "",
-      unitId: json['unit_id']??"",
+      unitId: json['unit_id'] ?? "",
       leaseType: json['lease_type'],
       startDate: json['start_date'],
       endDate: json['end_date'],
       tenantFirstName: json['tenant_firstName'],
       tenantLastName: json['tenant_lastName'],
-      tenantPhoneNumber: json['tenant_phoneNumber'],
+      tenantPhoneNumber: json['tenant_phoneNumber'] ?? "",
       tenantEmail: json['tenant_email'],
       rentalAddress: json['rental_adress'],
-      rentalUnit: json['rental_unit'] ??"",
+      rentalUnit: json['rental_unit'] ?? "",
+      recurring: json['recurring'],
     );
   }
 
@@ -230,53 +249,82 @@ class LeaseTenant {
       'tenant_email': tenantEmail,
       'rental_adress': rentalAddress,
       'rental_unit': rentalUnit,
+      'recurring': recurring,
     };
   }
 }
+
 class RenewLeases {
   String? sId;
   String? renewId;
   String? leaseId;
   String? adminId;
+
   String? leaseType;
   String? startDate;
   String? endDate;
-  int? amount;
-  int? leaseAmount;
+  List<String>? renewFileName;
+  // String? renewfileName;
+  double? amount;
+  double? leaseAmount;
   bool? isDelete;
+  bool? isrenewed;
   String? createdAt;
   String? updatedAt;
   int? iV;
 
   RenewLeases(
       {this.sId,
-        this.renewId,
-        this.leaseId,
-        this.adminId,
-        this.leaseType,
-        this.startDate,
-        this.endDate,
-        this.amount,
-        this.leaseAmount,
-        this.isDelete,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.renewId,
+      this.leaseId,
+      this.adminId,
+      this.leaseType,
+      this.startDate,
+      this.endDate,
+      this.renewFileName,
+      // this.renewfileName,
+      this.amount,
+      this.leaseAmount,
+      this.isDelete,
+      this.isrenewed,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   RenewLeases.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    renewId = json['renew_id'];
-    leaseId = json['lease_id'];
-    adminId = json['admin_id'];
-    leaseType = json['lease_type'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    amount = json['amount'];
-    leaseAmount = json['lease_amount'];
-    isDelete = json['is_delete'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
+    sId = json['_id'] ?? "";
+    renewId = json['renew_id'] ?? "";
+    // tenantId = json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : [];
+    leaseId = json['lease_id'] ?? "";
+    adminId = json['admin_id'] ?? "";
+    leaseType = json['lease_type'] ?? "";
+    startDate = json['start_date'] ?? "";
+    // renewFileName = json['renew_fileName'] != null
+    // ? List<String>.from(json['renew_fileName'])
+    // : [];
+    // renewfileName = json['renew_fileName'] ?? "";
+    // Handle renew_fileName: if it's a string, convert it to a list.
+    if (json['renew_fileName'] != null) {
+      if (json['renew_fileName'] is String) {
+        renewFileName =
+            json['renew_fileName'] == "" ? [] : [json['renew_fileName']];
+      } else {
+        renewFileName = List<String>.from(json['renew_fileName']);
+      }
+    } else {
+      renewFileName = [];
+    }
+
+    endDate = json['end_date'] ?? "";
+    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
+    leaseAmount = json['lease_amount'] != null
+        ? (json['lease_amount'] as num).toDouble()
+        : null;
+    isDelete = json['is_delete'] ?? false;
+    isrenewed = json['is_renewed'] ?? false;
+    createdAt = json['createdAt'] ?? "";
+    updatedAt = json['updatedAt'] ?? "";
+    iV = json['__v'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -285,15 +333,61 @@ class RenewLeases {
     data['renew_id'] = this.renewId;
     data['lease_id'] = this.leaseId;
     data['admin_id'] = this.adminId;
+
     data['lease_type'] = this.leaseType;
     data['start_date'] = this.startDate;
+    // data['renew_fileName'] = this.renewFileName;
+    // data['renew_fileName'] = this.renewfileName;
+    data['renew_fileName'] = this.renewFileName ?? [];
     data['end_date'] = this.endDate;
     data['amount'] = this.amount;
     data['lease_amount'] = this.leaseAmount;
     data['is_delete'] = this.isDelete;
+    data['is_renewed'] = this.isrenewed;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
+    return data;
+  }
+}
+
+class RecurringEntry {
+  String? entryId;
+  String? account;
+  double? amount;
+  String? date;
+  String? chargeType;
+  String? memo;
+  String? sId;
+
+  RecurringEntry(
+      {this.entryId,
+      this.account,
+      this.amount,
+      this.date,
+      this.chargeType,
+      this.memo,
+      this.sId});
+
+  RecurringEntry.fromJson(Map<String, dynamic> json) {
+    entryId = json['entry_id'];
+    account = json['account'];
+    amount = json['amount'].toDouble();
+    date = json['date'];
+    chargeType = json['charge_type'];
+    memo = json['memo'];
+    sId = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['entry_id'] = this.entryId;
+    data['account'] = this.account;
+    data['amount'] = this.amount;
+    data['date'] = this.date;
+    data['charge_type'] = this.chargeType;
+    data['memo'] = this.memo;
+    data['_id'] = this.sId;
     return data;
   }
 }

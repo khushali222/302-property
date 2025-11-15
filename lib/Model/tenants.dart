@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class TenantResponse {
@@ -30,6 +29,7 @@ class TenantResponse {
 class Tenant {
   String? id;
   String? tenantId;
+  String? applicantId;
   String? adminId;
   String? tenantFirstName;
   String? tenantLastName;
@@ -59,6 +59,7 @@ class Tenant {
   Tenant({
     this.id,
     this.tenantId,
+    this.applicantId,
     this.adminId,
     this.tenantFirstName,
     this.tenantLastName,
@@ -87,7 +88,9 @@ class Tenant {
   }); // Added leaseData
 
   Tenant.fromJson(Map<String, dynamic> json) {
+    print("calling tenants");
     tenantId = json['tenant_id'];
+    applicantId = json['applicant_id'];
     tenantResidentStatus = json['tenant_residentStatus'];
     adminId = json['admin_id'];
     tenantFirstName = json['tenant_firstName'].toString();
@@ -100,7 +103,7 @@ class Tenant {
     tenantBirthDate = json['tenant_birthDate'];
     taxPayerId = json['taxPayer_id'];
     comments = json['comments'];
-    rentshare = json['percentage']??"";
+    rentshare = json['percentage'] ?? "";
     emergencyContact = json['emergency_contact'] != null
         ? EmergencyContact.fromJson(json['emergency_contact'])
         : null;
@@ -126,6 +129,7 @@ class Tenant {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = id;
     data['tenant_id'] = tenantId;
+    data['applicant_id'] = applicantId;
     data['admin_id'] = adminId;
     data['tenant_residentStatus'] = tenantResidentStatus;
     data['tenant_firstName'] = tenantFirstName;
@@ -141,8 +145,8 @@ class Tenant {
     if (emergencyContact != null) {
       data['emergency_contact'] = emergencyContact!.toJson();
     }
-    data['createdAt'] = updatedAt;
-    data['updatedAt'] = createdAt;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
     data['rental_adress'] = rentalAddress;
     data['override_fee'] = overRideFee;
     data['enable_override_fee'] = enableoverrideFee;

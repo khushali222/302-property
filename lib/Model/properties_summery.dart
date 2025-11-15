@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 // class ApiResponse {
 //   final int statusCode;
 //   final List<TenantData> data;
@@ -683,8 +685,11 @@ class TenantData {
   final String? rentalUnit;
   final String? rentalUnitAddress;
   final String? rentalSqft;
+  bool? recurring;
   final List<dynamic>? rentalImages;
   final EmergencyContact? emergencyContact;
+  final TextEditingController? controller;
+  bool isSelected;
 
   TenantData({
     this.id,
@@ -729,6 +734,9 @@ class TenantData {
     this.rentalSqft,
     this.rentalImages,
     this.emergencyContact,
+    this.recurring,
+    this.controller,
+    this.isSelected = false
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {
@@ -776,6 +784,7 @@ class TenantData {
       rentalUnitAddress: json['rental_unit_adress'],
       rentalSqft: json['rental_sqft'],
       rentalImages: json['rental_images'],
+      recurring: json['recurring'],
       emergencyContact: json['emergency_contact'] != null ? EmergencyContact.fromJson(json['emergency_contact']) : null,
     );
   }

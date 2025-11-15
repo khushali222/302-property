@@ -25,12 +25,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   void initState() {
     super.initState();
-   // _loadPermissions();
+    // _loadPermissions();
   }
 
   Future<void> _loadPermissions() async {
     try {
-      UserPermissions fetchedPermissions = await PermissionService.fetchPermissions();
+      UserPermissions fetchedPermissions =
+      await PermissionService.fetchPermissions();
       setState(() {
         permissions = fetchedPermissions;
         isLoading = false;
@@ -45,7 +46,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
- /*   if (isLoading) {
+    /*   if (isLoading) {
       return Center(child: Text(""));
     }
 
@@ -121,12 +122,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FaIcon(
                     FontAwesomeIcons.chartColumn,
                     size: 20,
-                    color: widget.currentpage == "Financial"
+                    color: widget.currentpage == "Ledger"
                         ? Colors.white
                         : blueColor,
                   ),
-                  "Financial",
-                  widget.currentpage == "Financial",
+                  "Ledger",
+                  widget.currentpage == "Ledger",
                 ),
               if (permissions!.workorderView)
                 buildListTile(
