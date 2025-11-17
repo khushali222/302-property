@@ -1,5 +1,11 @@
 // lib/payment_configurations.dart (Test Configuration)
+//
+// NOTE: These configurations are set up for TEST/SANDBOX environment
+// For production, update the environment and merchant credentials accordingly
 
+// Google Pay Test Configuration
+// Environment is set to "TEST" for sandbox testing
+// Change to "PRODUCTION" when ready for live payments
 const String defaultGooglePayConfigString = '''
 {
   "provider": "google_pay",
@@ -34,6 +40,27 @@ const String defaultGooglePayConfigString = '''
       "merchantName": "Cloud Rental Manager",
       "merchantId": "BCR2DN6TZ7QZ4XQZ"
     }
+  }
+}
+''';
+
+// Apple Pay Test Configuration
+// NOTE: Apple Pay uses sandbox mode automatically when:
+// 1. Testing on a device with test Apple ID
+// 2. Using a sandbox merchant identifier
+// 3. Running in Xcode with sandbox environment
+// For production, ensure you have a valid production merchant identifier
+// and proper Apple Pay certificates configured in your Apple Developer account
+const String defaultApplePayConfigString = '''
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "merchant.com.hostmerchantservices.cloudrentalmanager",
+    "displayName": "Cloud Rental Manager",
+    "countryCode": "US",
+    "currencyCode": "USD",
+    "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+    "merchantCapabilities": ["debit", "credit", "3DS"]
   }
 }
 ''';

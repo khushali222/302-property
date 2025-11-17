@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pay/pay.dart';
 import 'dart:async';
+import 'dart:io' show Platform;
 // TODO: Uncomment these imports when you add the real API code
-// import 'dart:io';
 // import 'package:http/http.dart' as http;
 // import 'dart:convert';
 import 'payment_configurations.dart'; // Import the file from Step 1.1
@@ -158,6 +158,72 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  // Function called after the user authorizes the payment in the Apple Pay sheet
+  void onApplePayResult(Map<String, dynamic> paymentResult) async {
+    // 1. The result contains the encrypted token (PaymentData JSON)
+    print("Apple Pay Payment Result: $paymentResult");
+
+    // Reset previous errors
+    setState(() {
+      _isProcessingPayment = true;
+      _currentError = null;
+      _errorMessage = null;
+      _showSuccessMessage = false;
+    });
+
+    // 2. You MUST send this entire JSON object to your backend server for processing.
+    // DO NOT process the payment directly in Flutter.
+
+    try {
+      final response = await sendPaymentTokenToServer(
+        wallet: 'applepay',
+        paymentData: paymentResult,
+        amount: '1.00',
+      );
+
+      // Handle server response
+      if (response.isSuccess) {
+        print("Payment successfully processed!");
+        setState(() {
+          _isProcessingPayment = false;
+          _showSuccessMessage = true;
+          _currentError = null;
+          _errorMessage = null;
+        });
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment processed successfully!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        // Handle different error types
+        setState(() {
+          _isProcessingPayment = false;
+          _currentError = response.errorType ?? PaymentErrorType.unknownError;
+          _errorMessage =
+              response.errorMessage ?? 'Payment failed. Please try again.';
+        });
+
+        _showErrorSnackBar(_currentError!, _errorMessage!);
+      }
+    } catch (e) {
+      print("Error communicating with backend: $e");
+      setState(() {
+        _isProcessingPayment = false;
+        _currentError = PaymentErrorType.unknownError;
+        _errorMessage = 'An unexpected error occurred: ${e.toString()}';
+      });
+
+      _showErrorSnackBar(PaymentErrorType.unknownError, _errorMessage!);
+    }
+  }
+
   // Check if Google Pay is available on the device
   Future<bool> _isGooglePayAvailable() async {
     try {
@@ -169,6 +235,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // Note: Actual availability is checked by the button itself
       return true;
     } catch (e) {
+      return false;
+    }
+  }
+
+  // Check if Apple Pay is available on the device
+  Future<bool> _isApplePayAvailable() async {
+    // Only check on iOS devices
+    if (!Platform.isIOS) {
+      print("Apple Pay: Not iOS device, skipping");
+      return false;
+    }
+
+    try {
+      // Try to create a payment configuration to test availability
+      PaymentConfiguration.fromJsonString(
+        defaultApplePayConfigString,
+      );
+      // If we can create the config, Apple Pay might be available
+      // Note: Actual availability is checked by the button itself
+      // The button will handle its own availability check
+      print("Apple Pay: Configuration created successfully");
+      return true;
+    } catch (e) {
+      print("Apple Pay: Configuration error - $e");
       return false;
     }
   }
@@ -663,58 +753,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ],
                 )
               else
-                // The Google Pay Button (only shown when plugin is available)
-                FutureBuilder<bool>(
-                  future: _isGooglePayAvailable(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                // Payment buttons section - shows both Google Pay and Apple Pay
+                Column(
+                  children: [
+                    // Google Pay Button
+                    FutureBuilder<bool>(
+                      future: _isGooglePayAvailable(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox.shrink();
+                        }
 
-                    if (snapshot.hasError || !(snapshot.data ?? false)) {
-                      return Column(
-                        children: [
-                          const Icon(
-                            Icons.info_outline,
-                            size: 64,
-                            color: Colors.blue,
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Google Pay Not Available',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Text(
-                              'Google Pay is not available on this device.\n'
-                              'Make sure you are testing on a real Android device\n'
-                              'with Google Play Services installed.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('Go Back'),
-                          ),
-                        ],
-                      );
-                    }
+                        if (snapshot.hasError || !(snapshot.data ?? false)) {
+                          return const SizedBox.shrink();
+                        }
 
-                    // Show Google Pay Button
-                    try {
-                      return Column(
-                        children: [
-                          GooglePayButton(
+                        // Show Google Pay Button
+                        try {
+                          return GooglePayButton(
                             paymentConfiguration:
                                 PaymentConfiguration.fromJsonString(
                               defaultGooglePayConfigString,
@@ -726,48 +783,173 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             loadingIndicator: const Center(
                               child: CircularProgressIndicator(),
                             ),
-                          ),
-                          // Show error display if there's an error
-                          _buildErrorDisplay(),
-                          // Show success display if payment succeeded
-                          _buildSuccessDisplay(),
-                        ],
-                      );
-                    } catch (e) {
-                      return Column(
+                          );
+                        } catch (e) {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                    // Apple Pay Button (iOS only)
+                    if (Platform.isIOS)
+                      Column(
                         children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: Colors.red,
+                          Builder(
+                            builder: (context) {
+                              // Always try to show the button on iOS
+                              // The button itself will handle availability
+                              // If it's not available, the button won't render
+                              try {
+                                print("Apple Pay: Attempting to show button");
+                                final button = ApplePayButton(
+                                  paymentConfiguration:
+                                      PaymentConfiguration.fromJsonString(
+                                    defaultApplePayConfigString,
+                                  ),
+                                  paymentItems: _paymentItems,
+                                  type: ApplePayButtonType.buy,
+                                  margin: const EdgeInsets.only(top: 15.0),
+                                  onPaymentResult: onApplePayResult,
+                                  loadingIndicator: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+
+                                // Wrap in a container to ensure it takes space
+                                return Container(
+                                  margin: const EdgeInsets.only(top: 15.0),
+                                  constraints: const BoxConstraints(
+                                    minHeight: 50,
+                                  ),
+                                  child: button,
+                                );
+                              } catch (e, stackTrace) {
+                                print("Apple Pay: Error creating button - $e");
+                                print("Apple Pay: Stack trace - $stackTrace");
+                                // Show error message instead of hiding
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 15.0),
+                                  child: Column(
+                                    children: [
+                                      const Icon(
+                                        Icons.error_outline,
+                                        color: Colors.orange,
+                                        size: 32,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Apple Pay Error: $e',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.orange,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        'Please ensure:\n'
+                                        '1. Apple Pay capability is enabled in Xcode\n'
+                                        '2. Merchant identifier is configured\n'
+                                        '3. App is properly signed',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Error Loading Payment Button',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          // Debug info - shows if button might not be rendering
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              'If Apple Pay button is not visible, check Xcode configuration',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey.withOpacity(0.7),
+                                fontStyle: FontStyle.italic,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Error: $e',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.red),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('Go Back'),
-                          ),
                         ],
-                      );
-                    }
-                  },
+                      ),
+                    // Show message if no payment methods are available
+                    FutureBuilder<List<bool>>(
+                      future: Future.wait([
+                        _isGooglePayAvailable(),
+                        _isApplePayAvailable(),
+                      ]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        final googlePayAvailable = snapshot.data?[0] ?? false;
+                        final applePayAvailable = snapshot.data?[1] ?? false;
+
+                        if (!googlePayAvailable && !applePayAvailable) {
+                          return Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              const Icon(
+                                Icons.info_outline,
+                                size: 64,
+                                color: Colors.blue,
+                              ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Payment Methods Not Available',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Text(
+                                  Platform.isIOS
+                                      ? 'Apple Pay is not available.\n\n'
+                                          'Please check:\n'
+                                          '1. Apple Pay is set up in Settings > Wallet & Apple Pay\n'
+                                          '2. You have a card added to Apple Pay\n'
+                                          '3. Apple Pay capability is enabled in Xcode\n'
+                                          '4. Merchant identifier is configured in Xcode\n'
+                                          '5. App is signed with proper provisioning profile'
+                                      : 'Google Pay and Apple Pay are not available on this device.\n'
+                                          'Make sure you are testing on a real device\n'
+                                          'with the required payment services installed.',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.arrow_back),
+                                label: const Text('Go Back'),
+                              ),
+                            ],
+                          );
+                        }
+
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    // Show error display if there's an error
+                    _buildErrorDisplay(),
+                    // Show success display if payment succeeded
+                    _buildSuccessDisplay(),
+                  ],
                 ),
             ],
           ),

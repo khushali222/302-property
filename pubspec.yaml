@@ -68,48 +68,45 @@ dependencies:
   syncfusion_flutter_signaturepad: ^31.2.4
   google_fonts:
   file_picker: ^8.0.5
-  flutter_slidable: ^3.0.0
-  loading_animation_widget: ^1.2.1
+  flutter_slidable:
+  device_info_plus:
   printing:
   syncfusion_flutter_pdf:
-  path_provider: ^2.1.5
+  path_provider: ^2.1.3
+
   syncfusion_flutter_xlsio: ^31.2.4
   csv: ^6.0.0
   permission_handler: ^11.3.1
   credit_card_type_detector: ^3.0.0
   cached_network_image: ^3.3.1
-  fl_chart: ^0.69.2
+  fl_chart: ^0.68.0
   shimmer:
   zxcvbn:
   pdf: ^3.11.0
   flutter_colorpicker:
   keyboard_actions:
   flutter_blurhash: ^0.6.0
-  lottie: ^3.1.2
+  share_plus: ^12.0.1
+  lottie:
   connectivity_plus: ^5.0.2
-  encrypt:
+  zxcvbn:
+  url_launcher:
   credit_card_validator:
-  url_launcher: ^6.3.2
-  video_player: ^2.10.0
-  video_thumbnail: # video image for File only
-  chewie:
   timeago:
+  chewie:
+  video_thumbnail:
 
-  html2md: ^1.3.2
-  share_plus: ^7.1.0
-  flutter_cached_pdfview: ^0.4.3
-  #  syncfusion_flutter_pdfviewer:
+  video_player:
+  flutter_quill:
   badges: ^3.1.2
-  html:
+  video_thumbnail_imageview: ^0.0.6
   html_editor_enhanced:
-  super_tooltip:
   flutter_html:
   dio:
-  geolocator: ^13.0.0
+  geolocator:
   geocoding:
-  change_app_package_name: ^1.5.0
-  camera: ^0.11.3
-  package_info_plus: ^8.0.0
+  flutter_cached_pdfview: ^0.4.3
+  camera:
   pay: ^3.2.1
 
 
@@ -120,17 +117,13 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   custom_pop_up_menu: ^1.2.4
-flutter_native_splash:
-  color: "#ffffff"
-  image: assets/images/splashscreen.png
-  android_gravity: center
+  super_tooltip:
 
   web: false
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-
-  image_path: "assets/images/newlogo.png"
+  image_path: "assets/images/new_logo.jpg"
 
   #  this is image
   min_sdk_android: 21 # android min sdk min:16, default 21
