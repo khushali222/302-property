@@ -94,67 +94,65 @@ import 'provider/notification_provider.dart';
 // }
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  runApp(
-
-    DevicePreview(
-      enabled: false,
-      tools: [
-        ...DevicePreview.defaultTools,
-      ],
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => OwnerDetailsProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => Tenants_counts(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => SelectedTenantsProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => SelectedCosignersProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => NameProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => LeaseLedgerProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => EditFormState(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => WorkOrderCountProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => ApplicantDetailsProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => checkPlanPurchaseProiver(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => PermissionProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => StaffPermissionProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => WorkOrderCountProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => ProfileProvider(),
-          ),
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    timeago.setLocaleMessages('en_custom', CustomTimeAgo());
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    runApp(
+      DevicePreview(
+        enabled: kDebugMode ? false  :  false,
+        tools: const [
+          ...DevicePreview.defaultTools,
         ],
-        child: MyApp(),
+        builder: (context) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => OwnerDetailsProvider()),
+            ChangeNotifierProvider(create: (context) => Tenants_counts()),
+            ChangeNotifierProvider(
+                create: (context) => SelectedTenantsProvider()),
+            ChangeNotifierProvider(
+                create: (context) => SelectedCosignersProvider()),
+            ChangeNotifierProvider(
+                create: (context) => SelectedApplicantProvider()),
+            ChangeNotifierProvider(create: (context) => NameProvider()),
+            ChangeNotifierProvider(create: (context) => LeaseLedgerProvider()),
+            ChangeNotifierProvider(create: (context) => EditFormState()),
+            ChangeNotifierProvider(
+                create: (context) => WorkOrderCountProvider()),
+            ChangeNotifierProvider(
+                create: (context) => ApplicantDetailsProvider()),
+            ChangeNotifierProvider(
+                create: (context) => checkPlanPurchaseProiver()),
+            ChangeNotifierProvider(create: (context) => PermissionProvider()),
+            ChangeNotifierProvider(
+                create: (context) => StaffPermissionProvider()),
+            ChangeNotifierProvider(
+                create: (context) => WorkOrderCountProvider()),
+            ChangeNotifierProvider(create: (context) => ProfileProvider()),
+            ChangeNotifierProvider(create: (_) => DateProvider()),
+            ChangeNotifierProvider(create: (_) => DropdownProvider()),
+            ChangeNotifierProvider(create: (_) => CheckConnection()),
+            ChangeNotifierProvider(create: (_) => ThemeProvider()),
+            ChangeNotifierProvider(create: (_) => NotificationProvider()),
+            ChangeNotifierProvider(create: (_) => VendorPermission()),
+          ],
+          child: MyApp(),
+        ),
       ),
-    ),
-  );
+    );
+  }, (error, stackTrace) {
+    // Handle uncaught errors here if needed
+  }, zoneSpecification: ZoneSpecification(
+    print: (self, parent, zone, line) {
+      if (kDebugMode) {
+        parent.print(zone, line); // Show prints only in debug mode
+      }
+      // Do nothing in release/profile mode
+    },
+  ));
 }
 
 class MyApp extends StatelessWidget {

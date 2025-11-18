@@ -1,11 +1,80 @@
-// lib/payment_configurations.dart (Test Configuration)
+// lib/payment_configurations.dart
 //
 // NOTE: These configurations are set up for TEST/SANDBOX environment
 // For production, update the environment and merchant credentials accordingly
 
-// Google Pay Test Configuration
-// Environment is set to "TEST" for sandbox testing
-// Change to "PRODUCTION" when ready for live payments
+/// Generate Google Pay configuration dynamically with merchant ID and amount
+String generateGooglePayConfig({
+  required String merchantId,
+  required String amount,
+  String merchantName = 'Cloud Rental Manager',
+  String environment = 'TEST', // Change to 'PRODUCTION' for live
+  String currencyCode = 'USD',
+  String countryCode = 'US',
+}) {
+  return '''
+{
+  "provider": "google_pay",
+  "data": {
+    "environment": "$environment",
+    "apiVersion": 2,
+    "apiVersionMinor": 0,
+    "allowedPaymentMethods": [
+      {
+        "type": "CARD",
+        "parameters": {
+          "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+          "allowedCardNetworks": ["VISA", "MASTERCARD", "AMEX", "DISCOVER", "JCB"]
+        },
+        "tokenizationSpecification": {
+          "type": "PAYMENT_GATEWAY",
+          "parameters": {
+            "gateway": "gatewayservices",
+            "gatewayMerchantId": "$merchantId"
+          }
+        }
+      }
+    ],
+    "transactionInfo": {
+      "totalPriceStatus": "FINAL",
+      "totalPrice": "$amount",
+      "totalPriceLabel": "Total",
+      "currencyCode": "$currencyCode",
+      "countryCode": "$countryCode"
+    },
+    "merchantInfo": {
+      "merchantName": "$merchantName",
+      "merchantId": "$merchantId"
+    }
+  }
+}
+''';
+}
+
+/// Generate Apple Pay configuration dynamically with merchant ID and amount
+String generateApplePayConfig({
+  required String merchantId,
+  required String amount,
+  String merchantName = 'Cloud Rental Manager',
+  String currencyCode = 'USD',
+  String countryCode = 'US',
+}) {
+  return '''
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "$merchantId",
+    "displayName": "$merchantName",
+    "countryCode": "$countryCode",
+    "currencyCode": "$currencyCode",
+    "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+    "merchantCapabilities": ["debit", "credit", "3DS"]
+  }
+}
+''';
+}
+
+// Default static configurations (fallback)
 const String defaultGooglePayConfigString = '''
 {
   "provider": "google_pay",
@@ -23,7 +92,7 @@ const String defaultGooglePayConfigString = '''
         "tokenizationSpecification": {
           "type": "PAYMENT_GATEWAY",
           "parameters": {
-            "gateway": "example",
+            "gateway": "gatewayservices",
             "gatewayMerchantId": "exampleGatewayMerchantId"
           }
         }
@@ -44,13 +113,6 @@ const String defaultGooglePayConfigString = '''
 }
 ''';
 
-// Apple Pay Test Configuration
-// NOTE: Apple Pay uses sandbox mode automatically when:
-// 1. Testing on a device with test Apple ID
-// 2. Using a sandbox merchant identifier
-// 3. Running in Xcode with sandbox environment
-// For production, ensure you have a valid production merchant identifier
-// and proper Apple Pay certificates configured in your Apple Developer account
 const String defaultApplePayConfigString = '''
 {
   "provider": "apple_pay",
