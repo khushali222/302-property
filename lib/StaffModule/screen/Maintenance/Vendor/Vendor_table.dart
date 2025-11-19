@@ -637,7 +637,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: permissions!.vendorAdd! ? 3 : 1,
                           child: Padding(
@@ -810,129 +812,159 @@ class _Vendor_tableState extends State<Vendor_table> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Vendor>>(
-                        future: futurePropertyTypes,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            var data = snapshot.data!;
-                            if (searchvalue != "") {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.vendorName!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      property.vendorPhoneNumber!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      property.vendorEmail!
-                                          .toLowerCase()
-                                          .contains(searchvalue!.toLowerCase()))
-                                  .toList();
-                            }
-                            sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
-                            return SingleChildScrollView(
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Vendor>>(
+                      future: futurePropertyTypes,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const SizedBox(height: 10),
-                                  _buildHeaders(),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Vendor Propertytype = entry.value;
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? const Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: const Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      InkWell(
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (searchvalue != "") {
+                            data = snapshot.data!
+                                .where((property) =>
+                                    property.vendorName!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    property.vendorPhoneNumber!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()) ||
+                                    property.vendorEmail!
+                                        .toLowerCase()
+                                        .contains(searchvalue!.toLowerCase()))
+                                .toList();
+                          }
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Container(
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Vendor Propertytype = entry.value;
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // setState(() {
+                                                        //    isExpanded = !isExpanded;
+                                                        // //  expandedIndex = !expandedIndex;
+                                                        //
+                                                        // });
+                                                        // setState(() {
+                                                        //   if (isExpanded) {
+                                                        //     expandedIndex = null;
+                                                        //     isExpanded = !isExpanded;
+                                                        //   } else {
+                                                        //     expandedIndex = index;
+                                                        //   }
+                                                        // });
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: InkWell(
                                                         onTap: () {
-                                                          // setState(() {
-                                                          //    isExpanded = !isExpanded;
-                                                          // //  expandedIndex = !expandedIndex;
-                                                          //
-                                                          // });
-                                                          // setState(() {
-                                                          //   if (isExpanded) {
-                                                          //     expandedIndex = null;
-                                                          //     isExpanded = !isExpanded;
-                                                          //   } else {
-                                                          //     expandedIndex = index;
-                                                          //   }
-                                                          // });
                                                           setState(() {
                                                             if (expandedIndex ==
                                                                 index) {
@@ -944,218 +976,182 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                             }
                                                           });
                                                         },
-                                                        child: Container(
-                                                          margin:
+                                                        child: Padding(
+                                                          padding:
                                                               const EdgeInsets
                                                                   .only(
-                                                                  left: 5),
-                                                          padding: !isExpanded
-                                                              ? const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 10)
-                                                              : const EdgeInsets
-                                                                  .only(
-                                                                  top: 10),
-                                                          child: FaIcon(
+                                                                  left: 8.0),
+                                                          child: Text(
+                                                            '${Propertytype.vendorName}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .08),
+                                                    Expanded(
+                                                      child: Text(
+                                                        formatPhoneNumber(
+                                                            '${Propertytype.vendorPhoneNumber}'),
+                                                        // '${Propertytype.vendorPhoneNumber}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    // SizedBox(
+                                                    //     width:
+                                                    //         MediaQuery.of(context)
+                                                    //                 .size
+                                                    //                 .width *
+                                                    //             .08),
+                                                    // Expanded(
+                                                    //   child: Container(
+                                                    //     child: Row(
+                                                    //       children: [
+                                                    //         SizedBox(
+                                                    //           width: 20,
+                                                    //         ),
+                                                    //         InkWell(
+                                                    //           onTap: () async {
+                                                    //             var check = await Navigator
+                                                    //                 .push(
+                                                    //                     context,
+                                                    //                     MaterialPageRoute(
+                                                    //                         builder: (context) =>
+                                                    //                             edit_vendor(
+                                                    //                               vender_id: Propertytype.vendorId,
+                                                    //                             )));
+                                                    //             if (check == true) {
+                                                    //               setState(() {
+                                                    //                 futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                    //               });
+                                                    //             }
+                                                    //           },
+                                                    //           child: Container(
+                                                    //             child: FaIcon(
+                                                    //               FontAwesomeIcons
+                                                    //                   .edit,
+                                                    //               size: 20,
+                                                    //               color: Color
+                                                    //                   .fromRGBO(
+                                                    //                       21,
+                                                    //                       43,
+                                                    //                       83,
+                                                    //                       1),
+                                                    //             ),
+                                                    //           ),
+                                                    //         ),
+                                                    //         SizedBox(
+                                                    //           width: 10,
+                                                    //         ),
+                                                    //         InkWell(
+                                                    //           onTap: () {
+                                                    //             _showAlert(
+                                                    //                 context,
+                                                    //                 Propertytype
+                                                    //                     .vendorId!);
+                                                    //           },
+                                                    //           child: Container(
+                                                    //             child: FaIcon(
+                                                    //               FontAwesomeIcons
+                                                    //                   .trashCan,
+                                                    //               size: 20,
+                                                    //               color: Color
+                                                    //                   .fromRGBO(
+                                                    //                       21,
+                                                    //                       43,
+                                                    //                       83,
+                                                    //                       1),
+                                                    //             ),
+                                                    //           ),
+                                                    //         ),
+                                                    //       ],
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    // SizedBox(
+                                                    //     width:
+                                                    //         MediaQuery.of(context)
+                                                    //                 .size
+                                                    //                 .width *
+                                                    //             .02),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 2),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
                                                           ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (expandedIndex ==
-                                                                  index) {
-                                                                expandedIndex =
-                                                                    null;
-                                                              } else {
-                                                                expandedIndex =
-                                                                    index;
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 8.0),
-                                                            child: Text(
-                                                              '${Propertytype.vendorName}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .08),
-                                                      Expanded(
-                                                        child: Text(
-                                                          formatPhoneNumber(
-                                                              '${Propertytype.vendorPhoneNumber}'),
-                                                          // '${Propertytype.vendorPhoneNumber}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // SizedBox(
-                                                      //     width:
-                                                      //         MediaQuery.of(context)
-                                                      //                 .size
-                                                      //                 .width *
-                                                      //             .08),
-                                                      // Expanded(
-                                                      //   child: Container(
-                                                      //     child: Row(
-                                                      //       children: [
-                                                      //         SizedBox(
-                                                      //           width: 20,
-                                                      //         ),
-                                                      //         InkWell(
-                                                      //           onTap: () async {
-                                                      //             var check = await Navigator
-                                                      //                 .push(
-                                                      //                     context,
-                                                      //                     MaterialPageRoute(
-                                                      //                         builder: (context) =>
-                                                      //                             edit_vendor(
-                                                      //                               vender_id: Propertytype.vendorId,
-                                                      //                             )));
-                                                      //             if (check == true) {
-                                                      //               setState(() {
-                                                      //                 futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
-                                                      //               });
-                                                      //             }
-                                                      //           },
-                                                      //           child: Container(
-                                                      //             child: FaIcon(
-                                                      //               FontAwesomeIcons
-                                                      //                   .edit,
-                                                      //               size: 20,
-                                                      //               color: Color
-                                                      //                   .fromRGBO(
-                                                      //                       21,
-                                                      //                       43,
-                                                      //                       83,
-                                                      //                       1),
-                                                      //             ),
-                                                      //           ),
-                                                      //         ),
-                                                      //         SizedBox(
-                                                      //           width: 10,
-                                                      //         ),
-                                                      //         InkWell(
-                                                      //           onTap: () {
-                                                      //             _showAlert(
-                                                      //                 context,
-                                                      //                 Propertytype
-                                                      //                     .vendorId!);
-                                                      //           },
-                                                      //           child: Container(
-                                                      //             child: FaIcon(
-                                                      //               FontAwesomeIcons
-                                                      //                   .trashCan,
-                                                      //               size: 20,
-                                                      //               color: Color
-                                                      //                   .fromRGBO(
-                                                      //                       21,
-                                                      //                       43,
-                                                      //                       83,
-                                                      //                       1),
-                                                      //             ),
-                                                      //           ),
-                                                      //         ),
-                                                      //       ],
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
-                                                      // SizedBox(
-                                                      //     width:
-                                                      //         MediaQuery.of(context)
-                                                      //                 .size
-                                                      //                 .width *
-                                                      //             .02),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 2.0),
-                                                  margin: const EdgeInsets.only(
-                                                      bottom: 2),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 50,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Email : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Propertytype.vendorEmail}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Email : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${Propertytype.vendorEmail}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                              ],
                                                             ),
+                                                          ),
 
-                                                            /* Container(
+                                                          /* Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1163,276 +1159,273 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            if (permissions!
-                                                                .vendorEdit!)
-                                                              Expanded(
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          if (permissions!
+                                                              .vendorEdit!)
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  var check = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => edit_vendor(
+                                                                                vender_id: Propertytype.vendorId,
+                                                                              )));
+                                                                  if (check ==
+                                                                      true) {
+                                                                    setState(
+                                                                        () {
+                                                                      futurePropertyTypes =
+                                                                          VendorRepository(baseUrl: '')
+                                                                              .getVendors();
+                                                                    });
+                                                                  }
+                                                                },
                                                                 child:
-                                                                    GestureDetector(
-                                                                  onTap:
-                                                                      () async {
-                                                                    var check = await Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => edit_vendor(
-                                                                                  vender_id: Propertytype.vendorId,
-                                                                                )));
-                                                                    if (check ==
-                                                                        true) {
-                                                                      setState(
-                                                                          () {
-                                                                        futurePropertyTypes =
-                                                                            VendorRepository(baseUrl: '').getVendors();
-                                                                      });
-                                                                    }
-                                                                  },
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        width:
+                                                                            1.5),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ), // color:Colors.grey[100],
                                                                   child:
-                                                                      Container(
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border: Border.all(
-                                                                          color: Colors
-                                                                              .green,
-                                                                          width:
-                                                                              1.5),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ), // color:Colors.grey[100],
-                                                                    child:
-                                                                        const Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .edit,
-                                                                          size:
-                                                                              15,
-                                                                          color:
-                                                                              Colors.green,
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              10,
-                                                                        ),
-                                                                        Text(
-                                                                          "Edit",
-                                                                          style: TextStyle(
-                                                                              color: Colors.green,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                                      const Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.green,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
-                                                            if (permissions!
-                                                                .vendorEdit!)
-                                                              const SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                            if (permissions!
-                                                                .vendorDelete!)
-                                                              Expanded(
+                                                            ),
+                                                          if (permissions!
+                                                              .vendorEdit!)
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          if (permissions!
+                                                              .vendorDelete!)
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  _showAlert(
+                                                                      context,
+                                                                      Propertytype
+                                                                          .vendorId!);
+                                                                },
                                                                 child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    _showAlert(
-                                                                        context,
-                                                                        Propertytype
-                                                                            .vendorId!);
-                                                                  },
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        width:
+                                                                            1.5),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
                                                                   child:
-                                                                      Container(
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border: Border.all(
-                                                                          color: Colors
-                                                                              .red,
-                                                                          width:
-                                                                              1.5),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ),
-                                                                    child:
-                                                                        const Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        FaIcon(
-                                                                          FontAwesomeIcons
-                                                                              .trashCan,
-                                                                          size:
-                                                                              15,
-                                                                          color:
-                                                                              Colors.red,
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              10,
-                                                                        ),
-                                                                        Text(
-                                                                          "Delete",
-                                                                          style: TextStyle(
-                                                                              color: Colors.red,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        )
-                                                                      ],
-                                                                    ),
+                                                                      const Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .red,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Delete",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      )
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              //SizedBox(height: 13,),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                              ),
+                                            //SizedBox(height: 13,),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
-                                                ),
-                                              ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
                                                         setState(() {
-                                                          currentPage++;
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
                                                         });
                                                       }
                                                     : null,
+                                              ),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   FutureBuilder<List<Vendor>>(
                   //     future: futurePropertyTypes,

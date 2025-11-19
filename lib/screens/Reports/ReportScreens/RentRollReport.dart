@@ -53,6 +53,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
   @override
   void initState() {
     super.initState();
+    // Initialize notifier with empty list
+    _selectedOwnersNotifier.value = [];
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -72,11 +74,12 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     });
   }
 
-  Future<rentrollreportmodel> fetchRentersInsuranceData({String? id}) async {
+  Future<rentrollreportmodel> fetchRentersInsuranceData(
+      {String? id, List<String>? ids}) async {
     RentRollReportService service = RentRollReportService();
     try {
-      rentrollreportmodel data =
-          await service.fetchRentRollreport(rentalOwnerId: id);
+      rentrollreportmodel data = await service.fetchRentRollreport(
+          rentalOwnerId: id, rentalOwnerIds: ids);
       setState(() {
         // rentersInsuranceModel = data;
         isLoading = false;
@@ -805,12 +808,23 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     ];
 
     var rentalOwer;
-    if (selectedOwner == "all" || selectedOwner == null) {
+    if (selectedOwners.isEmpty || selectedOwners.contains("all")) {
       rentalOwer = "All";
-    } else {
+    } else if (selectedOwners.length == 1) {
       var Ower = rentalowners
-          .firstWhere((test) => test["rentalowner_id"] == selectedOwner);
+          .firstWhere((test) => test["rentalowner_id"] == selectedOwners.first);
       rentalOwer = Ower["rentalOwner_name"];
+    } else {
+      // Multiple owners selected - show comma-separated list
+      rentalOwer = selectedOwners.map((id) {
+        try {
+          var owner =
+              rentalowners.firstWhere((test) => test["rentalowner_id"] == id);
+          return owner["rentalOwner_name"];
+        } catch (e) {
+          return id;
+        }
+      }).join(", ");
     }
     tableData.add(totalRow);
     tablePropertyData.add(totalPropertyRow);
@@ -2007,7 +2021,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
   );
 
-  String? selectedOwner;
+  List<String> selectedOwners = [];
+  bool _isMultiSelectDropdownOpen = false;
+  final ValueNotifier<List<String>> _selectedOwnersNotifier =
+      ValueNotifier<List<String>>([]);
+  final GlobalKey _dropdownButtonKey = GlobalKey();
   final List<String> rentalOwners = [
     'All Owners',
     'Owner 1',
@@ -2020,6 +2038,174 @@ class _RentersInsurancesState extends State<RentersInsurances> {
   void handleDownload(String format) {
     // Replace with your download logic
     print("Downloading as $format");
+  }
+
+  // Multi-select dropdown widget
+  Widget _buildMultiSelectDropdown() {
+    // Use selectedOwners directly for display text
+    String displayText = selectedOwners.isEmpty
+        ? 'Select Rental Owners'
+        : selectedOwners.length == 1
+            ? rentalowners.firstWhere(
+                (owner) => owner['rentalowner_id'] == selectedOwners.first,
+                orElse: () => {'rentalOwner_name': 'Unknown'},
+              )['rentalOwner_name']
+            : '${selectedOwners.length} owners selected';
+
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _selectedOwnersNotifier,
+      builder: (context, currentSelected, _) {
+        return Container(
+          key: _dropdownButtonKey,
+          width: MediaQuery.of(context).size.width > 500 ? 200 : 150,
+          child: DropdownButtonHideUnderline(
+            child: Material(
+              elevation: 0,
+              borderRadius: BorderRadius.circular(8),
+              child: DropdownButton2<String>(
+                isExpanded: true,
+                hint: Text(
+                  displayText,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                value: null, // Always null for multi-select
+                items: rentalowners.map((owner) {
+                  final ownerId = owner['rentalowner_id'];
+                  final ownerName = owner['rentalOwner_name'];
+
+                  return DropdownMenuItem<String>(
+                    value: ownerId,
+                    enabled: false,
+                    child: ValueListenableBuilder<List<String>>(
+                      valueListenable: _selectedOwnersNotifier,
+                      builder: (context, currentSelectedList, _) {
+                        // For "all" option, check if all individual owners are selected
+                        final isCurrentlySelected = ownerId == "all"
+                            ? rentalowners
+                                .where((o) => o['rentalowner_id'] != "all")
+                                .every((o) => currentSelectedList
+                                    .contains(o['rentalowner_id']))
+                            : currentSelectedList.contains(ownerId);
+
+                        return InkWell(
+                          onTap: () {
+                            if (ownerId == "all") {
+                              if (isCurrentlySelected) {
+                                selectedOwners.clear();
+                              } else {
+                                // Select all owners (excluding "all" option)
+                                selectedOwners = rentalowners
+                                    .where((o) => o['rentalowner_id'] != "all")
+                                    .map((o) => o['rentalowner_id'] as String)
+                                    .toList();
+                              }
+                            } else {
+                              selectedOwners.remove("all");
+                              if (isCurrentlySelected) {
+                                selectedOwners.remove(ownerId);
+                              } else {
+                                selectedOwners.add(ownerId);
+                              }
+                            }
+                            _selectedOwnersNotifier.value =
+                                List.from(selectedOwners);
+                            setState(() {});
+                          },
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: isCurrentlySelected,
+                                onChanged: (bool? value) {
+                                  if (ownerId == "all") {
+                                    if (value == true) {
+                                      // Select all owners (excluding "all" option)
+                                      selectedOwners = rentalowners
+                                          .where((o) =>
+                                              o['rentalowner_id'] != "all")
+                                          .map((o) =>
+                                              o['rentalowner_id'] as String)
+                                          .toList();
+                                    } else {
+                                      selectedOwners.clear();
+                                    }
+                                  } else {
+                                    selectedOwners.remove("all");
+                                    if (value == true) {
+                                      selectedOwners.add(ownerId);
+                                    } else {
+                                      selectedOwners.remove(ownerId);
+                                    }
+                                  }
+                                  _selectedOwnersNotifier.value =
+                                      List.from(selectedOwners);
+                                  setState(() {});
+                                },
+                                activeColor: blueColor,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  ownerName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: isCurrentlySelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  // Do nothing - selection handled in item's InkWell
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 45,
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(left: 14, right: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFF8A95A8),
+                    ),
+                    color: Colors.white,
+                  ),
+                  elevation: 0,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  offset: const Offset(0, 0),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: const Radius.circular(20),
+                    thickness: MaterialStateProperty.all(6),
+                    thumbVisibility: MaterialStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.only(left: 14, right: 14),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -2072,99 +2258,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   horizontal: 16, vertical: 8),
                               child: Row(
                                 children: [
-                                  // Dropdown for Rental Owners
+                                  // Multi-select Dropdown for Rental Owners
                                   Expanded(
-                                    child: DropdownButtonHideUnderline(
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Row(
-                                            children: [
-                                              SizedBox(width: 4),
-                                              Expanded(
-                                                child: Text(
-                                                  'Select Rental Owners',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          items: rentalowners
-                                              .map((owner) =>
-                                                  DropdownMenuItem<String>(
-                                                    value:
-                                                        owner['rentalowner_id'],
-                                                    child: Text(
-                                                      owner[
-                                                          'rentalOwner_name']!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                          value: selectedOwner,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedOwner = value;
-                                            });
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: const Color(0xFF8A95A8),
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            maxHeight: 250,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(14),
-                                            ),
-                                            offset: const Offset(-20, 0),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(40),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 50,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    child: _buildMultiSelectDropdown(),
                                   ),
                                   const SizedBox(width: 8),
 
@@ -2185,7 +2281,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         setState(() {
                                           _futureRentersInsurance =
                                               fetchRentersInsuranceData(
-                                                  id: selectedOwner);
+                                                  ids: selectedOwners.isEmpty
+                                                      ? null
+                                                      : selectedOwners);
                                         });
                                         print("Run Report");
                                       },
@@ -2291,99 +2389,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   horizontal: 16, vertical: 8),
                               child: Row(
                                 children: [
-                                  // Dropdown for Rental Owners
+                                  // Multi-select Dropdown for Rental Owners
                                   Expanded(
-                                    child: DropdownButtonHideUnderline(
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Row(
-                                            children: [
-                                              SizedBox(width: 4),
-                                              Expanded(
-                                                child: Text(
-                                                  'Select Rental Owners',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          items: rentalowners
-                                              .map((owner) =>
-                                                  DropdownMenuItem<String>(
-                                                    value:
-                                                        owner['rentalowner_id'],
-                                                    child: Text(
-                                                      owner[
-                                                          'rentalOwner_name']!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                          value: selectedOwner,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedOwner = value;
-                                            });
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: const Color(0xFF8A95A8),
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            maxHeight: 250,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(14),
-                                            ),
-                                            offset: const Offset(-20, 0),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(40),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 50,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    child: _buildMultiSelectDropdown(),
                                   ),
                                   const SizedBox(width: 8),
 
@@ -2404,7 +2412,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         setState(() {
                                           _futureRentersInsurance =
                                               fetchRentersInsuranceData(
-                                                  id: selectedOwner);
+                                                  ids: selectedOwners.isEmpty
+                                                      ? null
+                                                      : selectedOwners);
                                         });
                                         print("Run Report");
                                       },

@@ -1401,7 +1401,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                       }
                       // Trigger validation on change for real-time feedback
                       if (widget.passwordController != null ||
-                          widget.pass != null) {
+                          widget.pass != null ||
+                          widget.phone != null) {
                         state.didChange(value);
                       }
                     },
@@ -1444,7 +1445,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-            height: 60,
+            height: _errorMessage != null ? 75 : 60,
             width: MediaQuery.of(context).size.width * .98,
             child: KeyboardActions(
               config: _buildConfig(context),
