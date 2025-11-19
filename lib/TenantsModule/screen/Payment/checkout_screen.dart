@@ -166,12 +166,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       merchantName: _merchantName ?? 'Cloud Rental Manager',
     );
 
-    // Generate Apple Pay configuration with dynamic merchant ID
-    _applePayConfigString = generateApplePayConfig(
-      merchantId: _merchantId!,
-      amount: widget.amount.toStringAsFixed(2),
-      merchantName: _merchantName ?? 'Cloud Rental Manager',
-    );
+    // Generate Apple Pay configuration
+    // Note: Apple Pay uses Apple Merchant ID (from entitlements), not NMI merchant ID
+    // This will be used when Apple Pay is set up (card added, etc.)
+    // If not set up, the button will silently not show (allowing Google Pay to work)
+    try {
+      _applePayConfigString = generateApplePayConfig(
+        amount: widget.amount.toStringAsFixed(2),
+        merchantName: _merchantName ?? 'Cloud Rental Manager',
+        // merchantIdentifier defaults to the one in entitlements file
+        // merchant.com.hostmerchantservices.cloudrentalmanager
+      );
+    } catch (e) {
+      // Silently handle error - don't prevent Google Pay from working
+      print('Apple Pay config generation error (non-blocking): $e');
+      _applePayConfigString = null;
+    }
   }
 
   // Check if pay plugin is available
@@ -347,6 +357,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // Check if Apple Pay is available on the device
+  // Returns false silently if not available (no card, not configured, etc.)
+  // This allows Google Pay to work independently
   Future<bool> _isApplePayAvailable() async {
     // Only check on iOS devices
     if (!Platform.isIOS) {
@@ -357,13 +369,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // Use dynamic configuration if available, otherwise use default
       if (_applePayConfigString != null) {
         PaymentConfiguration.fromJsonString(_applePayConfigString!);
+        // Configuration is valid, but actual availability depends on:
+        // - Apple Pay being set up in device settings
+        // - Card being added to Apple Pay
+        // - Proper app signing
+        // The button itself will handle these checks
         return true;
       }
       // Fallback to default config
       PaymentConfiguration.fromJsonString(defaultApplePayConfigString);
       return true;
     } catch (e) {
-      print("Apple Pay configuration error: $e");
+      // Silently return false - don't log errors
+      // This allows Google Pay to work even if Apple Pay config fails
       return false;
     }
   }
@@ -374,7 +392,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required String wallet,
     required Map<String, dynamic> paymentData,
     required String amount,
-  }) async {// Convert payment data to JSON string
+  }) async {
+    // Convert payment data to JSON string
     String tokenString = jsonEncode(paymentData);
     print("Sending $wallet token to server: $tokenString");
 
@@ -1059,12 +1078,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                           const SizedBox(height: 16),
                           // Apple Pay Button (iOS only)
+                          // Silently hide if not available - don't show errors
+                          // This allows Google Pay to work even if Apple Pay is not set up
                           if (Platform.isIOS)
-                            Builder(
-                              builder: (context) {
-                                // Always try to show the button on iOS
-                                // The button itself will handle availability
-                                // If it's not available, the button won't render
+                            FutureBuilder<bool>(
+                              future: _isApplePayAvailable(),
+                              builder: (context, snapshot) {
+                                // Don't show anything while checking
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Only show Apple Pay button if available
+                                // Silently hide if not available (no card, not configured, etc.)
+                                if (snapshot.hasError ||
+                                    !(snapshot.data ?? false)) {
+                                  // Silently hide - don't show error message
+                                  // This allows Google Pay to work independently
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Apple Pay is available, show the button
                                 try {
                                   if (_applePayConfigString == null) {
                                     return const SizedBox.shrink();
@@ -1097,51 +1132,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     ),
                                   );
                                 } catch (e) {
-                                  print("Apple Pay error: $e");
-                                  // Show error message instead of hiding
-                                  return Container(
-                                    padding: const EdgeInsets.all(12.0),
-                                    margin: const EdgeInsets.only(top: 12.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange[50],
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: Colors.orange[200]!,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        const Icon(
-                                          Icons.error_outline,
-                                          color: Colors.orange,
-                                          size: 28,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'Apple Pay Error: $e',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.orange,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 6),
-                                        const Text(
-                                          'Please ensure:\n'
-                                          '1. Apple Pay capability is enabled in Xcode\n'
-                                          '2. Merchant identifier is configured\n'
-                                          '3. App is properly signed',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                  // Silently hide on error - don't show error message
+                                  // This allows Google Pay to work independently
+                                  print(
+                                      "Apple Pay button error (silently handled): $e");
+                                  return const SizedBox.shrink();
                                 }
                               },
                             ),
@@ -1168,7 +1163,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 return Container(
                                   padding: const EdgeInsets.all(20.0),
                                   margin: const EdgeInsets.only(top: 12.0),
-                                  
                                   decoration: BoxDecoration(
                                     color: Colors.blue[50],
                                     borderRadius: BorderRadius.circular(8),
@@ -1199,16 +1193,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             horizontal: 8.0),
                                         child: Text(
                                           Platform.isIOS
-                                              ? 'Apple Pay is not available.\n\n'
-                                                  'Please check:\n'
+                                              ? 'No payment methods are available.\n\n'
+                                                  'For Apple Pay, please check:\n'
                                                   '1. Apple Pay is set up in Settings > Wallet & Apple Pay\n'
                                                   '2. You have a card added to Apple Pay\n'
                                                   '3. Apple Pay capability is enabled in Xcode\n'
                                                   '4. Merchant identifier is configured in Xcode\n'
-                                                  '5. App is signed with proper provisioning profile'
-                                              : 'Google Pay and Apple Pay are not available on this device.\n'
-                                                  'Make sure you are testing on a real device\n'
-                                                  'with the required payment services installed.',
+                                                  '5. App is signed with proper provisioning profile\n\n'
+                                                  'For Google Pay, please check:\n'
+                                                  '1. Google Pay is installed and set up\n'
+                                                  '2. You have a card added to Google Pay\n'
+                                                  '3. Testing on a real device'
+                                              : 'Google Pay is not available on this device.\n'
+                                                  'Make sure you are testing on a real Android device\n'
+                                                  'with Google Pay installed and set up.',
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             fontSize: 13,

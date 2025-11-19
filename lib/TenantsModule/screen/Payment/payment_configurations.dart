@@ -51,11 +51,14 @@ String generateGooglePayConfig({
 ''';
 }
 
-/// Generate Apple Pay configuration dynamically with merchant ID and amount
+/// Generate Apple Pay configuration dynamically with amount
+/// Note: merchantIdentifier must match the one in iOS entitlements file
+/// This is the Apple Merchant ID, NOT the NMI merchant ID
 String generateApplePayConfig({
-  required String merchantId,
   required String amount,
   String merchantName = 'Cloud Rental Manager',
+  String merchantIdentifier =
+      'merchant.com.hostmerchantservices.cloudrentalmanager',
   String currencyCode = 'USD',
   String countryCode = 'US',
 }) {
@@ -63,12 +66,12 @@ String generateApplePayConfig({
 {
   "provider": "apple_pay",
   "data": {
-    "merchantIdentifier": "$merchantId",
+    "merchantIdentifier": "$merchantIdentifier",
     "displayName": "$merchantName",
-    "countryCode": "$countryCode",
-    "currencyCode": "$currencyCode",
+    "merchantCapabilities": ["3DS", "debit", "credit"],
     "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
-    "merchantCapabilities": ["debit", "credit", "3DS"]
+    "countryCode": "$countryCode",
+    "currencyCode": "$currencyCode"
   }
 }
 ''';
@@ -119,10 +122,10 @@ const String defaultApplePayConfigString = '''
   "data": {
     "merchantIdentifier": "merchant.com.hostmerchantservices.cloudrentalmanager",
     "displayName": "Cloud Rental Manager",
-    "countryCode": "US",
-    "currencyCode": "USD",
+    "merchantCapabilities": ["3DS", "debit", "credit"],
     "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
-    "merchantCapabilities": ["debit", "credit", "3DS"]
+    "countryCode": "US",
+    "currencyCode": "USD"
   }
 }
 ''';
