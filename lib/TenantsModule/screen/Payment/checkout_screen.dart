@@ -374,8 +374,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required String wallet,
     required Map<String, dynamic> paymentData,
     required String amount,
-  }) async {
-    // Convert payment data to JSON string
+  }) async {// Convert payment data to JSON string
     String tokenString = jsonEncode(paymentData);
     print("Sending $wallet token to server: $tokenString");
 
@@ -1169,6 +1168,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 return Container(
                                   padding: const EdgeInsets.all(20.0),
                                   margin: const EdgeInsets.only(top: 12.0),
+                                  
                                   decoration: BoxDecoration(
                                     color: Colors.blue[50],
                                     borderRadius: BorderRadius.circular(8),

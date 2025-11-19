@@ -2315,7 +2315,7 @@ class _MakePaymentState extends State<MakePayment> {
                               },
                               child: Container(
                                 height: 45,
-                                width: 200,
+                                width: 250,
                                 margin: EdgeInsets.only(left: 0, bottom: 10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
