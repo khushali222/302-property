@@ -5,10 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:pay/pay.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
-// TODO: Uncomment these imports when you add the real API code
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-import 'payment_configurations.dart'; // Import the file from Step 1.1
+import 'dart:convert';
+import 'payment_configurations.dart';
+import 'nmi_keys_service.dart';
 
 // Payment response model
 class PaymentResponse {
@@ -40,7 +39,22 @@ enum PaymentErrorType {
 }
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({Key? key}) : super(key: key);
+  final double amount; // Dynamic amount from make_payment.dart
+  final String tenantId;
+  final String leaseId;
+  final String paymentAmountType; // "full", "rent", "partial"
+  final List<Map<String, dynamic>> entries;
+  final double surchargeamount;
+
+  const CheckoutScreen({
+    Key? key,
+    required this.amount,
+    required this.tenantId,
+    required this.leaseId,
+    required this.paymentAmountType,
+    required this.entries,
+    required this.surchargeamount,
+  }) : super(key: key);
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -50,22 +64,124 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isPayPluginAvailable = false;
   bool _isCheckingPlugin = true;
   bool _isProcessingPayment = false;
+  bool _isLoadingKeys = true; // Loading merchant ID
   PaymentErrorType? _currentError;
   String? _errorMessage;
   bool _showSuccessMessage = false;
 
-  final List<PaymentItem> _paymentItems = [
-    const PaymentItem(
-      label: 'Rent Payment',
-      amount: '1.00', // This should be the final rent amount
-      status: PaymentItemStatus.final_price,
-    ),
-  ];
+  // NMI Keys
+  String? _merchantId;
+  String? _merchantName;
+
+  // Dynamic payment items
+  late List<PaymentItem> _paymentItems;
+
+  // Payment configurations (will be generated dynamically)
+  String? _googlePayConfigString;
+  String? _applePayConfigString;
 
   @override
   void initState() {
     super.initState();
-    _checkPayPluginAvailability();
+    // Initialize payment items with dynamic amount
+    _paymentItems = [
+      PaymentItem(
+        label: 'Rent Payment',
+        amount: widget.amount.toStringAsFixed(2),
+        status: PaymentItemStatus.final_price,
+      ),
+    ];
+    // First fetch merchant ID, then check plugin availability
+    _initializePayment();
+  }
+
+  /// Initialize payment: Fetch merchant ID first, then setup payment
+  Future<void> _initializePayment() async {
+    try {
+      // Step 1: Fetch merchant ID and terminal ID from API
+      await _fetchNmiKeys();
+
+      // Step 2: Generate dynamic payment configurations
+      _generatePaymentConfigurations();
+
+      // Step 3: Check plugin availability
+      await _checkPayPluginAvailability();
+    } catch (e) {
+      print('Error initializing payment: $e');
+      setState(() {
+        _isLoadingKeys = false;
+        _currentError = PaymentErrorType.serverError;
+        _errorMessage = 'Failed to load payment configuration: ${e.toString()}';
+      });
+    }
+  }
+
+  /// Fetch NMI keys (merchant ID and terminal ID) from API
+  Future<void> _fetchNmiKeys() async {
+    setState(() {
+      _isLoadingKeys = true;
+    });
+
+    try {
+      final nmiKeysService = NmiKeysService();
+      final keysData = await nmiKeysService.fetchNmiKeys();
+
+      // Extract merchant ID from response
+      // API response structure: { "data": { "merchant_id": "...", ... } }
+      // Note: Some admin accounts may not have merchant_id set up yet
+      _merchantId = keysData['merchant_id']?.toString();
+      _merchantName = keysData['merchant_name']?.toString() ??
+          keysData['merchantName']?.toString() ??
+          'Cloud Rental Manager';
+
+      // Check if merchant_id exists, if not, show helpful error
+      if (_merchantId == null || _merchantId!.isEmpty) {
+        throw Exception(
+            'Merchant ID not configured. Please set up merchant ID in admin settings.');
+      }
+
+      setState(() {
+        _isLoadingKeys = false;
+      });
+    } catch (e) {
+      print('Error fetching NMI keys: $e');
+      setState(() {
+        _isLoadingKeys = false;
+      });
+      rethrow;
+    }
+  }
+
+  /// Generate dynamic payment configurations using fetched merchant ID
+  void _generatePaymentConfigurations() {
+    if (_merchantId == null) {
+      throw Exception(
+          'Merchant ID is required to generate payment configurations');
+    }
+
+    // Generate Google Pay configuration with dynamic merchant ID
+    _googlePayConfigString = generateGooglePayConfig(
+      merchantId: _merchantId!,
+      amount: widget.amount.toStringAsFixed(2),
+      merchantName: _merchantName ?? 'Cloud Rental Manager',
+    );
+
+    // Generate Apple Pay configuration
+    // Note: Apple Pay uses Apple Merchant ID (from entitlements), not NMI merchant ID
+    // This will be used when Apple Pay is set up (card added, etc.)
+    // If not set up, the button will silently not show (allowing Google Pay to work)
+    try {
+      _applePayConfigString = generateApplePayConfig(
+        amount: widget.amount.toStringAsFixed(2),
+        merchantName: _merchantName ?? 'Cloud Rental Manager',
+        // merchantIdentifier defaults to the one in entitlements file
+        // merchant.com.hostmerchantservices.cloudrentalmanager
+      );
+    } catch (e) {
+      // Silently handle error - don't prevent Google Pay from working
+      print('Apple Pay config generation error (non-blocking): $e');
+      _applePayConfigString = null;
+    }
   }
 
   // Check if pay plugin is available
@@ -94,8 +210,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   // Function called after the user authorizes the payment in the Google Pay sheet
   void onGooglePayResult(Map<String, dynamic> paymentResult) async {
-    // 1. The result contains the encrypted token (PaymentData JSON)
-    print("Google Pay Payment Result: $paymentResult");
+    // The result contains the encrypted token (PaymentData JSON)
+    String paymentTokenString = jsonEncode(paymentResult);
+    print("Google Pay Token: $paymentTokenString");
 
     // Reset previous errors
     setState(() {
@@ -112,12 +229,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final response = await sendPaymentTokenToServer(
         wallet: 'googlepay',
         paymentData: paymentResult,
-        amount: '1.00',
+        amount: widget.amount.toStringAsFixed(2), // Use dynamic amount
       );
 
       // Handle server response
       if (response.isSuccess) {
-        print("Payment successfully processed!");
         setState(() {
           _isProcessingPayment = false;
           _showSuccessMessage = true;
@@ -147,7 +263,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _showErrorSnackBar(_currentError!, _errorMessage!);
       }
     } catch (e) {
-      print("Error communicating with backend: $e");
+      print("Payment error: $e");
       setState(() {
         _isProcessingPayment = false;
         _currentError = PaymentErrorType.unknownError;
@@ -160,8 +276,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   // Function called after the user authorizes the payment in the Apple Pay sheet
   void onApplePayResult(Map<String, dynamic> paymentResult) async {
-    // 1. The result contains the encrypted token (PaymentData JSON)
-    print("Apple Pay Payment Result: $paymentResult");
+    // The result contains the encrypted token (PaymentData JSON)
+    String paymentTokenString = jsonEncode(paymentResult);
+    print("Apple Pay Token: $paymentTokenString");
 
     // Reset previous errors
     setState(() {
@@ -178,12 +295,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final response = await sendPaymentTokenToServer(
         wallet: 'applepay',
         paymentData: paymentResult,
-        amount: '1.00',
+        amount: widget.amount.toStringAsFixed(2), // Use dynamic amount
       );
 
       // Handle server response
       if (response.isSuccess) {
-        print("Payment successfully processed!");
         setState(() {
           _isProcessingPayment = false;
           _showSuccessMessage = true;
@@ -213,7 +329,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _showErrorSnackBar(_currentError!, _errorMessage!);
       }
     } catch (e) {
-      print("Error communicating with backend: $e");
+      print("Payment error: $e");
       setState(() {
         _isProcessingPayment = false;
         _currentError = PaymentErrorType.unknownError;
@@ -227,12 +343,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // Check if Google Pay is available on the device
   Future<bool> _isGooglePayAvailable() async {
     try {
-      // Try to create a payment configuration to test availability
-      PaymentConfiguration.fromJsonString(
-        defaultGooglePayConfigString,
-      );
-      // If we can create the config, Google Pay might be available
-      // Note: Actual availability is checked by the button itself
+      // Use dynamic configuration if available, otherwise use default
+      if (_googlePayConfigString != null) {
+        PaymentConfiguration.fromJsonString(_googlePayConfigString!);
+        return true;
+      }
+      // Fallback to default config
+      PaymentConfiguration.fromJsonString(defaultGooglePayConfigString);
       return true;
     } catch (e) {
       return false;
@@ -240,25 +357,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // Check if Apple Pay is available on the device
+  // Returns false silently if not available (no card, not configured, etc.)
+  // This allows Google Pay to work independently
   Future<bool> _isApplePayAvailable() async {
     // Only check on iOS devices
     if (!Platform.isIOS) {
-      print("Apple Pay: Not iOS device, skipping");
       return false;
     }
 
     try {
-      // Try to create a payment configuration to test availability
-      PaymentConfiguration.fromJsonString(
-        defaultApplePayConfigString,
-      );
-      // If we can create the config, Apple Pay might be available
-      // Note: Actual availability is checked by the button itself
-      // The button will handle its own availability check
-      print("Apple Pay: Configuration created successfully");
+      // Use dynamic configuration if available, otherwise use default
+      if (_applePayConfigString != null) {
+        PaymentConfiguration.fromJsonString(_applePayConfigString!);
+        // Configuration is valid, but actual availability depends on:
+        // - Apple Pay being set up in device settings
+        // - Card being added to Apple Pay
+        // - Proper app signing
+        // The button itself will handle these checks
+        return true;
+      }
+      // Fallback to default config
+      PaymentConfiguration.fromJsonString(defaultApplePayConfigString);
       return true;
     } catch (e) {
-      print("Apple Pay: Configuration error - $e");
+      // Silently return false - don't log errors
+      // This allows Google Pay to work even if Apple Pay config fails
       return false;
     }
   }
@@ -270,6 +393,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required Map<String, dynamic> paymentData,
     required String amount,
   }) async {
+    // Convert payment data to JSON string
+    String tokenString = jsonEncode(paymentData);
+    print("Sending $wallet token to server: $tokenString");
+
     // ============================================
     // PLACEHOLDER CODE - Replace with real API call
     // ============================================
@@ -677,282 +804,453 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rent Checkout')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              const Text('Your Rent Due: \$1.00',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('Payment Checkout'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 1,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
 
-              // Show processing indicator
-              if (_isProcessingPayment)
-                Column(
-                  children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Processing payment...',
-                      style: TextStyle(fontSize: 16),
+            // Amount Display Card
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
-                )
-              else if (_isCheckingPlugin)
-                const Center(
-                  child: CircularProgressIndicator(),
-                )
-              else if (!_isPayPluginAvailable)
-                // Fallback UI when plugin is not available
-                Column(
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.warning_amber_rounded,
-                      size: 64,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(height: 16),
                     const Text(
-                      'Payment Plugin Not Available',
+                      'Total Amount',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      '\$${widget.amount.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        'Please rebuild the app to enable payment functionality.\n\n'
-                        'Steps to fix:\n'
-                        '1. Stop the app completely\n'
-                        '2. Run: flutter clean\n'
-                        '3. Run: flutter pub get\n'
-                        '4. Rebuild and run the app',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Go Back'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
+                        color: Colors.black87,
                       ),
                     ),
                   ],
-                )
-              else
-                // Payment buttons section - shows both Google Pay and Apple Pay
-                Column(
-                  children: [
-                    // Google Pay Button
-                    FutureBuilder<bool>(
-                      future: _isGooglePayAvailable(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox.shrink();
-                        }
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
 
-                        if (snapshot.hasError || !(snapshot.data ?? false)) {
-                          return const SizedBox.shrink();
-                        }
-
-                        // Show Google Pay Button
-                        try {
-                          return GooglePayButton(
-                            paymentConfiguration:
-                                PaymentConfiguration.fromJsonString(
-                              defaultGooglePayConfigString,
-                            ),
-                            paymentItems: _paymentItems,
-                            type: GooglePayButtonType.pay,
-                            margin: const EdgeInsets.only(top: 15.0),
-                            onPaymentResult: onGooglePayResult,
-                            loadingIndicator: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        } catch (e) {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                    // Apple Pay Button (iOS only)
-                    if (Platform.isIOS)
-                      Column(
+            // Main Content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Show loading while fetching merchant ID
+                  if (_isLoadingKeys)
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Column(
                         children: [
-                          Builder(
-                            builder: (context) {
-                              // Always try to show the button on iOS
-                              // The button itself will handle availability
-                              // If it's not available, the button won't render
-                              try {
-                                print("Apple Pay: Attempting to show button");
-                                final button = ApplePayButton(
-                                  paymentConfiguration:
-                                      PaymentConfiguration.fromJsonString(
-                                    defaultApplePayConfigString,
-                                  ),
-                                  paymentItems: _paymentItems,
-                                  type: ApplePayButtonType.buy,
-                                  margin: const EdgeInsets.only(top: 15.0),
-                                  onPaymentResult: onApplePayResult,
-                                  loadingIndicator: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text(
+                            'Loading payment configuration...',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  // Show processing indicator
+                  else if (_isProcessingPayment)
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Column(
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text(
+                            'Processing payment...',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (_isCheckingPlugin)
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (!_isPayPluginAvailable)
+                    // Fallback UI when plugin is not available
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.warning_amber_rounded,
+                            size: 48,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Payment Plugin Not Available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Please rebuild the app to enable payment functionality.\n\n'
+                              'Steps to fix:\n'
+                              '1. Stop the app completely\n'
+                              '2. Run: flutter clean\n'
+                              '3. Run: flutter pub get\n'
+                              '4. Rebuild and run the app',
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(fontSize: 13, color: Colors.grey),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.arrow_back, size: 18),
+                            label: const Text('Go Back'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    // Payment buttons section - shows both Google Pay and Apple Pay
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Text(
+                            'Choose Payment Method',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          // Google Pay Button
+                          FutureBuilder<bool>(
+                            future: _isGooglePayAvailable(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox.shrink();
+                              }
 
-                                // Wrap in a container to ensure it takes space
+                              if (snapshot.hasError ||
+                                  !(snapshot.data ?? false)) {
+                                return const SizedBox.shrink();
+                              }
+
+                              // Show Google Pay Button with dynamic config
+                              try {
+                                if (_googlePayConfigString == null) {
+                                  return const SizedBox.shrink();
+                                }
                                 return Container(
-                                  margin: const EdgeInsets.only(top: 15.0),
-                                  constraints: const BoxConstraints(
-                                    minHeight: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                  child: button,
+                                  child: GooglePayButton(
+                                    paymentConfiguration:
+                                        PaymentConfiguration.fromJsonString(
+                                      _googlePayConfigString!,
+                                    ),
+                                    paymentItems: _paymentItems,
+                                    type: GooglePayButtonType.pay,
+                                    margin: EdgeInsets.zero,
+                                    onPaymentResult: onGooglePayResult,
+                                    loadingIndicator: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 );
-                              } catch (e, stackTrace) {
-                                print("Apple Pay: Error creating button - $e");
-                                print("Apple Pay: Stack trace - $stackTrace");
-                                // Show error message instead of hiding
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 15.0),
+                              } catch (e) {
+                                print('Error creating Google Pay button: $e');
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          // Apple Pay Button (iOS only)
+                          // Silently hide if not available - don't show errors
+                          // This allows Google Pay to work even if Apple Pay is not set up
+                          if (Platform.isIOS)
+                            FutureBuilder<bool>(
+                              future: _isApplePayAvailable(),
+                              builder: (context, snapshot) {
+                                // Don't show anything while checking
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Only show Apple Pay button if available
+                                // Silently hide if not available (no card, not configured, etc.)
+                                if (snapshot.hasError ||
+                                    !(snapshot.data ?? false)) {
+                                  // Silently hide - don't show error message
+                                  // This allows Google Pay to work independently
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Apple Pay is available, show the button
+                                try {
+                                  if (_applePayConfigString == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ApplePayButton(
+                                      paymentConfiguration:
+                                          PaymentConfiguration.fromJsonString(
+                                        _applePayConfigString!,
+                                      ),
+                                      paymentItems: _paymentItems,
+                                      type: ApplePayButtonType.buy,
+                                      margin: EdgeInsets.zero,
+                                      onPaymentResult: onApplePayResult,
+                                      loadingIndicator: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  // Silently hide on error - don't show error message
+                                  // This allows Google Pay to work independently
+                                  print(
+                                      "Apple Pay button error (silently handled): $e");
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                          const SizedBox(height: 16),
+                          // Show message if no payment methods are available
+                          FutureBuilder<List<bool>>(
+                            future: Future.wait([
+                              _isGooglePayAvailable(),
+                              _isApplePayAvailable(),
+                            ]),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+
+                              final googlePayAvailable =
+                                  snapshot.data?[0] ?? false;
+                              final applePayAvailable =
+                                  snapshot.data?[1] ?? false;
+
+                              if (!googlePayAvailable && !applePayAvailable) {
+                                return Container(
+                                  padding: const EdgeInsets.all(20.0),
+                                  margin: const EdgeInsets.only(top: 12.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.blue[200]!,
+                                      width: 1,
+                                    ),
+                                  ),
                                   child: Column(
                                     children: [
                                       const Icon(
-                                        Icons.error_outline,
-                                        color: Colors.orange,
-                                        size: 32,
+                                        Icons.info_outline,
+                                        size: 40,
+                                        color: Colors.blue,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Apple Pay Error: $e',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.orange,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: 12),
                                       const Text(
-                                        'Please ensure:\n'
-                                        '1. Apple Pay capability is enabled in Xcode\n'
-                                        '2. Merchant identifier is configured\n'
-                                        '3. App is properly signed',
+                                        'Payment Methods Not Available',
                                         style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
                                         ),
-                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text(
+                                          Platform.isIOS
+                                              ? 'No payment methods are available.\n\n'
+                                                  'For Apple Pay, please check:\n'
+                                                  '1. Apple Pay is set up in Settings > Wallet & Apple Pay\n'
+                                                  '2. You have a card added to Apple Pay\n'
+                                                  '3. Apple Pay capability is enabled in Xcode\n'
+                                                  '4. Merchant identifier is configured in Xcode\n'
+                                                  '5. App is signed with proper provisioning profile\n\n'
+                                                  'For Google Pay, please check:\n'
+                                                  '1. Google Pay is installed and set up\n'
+                                                  '2. You have a card added to Google Pay\n'
+                                                  '3. Testing on a real device'
+                                              : 'Google Pay is not available on this device.\n'
+                                                  'Make sure you are testing on a real Android device\n'
+                                                  'with Google Pay installed and set up.',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        icon: const Icon(Icons.arrow_back,
+                                            size: 18),
+                                        label: const Text('Go Back'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 10,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 );
                               }
+
+                              return const SizedBox.shrink();
                             },
                           ),
-                          // Debug info - shows if button might not be rendering
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'If Apple Pay button is not visible, check Xcode configuration',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey.withOpacity(0.7),
-                                fontStyle: FontStyle.italic,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                          // Show error display if there's an error
+                          _buildErrorDisplay(),
+                          // Show success display if payment succeeded
+                          _buildSuccessDisplay(),
                         ],
                       ),
-                    // Show message if no payment methods are available
-                    FutureBuilder<List<bool>>(
-                      future: Future.wait([
-                        _isGooglePayAvailable(),
-                        _isApplePayAvailable(),
-                      ]),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-
-                        final googlePayAvailable = snapshot.data?[0] ?? false;
-                        final applePayAvailable = snapshot.data?[1] ?? false;
-
-                        if (!googlePayAvailable && !applePayAvailable) {
-                          return Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              const Icon(
-                                Icons.info_outline,
-                                size: 64,
-                                color: Colors.blue,
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Payment Methods Not Available',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text(
-                                  Platform.isIOS
-                                      ? 'Apple Pay is not available.\n\n'
-                                          'Please check:\n'
-                                          '1. Apple Pay is set up in Settings > Wallet & Apple Pay\n'
-                                          '2. You have a card added to Apple Pay\n'
-                                          '3. Apple Pay capability is enabled in Xcode\n'
-                                          '4. Merchant identifier is configured in Xcode\n'
-                                          '5. App is signed with proper provisioning profile'
-                                      : 'Google Pay and Apple Pay are not available on this device.\n'
-                                          'Make sure you are testing on a real device\n'
-                                          'with the required payment services installed.',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.arrow_back),
-                                label: const Text('Go Back'),
-                              ),
-                            ],
-                          );
-                        }
-
-                        return const SizedBox.shrink();
-                      },
                     ),
-                    // Show error display if there's an error
-                    _buildErrorDisplay(),
-                    // Show success display if payment succeeded
-                    _buildSuccessDisplay(),
-                  ],
-                ),
-            ],
-          ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );

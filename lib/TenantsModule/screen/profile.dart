@@ -23,7 +23,6 @@ import '../../provider/dateProvider.dart';
 import '../widgets/custom_drawer.dart';
 import '../../widgets/titleBar.dart';
 import '../widgets/appbar.dart';
-import 'Payment/checkout_screen.dart';
 
 class Profile_screen extends StatefulWidget {
   const Profile_screen({Key? key}) : super(key: key);
@@ -3733,101 +3732,6 @@ class _Profile_screenState extends State<Profile_screen> {
                                     buildLeaseTable(leaseData),
                                   ],
                                   const SizedBox(height: 20),
-                                  // Payment/Checkout Section for Mobile
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 3.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.1),
-                                            spreadRadius: 1,
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Payment',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            const Text(
-                                              'Make a Payment',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            const Text(
-                                              'Proceed to checkout to make your rent payment',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 16),
-                                            SizedBox(
-                                              width: double.infinity,
-                                              height: 48,
-                                              child: ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CheckoutScreen(),
-                                                    ),
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: blueColor,
-                                                  foregroundColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        8),
-                                                  ),
-                                                ),
-                                                child: const Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  children: [
-                                                    Icon(Icons.payment,
-                                                        size: 18),
-                                                    SizedBox(width: 8),
-                                                    Text(
-                                                      ' Go to Checkout',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                        FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                             );
