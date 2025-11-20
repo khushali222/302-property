@@ -51,26 +51,26 @@ class _Vendor_tableState extends State<Vendor_table> {
   void sortData(List<Vendor> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.vendorName!.compareTo(b.vendorName!)
-          : b.vendorName!.compareTo(a.vendorName!));
+          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
+          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
           : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.vendorName!.compareTo(b.vendorName!)
-          : b.vendorName!.compareTo(a.vendorName!));
+          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
+          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
     }
   }
 
   int? expandedIndex;
   Set<int> expandedIndices = {};
   late bool isExpanded;
-  bool sorting1 = false;
+  bool sorting1 = true; // Default: sort by name
   bool sorting2 = false;
   bool sorting3 = false;
-  bool ascending1 = false;
+  bool ascending1 = true; // Default: ascending order
   bool ascending2 = false;
   bool ascending3 = false;
   Widget _buildHeaders() {
