@@ -155,6 +155,7 @@ SPEC REPOS:
     - ReachabilitySwift
     - SDWebImage
     - SwiftyGif
+    - Toast
 
 EXTERNAL SOURCES:
   camera_avfoundation:

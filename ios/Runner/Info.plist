@@ -28,6 +28,8 @@
 		<true/>
 			<key>NSPhotoLibraryUsageDescription</key>
 	<string>We use this informaation to update the profile image based on by the user</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Cloud Rental Manager needs access to your camera to take photos for property documentation, work orders, and profile pictures.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Cloud Rental Manager needs your location to show nearby rental properties within 5km, find the nearest property, and display location-based work orders on your dashboard.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

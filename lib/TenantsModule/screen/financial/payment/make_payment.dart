@@ -2271,79 +2271,79 @@ class _MakePaymentState extends State<MakePayment> {
                           SizedBox(
                             height: 15,
                           ),
-                          // Google Pay / Apple Pay Button
-                          // if (totalpayamount > 0.0 && selectedTenantId != null)
-                          //   GestureDetector(
-                          //     onTap: () {
-                          //       // Prepare payment entries
-                          //       List<Map<String, dynamic>> manualEntries = [
-                          //         {
-                          //           "account": selected_account == "rent"
-                          //               ? "Rent Income"
-                          //               : "Payment",
-                          //           "amount": totalamount,
-                          //           "memo": selected_account == "rent"
-                          //               ? "Rent Income"
-                          //               : "Payment",
-                          //           "date": _startDate.text.trim(),
-                          //           "charge_type": selected_account == "rent"
-                          //               ? "Rent"
-                          //               : "Payment",
-                          //         }
-                          //       ];
+                          //Google Pay / Apple Pay Button
+                          if (totalpayamount > 0.0 && selectedTenantId != null)
+                            GestureDetector(
+                              onTap: () {
+                                // Prepare payment entries
+                                List<Map<String, dynamic>> manualEntries = [
+                                  {
+                                    "account": selected_account == "rent"
+                                        ? "Rent Income"
+                                        : "Payment",
+                                    "amount": totalamount,
+                                    "memo": selected_account == "rent"
+                                        ? "Rent Income"
+                                        : "Payment",
+                                    "date": _startDate.text.trim(),
+                                    "charge_type": selected_account == "rent"
+                                        ? "Rent"
+                                        : "Payment",
+                                  }
+                                ];
 
-                          //       // Navigate to CheckoutScreen for Google/Apple Pay
-                          //       Navigator.push(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //           builder: (context) => CheckoutScreen(
-                          //             amount: totalpayamount,
-                          //             tenantId: widget.tenantId,
-                          //             leaseId: selectedTenantId ?? "",
-                          //             paymentAmountType:
-                          //                 selected_account ?? "full",
-                          //             entries: manualEntries,
-                          //             surchargeamount: surchargeamount,
-                          //           ),
-                          //         ),
-                          //       ).then((result) {
-                          //         if (result == true) {
-                          //           // Payment successful, refresh or navigate back
-                          //           Navigator.pop(context, true);
-                          //         }
-                          //       });
-                          //     },
-                          //     child: Container(
-                          //       height: 45,
-                          //       width: 250,
-                          //       margin: EdgeInsets.only(left: 0, bottom: 10),
-                          //       decoration: BoxDecoration(
-                          //         borderRadius: BorderRadius.circular(5),
-                          //         color: Colors.green,
-                          //       ),
-                          //       child: Center(
-                          //         child: Row(
-                          //           mainAxisAlignment: MainAxisAlignment.center,
-                          //           children: [
-                          //             Icon(
-                          //               Icons.account_balance_wallet,
-                          //               color: Colors.white,
-                          //               size: 20,
-                          //             ),
-                          //             SizedBox(width: 8),
-                          //             Text(
-                          //               "Pay with Google/Apple Pay",
-                          //               style: TextStyle(
-                          //                 fontSize: 14,
-                          //                 color: Colors.white,
-                          //                 fontWeight: FontWeight.bold,
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
+                                // Navigate to CheckoutScreen for Google/Apple Pay
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CheckoutScreen(
+                                      amount: totalpayamount,
+                                      tenantId: widget.tenantId,
+                                      leaseId: selectedTenantId ?? "",
+                                      paymentAmountType:
+                                          selected_account ?? "full",
+                                      entries: manualEntries,
+                                      surchargeamount: surchargeamount,
+                                    ),
+                                  ),
+                                ).then((result) {
+                                  if (result == true) {
+                                    // Payment successful, refresh or navigate back
+                                    Navigator.pop(context, true);
+                                  }
+                                });
+                              },
+                              child: Container(
+                                height: 45,
+                                width: 250,
+                                margin: EdgeInsets.only(left: 0, bottom: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.green,
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.account_balance_wallet,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Pay with Google/Apple Pay",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           SizedBox(
                             height: 10,
                           ),
