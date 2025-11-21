@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import '../../Model/rentrollreportmodel.dart';
@@ -9,7 +8,7 @@ import '../../Model/rentrollreportmodel.dart';
 
 
 class RentRollReportService {
-  Future<rentrollreportmodel> fetchRentRollreport({String? rentalOwnerId}) async {
+  Future<rentrollreportmodel> fetchRentRollreport({String? rentalOwnerId, List<String>? rentalOwnerIds}) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -18,8 +17,24 @@ class RentRollReportService {
 
     Uri uri;
 
-    if (rentalOwnerId != null && rentalOwnerId != "all") {
-      // If rentalOwnerId is provided, add it as a query parameter
+    // Handle multiple rental owner IDs
+    if (rentalOwnerIds != null && rentalOwnerIds.isNotEmpty) {
+      // Filter out "all" from the list
+      final filteredIds = rentalOwnerIds.where((id) => id != "all").toList();
+      if (filteredIds.isNotEmpty) {
+        // Build query parameters for multiple IDs as array
+        final queryParams = <String, dynamic>{};
+        for (int i = 0; i < filteredIds.length; i++) {
+          queryParams["rentalowner_id[$i]"] = filteredIds[i];
+        }
+        uri = Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId')
+            .replace(queryParameters: queryParams);
+      } else {
+        // If only "all" was selected, make normal API call
+        uri = Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId');
+      }
+    } else if (rentalOwnerId != null && rentalOwnerId != "all") {
+      // If single rentalOwnerId is provided, add it as a query parameter
       uri = Uri.parse('$Api_url/api/rental_owner/rent-roll-report/$adminId')
           .replace(queryParameters: {"rentalowner_id[]": rentalOwnerId});
     } else {

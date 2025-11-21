@@ -1,22 +1,33 @@
 // lib/payment_configurations.dart
 //
-// NOTE: These configurations are set up for TEST/SANDBOX environment
-// For production, update the environment and merchant credentials accordingly
+// NOTE: These configurations support both TEST and PRODUCTION environments
+// For production, set PAYMENT_ENVIRONMENT to 'PRODUCTION' below
+
+// ============================================================================
+// ENVIRONMENT CONFIGURATION
+// ============================================================================
+// Change this to switch between TEST and PRODUCTION environments
+// TEST: Use for development and testing (works without Google Pay Console registration)
+// PRODUCTION: Use for live payments (requires Google Pay Console merchant registration)
+const String PAYMENT_ENVIRONMENT =
+    'TEST'; // Change to 'PRODUCTION' for live payments
 
 /// Generate Google Pay configuration dynamically with merchant ID and amount
 String generateGooglePayConfig({
   required String merchantId,
   required String amount,
   String merchantName = 'Cloud Rental Manager',
-  String environment = 'TEST', // Change to 'PRODUCTION' for live
+  String? environment, // If null, uses PAYMENT_ENVIRONMENT constant
   String currencyCode = 'USD',
   String countryCode = 'US',
 }) {
+  // Use provided environment or fall back to constant
+  final String env = environment ?? PAYMENT_ENVIRONMENT;
   return '''
 {
   "provider": "google_pay",
   "data": {
-    "environment": "$environment",
+    "environment": "$env",
     "apiVersion": 2,
     "apiVersionMinor": 0,
     "allowedPaymentMethods": [
@@ -52,7 +63,13 @@ String generateGooglePayConfig({
 }
 
 /// Generate Apple Pay configuration dynamically with amount
-/// Note: merchantIdentifier must match the one in iOS entitlements file
+///
+/// NOTE: Apple Pay does NOT require environment configuration (TEST/PRODUCTION)
+/// Apple Pay automatically uses the correct environment based on:
+/// - App signing (development vs production provisioning profile)
+/// - App Store vs TestFlight vs development builds
+///
+/// Important: merchantIdentifier must match the one in iOS entitlements file
 /// This is the Apple Merchant ID, NOT the NMI merchant ID
 String generateApplePayConfig({
   required String amount,
