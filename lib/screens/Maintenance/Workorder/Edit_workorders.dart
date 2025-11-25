@@ -148,11 +148,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         setState(() {
           _dropdownCategories.add(match);
         });
+        setState(() {
+          _selectedDropdownCategory = match;
+        });
+      } else {
+        // Use the actual object from the list to ensure reference equality
+        setState(() {
+          _selectedDropdownCategory = _dropdownCategories.firstWhere(
+            (cat) => cat.name == initialSelectedCategory,
+          );
+        });
       }
-
-      setState(() {
-        _selectedDropdownCategory = match;
-      });
     }
   }
 
@@ -162,6 +168,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
       print('Fetched categories in EditWorkOrder: ' +
           cats.map((c) => c.name).toList().toString());
       setState(() {
@@ -589,12 +601,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   ];
   String? _selectedStatus;
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Pending',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold',
+    'Pending'
   ];
   final List<String> _account = [
     'Advertising',
@@ -2222,9 +2234,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               hint: Text(_isLoadingCategories
                                   ? 'Loading categories...'
                                   : 'Select Category'),
-                              value: _dropdownCategories
-                                      .contains(_selectedDropdownCategory)
-                                  ? _selectedDropdownCategory
+                              value: _selectedDropdownCategory != null
+                                  ? _dropdownCategories.firstWhere(
+                                      (cat) =>
+                                          cat.name ==
+                                              _selectedDropdownCategory?.name ||
+                                          (cat.categoryId != null &&
+                                              cat.categoryId ==
+                                                  _selectedDropdownCategory
+                                                      ?.categoryId),
+                                      orElse: () => _selectedDropdownCategory!,
+                                    )
                                   : null,
                               items: _dropdownCategories.map((cat) {
                                 return DropdownMenuItem<allcategories_model>(
@@ -2715,8 +2735,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const Row(
                             children: [
                               Text('Parts and Labor :',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
                             ],
                           ),
                           ...partsAndLabor.asMap().entries.map((entry) {
@@ -2744,10 +2765,15 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       addRow();
                                     },
-                                    child: Text(' +   Add Row',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),)),
+                                    child: Text(
+                                      ' +   Add Row',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor),
+                                    )),
                               ),
                               Expanded(
                                 child: Container(
@@ -2760,14 +2786,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                           )),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child:
-                                        Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                        child: Text(
+                                            '\$${totalAmount.toStringAsFixed(2)}'),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           // const SizedBox(
@@ -2848,7 +2873,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     });
                                   },
                                   activeColor:
-                                  isChecked ? blueColor : Colors.black,
+                                      isChecked ? blueColor : Colors.black,
                                 ),
                               ),
                               const SizedBox(
@@ -3206,7 +3231,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(8.0),
+                                              BorderRadius.circular(8.0),
                                           color: Colors.white,
                                           border: Border.all(
                                             color: const Color(0xFFCED4DA),
@@ -3226,19 +3251,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(6),
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
                                           thickness:
-                                          MaterialStateProperty.all(6),
+                                              MaterialStateProperty.all(6),
                                           thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
                                       menuItemStyleData:
-                                      const MenuItemStyleData(
+                                          const MenuItemStyleData(
                                         height: 40,
                                         padding: EdgeInsets.only(
                                             left: 14, right: 14),
@@ -3289,8 +3314,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 //     0.0, // How much the shadow should spread
                                 //   ),
                                 // ],
-                                border:
-                                Border.all(width: 0, color: Color(0xFFCED4DA),),
+                                border: Border.all(
+                                  width: 0,
+                                  color: Color(0xFFCED4DA),
+                                ),
                                 borderRadius: BorderRadius.circular(6.0)),
                             child: TextFormField(
                               style: const TextStyle(
@@ -3341,20 +3368,22 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 borderRadius: BorderRadius.circular(8.0),
                                 border: Border.all(
                                   color: const Color(0xFFCED4DA),
-                                )
-                            ),
+                                )),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child:  Text(
+                                child: Text(
                                   'Cancel',
-                                  style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ))),
                       ),
                       const SizedBox(
@@ -3377,15 +3406,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             onPressed: _submitForm,
                             child: isloading
                                 ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : const Text(
-                              'Update Work Order',
-                              style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
-                            ),
+                                    'Update Work Order',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                           ),
                         ),
                       ),
@@ -3934,11 +3965,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   ];
   String? _selectedStatus;
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold'
   ];
   final List<String> _account = [
     'Advertising',

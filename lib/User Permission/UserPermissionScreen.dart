@@ -426,7 +426,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                       ),
                       const SizedBox(height: 8),
                       _buildPermissionTable(
-                        'Property',
+                        'Properties',
                         [
                           _buildCheckboxRow(
                             'VIEW',
@@ -595,7 +595,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                       ),
                       const SizedBox(height: 8),
                       _buildPermissionTable(
-                        'Property',
+                        'Properties',
                         [
                           _buildCheckboxRow(
                             'VIEW',
