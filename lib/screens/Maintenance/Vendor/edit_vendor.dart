@@ -747,46 +747,60 @@ class _edit_vendorState extends State<edit_vendor> {
                                       }
                                       return null;
                                     },
+                                    suffixIcon: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          obsecure = !obsecure;
+                                        });
+                                      },
+                                      child: Icon(
+                                        !obsecure
+                                            ? CupertinoIcons.eye_slash_fill
+                                            : CupertinoIcons.eye_fill,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                     pass: true,
                                   ),
                                 ),
-                                const SizedBox(
-                                    width:
-                                        10), // Add some space between the widgets
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      obsecure = !obsecure;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 38,
-                                    height: 50,
-                                    child: Center(
-                                      child: FaIcon(
-                                        !obsecure
-                                            ? FontAwesomeIcons.eyeSlash
-                                            : FontAwesomeIcons.eye,
-                                        size: 20,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        const BoxShadow(
-                                          color: Colors.black26,
-                                          offset: Offset(1.2, 1.2),
-                                          blurRadius: 3.0,
-                                          spreadRadius: 1.0,
-                                        ),
-                                      ],
-                                      border: Border.all(
-                                          width: 0, color: Colors.white),
-                                      borderRadius: BorderRadius.circular(6.0),
-                                    ),
-                                  ),
-                                ),
+
+                                // const SizedBox(
+                                //     width:
+                                //         10), // Add some space between the widgets
+                                // InkWell(
+                                //   onTap: () {
+                                //     setState(() {
+                                //       obsecure = !obsecure;
+                                //     });
+                                //   },
+                                //   child: Container(
+                                //     width: 38,
+                                //     height: 50,
+                                //     child: Center(
+                                //       child: FaIcon(
+                                //         !obsecure
+                                //             ? FontAwesomeIcons.eyeSlash
+                                //             : FontAwesomeIcons.eye,
+                                //         size: 20,
+                                //         color: Colors.black,
+                                //       ),
+                                //     ),
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.white,
+                                //       boxShadow: [
+                                //         const BoxShadow(
+                                //           color: Colors.black26,
+                                //           offset: Offset(1.2, 1.2),
+                                //           blurRadius: 3.0,
+                                //           spreadRadius: 1.0,
+                                //         ),
+                                //       ],
+                                //       border: Border.all(
+                                //           width: 0, color: Colors.white),
+                                //       borderRadius: BorderRadius.circular(6.0),
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                             const SizedBox(
@@ -816,46 +830,59 @@ class _edit_vendorState extends State<edit_vendor> {
                                       return null;
                                     },
                                     pass: true,
+                                    suffixIcon: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          conobsecure = !conobsecure;
+                                        });
+                                      },
+                                      child: Icon(
+                                        !conobsecure
+                                            ? CupertinoIcons.eye_slash_fill
+                                            : CupertinoIcons.eye_fill,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                     passwordController: passWord,
                                   ),
                                 ),
-                                const SizedBox(
-                                    width:
-                                        10), // Add some space between the widgets
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      conobsecure = !conobsecure;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 38,
-                                    height: 50,
-                                    child: Center(
-                                      child: FaIcon(
-                                        !conobsecure
-                                            ? FontAwesomeIcons.eyeSlash
-                                            : FontAwesomeIcons.eye,
-                                        size: 20,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        const BoxShadow(
-                                          color: Colors.black26,
-                                          offset: Offset(1.2, 1.2),
-                                          blurRadius: 3.0,
-                                          spreadRadius: 1.0,
-                                        ),
-                                      ],
-                                      border: Border.all(
-                                          width: 0, color: Colors.white),
-                                      borderRadius: BorderRadius.circular(6.0),
-                                    ),
-                                  ),
-                                ),
+                                // const SizedBox(
+                                //     width:
+                                //         10), // Add some space between the widgets
+                                // InkWell(
+                                //   onTap: () {
+                                //     setState(() {
+                                //       conobsecure = !conobsecure;
+                                //     });
+                                //   },
+                                //   child: Container(
+                                //     width: 38,
+                                //     height: 50,
+                                //     child: Center(
+                                //       child: FaIcon(
+                                //         !conobsecure
+                                //             ? FontAwesomeIcons.eyeSlash
+                                //             : FontAwesomeIcons.eye,
+                                //         size: 20,
+                                //         color: Colors.black,
+                                //       ),
+                                //     ),
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.white,
+                                //       boxShadow: [
+                                //         const BoxShadow(
+                                //           color: Colors.black26,
+                                //           offset: Offset(1.2, 1.2),
+                                //           blurRadius: 3.0,
+                                //           spreadRadius: 1.0,
+                                //         ),
+                                //       ],
+                                //       border: Border.all(
+                                //           width: 0, color: Colors.white),
+                                //       borderRadius: BorderRadius.circular(6.0),
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                             const SizedBox(
