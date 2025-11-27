@@ -53,21 +53,10 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   void _setTodayDateAndFetch() {
-    final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    String todayDisplayFormat = dateProvider.formatCurrentDate(todayApiFormat);
-
-    // Set today's date in the fields
-    fromDate.text = todayDisplayFormat;
-    toDate.text = todayDisplayFormat;
-
-    // Set default date range to "Today"
-    daterange = "Today";
-
-    // Fetch today's data
+    // Fetch data without date filters
     _fetchOpenWorkOrders(
-      fromDate: todayApiFormat,
-      toDate: todayApiFormat,
+      fromDate: null,
+      toDate: null,
       status: null,
     );
   }
@@ -93,126 +82,15 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   void _runReport() {
-    // Always set today's date if fields are empty
-    if (fromDate.text.isEmpty || toDate.text.isEmpty) {
-      final dateProvider = Provider.of<DateProvider>(context, listen: false);
-      String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      fromDate.text = dateProvider.formatCurrentDate(todayApiFormat);
-      toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
-    }
-
-    // Use stored API format dates if available, otherwise convert display dates
-    String apiFromDate;
-    String apiToDate;
-
-    if (_apiFromDate != null && _apiToDate != null) {
-      // Use stored API format dates
-      apiFromDate = _apiFromDate!;
-      apiToDate = _apiToDate!;
-      print('Using stored API dates (Staff): $apiFromDate to $apiToDate');
-    } else {
-      // Fallback: convert display dates to API format
-      apiFromDate = _convertToApiFormat(fromDate.text);
-      apiToDate = _convertToApiFormat(toDate.text);
-      print('Converted display dates (Staff): $apiFromDate to $apiToDate');
-    }
-
     // Get status parameter
     String? statusParam = statusType == 'All Statuses' ? null : statusType;
 
-    // Print API parameters for debugging
-    print('=== API DEBUG INFO (STAFF) ===');
-    print('From Date (Display): ${fromDate.text}');
-    print('To Date (Display): ${toDate.text}');
-    print('From Date (API): $apiFromDate');
-    print('To Date (API): $apiToDate');
-    print('Status: $statusParam');
-    print('Status Type: $statusType');
-    print('==============================');
-
-    // Test formatDate function directly
-    print('=== FORMATDATE TEST ===');
-    print(
-        'Testing formatDate with fromDate.text: ${formatDate(fromDate.text)}');
-    print('Testing formatDate with toDate.text: ${formatDate(toDate.text)}');
-    print('========================');
-
-    // Fetch data with filters
+    // Fetch data with status filter only
     _fetchOpenWorkOrders(
-      fromDate: apiFromDate,
-      toDate: apiToDate,
+      fromDate: null,
+      toDate: null,
       status: statusParam,
     );
-  }
-
-  String _convertToApiFormat(String displayDate) {
-    print("_convertToApiFormat called with: '$displayDate'");
-    String result = formatDate(displayDate);
-    print("_convertToApiFormat returning: '$result'");
-    return result;
-  }
-
-  // Date picker methods
-  Future<void> _pickDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: blueColor,
-            colorScheme: ColorScheme.light(
-              primary: blueColor,
-            ),
-            buttonTheme: ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-      });
-    }
-  }
-
-  Future<void> _endDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: blueColor,
-            colorScheme: ColorScheme.light(
-              primary: blueColor,
-            ),
-            buttonTheme: ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-      });
-    }
   }
 
   Widget _buildDataCell(String text) {
@@ -253,16 +131,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   String? selectedValue;
 
   // Filter variables
-  TextEditingController fromDate = TextEditingController();
-  TextEditingController toDate = TextEditingController();
-  String? daterange;
   String? statusType;
-  bool customdate = false;
-  DateTime? _selectedDate;
-
-  // Store API format dates separately
-  String? _apiFromDate;
-  String? _apiToDate;
 
   List<WorkOrderReportData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
@@ -367,12 +236,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
           right: MediaQuery.of(context).size.width > 500 ? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -415,14 +281,20 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Date",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Date",
-                              style: TextStyle(color: Colors.white)),
+                          ? Text("Date",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("Date",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
+                          ? Padding(
                               padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
@@ -430,7 +302,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Padding(
+                          : Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
@@ -466,11 +338,14 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                   },
                   child: Row(
                     children: [
-                      const Text("Address",
-                          style: TextStyle(color: Colors.white)),
+                      Text("Address",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       const SizedBox(width: 5),
                       ascending2
-                          ? const Padding(
+                          ? Padding(
                               padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
@@ -478,7 +353,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Padding(
+                          : Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
@@ -491,52 +366,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                 ),
               ),
               Expanded(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      if (sorting3) {
-                        sorting1 = false;
-                        sorting2 = false;
-                        sorting3 = sorting3;
-                        ascending3 = sorting3 ? !ascending3 : true;
-                        ascending2 = false;
-                        ascending1 = false;
-                      } else {
-                        sorting1 = false;
-                        sorting2 = false;
-                        sorting3 = !sorting3;
-                        ascending3 = sorting3 ? !ascending3 : true;
-                        ascending2 = false;
-                        ascending1 = false;
-                      }
-
-                      // Sorting logic here
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      const Text("Work", style: TextStyle(color: Colors.white)),
-                      const SizedBox(width: 5),
-                      ascending3
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
+                child: Text("Ticket",
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
               ),
             ],
           ),
@@ -718,17 +552,31 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             headers: [
               'Date',
               'Address',
+              'Ticket',
               'Work',
               'Performed',
             ],
             data: workOrderData.map((workOrder) {
               return [
-                workOrder.date != null
+                workOrder.date != null && workOrder.date!.isNotEmpty
                     ? dateProvider.formatCurrentDate(workOrder.date!)
-                    : '',
-                workOrder.rentalAddress ?? '',
-                workOrder.workSubject ?? '',
-                workOrder.workPerformed ?? '',
+                    : '-',
+                (workOrder.rentalAddress == null ||
+                        workOrder.rentalAddress!.isEmpty)
+                    ? '-'
+                    : workOrder.rentalAddress!,
+                (workOrder.ticketNumber == null ||
+                        workOrder.ticketNumber!.isEmpty)
+                    ? '-'
+                    : workOrder.ticketNumber!,
+                (workOrder.workSubject == null ||
+                        workOrder.workSubject!.isEmpty)
+                    ? '-'
+                    : workOrder.workSubject!,
+                (workOrder.workPerformed == null ||
+                        workOrder.workPerformed!.isEmpty)
+                    ? '-'
+                    : workOrder.workPerformed!,
               ];
             }).toList(),
             border: pw.TableBorder.all(
@@ -750,8 +598,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             columnWidths: {
               0: const pw.FlexColumnWidth(1.2), // Date
               1: const pw.FlexColumnWidth(1.5), // Address
-              2: const pw.FlexColumnWidth(1.5), // Work
-              3: const pw.FlexColumnWidth(1.5), // Performed
+              2: const pw.FlexColumnWidth(1.2), // Ticket
+              3: const pw.FlexColumnWidth(1.5), // Work
+              4: const pw.FlexColumnWidth(1.5), // Performed
             },
           ),
         ],
@@ -769,11 +618,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
-    sheet.getRangeByName('A1:D1').columnWidth = 20;
+    sheet.getRangeByName('A1:E1').columnWidth = 20;
 
     final List<String> headers = [
       'Date',
       'Address',
+      'Ticket',
       'Work',
       'Performed',
     ];
@@ -796,17 +646,30 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       // Safe date parsing with default/fallback value
       String formattedDate;
       try {
-        formattedDate = workOrder.date != null
+        formattedDate = workOrder.date != null && workOrder.date!.isNotEmpty
             ? dateProvider.formatCurrentDate(workOrder.date!)
-            : 'Invalid Date';
+            : '-';
       } catch (e) {
-        formattedDate = 'Invalid Date';
+        formattedDate = '-';
       }
 
       sheet.getRangeByIndex(2 + i, 1).setText(formattedDate);
-      sheet.getRangeByIndex(2 + i, 2).setText(workOrder.rentalAddress ?? '');
-      sheet.getRangeByIndex(2 + i, 3).setText(workOrder.workSubject ?? '');
-      sheet.getRangeByIndex(2 + i, 4).setText(workOrder.workPerformed ?? '');
+      sheet.getRangeByIndex(2 + i, 2).setText(
+          (workOrder.rentalAddress == null || workOrder.rentalAddress!.isEmpty)
+              ? '-'
+              : workOrder.rentalAddress!);
+      sheet.getRangeByIndex(2 + i, 3).setText(
+          (workOrder.ticketNumber == null || workOrder.ticketNumber!.isEmpty)
+              ? '-'
+              : workOrder.ticketNumber!);
+      sheet.getRangeByIndex(2 + i, 4).setText(
+          (workOrder.workSubject == null || workOrder.workSubject!.isEmpty)
+              ? '-'
+              : workOrder.workSubject!);
+      sheet.getRangeByIndex(2 + i, 5).setText(
+          (workOrder.workPerformed == null || workOrder.workPerformed!.isEmpty)
+              ? '-'
+              : workOrder.workPerformed!);
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -839,17 +702,26 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       List<WorkOrderReportData> workOrderData) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     List<List<dynamic>> rows = [
-      ['Date', 'Address', 'Work', 'Performed']
+      ['Date', 'Address', 'Ticket', 'Work', 'Performed']
     ];
 
     for (var workOrder in workOrderData) {
       rows.add([
-        workOrder.date != null
+        workOrder.date != null && workOrder.date!.isNotEmpty
             ? dateProvider.formatCurrentDate(workOrder.date!)
-            : '',
-        workOrder.rentalAddress ?? '',
-        workOrder.workSubject ?? '',
-        workOrder.workPerformed ?? '',
+            : '-',
+        (workOrder.rentalAddress == null || workOrder.rentalAddress!.isEmpty)
+            ? '-'
+            : workOrder.rentalAddress!,
+        (workOrder.ticketNumber == null || workOrder.ticketNumber!.isEmpty)
+            ? '-'
+            : workOrder.ticketNumber!,
+        (workOrder.workSubject == null || workOrder.workSubject!.isEmpty)
+            ? '-'
+            : workOrder.workSubject!,
+        (workOrder.workPerformed == null || workOrder.workPerformed!.isEmpty)
+            ? '-'
+            : workOrder.workPerformed!,
       ]);
     }
 
@@ -916,342 +788,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     ),
                     child: Column(
                       children: [
-                        // Date Range and Status Dropdowns Side by Side
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      hint: const Row(
-                                        children: [
-                                          SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              'Date Range',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Color(0xFF8A95A8),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      items: const [
-                                        DropdownMenuItem<String>(
-                                          value: 'Today',
-                                          child: Text('Today'),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: 'This Week',
-                                          child: Text('This Week'),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: 'This Month',
-                                          child: Text('This Month'),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: 'This Year',
-                                          child: Text('This Year'),
-                                        ),
-                                        DropdownMenuItem<String>(
-                                          value: 'Custom',
-                                          child: Text('Custom'),
-                                        ),
-                                      ],
-                                      value: daterange,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          daterange = value;
-                                          if (value == "Today") {
-                                            customdate = false;
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
-                                            String todayApiFormat =
-                                                DateFormat('yyyy-MM-dd')
-                                                    .format(DateTime.now());
-
-                                            // Store API format dates
-                                            _apiFromDate = todayApiFormat;
-                                            _apiToDate = todayApiFormat;
-
-                                            // Set display format dates
-                                            fromDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    todayApiFormat);
-                                            toDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    todayApiFormat);
-                                          } else if (value == "This Week") {
-                                            DateTime now = DateTime.now();
-                                            customdate = false;
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
-                                            String weekStartApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    now.subtract(Duration(
-                                                        days:
-                                                            now.weekday - 1)));
-                                            String weekEndApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    now.add(Duration(
-                                                        days: DateTime
-                                                                .daysPerWeek -
-                                                            now.weekday)));
-
-                                            // Store API format dates
-                                            _apiFromDate = weekStartApiFormat;
-                                            _apiToDate = weekEndApiFormat;
-
-                                            // Set display format dates
-                                            fromDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    weekStartApiFormat);
-                                            toDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    weekEndApiFormat);
-                                          } else if (value == "This Month") {
-                                            customdate = false;
-                                            DateTime now = DateTime.now();
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
-                                            String monthStartApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    DateTime(now.year,
-                                                        now.month, 1));
-                                            String monthEndApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    DateTime(now.year,
-                                                        now.month + 1, 0));
-
-                                            // Store API format dates
-                                            _apiFromDate = monthStartApiFormat;
-                                            _apiToDate = monthEndApiFormat;
-
-                                            // Set display format dates
-                                            fromDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    monthStartApiFormat);
-                                            toDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    monthEndApiFormat);
-                                          } else if (value == "This Year") {
-                                            customdate = false;
-                                            DateTime now = DateTime.now();
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
-                                            String yearStartApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    DateTime(now.year, 1, 1));
-                                            String yearEndApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    DateTime(now.year, 12, 31));
-
-                                            // Store API format dates
-                                            _apiFromDate = yearStartApiFormat;
-                                            _apiToDate = yearEndApiFormat;
-
-                                            // Set display format dates
-                                            fromDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    yearStartApiFormat);
-                                            toDate.text =
-                                                dateProvider.formatCurrentDate(
-                                                    yearEndApiFormat);
-
-                                            // Debug: Print the generated dates
-                                            print(
-                                                '=== DATE RANGE SELECTION DEBUG (STAFF) ===');
-                                            print(
-                                                'Year Start API Format: $yearStartApiFormat');
-                                            print(
-                                                'Year End API Format: $yearEndApiFormat');
-                                            print(
-                                                'From Date Display: ${fromDate.text}');
-                                            print(
-                                                'To Date Display: ${toDate.text}');
-                                            print(
-                                                '==========================================');
-                                          } else if (value == "Custom") {
-                                            customdate = true;
-                                          }
-                                          if (value != "Custom" &&
-                                              customdate == true) {
-                                            customdate = false;
-                                            fromDate.text = "";
-                                            toDate.text = "";
-                                          }
-
-                                          // Auto-fetch data only for "Today" selection
-                                          if (value == "Today") {
-                                            _fetchOpenWorkOrders(
-                                              fromDate: _apiFromDate!,
-                                              toDate: _apiToDate!,
-                                              status:
-                                                  statusType == 'All Statuses'
-                                                      ? null
-                                                      : statusType,
-                                            );
-                                          }
-                                          // For other date ranges, user must click "Run Report" button
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(0xFF8A95A8)),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        maxHeight: 250,
-                                        width: 200,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                        ),
-                                        offset: const Offset(-20, 0),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(40),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        // From Date and To Date fields with theme
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Color(0xFF8A95A8),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Theme(
-                                    data: ThemeData.light().copyWith(
-                                      primaryColor: blueColor,
-                                      colorScheme: ColorScheme.light(
-                                        primary: Color(0xFF8A95A8),
-                                      ),
-                                      buttonTheme: ButtonThemeData(
-                                        textTheme: ButtonTextTheme.primary,
-                                      ),
-                                    ),
-                                    child: TextFormField(
-                                      controller: fromDate,
-                                      onTap: customdate
-                                          ? () {
-                                              _pickDate(context);
-                                            }
-                                          : null,
-                                      readOnly: true,
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                      textInputAction: TextInputAction.next,
-                                      textAlignVertical:
-                                          TextAlignVertical.center,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 11, horizontal: 11),
-                                        isDense: true,
-                                        hintText: "From",
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Color(0xFF8A95A8),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Theme(
-                                    data: ThemeData.light().copyWith(
-                                      primaryColor: blueColor,
-                                      colorScheme: ColorScheme.light(
-                                        primary: Color(0xFF8A95A8),
-                                      ),
-                                      buttonTheme: ButtonThemeData(
-                                        textTheme: ButtonTextTheme.primary,
-                                      ),
-                                    ),
-                                    child: TextFormField(
-                                      controller: toDate,
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                      onTap: customdate
-                                          ? () {
-                                              _endDate(context);
-                                            }
-                                          : null,
-                                      readOnly: true,
-                                      textInputAction: TextInputAction.next,
-                                      textAlignVertical:
-                                          TextAlignVertical.center,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 11, horizontal: 11),
-                                        isDense: true,
-                                        hintText: "To",
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        // Run Report Button
+                        // Status and Run Report Button
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),
                           child: Row(
@@ -1571,10 +1108,10 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             ? 10
                                             : 0),
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: const Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
@@ -1588,13 +1125,16 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                           entry.value;
 
                                       return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                         // decoration: BoxDecoration(
                                         //   border: Border.all(color: blueColor),
@@ -1647,7 +1187,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        '   ${workOrder.date == null ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
+                                                        '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-' : dateProvider.formatCurrentDate(workOrder.date!)} ',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1664,7 +1204,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                             .04),
                                                     Expanded(
                                                       child: Text(
-                                                        '${workOrder.rentalAddress ?? '-'}',
+                                                        '${(workOrder.rentalAddress == null || workOrder.rentalAddress!.isEmpty) ? '-' : workOrder.rentalAddress}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1681,7 +1221,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                             .04),
                                                     Expanded(
                                                       child: Text(
-                                                        '${workOrder.workSubject ?? '-'}',
+                                                        '${(workOrder.ticketNumber == null || workOrder.ticketNumber!.isEmpty) ? '-' : workOrder.ticketNumber}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1690,7 +1230,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                         ),
                                                       ),
                                                     ),
-
                                                     // SizedBox(
                                                     //     width: MediaQuery.of(context)
                                                     //             .size
@@ -1753,7 +1292,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Description:  ',
+                                                                            'Work :   ',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
@@ -1761,7 +1300,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${workOrder.workPerformed ?? '-'}',
+                                                                            '${(workOrder.workSubject == null || workOrder.workSubject!.isEmpty) ? '-' : workOrder.workSubject}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
@@ -1778,7 +1317,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Note: ',
+                                                                            'Description :   ',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
@@ -1786,7 +1325,32 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${workOrder.vendorNotes}',
+                                                                            '${(workOrder.workPerformed == null || workOrder.workPerformed!.isEmpty) ? '-' : workOrder.workPerformed}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Note :  ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${(workOrder.vendorNotes == null || workOrder.vendorNotes!.isEmpty) ? '-' : workOrder.vendorNotes}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,

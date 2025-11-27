@@ -151,7 +151,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 Expanded(
                   child: Container(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: appliance.status == 'Working'
                           ? Colors.green.withOpacity(0.1)
@@ -263,7 +263,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ),
                               TextSpan(
                                 text:
-                                "\n${_getValueOrNA(appliance.serialNumber)}",
+                                    "\n${_getValueOrNA(appliance.serialNumber)}",
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -288,7 +288,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ),
                               TextSpan(
                                 text:
-                                "\n${appliance.installedDate != null ? dateProvider.formatCurrentDate(appliance.installedDate!) : 'N/A'}",
+                                    "\n${appliance.installedDate != null ? dateProvider.formatCurrentDate(appliance.installedDate!) : 'N/A'}",
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -308,7 +308,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ),
                               TextSpan(
                                 text:
-                                "\n${appliance.warrantyExpiry != null ? dateProvider.formatCurrentDate(appliance.warrantyExpiry!) : 'N/A'}",
+                                    "\n${appliance.warrantyExpiry != null ? dateProvider.formatCurrentDate(appliance.warrantyExpiry!) : 'N/A'}",
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -333,7 +333,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ),
                               TextSpan(
                                 text:
-                                "\n${appliance.lastMaintenanceDate != null ? dateProvider.formatCurrentDate(appliance.lastMaintenanceDate!) : 'N/A'}",
+                                    "\n${appliance.lastMaintenanceDate != null ? dateProvider.formatCurrentDate(appliance.lastMaintenanceDate!) : 'N/A'}",
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -377,7 +377,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ),
                               TextSpan(
                                 text:
-                                "\n${_getValueOrNA(appliance.applianceDescription)}",
+                                    "\n${_getValueOrNA(appliance.applianceDescription)}",
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -443,7 +443,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       setState(() {
         isLoading = false;
         errorMessage =
-        'Failed to load home system data. Please try again later.';
+            'Failed to load home system data. Please try again later.';
       });
       throw Exception('Failed to load home system data');
     }
@@ -522,9 +522,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     children: [
                       width < 400
                           ? const Text("    Unit\n    Details",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text("    Unit\n    Details",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                     ],
                   ),
@@ -601,7 +601,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       );
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       final currentDate =
-      dateProvider.formatCurrentDate(DateTime.now().toString());
+          dateProvider.formatCurrentDate(DateTime.now().toString());
 
       // First Page - Details
       pdf.addPage(
@@ -609,7 +609,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           pageFormat: PdfPageFormat.a4.landscape,
           margin: const pw.EdgeInsets.all(20),
           maxPages:
-          1000, // Allow up to 1000 pages to prevent TooManyPagesException
+              1000, // Allow up to 1000 pages to prevent TooManyPagesException
           build: (pw.Context context) {
             return [
               // Header with logo and title
@@ -723,42 +723,42 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     } else {
                       rows.addAll(
                         unit.appliances!.map((appliance) => pw.TableRow(
-                          children: [
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.applianceName)),
-                            _buildDetailCell(_getValueOrNA(
-                                appliance.applianceDescription)),
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.category)),
-                            _buildDetailCell(_getValueOrNA(appliance.type)),
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.brand)),
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.model)),
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.serialNumber)),
-                            _buildDetailCell(appliance.installedDate != null
-                                ? dateProvider.formatCurrentDate(
-                                appliance.installedDate!)
-                                : 'N/A'),
-                            _buildDetailCell(
-                                appliance.warrantyExpiry != null
+                              children: [
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.applianceName)),
+                                _buildDetailCell(_getValueOrNA(
+                                    appliance.applianceDescription)),
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.category)),
+                                _buildDetailCell(_getValueOrNA(appliance.type)),
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.brand)),
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.model)),
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.serialNumber)),
+                                _buildDetailCell(appliance.installedDate != null
                                     ? dateProvider.formatCurrentDate(
-                                    appliance.warrantyExpiry!)
+                                        appliance.installedDate!)
                                     : 'N/A'),
-                            _buildDetailCell(
-                                appliance.lastMaintenanceDate != null
-                                    ? dateProvider.formatCurrentDate(
-                                    appliance.lastMaintenanceDate!)
-                                    : 'N/A'),
-                            _buildDetailCell(
-                                _getValueOrNA(appliance.status),
-                                color: appliance.status?.toLowerCase() ==
-                                    'working'
-                                    ? PdfColors.green
-                                    : PdfColors.red),
-                          ],
-                        )),
+                                _buildDetailCell(
+                                    appliance.warrantyExpiry != null
+                                        ? dateProvider.formatCurrentDate(
+                                            appliance.warrantyExpiry!)
+                                        : 'N/A'),
+                                _buildDetailCell(
+                                    appliance.lastMaintenanceDate != null
+                                        ? dateProvider.formatCurrentDate(
+                                            appliance.lastMaintenanceDate!)
+                                        : 'N/A'),
+                                _buildDetailCell(
+                                    _getValueOrNA(appliance.status),
+                                    color: appliance.status?.toLowerCase() ==
+                                            'working'
+                                        ? PdfColors.green
+                                        : PdfColors.red),
+                              ],
+                            )),
                       );
                     }
 
@@ -771,16 +771,20 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         ),
       );
 
-      // Summary Pages - Create separate page for each unit to avoid TooManyPagesException
-      for (var unit in data.units!) {
-        pdf.addPage(
-          pw.MultiPage(
-            pageFormat: PdfPageFormat.a4.landscape,
-            margin: const pw.EdgeInsets.all(20),
-            build: (pw.Context context) {
-              return [
-                // Header
-                pw.Row(
+      // Summary Pages - Combine all units in a single MultiPage with proper spacing
+      pdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4.landscape,
+          margin: const pw.EdgeInsets.all(20),
+          maxPages: 1000,
+          build: (pw.Context context) {
+            List<pw.Widget> summaryWidgets = [];
+
+            // Add header only once at the beginning
+            summaryWidgets.addAll([
+              pw.Header(
+                level: 0,
+                child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Image(image, width: 40, height: 40),
@@ -800,70 +804,107 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                         ),
                       ],
                     ),
+                    pw.Text(
+                      'Markdueltd',
+                      style: const pw.TextStyle(fontSize: 10),
+                    ),
                   ],
                 ),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Summary',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Summary',
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
                 ),
-                pw.SizedBox(height: 15),
-                // Header for the summary table
+              ),
+              pw.SizedBox(height: 15),
+              // Header for the summary table
+              pw.Container(
+                color: PdfColor.fromHex("#4B88E8"),
+                padding:
+                    const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                child: pw.Row(
+                  children: [
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                        'Date',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                        'Performed By',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                    pw.Expanded(
+                      flex: 3,
+                      child: pw.Text(
+                        'Work Subject',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ]);
+
+            // Add all units with proper spacing
+            for (int unitIndex = 0;
+                unitIndex < data.units!.length;
+                unitIndex++) {
+              var unit = data.units![unitIndex];
+
+              // Add page break before new unit if not the first unit and there's content above
+              if (unitIndex > 0) {
+                summaryWidgets.add(pw.SizedBox(height: 15));
+                summaryWidgets.add(pw.Divider(
+                  height: 1,
+                  color: PdfColors.grey300,
+                ));
+                summaryWidgets.add(pw.SizedBox(height: 15));
+              }
+
+              // Unit header
+              summaryWidgets.add(
                 pw.Container(
-                  color: PdfColor.fromHex("#4B88E8"),
-                  padding: const pw.EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 10),
-                  child: pw.Row(
-                    children: [
-                      pw.Expanded(
-                        flex: 2,
-                        child: pw.Text(
-                          'Date',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      pw.Expanded(
-                        flex: 2,
-                        child: pw.Text(
-                          'Performed By',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      pw.Expanded(
-                        flex: 3,
-                        child: pw.Text(
-                          'Work Subject',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                    ],
+                  padding: const pw.EdgeInsets.symmetric(vertical: 8),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey100,
+                    borderRadius:
+                        const pw.BorderRadius.all(pw.Radius.circular(4)),
+                  ),
+                  child: pw.Text(
+                    'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
+                    style: pw.TextStyle(
+                      fontSize: 13,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColor.fromHex("#4B88E8"),
+                    ),
                   ),
                 ),
-                pw.SizedBox(height: 15),
-                pw.Text(
-                  'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
-                  style: pw.TextStyle(
-                    fontSize: 12,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                if (unit.appliances == null || unit.appliances!.isEmpty)
+              );
+              summaryWidgets.add(pw.SizedBox(height: 12));
+
+              if (unit.appliances == null || unit.appliances!.isEmpty) {
+                summaryWidgets.add(
                   pw.Text(
                     'No appliances found in this unit',
                     style: pw.TextStyle(
@@ -871,307 +912,317 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       fontStyle: pw.FontStyle.italic,
                       color: PdfColors.grey700,
                     ),
-                  )
-                else if (unit.appliances != null) ...[
-                  // Separate Major Systems and Appliances
-                      () {
-                    List<dynamic> majorSystems = [];
-                    List<dynamic> appliances = [];
+                  ),
+                );
+                summaryWidgets.add(pw.SizedBox(height: 20));
+              } else if (unit.appliances != null) {
+                // Separate Major Systems and Appliances
+                List<dynamic> majorSystems = [];
+                List<dynamic> appliances = [];
 
-                    for (var appliance in unit.appliances!) {
-                      if (_isMajorSystem(appliance)) {
-                        majorSystems.add(appliance);
-                      } else {
-                        appliances.add(appliance);
-                      }
-                    }
+                for (var appliance in unit.appliances!) {
+                  if (_isMajorSystem(appliance)) {
+                    majorSystems.add(appliance);
+                  } else {
+                    appliances.add(appliance);
+                  }
+                }
 
-                    return pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        // Major Systems Section
-                        if (majorSystems.isNotEmpty) ...[
-                          pw.Text(
-                            'Major System',
-                            style: pw.TextStyle(
-                              fontSize: 12,
-                              fontWeight: pw.FontWeight.bold,
-                            ),
-                          ),
-                          pw.SizedBox(height: 8),
-                          ...majorSystems.map((appliance) {
-                            return pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  appliance.applianceName ?? 'N/A',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 5),
-                                // Maintenance History
-                                if (appliance.maintenanceHistory?.isEmpty !=
-                                    false)
-                                  pw.Text(
-                                    'No maintenance history found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.maintenanceHistory!
-                                      .map((history) => pw.Container(
-                                    padding:
-                                    const pw.EdgeInsets.symmetric(
-                                        vertical: 4),
-                                    child: pw.Row(
-                                      children: [
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            history.timestamp != null
-                                                ? dateProvider
-                                                .formatCurrentDate(
-                                                history
-                                                    .timestamp!)
-                                                : 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            history.adminName ??
-                                                history
-                                                    .staffmemberName ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 3,
-                                          child: pw.Text(
-                                            history.workSubject ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 5),
-                                // Notes Section
-                                if (appliance.notes?.isEmpty != false)
-                                  pw.Text(
-                                    'No notes found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.notes!
-                                      .map((note) => pw.Container(
-                                    padding:
-                                    const pw.EdgeInsets.symmetric(
-                                        vertical: 4),
-                                    child: pw.Row(
-                                      children: [
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            note.timestamp != null
-                                                ? dateProvider
-                                                .formatCurrentDate(
-                                                note.timestamp!)
-                                                : 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            note.adminName ??
-                                                note.staffmemberName ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 3,
-                                          child: pw.Text(
-                                            note.note ?? 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 12),
-                              ],
-                            );
-                          }).toList(),
-                          if (appliances.isNotEmpty) pw.SizedBox(height: 15),
-                        ],
-                        // Regular Appliances Section
-                        if (appliances.isNotEmpty) ...[
-                          if (majorSystems.isNotEmpty)
-                            pw.Text(
-                              'Appliance',
-                              style: pw.TextStyle(
-                                fontSize: 12,
-                                fontWeight: pw.FontWeight.bold,
-                              ),
-                            ),
-                          if (majorSystems.isNotEmpty) pw.SizedBox(height: 8),
-                          ...appliances.map((appliance) {
-                            return pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  appliance.applianceName ?? 'N/A',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 5),
-                                // Maintenance History
-                                if (appliance.maintenanceHistory?.isEmpty !=
-                                    false)
-                                  pw.Text(
-                                    'No maintenance history found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.maintenanceHistory!
-                                      .map((history) => pw.Container(
-                                    padding:
-                                    const pw.EdgeInsets.symmetric(
-                                        vertical: 4),
-                                    child: pw.Row(
-                                      children: [
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            history.timestamp != null
-                                                ? dateProvider
-                                                .formatCurrentDate(
-                                                history
-                                                    .timestamp!)
-                                                : 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            history.adminName ??
-                                                history
-                                                    .staffmemberName ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 3,
-                                          child: pw.Text(
-                                            history.workSubject ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 5),
-                                // Notes Section
-                                if (appliance.notes?.isEmpty != false)
-                                  pw.Text(
-                                    'No notes found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.notes!
-                                      .map((note) => pw.Container(
-                                    padding:
-                                    const pw.EdgeInsets.symmetric(
-                                        vertical: 4),
-                                    child: pw.Row(
-                                      children: [
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            note.timestamp != null
-                                                ? dateProvider
-                                                .formatCurrentDate(
-                                                note.timestamp!)
-                                                : 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 2,
-                                          child: pw.Text(
-                                            note.adminName ??
-                                                note.staffmemberName ??
-                                                'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                        pw.Expanded(
-                                          flex: 3,
-                                          child: pw.Text(
-                                            note.note ?? 'N/A',
-                                            style: const pw.TextStyle(
-                                                fontSize: 9),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 12),
-                              ],
-                            );
-                          }).toList(),
-                        ],
-                      ],
+                // Major Systems Section
+                if (majorSystems.isNotEmpty) {
+                  summaryWidgets.add(
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromHex("#E3EFF9"),
+                        borderRadius:
+                            const pw.BorderRadius.all(pw.Radius.circular(4)),
+                      ),
+                      child: pw.Text(
+                        'Major System',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColor.fromHex("#4B88E8"),
+                        ),
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 10));
+                }
+
+                for (var appliance in majorSystems) {
+                  summaryWidgets.add(
+                    pw.Text(
+                      appliance.applianceName ?? 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Maintenance History
+                  if (appliance.maintenanceHistory?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No maintenance history found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
                     );
-                  }(),
-                ],
-              ];
-            },
-          ),
-        );
-      }
+                  } else {
+                    for (var history in appliance.maintenanceHistory!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(history.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.adminName ??
+                                      history.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  history.workSubject ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Notes Section
+                  if (appliance.notes?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No notes found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var note in appliance.notes!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(note.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.adminName ??
+                                      note.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  note.note ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 15));
+                }
+
+                // Regular Appliances Section
+                if (appliances.isNotEmpty) {
+                  if (majorSystems.isNotEmpty) {
+                    summaryWidgets.add(pw.SizedBox(height: 10));
+                  }
+                  summaryWidgets.add(
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromHex("#FFF4E6"),
+                        borderRadius:
+                            const pw.BorderRadius.all(pw.Radius.circular(4)),
+                      ),
+                      child: pw.Text(
+                        'Appliance',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.orange,
+                        ),
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 10));
+                }
+
+                for (var appliance in appliances) {
+                  summaryWidgets.add(
+                    pw.Text(
+                      appliance.applianceName ?? 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Maintenance History
+                  if (appliance.maintenanceHistory?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No maintenance history found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var history in appliance.maintenanceHistory!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(history.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.adminName ??
+                                      history.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  history.workSubject ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Notes Section
+                  if (appliance.notes?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No notes found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var note in appliance.notes!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(note.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.adminName ??
+                                      note.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  note.note ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 15));
+                }
+              }
+            }
+
+            return summaryWidgets;
+          },
+        ),
+      );
 
       // For iOS, ensure landscape A4 format is used
       if (Platform.isIOS) {
@@ -1259,7 +1310,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       detailsSheet.getRangeByIndex(1, i + 1).cellStyle.borders.all.lineStyle =
           syncXlsx.LineStyle.thin;
       detailsSheet.getRangeByIndex(1, i + 1).cellStyle.borders.all.color =
-      '#4B88E8';
+          '#4B88E8';
     }
 
     // Add data to Details sheet
@@ -1274,7 +1325,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           .setText('Unit: ${unit.unitNumber} - ${unit.unitAddress}');
       detailsSheet.getRangeByIndex(detailRow, 1).cellStyle.bold = true;
       detailsSheet.getRangeByIndex(detailRow, 1).cellStyle.backColor =
-      '#F5F5F5';
+          '#F5F5F5';
       detailRow++;
 
       if (unit.appliances == null || unit.appliances!.isEmpty) {
@@ -1289,7 +1340,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         detailsSheet.getRangeByIndex(detailRow, 1).cellStyle.hAlign =
             syncXlsx.HAlignType.center;
         detailsSheet.getRangeByIndex(detailRow, 1).cellStyle.fontColor =
-        '#666666';
+            '#666666';
         detailRow++;
       } else {
         for (var appliance in unit.appliances!) {
@@ -1325,7 +1376,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           detailsSheet.getRangeByIndex(detailRow, 10).setText(
               appliance.lastMaintenanceDate != null
                   ? dateProvider
-                  .formatCurrentDate(appliance.lastMaintenanceDate!)
+                      .formatCurrentDate(appliance.lastMaintenanceDate!)
                   : 'N/A');
           detailsSheet
               .getRangeByIndex(detailRow, 11)
@@ -1334,10 +1385,10 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           // Color the status cell
           if (appliance.status?.toLowerCase() == 'working') {
             detailsSheet.getRangeByIndex(detailRow, 11).cellStyle.fontColor =
-            '#008000'; // Green
+                '#008000'; // Green
           } else {
             detailsSheet.getRangeByIndex(detailRow, 11).cellStyle.fontColor =
-            '#FF0000'; // Red
+                '#FF0000'; // Red
           }
 
           detailRow++;
@@ -1388,7 +1439,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 .setText('Maintenance History');
             summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
             summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.backColor =
-            '#F5F5F5';
+                '#F5F5F5';
             summaryRow++;
 
             for (var history in appliance.maintenanceHistory!) {
@@ -1410,7 +1461,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             summarySheet.getRangeByIndex(summaryRow, 1).setText('Notes');
             summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
             summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.backColor =
-            '#F5F5F5';
+                '#F5F5F5';
             summaryRow++;
 
             for (var note in appliance.notes!) {
@@ -1470,7 +1521,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
     final currentDate =
-    dateProvider.formatCurrentDate(DateTime.now().toString());
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Details Section
     csvBuffer.writeln('Home Systems Report - Details');
@@ -1748,102 +1799,102 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            titleBar(
-              title: 'Home System Report',
-              width: MediaQuery.of(context).size.width * .91,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildActionButtons(), // Add action buttons
-                _buildTabBar(),
-                FutureBuilder<Home_system_report>(
-                  future: _futureRentersInsurance,
-                  builder: (context, snapshot) {
-                    if (_futureRentersInsurance == null) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Please select a property",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                                fontSize: 16,
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  titleBar(
+                    title: 'Home System Report',
+                    width: MediaQuery.of(context).size.width * .91,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildActionButtons(), // Add action buttons
+                      _buildTabBar(),
+                      FutureBuilder<Home_system_report>(
+                        future: _futureRentersInsurance,
+                        builder: (context, snapshot) {
+                          if (_futureRentersInsurance == null) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "Please select a property",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                            );
+                          }
 
-                    if (isLoading) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: SpinKitFadingCircle(
-                              color: Colors.black, size: 45),
-                        ),
-                      );
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          errorMessage ?? 'An error occurred',
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      );
-                    }
-
-                    if (!snapshot.hasData ||
-                        snapshot.data?.units?.isEmpty == true) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                                fontSize: 16,
+                          if (isLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: SpinKitFadingCircle(
+                                    color: Colors.black, size: 45),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                            );
+                          }
 
-                    return _selectedTabIndex == 0
-                        ? _buildDataTable(snapshot.data!)
-                        : _buildSummaryView(snapshot.data!);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      )
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                errorMessage ?? 'An error occurred',
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            );
+                          }
+
+                          if (!snapshot.hasData ||
+                              snapshot.data?.units?.isEmpty == true) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return _selectedTabIndex == 0
+                              ? _buildDataTable(snapshot.data!)
+                              : _buildSummaryView(snapshot.data!);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
           : const Center(
-        child: Text("No Internet Connection"),
-      ),
+              child: Text("No Internet Connection"),
+            ),
     );
   }
 
@@ -1868,7 +1919,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 Text(
                   leftLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -1888,7 +1939,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 Text(
                   centerLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -1908,7 +1959,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 Text(
                   rightLabel,
                   style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 const SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -2024,7 +2075,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                             ),
                             itemBuilder: (context, index) {
                               final history =
-                              appliance.maintenanceHistory![index];
+                                  appliance.maintenanceHistory![index];
                               return Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Column(
@@ -2046,7 +2097,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                  "\n${history.timestamp != null ? dateProvider.formatCurrentDate(history.timestamp!) : 'N/A'}",
+                                                      "\n${history.timestamp != null ? dateProvider.formatCurrentDate(history.timestamp!) : 'N/A'}",
                                                   style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -2069,7 +2120,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                  "\n${history.adminName ?? history.staffmemberName ?? 'N/A'}",
+                                                      "\n${history.adminName ?? history.staffmemberName ?? 'N/A'}",
                                                   style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -2170,7 +2221,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                  "\n${note.timestamp != null ? dateProvider.formatCurrentDate(note.timestamp!) : 'N/A'}",
+                                                      "\n${note.timestamp != null ? dateProvider.formatCurrentDate(note.timestamp!) : 'N/A'}",
                                                   style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -2193,7 +2244,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                  "\n${note.adminName ?? note.staffmemberName ?? 'N/A'}",
+                                                      "\n${note.adminName ?? note.staffmemberName ?? 'N/A'}",
                                                   style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
@@ -2267,235 +2318,235 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             Container(
               decoration: BoxDecoration(
                 border:
-                Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: data.units?.asMap().entries.map((entry) {
-                  int rowIndex = entry.key;
-                  var unit = entry.value;
-                  bool isRowExpanded = expandedRowIndex == rowIndex;
+                      int rowIndex = entry.key;
+                      var unit = entry.value;
+                      bool isRowExpanded = expandedRowIndex == rowIndex;
 
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: rowIndex % 2 != 0
-                          ? Colors.white
-                          : blueColor.withOpacity(0.09),
-                      border: Border.all(
-                          color: const Color.fromRGBO(152, 162, 179, .5)),
-                    ),
-                    child: Column(
-                      children: [
-                        // Main row showing unit info
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Row(
-                            children: [
-                              // Expand/Collapse icon
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (expandedRowIndex == rowIndex) {
-                                      expandedRowIndex = null;
-                                    } else {
-                                      expandedRowIndex = rowIndex;
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 5),
-                                  padding: !isRowExpanded
-                                      ? const EdgeInsets.only(bottom: 10)
-                                      : const EdgeInsets.only(top: 10),
-                                  child: FaIcon(
-                                    isRowExpanded
-                                        ? FontAwesomeIcons.sortUp
-                                        : FontAwesomeIcons.sortDown,
-                                    size: 20,
-                                    color: blueColor,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Unit info
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                    'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: rowIndex % 2 != 0
+                              ? Colors.white
+                              : blueColor.withOpacity(0.09),
+                          border: Border.all(
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
+                        ),
+                        child: Column(
+                          children: [
+                            // Main row showing unit info
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Row(
+                                children: [
+                                  // Expand/Collapse icon
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (expandedRowIndex == rowIndex) {
+                                          expandedRowIndex = null;
+                                        } else {
+                                          expandedRowIndex = rowIndex;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(left: 5),
+                                      padding: !isRowExpanded
+                                          ? const EdgeInsets.only(bottom: 10)
+                                          : const EdgeInsets.only(top: 10),
+                                      child: FaIcon(
+                                        isRowExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons.sortDown,
+                                        size: 20,
+                                        color: blueColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Expanded section showing appliances
-                        if (isRowExpanded)
-                          if (unit.appliances == null ||
-                              unit.appliances!.isEmpty)
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                Border.all(color: Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.info_outline,
-                                      color: Colors.grey[600], size: 20),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    'No appliances found in this unit',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontStyle: FontStyle.italic,
+                                  // Unit info
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Text(
+                                        'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            )
-                          else
-                            Builder(
-                              builder: (context) {
-                                // Separate appliances into Major Systems and Appliances
-                                List<MapEntry<int, dynamic>> majorSystems =
-                                [];
-                                List<MapEntry<int, dynamic>> appliances =
-                                [];
-
-                                unit.appliances!
-                                    .asMap()
-                                    .entries
-                                    .forEach((entry) {
-                                  if (_isMajorSystem(entry.value)) {
-                                    majorSystems.add(entry);
-                                  } else {
-                                    appliances.add(entry);
-                                  }
-                                });
-
-                                // Sort both lists alphabetically by appliance name
-                                majorSystems.sort((a, b) {
-                                  String nameA =
-                                      a.value.applianceName ?? '';
-                                  String nameB =
-                                      b.value.applianceName ?? '';
-                                  return nameA
-                                      .toLowerCase()
-                                      .compareTo(nameB.toLowerCase());
-                                });
-
-                                appliances.sort((a, b) {
-                                  String nameA =
-                                      a.value.applianceName ?? '';
-                                  String nameB =
-                                      b.value.applianceName ?? '';
-                                  return nameA
-                                      .toLowerCase()
-                                      .compareTo(nameB.toLowerCase());
-                                });
-
-                                return Column(
-                                  children: [
-                                    // Major Systems Section
-                                    if (majorSystems.isNotEmpty) ...[
-                                      Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: blueColor.withOpacity(0.1),
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          border: Border.all(
-                                              color: blueColor
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.build,
-                                                color: blueColor, size: 20),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Major System',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: blueColor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      ...majorSystems.map((entry) {
-                                        int applianceIndex = entry.key;
-                                        var appliance = entry.value;
-                                        return _buildApplianceWidget(
-                                            appliance,
-                                            applianceIndex,
-                                            rowIndex);
-                                      }).toList(),
-                                    ],
-                                    // Appliances Section
-                                    if (appliances.isNotEmpty) ...[
-                                      Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange
-                                              .withOpacity(0.1),
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          border: Border.all(
-                                              color: Colors.orange
-                                                  .withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.kitchen,
-                                                color: Colors.orange,
-                                                size: 20),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Appliance',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.orange,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      ...appliances.map((entry) {
-                                        int applianceIndex = entry.key;
-                                        var appliance = entry.value;
-                                        return _buildApplianceWidget(
-                                            appliance,
-                                            applianceIndex,
-                                            rowIndex);
-                                      }).toList(),
-                                    ],
-                                  ],
-                                );
-                              },
                             ),
-                      ],
-                    ),
-                  );
-                }).toList() ??
+                            // Expanded section showing appliances
+                            if (isRowExpanded)
+                              if (unit.appliances == null ||
+                                  unit.appliances!.isEmpty)
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border:
+                                        Border.all(color: Colors.grey[300]!),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.info_outline,
+                                          color: Colors.grey[600], size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'No appliances found in this unit',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              else
+                                Builder(
+                                  builder: (context) {
+                                    // Separate appliances into Major Systems and Appliances
+                                    List<MapEntry<int, dynamic>> majorSystems =
+                                        [];
+                                    List<MapEntry<int, dynamic>> appliances =
+                                        [];
+
+                                    unit.appliances!
+                                        .asMap()
+                                        .entries
+                                        .forEach((entry) {
+                                      if (_isMajorSystem(entry.value)) {
+                                        majorSystems.add(entry);
+                                      } else {
+                                        appliances.add(entry);
+                                      }
+                                    });
+
+                                    // Sort both lists alphabetically by appliance name
+                                    majorSystems.sort((a, b) {
+                                      String nameA =
+                                          a.value.applianceName ?? '';
+                                      String nameB =
+                                          b.value.applianceName ?? '';
+                                      return nameA
+                                          .toLowerCase()
+                                          .compareTo(nameB.toLowerCase());
+                                    });
+
+                                    appliances.sort((a, b) {
+                                      String nameA =
+                                          a.value.applianceName ?? '';
+                                      String nameB =
+                                          b.value.applianceName ?? '';
+                                      return nameA
+                                          .toLowerCase()
+                                          .compareTo(nameB.toLowerCase());
+                                    });
+
+                                    return Column(
+                                      children: [
+                                        // Major Systems Section
+                                        if (majorSystems.isNotEmpty) ...[
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: blueColor.withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: blueColor
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.build,
+                                                    color: blueColor, size: 20),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Major System',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          ...majorSystems.map((entry) {
+                                            int applianceIndex = entry.key;
+                                            var appliance = entry.value;
+                                            return _buildApplianceWidget(
+                                                appliance,
+                                                applianceIndex,
+                                                rowIndex);
+                                          }).toList(),
+                                        ],
+                                        // Appliances Section
+                                        if (appliances.isNotEmpty) ...[
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Colors.orange
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.kitchen,
+                                                    color: Colors.orange,
+                                                    size: 20),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Appliance',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          ...appliances.map((entry) {
+                                            int applianceIndex = entry.key;
+                                            var appliance = entry.value;
+                                            return _buildApplianceWidget(
+                                                appliance,
+                                                applianceIndex,
+                                                rowIndex);
+                                          }).toList(),
+                                        ],
+                                      ],
+                                    );
+                                  },
+                                ),
+                          ],
+                        ),
+                      );
+                    }).toList() ??
                     [],
               ),
             ),
