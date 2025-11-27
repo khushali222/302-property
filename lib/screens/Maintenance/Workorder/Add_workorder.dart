@@ -149,6 +149,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
       print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
@@ -447,11 +453,11 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   ];
   String? _selectedStatus = "New";
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold'
   ];
   final List<String> _account = [
     'Advertising',
@@ -602,36 +608,38 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: 45,
-                //width: 200,
-                padding: const EdgeInsets.only(left: 14, right: 14),
+                height: MediaQuery.of(context).size.width < 500
+                    ? 45
+                    : 50,
+                // width: 180,
+                // width: MediaQuery.of(context).size.width < 500
+                //     ? MediaQuery.of(context).size.width * .38
+                //     : MediaQuery.of(context).size.width * .4,
+                padding:
+                const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFFCED4DA),
-                    width: 1.5,
+                    // color: Colors.black26,
+                    color: const Color(0xFF8A95A8),
                   ),
+                  color: Colors.white,
                 ),
                 elevation: 0,
               ),
-              iconStyleData: const IconStyleData(
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                ),
-                iconSize: 24,
-                iconEnabledColor: Color(0xFFb0b6c3),
-                iconDisabledColor: Colors.grey,
-              ),
               dropdownStyleData: DropdownStyleData(
+                maxHeight: 250,
+                width: 200,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  //color: Colors.redAccent,
                 ),
+                offset: const Offset(-20, 0),
                 scrollbarTheme: ScrollbarThemeData(
-                  radius: const Radius.circular(6),
+                  radius: const Radius.circular(40),
                   thickness: MaterialStateProperty.all(6),
-                  thumbVisibility: MaterialStateProperty.all(true),
+                  thumbVisibility:
+                  MaterialStateProperty.all(true),
                 ),
               ),
               menuItemStyleData: const MenuItemStyleData(
@@ -2553,8 +2561,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const Row(
                             children: [
                               Text('Parts and Labor :',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
                             ],
                           ),
                           ...partsAndLabor.asMap().entries.map((entry) {
@@ -2568,10 +2577,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       addRow();
                                     },
-                                    child: Text(' +   Add Row',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),)),
+                                    child: Text(
+                                      ' +   Add Row',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor),
+                                    )),
                               ),
                               Expanded(
                                 child: Container(
@@ -2584,14 +2598,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                           )),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child:
-                                            Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                        child: Text(
+                                            '\$${totalAmount.toStringAsFixed(2)}'),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           // const SizedBox(
@@ -2646,7 +2659,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     });
                                   },
                                   activeColor:
-                                  isChecked ? blueColor : Colors.black,
+                                      isChecked ? blueColor : Colors.black,
                                 ),
                               ),
                               const SizedBox(
@@ -3084,8 +3097,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 //     0.0, // How much the shadow should spread
                                 //   ),
                                 // ],
-                                border:
-                                Border.all(width: 0, color: Color(0xFFCED4DA),),
+                                border: Border.all(
+                                  width: 0,
+                                  color: Color(0xFFCED4DA),
+                                ),
                                 borderRadius: BorderRadius.circular(6.0)),
                             child: TextFormField(
                               style: const TextStyle(
@@ -3137,20 +3152,22 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 borderRadius: BorderRadius.circular(8.0),
                                 border: Border.all(
                                   color: const Color(0xFFCED4DA),
-                                )
-                            ),
+                                )),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child:  Text(
+                                child: Text(
                                   'Cancel',
-                                  style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ))),
                       ),
                       const SizedBox(
@@ -3173,15 +3190,18 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             onPressed: _submitForm,
                             child: isloading
                                 ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : const Text(
-                              'Add Work Order',
-                              style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),
-                            ),
+                                    'Add Work Order',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                           ),
                         ),
                       ),
@@ -3636,12 +3656,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   ];
   String? _selectedStatus = "New";
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Pending',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold',
+    'Pending'
   ];
   final List<String> _account = [
     'Advertising',

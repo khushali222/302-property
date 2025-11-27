@@ -1824,6 +1824,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       issurge = false;
                                       ismail = false;
                                       ischargesetting = true;
+                                      ismanagetemplate = false;
                                       islatefee = false;
                                       isaccounts = false;
                                       isdateformate = false;
@@ -1869,6 +1870,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismail = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      ismanagetemplate = false;
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
@@ -1921,6 +1923,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isaccounts = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      ismanagetemplate = false;
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
@@ -2035,6 +2038,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     setState(() {
                                       issurge = false;
                                       isaccounts = false;
+                                      ischargesetting = false;
                                       ismail = false;
                                       isdateformate = false;
                                       islatefee = false;
@@ -2083,6 +2087,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      ischargesetting = false;
                                       ismanagetemplate = false;
                                       iscategories = false;
                                     });
@@ -2187,6 +2192,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       iscategories = true;
                                       islatefee = false;
                                       isdateformate = false;
+                                      ischargesetting = false;
                                       ismanagetemplate = false;
                                     });
                                   },

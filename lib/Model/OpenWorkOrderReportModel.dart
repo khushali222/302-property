@@ -31,6 +31,7 @@ class OpenWorkOrderReportModel {
 
 class WorkOrderReportData {
   final String? workOrderId;
+  final String? ticketNumber;
   final String? workSubject;
   final String? workCategory;
   final String? workPerformed;
@@ -44,6 +45,7 @@ class WorkOrderReportData {
 
   WorkOrderReportData({
     this.workOrderId,
+    this.ticketNumber,
     this.workSubject,
     this.workCategory,
     this.workPerformed,
@@ -62,6 +64,7 @@ class WorkOrderReportData {
     });
     return WorkOrderReportData(
       workOrderId: json['workOrder_id'] as String?,
+      ticketNumber: json['ticket_number'] as String?,
       workSubject: json['work_subject'] as String?,
       workCategory: json['work_category'] as String?,
       workPerformed: json['work_performed'] as String?,
@@ -78,6 +81,7 @@ class WorkOrderReportData {
   Map<String, dynamic> toJson() {
     return {
       'workOrder_id': workOrderId,
+      'ticket_number': ticketNumber,
       'work_subject': workSubject,
       'work_category': workCategory,
       'work_performed': workPerformed,

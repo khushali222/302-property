@@ -131,23 +131,16 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                    ascending1
+                    sorting1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
                             padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
                               color: blueColor,
                             ),
-                          ),
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ),
@@ -181,23 +174,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    ),
                   ],
                 ),
               ),

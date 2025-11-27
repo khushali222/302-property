@@ -771,16 +771,20 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         ),
       );
 
-      // Summary Pages - Create separate page for each unit to avoid TooManyPagesException
-      for (var unit in data.units!) {
-        pdf.addPage(
-          pw.MultiPage(
-            pageFormat: PdfPageFormat.a4.landscape,
-            margin: const pw.EdgeInsets.all(20),
-            build: (pw.Context context) {
-              return [
-                // Header
-                pw.Row(
+      // Summary Pages - Combine all units in a single MultiPage with proper spacing
+      pdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4.landscape,
+          margin: const pw.EdgeInsets.all(20),
+          maxPages: 1000,
+          build: (pw.Context context) {
+            List<pw.Widget> summaryWidgets = [];
+
+            // Add header only once at the beginning
+            summaryWidgets.addAll([
+              pw.Header(
+                level: 0,
+                child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Image(image, width: 40, height: 40),
@@ -800,70 +804,107 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                         ),
                       ],
                     ),
+                    pw.Text(
+                      'Markdueltd',
+                      style: const pw.TextStyle(fontSize: 10),
+                    ),
                   ],
                 ),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Summary',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                'Summary',
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
                 ),
-                pw.SizedBox(height: 15),
-                // Header for the summary table
+              ),
+              pw.SizedBox(height: 15),
+              // Header for the summary table
+              pw.Container(
+                color: PdfColor.fromHex("#4B88E8"),
+                padding:
+                    const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                child: pw.Row(
+                  children: [
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                        'Date',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                        'Performed By',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                    pw.Expanded(
+                      flex: 3,
+                      child: pw.Text(
+                        'Work Subject',
+                        style: pw.TextStyle(
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ]);
+
+            // Add all units with proper spacing
+            for (int unitIndex = 0;
+                unitIndex < data.units!.length;
+                unitIndex++) {
+              var unit = data.units![unitIndex];
+
+              // Add page break before new unit if not the first unit and there's content above
+              if (unitIndex > 0) {
+                summaryWidgets.add(pw.SizedBox(height: 15));
+                summaryWidgets.add(pw.Divider(
+                  height: 1,
+                  color: PdfColors.grey300,
+                ));
+                summaryWidgets.add(pw.SizedBox(height: 15));
+              }
+
+              // Unit header
+              summaryWidgets.add(
                 pw.Container(
-                  color: PdfColor.fromHex("#4B88E8"),
-                  padding: const pw.EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 10),
-                  child: pw.Row(
-                    children: [
-                      pw.Expanded(
-                        flex: 2,
-                        child: pw.Text(
-                          'Date',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      pw.Expanded(
-                        flex: 2,
-                        child: pw.Text(
-                          'Performed By',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      pw.Expanded(
-                        flex: 3,
-                        child: pw.Text(
-                          'Work Subject',
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                    ],
+                  padding: const pw.EdgeInsets.symmetric(vertical: 8),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey100,
+                    borderRadius:
+                        const pw.BorderRadius.all(pw.Radius.circular(4)),
+                  ),
+                  child: pw.Text(
+                    'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
+                    style: pw.TextStyle(
+                      fontSize: 13,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColor.fromHex("#4B88E8"),
+                    ),
                   ),
                 ),
-                pw.SizedBox(height: 15),
-                pw.Text(
-                  'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
-                  style: pw.TextStyle(
-                    fontSize: 12,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                if (unit.appliances == null || unit.appliances!.isEmpty)
+              );
+              summaryWidgets.add(pw.SizedBox(height: 12));
+
+              if (unit.appliances == null || unit.appliances!.isEmpty) {
+                summaryWidgets.add(
                   pw.Text(
                     'No appliances found in this unit',
                     style: pw.TextStyle(
@@ -871,307 +912,317 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       fontStyle: pw.FontStyle.italic,
                       color: PdfColors.grey700,
                     ),
-                  )
-                else if (unit.appliances != null) ...[
-                  // Separate Major Systems and Appliances
-                  () {
-                    List<dynamic> majorSystems = [];
-                    List<dynamic> appliances = [];
+                  ),
+                );
+                summaryWidgets.add(pw.SizedBox(height: 20));
+              } else if (unit.appliances != null) {
+                // Separate Major Systems and Appliances
+                List<dynamic> majorSystems = [];
+                List<dynamic> appliances = [];
 
-                    for (var appliance in unit.appliances!) {
-                      if (_isMajorSystem(appliance)) {
-                        majorSystems.add(appliance);
-                      } else {
-                        appliances.add(appliance);
-                      }
-                    }
+                for (var appliance in unit.appliances!) {
+                  if (_isMajorSystem(appliance)) {
+                    majorSystems.add(appliance);
+                  } else {
+                    appliances.add(appliance);
+                  }
+                }
 
-                    return pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        // Major Systems Section
-                        if (majorSystems.isNotEmpty) ...[
-                          pw.Text(
-                            'Major System',
-                            style: pw.TextStyle(
-                              fontSize: 12,
-                              fontWeight: pw.FontWeight.bold,
-                            ),
-                          ),
-                          pw.SizedBox(height: 8),
-                          ...majorSystems.map((appliance) {
-                            return pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  appliance.applianceName ?? 'N/A',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 5),
-                                // Maintenance History
-                                if (appliance.maintenanceHistory?.isEmpty !=
-                                    false)
-                                  pw.Text(
-                                    'No maintenance history found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.maintenanceHistory!
-                                      .map((history) => pw.Container(
-                                            padding:
-                                                const pw.EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                            child: pw.Row(
-                                              children: [
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    history.timestamp != null
-                                                        ? dateProvider
-                                                            .formatCurrentDate(
-                                                                history
-                                                                    .timestamp!)
-                                                        : 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    history.adminName ??
-                                                        history
-                                                            .staffmemberName ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 3,
-                                                  child: pw.Text(
-                                                    history.workSubject ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 5),
-                                // Notes Section
-                                if (appliance.notes?.isEmpty != false)
-                                  pw.Text(
-                                    'No notes found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.notes!
-                                      .map((note) => pw.Container(
-                                            padding:
-                                                const pw.EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                            child: pw.Row(
-                                              children: [
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    note.timestamp != null
-                                                        ? dateProvider
-                                                            .formatCurrentDate(
-                                                                note.timestamp!)
-                                                        : 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    note.adminName ??
-                                                        note.staffmemberName ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 3,
-                                                  child: pw.Text(
-                                                    note.note ?? 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 12),
-                              ],
-                            );
-                          }).toList(),
-                          if (appliances.isNotEmpty) pw.SizedBox(height: 15),
-                        ],
-                        // Regular Appliances Section
-                        if (appliances.isNotEmpty) ...[
-                          if (majorSystems.isNotEmpty)
-                            pw.Text(
-                              'Appliance',
-                              style: pw.TextStyle(
-                                fontSize: 12,
-                                fontWeight: pw.FontWeight.bold,
-                              ),
-                            ),
-                          if (majorSystems.isNotEmpty) pw.SizedBox(height: 8),
-                          ...appliances.map((appliance) {
-                            return pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  appliance.applianceName ?? 'N/A',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 5),
-                                // Maintenance History
-                                if (appliance.maintenanceHistory?.isEmpty !=
-                                    false)
-                                  pw.Text(
-                                    'No maintenance history found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.maintenanceHistory!
-                                      .map((history) => pw.Container(
-                                            padding:
-                                                const pw.EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                            child: pw.Row(
-                                              children: [
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    history.timestamp != null
-                                                        ? dateProvider
-                                                            .formatCurrentDate(
-                                                                history
-                                                                    .timestamp!)
-                                                        : 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    history.adminName ??
-                                                        history
-                                                            .staffmemberName ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 3,
-                                                  child: pw.Text(
-                                                    history.workSubject ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 5),
-                                // Notes Section
-                                if (appliance.notes?.isEmpty != false)
-                                  pw.Text(
-                                    'No notes found',
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColors.grey700,
-                                    ),
-                                  )
-                                else ...[
-                                  ...appliance.notes!
-                                      .map((note) => pw.Container(
-                                            padding:
-                                                const pw.EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                            child: pw.Row(
-                                              children: [
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    note.timestamp != null
-                                                        ? dateProvider
-                                                            .formatCurrentDate(
-                                                                note.timestamp!)
-                                                        : 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 2,
-                                                  child: pw.Text(
-                                                    note.adminName ??
-                                                        note.staffmemberName ??
-                                                        'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                                pw.Expanded(
-                                                  flex: 3,
-                                                  child: pw.Text(
-                                                    note.note ?? 'N/A',
-                                                    style: const pw.TextStyle(
-                                                        fontSize: 9),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                      .toList(),
-                                ],
-                                pw.SizedBox(height: 12),
-                              ],
-                            );
-                          }).toList(),
-                        ],
-                      ],
+                // Major Systems Section
+                if (majorSystems.isNotEmpty) {
+                  summaryWidgets.add(
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromHex("#E3EFF9"),
+                        borderRadius:
+                            const pw.BorderRadius.all(pw.Radius.circular(4)),
+                      ),
+                      child: pw.Text(
+                        'Major System',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColor.fromHex("#4B88E8"),
+                        ),
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 10));
+                }
+
+                for (var appliance in majorSystems) {
+                  summaryWidgets.add(
+                    pw.Text(
+                      appliance.applianceName ?? 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Maintenance History
+                  if (appliance.maintenanceHistory?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No maintenance history found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
                     );
-                  }(),
-                ],
-              ];
-            },
-          ),
-        );
-      }
+                  } else {
+                    for (var history in appliance.maintenanceHistory!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(history.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.adminName ??
+                                      history.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  history.workSubject ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Notes Section
+                  if (appliance.notes?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No notes found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var note in appliance.notes!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(note.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.adminName ??
+                                      note.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  note.note ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 15));
+                }
+
+                // Regular Appliances Section
+                if (appliances.isNotEmpty) {
+                  if (majorSystems.isNotEmpty) {
+                    summaryWidgets.add(pw.SizedBox(height: 10));
+                  }
+                  summaryWidgets.add(
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromHex("#FFF4E6"),
+                        borderRadius:
+                            const pw.BorderRadius.all(pw.Radius.circular(4)),
+                      ),
+                      child: pw.Text(
+                        'Appliance',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.orange,
+                        ),
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 10));
+                }
+
+                for (var appliance in appliances) {
+                  summaryWidgets.add(
+                    pw.Text(
+                      appliance.applianceName ?? 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  );
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Maintenance History
+                  if (appliance.maintenanceHistory?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No maintenance history found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var history in appliance.maintenanceHistory!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(history.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  history.adminName ??
+                                      history.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  history.workSubject ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 6));
+
+                  // Notes Section
+                  if (appliance.notes?.isEmpty != false) {
+                    summaryWidgets.add(
+                      pw.Text(
+                        'No notes found',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    );
+                  } else {
+                    for (var note in appliance.notes!) {
+                      summaryWidgets.add(
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.timestamp != null
+                                      ? dateProvider
+                                          .formatCurrentDate(note.timestamp!)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: pw.Text(
+                                  note.adminName ??
+                                      note.staffmemberName ??
+                                      'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                              pw.Expanded(
+                                flex: 3,
+                                child: pw.Text(
+                                  note.note ?? 'N/A',
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  }
+
+                  summaryWidgets.add(pw.SizedBox(height: 15));
+                }
+              }
+            }
+
+            return summaryWidgets;
+          },
+        ),
+      );
 
       // For iOS, ensure landscape A4 format is used
       if (Platform.isIOS) {

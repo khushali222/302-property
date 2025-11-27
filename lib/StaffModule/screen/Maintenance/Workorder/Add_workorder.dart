@@ -153,6 +153,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
       print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
@@ -453,11 +459,11 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   ];
   String? _selectedStatus = "New";
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold'
   ];
   final List<String> _account = [
     'Advertising',
@@ -2589,8 +2595,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const Row(
                             children: [
                               Text('Parts And Labour :',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
                             ],
                           ),
                           ...partsAndLabor.asMap().entries.map((entry) {
@@ -2618,10 +2625,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       addRow();
                                     },
-                                    child: Text(' +   Add Row',style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),)),
+                                    child: Text(
+                                      ' +   Add Row',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor),
+                                    )),
                               ),
                               Expanded(
                                 child: Container(
@@ -2634,14 +2646,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                           )),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child:
-                                        Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                        child: Text(
+                                            '\$${totalAmount.toStringAsFixed(2)}'),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           // const SizedBox(
@@ -2693,7 +2704,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     });
                                   },
                                   activeColor:
-                                  isChecked ? blueColor : Colors.black,
+                                      isChecked ? blueColor : Colors.black,
                                 ),
                               ),
                               const SizedBox(
@@ -3107,8 +3118,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 //     0.0, // How much the shadow should spread
                                 //   ),
                                 // ],
-                                border:
-                                Border.all(width: 0, color: Color(0xFFCED4DA),),
+                                border: Border.all(
+                                  width: 0,
+                                  color: Color(0xFFCED4DA),
+                                ),
                                 borderRadius: BorderRadius.circular(6.0)),
                             child: TextFormField(
                               style: const TextStyle(
@@ -3160,20 +3173,22 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 borderRadius: BorderRadius.circular(8.0),
                                 border: Border.all(
                                   color: const Color(0xFFCED4DA),
-                                )
-                            ),
+                                )),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child:  Text(
+                                child: Text(
                                   'Cancel',
-                                  style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ))),
                       ),
                       const SizedBox(
@@ -3196,15 +3211,18 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             onPressed: _submitForm,
                             child: isloading
                                 ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 55.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
                                 : const Text(
-                              'Add Work Order',
-                              style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),
-                            ),
+                                    'Add Work Order',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                           ),
                         ),
                       ),
@@ -3378,6 +3396,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
       print('Fetched categories in AddWorkOrderForTablet: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
@@ -3655,11 +3679,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
   ];
   String? _selectedStatus = "New";
   final List<String> _status = [
-    'New',
-    'In Progress',
-    'On Hold',
+    'Closed',
     'Completed',
-    'Closed'
+    'In Progress',
+    'New',
+    'On Hold'
   ];
   final List<String> _account = [
     'Advertising',
