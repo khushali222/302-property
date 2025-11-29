@@ -75,7 +75,7 @@ String generateApplePayConfig({
   required String amount,
   String merchantName = 'Cloud Rental Manager',
   String merchantIdentifier =
-      'merchant.com.hostmerchantservices.cloudrentalmanager',
+  'merchant.com.hostmerchantservices.cloudrentalmanager',
   String currencyCode = 'USD',
   String countryCode = 'US',
 }) {
