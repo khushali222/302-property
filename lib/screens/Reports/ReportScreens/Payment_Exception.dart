@@ -337,13 +337,17 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
           left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
           right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
       child: Container(
+        // decoration: BoxDecoration(
+        //   color: blueColor,
+        //   borderRadius: const BorderRadius.only(
+        //     topLeft: Radius.circular(13),
+        //     topRight: Radius.circular(13),
+        //   ),
+        // ),
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -388,27 +392,33 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                     child: Row(
                       children: [
                         width < 400
-                            ? const Text("Property",
-                                style: TextStyle(color: Colors.white))
-                            : const Text("Property",
-                                style: TextStyle(color: Colors.white)),
+                            ? Text("Property",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15))
+                            : Text("Property",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
                         const SizedBox(width: 3),
                         ascending1
-                            ? const Padding(
+                            ? Padding(
                                 padding: EdgeInsets.only(top: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortUp,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               )
-                            : const Padding(
+                            : Padding(
                                 padding: EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               ),
                       ],
@@ -441,24 +451,27 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   child: Row(
                     children: [
                       SizedBox(width: 25),
-                      Text("Type", style: TextStyle(color: Colors.white)),
+                      Text("Type",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
                       ascending2
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 7, left: 2),
+                              padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
                           : Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 7, left: 2),
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -491,24 +504,27 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   child: Row(
                     children: [
                       SizedBox(width: 25),
-                      Text("Date", style: TextStyle(color: Colors.white)),
+                      Text("Date",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
                       ascending3
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 7, left: 2),
+                              padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
                           : Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 7, left: 2),
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1285,6 +1301,12 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           .take(itemsPerPage)
                           .toList();
 
+                      // Calculate grand total from filtered data
+                      double grandTotal = 0.0;
+                      for (var item in data) {
+                        grandTotal += (item.totalAmount ?? 0.0);
+                      }
+
                       return SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -1296,8 +1318,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                               ),
                               filters(data: data),
                               const SizedBox(height: 10),
-                              _buildHeaders(),
-                              const SizedBox(height: 20),
+                              // Grand Total Display
                               Padding(
                                 padding: EdgeInsets.only(
                                     left:
@@ -1309,10 +1330,56 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                             ? 12
                                             : 0),
                                 child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 12.0),
                                   decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
+                                    color: const Color(0xFFF4F8FF),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: const Color(0xFFDBE0E5)),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Grand Total',
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(
+                                        '\$${grandTotal.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              _buildHeaders(),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0),
+                                child: Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1325,16 +1392,16 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                       Data rental = entry.value;
                                       print(rental.paymentType);
                                       return Container(
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: rowIndex % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -1560,7 +1627,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                                     Row(
                                                       children: [
                                                         SizedBox(
-                                                          width: 25,
+                                                          width: 30,
                                                         ),
                                                         Text(
                                                           "Details : ",
@@ -1602,7 +1669,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                                               Row(
                                                                 children: [
                                                                   SizedBox(
-                                                                    width: 25,
+                                                                    width: 30,
                                                                   ),
                                                                   Expanded(
                                                                       child:

@@ -33,6 +33,7 @@ class CompletedWorkOrdersModel {
 
 class CompletedWorkData {
   String? workOrderId;
+  String? ticketNumber;
   String? workSubject;
   String? workCategory;
   String? workPerformed;
@@ -46,6 +47,7 @@ class CompletedWorkData {
 
   CompletedWorkData({
     this.workOrderId,
+    this.ticketNumber,
     this.workSubject,
     this.workCategory,
     this.workPerformed,
@@ -61,6 +63,7 @@ class CompletedWorkData {
   factory CompletedWorkData.fromJson(Map<String, dynamic> json) {
     return CompletedWorkData(
       workOrderId: json['workOrder_id'] as String?,
+      ticketNumber: json['ticket_number'] as String?,
       workSubject: json['work_subject'] as String?,
       workCategory: json['work_category'] as String?,
       workPerformed: json['work_performed'] as String?,
@@ -77,6 +80,7 @@ class CompletedWorkData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['workOrder_id'] = this.workOrderId;
+    data['ticket_number'] = this.ticketNumber;
     data['work_subject'] = this.workSubject;
     data['work_category'] = this.workCategory;
     data['work_performed'] = this.workPerformed;

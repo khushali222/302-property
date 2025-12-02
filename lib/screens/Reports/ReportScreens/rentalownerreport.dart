@@ -54,10 +54,16 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   String? errorMessage;
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
+  // Pagination for payments within each rental owner
+  Map<int, int> paymentCurrentPage = {}; // Key: rowIndex, Value: current page
+  Map<int, int> paymentItemsPerPage =
+      {}; // Key: rowIndex, Value: items per page
+  int defaultPaymentItemsPerPage = 5; // Default items per page for payments
   ConnectivityResult? _connectivityResult;
   @override
   void initState() {
     super.initState();
+    _selectedOwnersNotifier.value = [];
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -103,7 +109,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
-      selectedrenatalownerid = selectedRentalOwnerIds.join(',');
+      String? selectedrenatalownerid = selectedRentalOwnerIds.isEmpty ||
+              selectedRentalOwnerIds.contains("all")
+          ? null
+          : selectedRentalOwnerIds.join(',');
       List<RentalOwnerReport> data = await RentalOwnerReportService()
           .fetchRentalOwnerReport(id!, fromDate, toDate,
               rentalownerid: selectedrenatalownerid, chargetype: chargedata);
@@ -298,12 +307,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
       child: Container(
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -348,27 +354,33 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                     child: Row(
                       children: [
                         width < 400
-                            ? const Text("Rental Owner",
-                                style: TextStyle(color: Colors.white))
-                            : const Text("Rental Owner",
-                                style: TextStyle(color: Colors.white)),
+                            ? Text("Rental Owner",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15))
+                            : Text("Rental Owner",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
                         const SizedBox(width: 3),
                         ascending1
-                            ? const Padding(
+                            ? Padding(
                                 padding: EdgeInsets.only(top: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortUp,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               )
-                            : const Padding(
+                            : Padding(
                                 padding: EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               ),
                       ],
@@ -1317,11 +1329,17 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             .map((e) => e as Map<String, dynamic>)!
             .toList();
 
-        // Sort rental owners alphabetically by name
+        // Sort rental owners alphabetically by name (excluding "All" option)
         rentalowners.sort((a, b) {
           String nameA = a['rentalOwner_name']?.toString() ?? '';
           String nameB = b['rentalOwner_name']?.toString() ?? '';
           return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        });
+
+        // Insert "All" option at the beginning after sorting
+        rentalowners.insert(0, {
+          "rentalowner_id": "all",
+          "rentalOwner_name": "All",
         });
       });
       log(rentalowners.toString());
@@ -1469,7 +1487,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                               filters(data: data),
                               const SizedBox(height: 20),
                               _buildHeaders(),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 10),
                               if (showTableData)
                                 Padding(
                                   padding: EdgeInsets.only(
@@ -1482,10 +1500,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                           ? 12
                                           : 0),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1501,13 +1519,16 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: rowIndex % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1533,6 +1554,16 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                             } else {
                                                               expandedRowIndex =
                                                                   rowIndex;
+                                                              // Initialize pagination when expanding
+                                                              if (!paymentCurrentPage
+                                                                  .containsKey(
+                                                                      rowIndex)) {
+                                                                paymentCurrentPage[
+                                                                    rowIndex] = 0;
+                                                                paymentItemsPerPage[
+                                                                        rowIndex] =
+                                                                    defaultPaymentItemsPerPage;
+                                                              }
                                                             }
                                                           });
                                                         },
@@ -1618,388 +1649,538 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                 ),
                                               ),
                                               if (isRowExpanded)
-                                                Column(
-                                                  children: item.payments!
-                                                      .asMap()
-                                                      .entries
-                                                      .map((tenantEntry) {
-                                                    int tenantIndex =
-                                                        tenantEntry.key;
-                                                    var tenant =
-                                                        tenantEntry.value;
-                                                    bool isTenantExpanded =
-                                                        expandedTenantIndex[
-                                                                rowIndex] ==
-                                                            tenantIndex;
+                                                Builder(
+                                                  builder: (context) {
+                                                    // Initialize pagination for this rental owner if not exists
+                                                    if (!paymentCurrentPage
+                                                        .containsKey(
+                                                            rowIndex)) {
+                                                      paymentCurrentPage[
+                                                          rowIndex] = 0;
+                                                      paymentItemsPerPage[
+                                                              rowIndex] =
+                                                          defaultPaymentItemsPerPage;
+                                                    }
+
+                                                    final currentPaymentPage =
+                                                        paymentCurrentPage[
+                                                                rowIndex] ??
+                                                            0;
+                                                    final paymentItemsPerPageValue =
+                                                        paymentItemsPerPage[
+                                                                rowIndex] ??
+                                                            defaultPaymentItemsPerPage;
+                                                    final totalPayments =
+                                                        item.payments!.length;
+                                                    final totalPaymentPages =
+                                                        (totalPayments /
+                                                                paymentItemsPerPageValue)
+                                                            .ceil();
+
+                                                    // Get paginated payments
+                                                    final paginatedPayments = item
+                                                        .payments!
+                                                        .skip(currentPaymentPage *
+                                                            paymentItemsPerPageValue)
+                                                        .take(
+                                                            paymentItemsPerPageValue)
+                                                        .toList();
 
                                                     return Column(
                                                       children: [
-                                                        Row(
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  if (expandedTenantIndex[
-                                                                          rowIndex] ==
-                                                                      tenantIndex) {
-                                                                    expandedTenantIndex[
-                                                                            rowIndex] =
-                                                                        null;
-                                                                  } else {
-                                                                    expandedTenantIndex[
-                                                                            rowIndex] =
-                                                                        tenantIndex;
-                                                                  }
-                                                                });
-                                                              },
-                                                              child: Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left: 5,
-                                                                        right:
-                                                                            5),
-                                                                padding: !isTenantExpanded
-                                                                    ? const EdgeInsets
-                                                                        .only(
-                                                                        bottom:
-                                                                            10)
-                                                                    : const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            10),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              10),
-                                                                  child: FaIcon(
-                                                                    isTenantExpanded
-                                                                        ? FontAwesomeIcons
-                                                                            .sortUp
-                                                                        : FontAwesomeIcons
-                                                                            .sortDown,
-                                                                    size: 20,
-                                                                    color: isTenantExpanded
-                                                                        ? blueColor
-                                                                        : blueColor,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                                child:
-                                                                    GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  if (expandedTenantIndex[
-                                                                          rowIndex] ==
-                                                                      tenantIndex) {
-                                                                    expandedTenantIndex[
-                                                                            rowIndex] =
-                                                                        null;
-                                                                  } else {
-                                                                    expandedTenantIndex[
-                                                                            rowIndex] =
-                                                                        tenantIndex;
-                                                                  }
-                                                                });
-                                                              },
-                                                              child: Text(
-                                                                "${tenant.rentalData!.rentalAddress}",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        blueColor),
-                                                              ),
-                                                            )),
-                                                            Expanded(
-                                                                child: Text(
-                                                              dateProvider
-                                                                  .formatCurrentDate(
-                                                                      '${tenant.createdAt}'),
-                                                              // "${formatDate(tenant.createdAt.toString())}",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      blueColor),
-                                                            ))
-                                                          ],
-                                                        ),
-                                                        if (isTenantExpanded)
-                                                          Column(
+                                                        ...paginatedPayments
+                                                            .asMap()
+                                                            .entries
+                                                            .map((tenantEntry) {
+                                                          // Calculate actual index in full list
+                                                          final actualIndex =
+                                                              currentPaymentPage *
+                                                                      paymentItemsPerPageValue +
+                                                                  tenantEntry
+                                                                      .key;
+                                                          int tenantIndex =
+                                                              actualIndex;
+                                                          var tenant =
+                                                              tenantEntry.value;
+                                                          bool
+                                                              isTenantExpanded =
+                                                              expandedTenantIndex[
+                                                                      rowIndex] ==
+                                                                  tenantIndex;
+
+                                                          return Column(
                                                             children: [
                                                               Row(
                                                                 children: [
-                                                                  SizedBox(
-                                                                    width: 20,
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        if (expandedTenantIndex[rowIndex] ==
+                                                                            tenantIndex) {
+                                                                          expandedTenantIndex[rowIndex] =
+                                                                              null;
+                                                                        } else {
+                                                                          expandedTenantIndex[rowIndex] =
+                                                                              tenantIndex;
+                                                                        }
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      margin: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              5,
+                                                                          right:
+                                                                              5),
+                                                                      padding: !isTenantExpanded
+                                                                          ? const EdgeInsets
+                                                                              .only(
+                                                                              bottom:
+                                                                                  10)
+                                                                          : const EdgeInsets
+                                                                              .only(
+                                                                              top: 10),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
+                                                                            left:
+                                                                                10),
+                                                                        child:
+                                                                            FaIcon(
+                                                                          isTenantExpanded
+                                                                              ? FontAwesomeIcons.sortUp
+                                                                              : FontAwesomeIcons.sortDown,
+                                                                          size:
+                                                                              20,
+                                                                          color: isTenantExpanded
+                                                                              ? blueColor
+                                                                              : blueColor,
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                   Expanded(
-                                                                    child:
-                                                                        Table(
-                                                                      columnWidths: {
-                                                                        // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                                        // 1: FlexColumnWidth(),
-                                                                        0: FlexColumnWidth(), // Distribute columns equally
-                                                                        1: FlexColumnWidth(),
-                                                                      },
-                                                                      children: [
-                                                                        _buildTableRow(
-                                                                            'Rental Owners Name:',
-                                                                            _getDisplayValue(item.rentalOwnerName),
-                                                                            'Property:',
-                                                                            _getDisplayValue(tenant.rentalData!.rentalAddress)),
-                                                                        _buildTableRow(
-                                                                            'Tenant Name:',
-                                                                            _getDisplayValue("${tenant.tenantData!.tenantFirstName} ${tenant.tenantData!.tenantLastName}"),
-                                                                            'Transaction Id',
-                                                                            _getDisplayValue(tenant.transactionId)),
-                                                                        _buildTableRow(
-                                                                            'Transaction Date:',
-                                                                            _getDisplayValue(
-                                                                              dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
-                                                                              // formatDate(tenant
-                                                                              //     .createdAt
-                                                                              //     .toString())
-                                                                            ),
-                                                                            'Transaction Type:',
-                                                                            _getDisplayValue(tenant.paymentType)),
-                                                                        _buildTableRow(
-                                                                            'Payment Details:',
-                                                                            _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"),
-                                                                            'Payment Amount:',
-                                                                            _getDisplayValue(formatCurrency(tenant.totalAmount))),
-                                                                      ],
+                                                                      child:
+                                                                          GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        if (expandedTenantIndex[rowIndex] ==
+                                                                            tenantIndex) {
+                                                                          expandedTenantIndex[rowIndex] =
+                                                                              null;
+                                                                        } else {
+                                                                          expandedTenantIndex[rowIndex] =
+                                                                              tenantIndex;
+                                                                        }
+                                                                      });
+                                                                    },
+                                                                    child: Text(
+                                                                      "${tenant.rentalData!.rentalAddress}",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor),
                                                                     ),
-                                                                  ),
+                                                                  )),
+                                                                  Expanded(
+                                                                      child:
+                                                                          Text(
+                                                                    dateProvider
+                                                                        .formatCurrentDate(
+                                                                            '${tenant.createdAt}'),
+                                                                    // "${formatDate(tenant.createdAt.toString())}",
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            blueColor),
+                                                                  ))
                                                                 ],
                                                               ),
-                                                              if (tenant.entry
-                                                                  .isNotEmpty)
-                                                                Row(
+                                                              if (isTenantExpanded)
+                                                                Column(
                                                                   children: [
-                                                                    const SizedBox(
-                                                                      width: 27,
+                                                                    Row(
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              20,
+                                                                        ),
+                                                                        Expanded(
+                                                                          child:
+                                                                              Table(
+                                                                            columnWidths: {
+                                                                              // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                                              // 1: FlexColumnWidth(),
+                                                                              0: FlexColumnWidth(), // Distribute columns equally
+                                                                              1: FlexColumnWidth(),
+                                                                            },
+                                                                            children: [
+                                                                              _buildTableRow('Rental Owners Name:', _getDisplayValue(item.rentalOwnerName), 'Property:', _getDisplayValue(tenant.rentalData!.rentalAddress)),
+                                                                              _buildTableRow('Tenant Name:', _getDisplayValue("${tenant.tenantData!.tenantFirstName} ${tenant.tenantData!.tenantLastName}"), 'Transaction Id', _getDisplayValue(tenant.transactionId)),
+                                                                              _buildTableRow(
+                                                                                  'Transaction Date:',
+                                                                                  _getDisplayValue(
+                                                                                    dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
+                                                                                    // formatDate(tenant
+                                                                                    //     .createdAt
+                                                                                    //     .toString())
+                                                                                  ),
+                                                                                  'Transaction Type:',
+                                                                                  _getDisplayValue(tenant.paymentType)),
+                                                                              _buildTableRow('Payment Details:', _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"), 'Payment Amount:', _getDisplayValue(formatCurrency(tenant.totalAmount))),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    Text.rich(
-                                                                      TextSpan(
+                                                                    if (tenant
+                                                                        .entry
+                                                                        .isNotEmpty)
+                                                                      Row(
                                                                         children: [
-                                                                          TextSpan(
-                                                                            text:
-                                                                                'Details Line : ',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                27,
+                                                                          ),
+                                                                          Text.rich(
+                                                                            TextSpan(
+                                                                              children: [
+                                                                                TextSpan(
+                                                                                  text: 'Details Line : ',
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                           ),
                                                                         ],
                                                                       ),
+                                                                    if (tenant
+                                                                            .entry
+                                                                            .isNotEmpty &&
+                                                                        tenant.response !=
+                                                                            "FAILURE")
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            4,
+                                                                      ),
+                                                                    if (tenant
+                                                                            .entry
+                                                                            .isNotEmpty &&
+                                                                        tenant.response !=
+                                                                            "FAILURE")
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
+                                                                            left:
+                                                                                15,
+                                                                            top:
+                                                                                0),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: [
+                                                                            FaIcon(
+                                                                              isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                                              size: 20,
+                                                                              color: Colors.transparent,
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 2,
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Text.rich(
+                                                                                    TextSpan(
+                                                                                      children: [
+                                                                                        TextSpan(
+                                                                                          text: 'Account : ',
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: blueColor,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            Expanded(
+                                                                              flex: 2,
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Text.rich(
+                                                                                    TextSpan(
+                                                                                      children: [
+                                                                                        TextSpan(
+                                                                                          text: '  Amount : ',
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: blueColor,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    if (tenant
+                                                                            .entry
+                                                                            .isNotEmpty &&
+                                                                        tenant.response !=
+                                                                            "FAILURE")
+                                                                      Column(
+                                                                        children: tenant
+                                                                            .entry
+                                                                            .map((entry) {
+                                                                          return Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 15.0, bottom: 0),
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                              children: [
+                                                                                FaIcon(
+                                                                                  isTenantExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                                                  size: 20,
+                                                                                  color: Colors.transparent,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  flex: 2,
+                                                                                  child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    children: <Widget>[
+                                                                                      Text.rich(
+                                                                                        TextSpan(
+                                                                                          children: [
+                                                                                            TextSpan(
+                                                                                              text: '${entry.account ?? "N/A"}',
+                                                                                              style: TextStyle(
+                                                                                                fontWeight: FontWeight.w700,
+                                                                                                color: grey,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 15,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  flex: 2,
+                                                                                  child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    children: <Widget>[
+                                                                                      Text.rich(
+                                                                                        TextSpan(
+                                                                                          children: [
+                                                                                            TextSpan(
+                                                                                              text: ' ${formatCurrency(entry.amount)}',
+                                                                                              style: TextStyle(
+                                                                                                fontWeight: FontWeight.w700,
+                                                                                                color: grey,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                      // Add additional fields if needed
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          );
+                                                                        }).toList(),
+                                                                      ),
+                                                                    if (tenant
+                                                                            .response ==
+                                                                        "FAILURE")
+                                                                      Text.rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Failed : Reason(${tenant.responseText}) ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                  ],
+                                                                ),
+                                                              SizedBox(
+                                                                height: 8,
+                                                              ),
+                                                              if (actualIndex <
+                                                                  totalPayments -
+                                                                      1)
+                                                                Divider(
+                                                                  thickness: 2,
+                                                                )
+                                                            ],
+                                                          );
+                                                        }).toList(),
+                                                        // Pagination controls for payments
+                                                        if (totalPayments >
+                                                            paymentItemsPerPageValue)
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        10,
+                                                                    horizontal:
+                                                                        16),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Material(
+                                                                      elevation:
+                                                                          2,
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            35,
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                8.0),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          border:
+                                                                              Border.all(color: Colors.grey),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(4.0),
+                                                                        ),
+                                                                        child:
+                                                                            DropdownButtonHideUnderline(
+                                                                          child:
+                                                                              DropdownButton<int>(
+                                                                            value:
+                                                                                paymentItemsPerPageValue,
+                                                                            items:
+                                                                                [
+                                                                              5,
+                                                                              10,
+                                                                              25,
+                                                                              50,
+                                                                              100
+                                                                            ].map((int value) {
+                                                                              return DropdownMenuItem<int>(
+                                                                                value: value,
+                                                                                child: Text(value.toString()),
+                                                                              );
+                                                                            }).toList(),
+                                                                            onChanged:
+                                                                                (newValue) {
+                                                                              if (newValue != null) {
+                                                                                setState(() {
+                                                                                  paymentItemsPerPage[rowIndex] = newValue;
+                                                                                  paymentCurrentPage[rowIndex] = 0; // Reset to first page
+                                                                                });
+                                                                              }
+                                                                            },
+                                                                            icon:
+                                                                                const Icon(
+                                                                              Icons.arrow_drop_down,
+                                                                              size: 20,
+                                                                            ),
+                                                                            style:
+                                                                                const TextStyle(color: Colors.black, fontSize: 14),
+                                                                            dropdownColor:
+                                                                                Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    IconButton(
+                                                                      icon:
+                                                                          FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .circleChevronLeft,
+                                                                        size:
+                                                                            24,
+                                                                        color: currentPaymentPage ==
+                                                                                0
+                                                                            ? Colors.grey
+                                                                            : blueColor,
+                                                                      ),
+                                                                      onPressed: currentPaymentPage ==
+                                                                              0
+                                                                          ? null
+                                                                          : () {
+                                                                              setState(() {
+                                                                                paymentCurrentPage[rowIndex] = currentPaymentPage - 1;
+                                                                              });
+                                                                            },
+                                                                    ),
+                                                                    Text(
+                                                                      'Page ${currentPaymentPage + 1} of $totalPaymentPages',
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              14),
+                                                                    ),
+                                                                    IconButton(
+                                                                      icon:
+                                                                          FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .circleChevronRight,
+                                                                        size:
+                                                                            24,
+                                                                        color: currentPaymentPage >=
+                                                                                totalPaymentPages - 1
+                                                                            ? Colors.grey
+                                                                            : blueColor,
+                                                                      ),
+                                                                      onPressed: currentPaymentPage >=
+                                                                              totalPaymentPages - 1
+                                                                          ? null
+                                                                          : () {
+                                                                              setState(() {
+                                                                                paymentCurrentPage[rowIndex] = currentPaymentPage + 1;
+                                                                              });
+                                                                            },
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              if (tenant.entry
-                                                                      .isNotEmpty &&
-                                                                  tenant.response !=
-                                                                      "FAILURE")
-                                                                const SizedBox(
-                                                                  height: 4,
-                                                                ),
-                                                              if (tenant.entry
-                                                                      .isNotEmpty &&
-                                                                  tenant.response !=
-                                                                      "FAILURE")
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              15,
-                                                                          top:
-                                                                              0),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        isTenantExpanded
-                                                                            ? FontAwesomeIcons.sortUp
-                                                                            : FontAwesomeIcons.sortDown,
-                                                                        size:
-                                                                            20,
-                                                                        color: Colors
-                                                                            .transparent,
-                                                                      ),
-                                                                      Expanded(
-                                                                        flex: 2,
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: <Widget>[
-                                                                            Text.rich(
-                                                                              TextSpan(
-                                                                                children: [
-                                                                                  TextSpan(
-                                                                                    text: 'Account : ',
-                                                                                    style: TextStyle(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color: blueColor,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      Expanded(
-                                                                        flex: 2,
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: <Widget>[
-                                                                            Text.rich(
-                                                                              TextSpan(
-                                                                                children: [
-                                                                                  TextSpan(
-                                                                                    text: '  Amount : ',
-                                                                                    style: TextStyle(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color: blueColor,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              if (tenant.entry
-                                                                      .isNotEmpty &&
-                                                                  tenant.response !=
-                                                                      "FAILURE")
-                                                                Column(
-                                                                  children: tenant
-                                                                      .entry
-                                                                      .map(
-                                                                          (entry) {
-                                                                    return Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              15.0,
-                                                                          bottom:
-                                                                              0),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: [
-                                                                          FaIcon(
-                                                                            isTenantExpanded
-                                                                                ? FontAwesomeIcons.sortUp
-                                                                                : FontAwesomeIcons.sortDown,
-                                                                            size:
-                                                                                20,
-                                                                            color:
-                                                                                Colors.transparent,
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text.rich(
-                                                                                  TextSpan(
-                                                                                    children: [
-                                                                                      TextSpan(
-                                                                                        text: '${entry.account ?? "N/A"}',
-                                                                                        style: TextStyle(
-                                                                                          fontWeight: FontWeight.w700,
-                                                                                          color: grey,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                15,
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text.rich(
-                                                                                  TextSpan(
-                                                                                    children: [
-                                                                                      TextSpan(
-                                                                                        text: ' ${formatCurrency(entry.amount)}',
-                                                                                        style: TextStyle(
-                                                                                          fontWeight: FontWeight.w700,
-                                                                                          color: grey,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                // Add additional fields if needed
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    );
-                                                                  }).toList(),
-                                                                ),
-                                                              if (tenant
-                                                                      .response ==
-                                                                  "FAILURE")
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Failed : Reason(${tenant.responseText}) ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                            ],
+                                                                // Text(
+                                                                //   ' ${(currentPaymentPage * paymentItemsPerPageValue) + 1}-${(currentPaymentPage * paymentItemsPerPageValue + paginatedPayments.length)} of $totalPayments',
+                                                                //   style: TextStyle(
+                                                                //       fontSize:
+                                                                //           12,
+                                                                //       color: Colors
+                                                                //               .grey[
+                                                                //           600]),
+                                                                // ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                        if (item.payments
-                                                                    .length -
-                                                                1 !=
-                                                            tenantIndex)
-                                                          Divider(
-                                                            thickness: 2,
-                                                          )
                                                       ],
                                                     );
-                                                  }).toList(),
+                                                  },
                                                 ),
                                             ],
                                           ),
@@ -2880,6 +3061,179 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   List<String> selectedRentalOwnerIds = [];
+  final ValueNotifier<List<String>> _selectedOwnersNotifier =
+      ValueNotifier<List<String>>([]);
+  final GlobalKey _dropdownButtonKey = GlobalKey();
+
+  // Multi-select dropdown widget
+  Widget _buildMultiSelectDropdown() {
+    // Use selectedRentalOwnerIds directly for display text
+    String displayText = selectedRentalOwnerIds.isEmpty
+        ? 'Select Rental Owners'
+        : selectedRentalOwnerIds.length == 1
+            ? rentalowners.firstWhere(
+                (owner) =>
+                    owner['rentalowner_id'] == selectedRentalOwnerIds.first,
+                orElse: () => {'rentalOwner_name': 'Unknown'},
+              )['rentalOwner_name']
+            : '${selectedRentalOwnerIds.length} owners selected';
+
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _selectedOwnersNotifier,
+      builder: (context, currentSelected, _) {
+        return Container(
+          key: _dropdownButtonKey,
+          width: MediaQuery.of(context).size.width > 500 ? 200 : 150,
+          child: DropdownButtonHideUnderline(
+            child: Material(
+              elevation: 0,
+              borderRadius: BorderRadius.circular(8),
+              child: DropdownButton2<String>(
+                isExpanded: true,
+                hint: Text(
+                  displayText,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                value: null, // Always null for multi-select
+                items: rentalowners.map((owner) {
+                  final ownerId = owner['rentalowner_id'];
+                  final ownerName = owner['rentalOwner_name'];
+
+                  return DropdownMenuItem<String>(
+                    value: ownerId,
+                    enabled: false,
+                    child: ValueListenableBuilder<List<String>>(
+                      valueListenable: _selectedOwnersNotifier,
+                      builder: (context, currentSelectedList, _) {
+                        // For "all" option, check if all individual owners are selected
+                        final isCurrentlySelected = ownerId == "all"
+                            ? rentalowners
+                                .where((o) => o['rentalowner_id'] != "all")
+                                .every((o) => currentSelectedList
+                                    .contains(o['rentalowner_id']))
+                            : currentSelectedList.contains(ownerId);
+
+                        return InkWell(
+                          onTap: () {
+                            if (ownerId == "all") {
+                              if (isCurrentlySelected) {
+                                selectedRentalOwnerIds.clear();
+                              } else {
+                                // Select all owners (excluding "all" option)
+                                selectedRentalOwnerIds = rentalowners
+                                    .where((o) => o['rentalowner_id'] != "all")
+                                    .map((o) => o['rentalowner_id'] as String)
+                                    .toList();
+                              }
+                            } else {
+                              selectedRentalOwnerIds.remove("all");
+                              if (isCurrentlySelected) {
+                                selectedRentalOwnerIds.remove(ownerId);
+                              } else {
+                                selectedRentalOwnerIds.add(ownerId);
+                              }
+                            }
+                            _selectedOwnersNotifier.value =
+                                List.from(selectedRentalOwnerIds);
+                            setState(() {});
+                          },
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: isCurrentlySelected,
+                                onChanged: (bool? value) {
+                                  if (ownerId == "all") {
+                                    if (value == true) {
+                                      // Select all owners (excluding "all" option)
+                                      selectedRentalOwnerIds = rentalowners
+                                          .where((o) =>
+                                              o['rentalowner_id'] != "all")
+                                          .map((o) =>
+                                              o['rentalowner_id'] as String)
+                                          .toList();
+                                    } else {
+                                      selectedRentalOwnerIds.clear();
+                                    }
+                                  } else {
+                                    selectedRentalOwnerIds.remove("all");
+                                    if (value == true) {
+                                      selectedRentalOwnerIds.add(ownerId);
+                                    } else {
+                                      selectedRentalOwnerIds.remove(ownerId);
+                                    }
+                                  }
+                                  _selectedOwnersNotifier.value =
+                                      List.from(selectedRentalOwnerIds);
+                                  setState(() {});
+                                },
+                                activeColor: blueColor,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  ownerName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: isCurrentlySelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  // Do nothing - selection handled in item's InkWell
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 45,
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(left: 14, right: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFF8A95A8),
+                    ),
+                    color: Colors.white,
+                  ),
+                  elevation: 0,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  offset: const Offset(0, 0),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: const Radius.circular(20),
+                    thickness: MaterialStateProperty.all(6),
+                    thumbVisibility: MaterialStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.only(left: 14, right: 14),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   filters({List<RentalOwnerReport>? data}) {
     return Padding(
       padding: EdgeInsets.only(
@@ -2896,108 +3250,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: Row(
-                          children: [
-                            SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                selectedRentalOwnerIds.isEmpty
-                                    ? "Select Rental Owners"
-                                    : selectedRentalOwnerIds.length == 1
-                                        ? rentalowners.firstWhere((owner) =>
-                                            owner['rentalowner_id'] ==
-                                            selectedRentalOwnerIds
-                                                .first)['rentalOwner_name']
-                                        : "${selectedRentalOwnerIds.length} Rental Owners Selected",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: rentalowners.map((owner) {
-                          return DropdownMenuItem<String>(
-                            value: owner['rentalowner_id'],
-                            child: StatefulBuilder(
-                              builder: (context, setState) {
-                                bool isSelected = selectedRentalOwnerIds
-                                    .contains(owner['rentalowner_id']);
-                                return CheckboxListTile(
-                                  value: isSelected,
-                                  title: Text(
-                                    owner['rentalOwner_name']!,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                  onChanged: (bool? checked) {
-                                    setState(() {
-                                      if (checked == true) {
-                                        selectedRentalOwnerIds
-                                            .add(owner['rentalowner_id']!);
-                                      } else {
-                                        selectedRentalOwnerIds
-                                            .remove(owner['rentalowner_id']!);
-                                      }
-                                    });
-                                    // Update the outer state
-                                    this.setState(() {});
-                                  },
-                                );
-                              },
-                            ),
-                          );
-                        }).toList(),
-                        value:
-                            null, // Since we're using multi-select, we don't set a single value
-                        onChanged: (_) {}, // Keep the existing functionality
-                        buttonStyleData: ButtonStyleData(
-                          height: 50,
-                          width: double.infinity,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 250,
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 50,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: _buildMultiSelectDropdown(),
                 ),
                 const SizedBox(width: 6),
               ],

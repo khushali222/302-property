@@ -1127,12 +1127,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1177,10 +1174,14 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("   Entity",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("   Entity",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text("   Entity",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          :  Text("   Entity",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
                       // ascending1
@@ -1227,10 +1228,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child:  Row(
                   children: [
                     Text("Total Outstanding",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                   ],
                 ),
               ),
@@ -1275,12 +1278,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1325,27 +1325,31 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text(" Address",
-                              style: TextStyle(color: Colors.white))
-                          : const Text(" Address",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text(" Address",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          :  Text(" Address",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
+                          ?  Padding(
                               padding: EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
-                          : const Padding(
+                          :  Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1375,10 +1379,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child:  Row(
                   children: [
                     Text("        Entity",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                   ],
                 ),
               ),
@@ -1408,24 +1414,26 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                    const Text(" Balance",
-                        style: TextStyle(color: Colors.white)),
+                     Text(" Balance",
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     const SizedBox(width: 3),
                     ascending3
-                        ? const Padding(
+                        ?  Padding(
                             padding: EdgeInsets.only(top: 10, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor,
                             ),
                           )
-                        : const Padding(
+                        :  Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -2464,12 +2472,12 @@ class _Rent_collectionState extends State<Rent_collection> {
         child: Column(
           children: [
             _buildHeaders(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
+              // decoration: BoxDecoration(
+              //   border:
+              //       Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+              // ),
               child: Column(
                 children: [
                   ...sortedData.asMap().entries.map((entry) {
@@ -2477,12 +2485,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
                         border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color(0xFFDBE0E5)),
+                        borderRadius:
+                        BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -2859,12 +2871,12 @@ class _Rent_collectionState extends State<Rent_collection> {
         child: Column(
           children: [
             _buildHeadersDetails(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
+              // decoration: BoxDecoration(
+              //   border:
+              //       Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+              // ),
               child: Column(
                 children: [
                   // Data count info - Responsive
@@ -2991,12 +3003,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
                         border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color(0xFFDBE0E5)),
+                        borderRadius:
+                        BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3500,13 +3516,13 @@ class _Rent_collectionState extends State<Rent_collection> {
         child: Column(
           children: [
             if (currentPageData.isNotEmpty) _buildHeadersDetails(),
-            if (currentPageData.isNotEmpty) const SizedBox(height: 20),
+            if (currentPageData.isNotEmpty) const SizedBox(height: 10),
             if (currentPageData.isNotEmpty)
               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color.fromRGBO(152, 162, 179, .5)),
-                ),
+                // decoration: BoxDecoration(
+                //   border: Border.all(
+                //       color: const Color.fromRGBO(152, 162, 179, .5)),
+                // ),
                 child: Column(
                   children: [
                     ...currentPageData.asMap().entries.map((entry) {
@@ -3514,12 +3530,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                       var item = entry.value;
                       bool isRowExpanded = expandedRowIndex == rowIndex;
                       return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
+                              ? const Color(0xFFF4F8FF)
+                              : Colors.white,
                           border: Border.all(
-                              color: const Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color(0xFFDBE0E5)),
+                          borderRadius:
+                          BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: <Widget>[
