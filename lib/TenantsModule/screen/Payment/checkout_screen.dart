@@ -76,6 +76,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // NMI Keys
   String? _merchantId;
   String? _merchantName;
+  String? _securityKey;
 
   // Dynamic payment items
   late List<PaymentItem> _paymentItems;
@@ -130,13 +131,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final nmiKeysService = NmiKeysService();
       final keysData = await nmiKeysService.fetchNmiKeys();
 
-      // Extract merchant ID from response
-      // API response structure: { "data": { "merchant_id": "...", ... } }
+      // Extract merchant ID and security key from response
+      // API response structure: { "data": { "merchant_id": "...", "security_key": "...", ... } }
       // Note: Some admin accounts may not have merchant_id set up yet
       _merchantId = keysData['merchant_id']?.toString();
       _merchantName = keysData['merchant_name']?.toString() ??
           keysData['merchantName']?.toString() ??
           'Cloud Rental Manager';
+
+      // Extract security_key (try different possible field names)
+      _securityKey = keysData['security_key']?.toString() ??
+          keysData['securityKey']?.toString() ??
+          keysData['securitykey']?.toString();
+
+      // Print merchant ID and security key
+      print('\n[NMI KEYS] Merchant ID: ${_merchantId ?? "Not found"}');
+      print('[NMI KEYS] Security Key: ${_securityKey ?? "Not found"}');
+      if (_securityKey != null && _securityKey!.isNotEmpty) {
+        print(
+            '[NMI KEYS] Security Key Length: ${_securityKey!.length} characters');
+      }
 
       // Check if merchant_id exists, if not, show helpful error
       if (_merchantId == null || _merchantId!.isEmpty) {
@@ -231,9 +245,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     print('[GOOGLE PAY] Token received successfully');
     print('[GOOGLE PAY] Token structure:');
     print('  - Keys: ${paymentResult.keys.toList()}');
+
+    // Extract and print full token for Postman testing (even if backend is offline)
     if (paymentResult.containsKey('paymentMethodData')) {
       final pmData =
-      paymentResult['paymentMethodData'] as Map<String, dynamic>?;
+          paymentResult['paymentMethodData'] as Map<String, dynamic>?;
       if (pmData?.containsKey('tokenizationData') == true) {
         final tokenData = pmData!['tokenizationData'] as Map<String, dynamic>?;
         if (tokenData?.containsKey('token') == true) {
@@ -243,6 +259,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             print('  - Inner token length: ${innerToken.length} chars');
             print(
                 '  - Inner token preview: ${innerToken.substring(0, innerToken.length > 100 ? 100 : innerToken.length)}...');
+
+            // Print token for Postman testing
+            print('\n[POSTMAN] Payment Token:');
+            print('────────────────────────────────────────────────────────');
+            print(innerToken);
+            print('────────────────────────────────────────────────────────');
+            print('[POSTMAN] Token Format: JSON String');
+            print('[POSTMAN] Token Length: ${innerToken.length} characters\n');
           }
         }
       }
@@ -293,13 +317,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
     } catch (e) {
       print("Payment error: $e");
+
+      // If backend is offline, token is still available for Postman testing
+      print('\n[BACKEND OFFLINE] Token was generated successfully!');
+      print(
+          '[BACKEND OFFLINE] Check logs above for full token to use in Postman');
+
       setState(() {
         _isProcessingPayment = false;
-        _currentError = PaymentErrorType.unknownError;
-        _errorMessage = 'An unexpected error occurred: ${e.toString()}';
+        _currentError =
+            PaymentErrorType.networkError; // Change to networkError for offline
+        _errorMessage =
+            'Backend API is offline. Token generated successfully - check logs for Postman testing.';
       });
 
-      _showErrorSnackBar(PaymentErrorType.unknownError, _errorMessage!);
+      _showErrorSnackBar(PaymentErrorType.networkError, _errorMessage!);
     }
   }
 
@@ -466,7 +498,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           final leases = leaseJson['data']['leases'] as List?;
           if (leases != null && leases.isNotEmpty) {
             leaseData = leases.firstWhere(
-                  (lease) => lease['lease_id'] == widget.leaseId,
+              (lease) => lease['lease_id'] == widget.leaseId,
               orElse: () => null,
             ) as Map<String, dynamic>?;
           }
@@ -482,10 +514,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           paymentData.containsKey('paymentMethodData')) {
         try {
           final pmData =
-          paymentData['paymentMethodData'] as Map<String, dynamic>?;
+              paymentData['paymentMethodData'] as Map<String, dynamic>?;
           if (pmData?.containsKey('tokenizationData') == true) {
             final tokenData =
-            pmData!['tokenizationData'] as Map<String, dynamic>?;
+                pmData!['tokenizationData'] as Map<String, dynamic>?;
             if (tokenData?.containsKey('token') == true) {
               final innerToken = tokenData!['token'] as String?;
               if (innerToken != null) {
@@ -534,81 +566,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'paymentDetails': paymentDetails,
       };
 
-      print('\n[PAYMENT] ============================================');
-      print(
-          '[PAYMENT] Sending request to: $Api_url/api/nmipayment/wallet-payment');
-      print('[PAYMENT] Amount: \$$amount | Method: $wallet');
-      print('[PAYMENT] Payment token type: ${paymentTokenForNmi.runtimeType}');
-
-      print('\n[PAYMENT] 📦 TOKEN BEING SENT TO BACKEND:');
-      print('[PAYMENT] ──────────────────────────────────────────────');
-
+      // Print token being sent to backend
       if (paymentTokenForNmi is String) {
-        print('[PAYMENT] Token Format: STRING');
+        print('\n[PAYMENT] Token Format: STRING');
         print(
             '[PAYMENT] Token Length: ${paymentTokenForNmi.length} characters');
-        print('[PAYMENT] Token Value (COMPLETE):');
-        print('────────────────────────────────────────────────────────');
-        print(paymentTokenForNmi);
-        print('────────────────────────────────────────────────────────');
-
         try {
           final parsed = jsonDecode(paymentTokenForNmi) as Map<String, dynamic>;
-          print('\n[PAYMENT] Token Structure (when parsed as JSON):');
-          print('  ✅ Keys: ${parsed.keys.toList()}');
-          print('  ✅ Has signature: ${parsed.containsKey('signature')}');
           print(
-              '  ✅ Has protocolVersion: ${parsed.containsKey('protocolVersion')}');
-          print(
-              '  ✅ Has signedMessage: ${parsed.containsKey('signedMessage')}');
-          if (parsed.containsKey('protocolVersion')) {
-            print('  ✅ Protocol Version: ${parsed['protocolVersion']}');
-          }
-          if (parsed.containsKey('signature')) {
-            final sig = parsed['signature'] as String?;
-            print('  ✅ Signature length: ${sig?.length ?? 0} chars');
-          }
-          if (parsed.containsKey('signedMessage')) {
-            final msg = parsed['signedMessage'] as String?;
-            print('  ✅ SignedMessage length: ${msg?.length ?? 0} chars');
-          }
+              '[PAYMENT] Token Structure: ${parsed.keys.toList().join(", ")}');
         } catch (e) {
-          print('[PAYMENT] ⚠️ Token is not valid JSON: $e');
+          print('[PAYMENT] Token validation: $e');
         }
       } else {
         print('[PAYMENT] Token Format: OBJECT');
-        final tokenJson = jsonEncode(paymentTokenForNmi);
-        print(
-            '[PAYMENT] Token Length (when stringified): ${tokenJson.length} characters');
-        print(
-            '[PAYMENT] Token Keys: ${(paymentTokenForNmi as Map).keys.toList()}');
-        print('[PAYMENT] Token Value (COMPLETE - stringified):');
-        print('────────────────────────────────────────────────────────');
-        print(tokenJson);
-        print('────────────────────────────────────────────────────────');
       }
-
-      print('\n[PAYMENT] 📋 COMPLETE REQUEST BODY (JSON):');
-      print('[PAYMENT] ──────────────────────────────────────────────');
-      try {
-        final requestBodyJson = jsonEncode(requestBody);
-        print(requestBodyJson);
-
-        print('\n[PAYMENT] ✅ VERIFICATION - Token Format:');
-        if (paymentTokenForNmi is String) {
-          print('[PAYMENT] ✅ payment_token is sent as JSON STRING format');
-          print(
-              '[PAYMENT] ✅ In request body: "payment_token": "${paymentTokenForNmi.substring(0, paymentTokenForNmi.length > 50 ? 50 : paymentTokenForNmi.length)}..."');
-          print('[PAYMENT] ✅ This is the correct JSON string format for NMI');
-        } else {
-          print(
-              '[PAYMENT] ⚠️ payment_token is sent as OBJECT (will be stringified)');
-        }
-      } catch (e) {
-        print('[PAYMENT] Error encoding request body: $e');
-      }
-
-      print('[PAYMENT] ============================================');
       final apiStartTime = DateTime.now();
       final url = Uri.parse('$Api_url/api/nmipayment/wallet-payment');
       final response = await http
@@ -821,7 +793,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           isSuccess: false,
           errorType: PaymentErrorType.serverError,
           errorMessage:
-          responseData['message'] ?? 'An error occurred. Please try again.',
+              responseData['message'] ?? 'An error occurred. Please try again.',
           errorCode: response.statusCode.toString(),
           data: responseData,
         );
@@ -832,7 +804,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         isSuccess: false,
         errorType: PaymentErrorType.networkError,
         errorMessage:
-        'No internet connection. Please check your network and try again.',
+            'No internet connection. Please check your network and try again.',
         errorCode: 'NETWORK_ERROR',
       );
     } on HttpException catch (e) {
@@ -849,7 +821,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         isSuccess: false,
         errorType: PaymentErrorType.timeoutError,
         errorMessage:
-        'Request timed out. Please check your connection and try again.',
+            'Request timed out. Please check your connection and try again.',
         errorCode: 'TIMEOUT',
       );
     } on FormatException {
@@ -1232,278 +1204,278 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     )
                   else if (_isCheckingPlugin)
-                      Container(
-                        padding: const EdgeInsets.all(24.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
-                    else if (!_isPayPluginAvailable)
-                      // Fallback UI when plugin is not available
-                        Container(
-                          padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (!_isPayPluginAvailable)
+                    // Fallback UI when plugin is not available
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                          child: Column(
-                            children: [
-                              const Icon(
-                                Icons.warning_amber_rounded,
-                                size: 48,
-                                color: Colors.orange,
-                              ),
-                              const SizedBox(height: 12),
-                              const Text(
-                                'Payment Plugin Not Available',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(
-                                  'Please rebuild the app to enable payment functionality.\n\n'
-                                      'Steps to fix:\n'
-                                      '1. Stop the app completely\n'
-                                      '2. Run: flutter clean\n'
-                                      '3. Run: flutter pub get\n'
-                                      '4. Rebuild and run the app',
-                                  textAlign: TextAlign.center,
-                                  style:
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.warning_amber_rounded,
+                            size: 48,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Payment Plugin Not Available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Please rebuild the app to enable payment functionality.\n\n'
+                              'Steps to fix:\n'
+                              '1. Stop the app completely\n'
+                              '2. Run: flutter clean\n'
+                              '3. Run: flutter pub get\n'
+                              '4. Rebuild and run the app',
+                              textAlign: TextAlign.center,
+                              style:
                                   TextStyle(fontSize: 13, color: Colors.grey),
-                                ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.arrow_back, size: 18),
+                            label: const Text('Go Back'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
                               ),
-                              const SizedBox(height: 20),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.arrow_back, size: 18),
-                                label: const Text('Go Back'),
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 10,
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    // Payment buttons section - shows both Google Pay and Apple Pay
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Text(
+                            'Choose Payment Method',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          // Google Pay Button
+                          FutureBuilder<bool>(
+                            future: _isGooglePayAvailable(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox.shrink();
+                              }
+
+                              if (snapshot.hasError ||
+                                  !(snapshot.data ?? false)) {
+                                return const SizedBox.shrink();
+                              }
+
+                              // Show Google Pay Button with dynamic config
+                              try {
+                                if (_googlePayConfigString == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                      // Payment buttons section - shows both Google Pay and Apple Pay
-                        Container(
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const Text(
-                                'Choose Payment Method',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              // Google Pay Button
-                              FutureBuilder<bool>(
-                                future: _isGooglePayAvailable(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  if (snapshot.hasError ||
-                                      !(snapshot.data ?? false)) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  // Show Google Pay Button with dynamic config
-                                  try {
-                                    if (_googlePayConfigString == null) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
-                                            blurRadius: 6,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: GooglePayButton(
-                                        paymentConfiguration:
+                                  child: GooglePayButton(
+                                    paymentConfiguration:
                                         PaymentConfiguration.fromJsonString(
-                                          _googlePayConfigString!,
-                                        ),
-                                        paymentItems: _paymentItems,
-                                        type: GooglePayButtonType.pay,
-                                        margin: EdgeInsets.zero,
-                                        onPaymentResult: onGooglePayResult,
-                                        loadingIndicator: const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                          ),
-                                        ),
+                                      _googlePayConfigString!,
+                                    ),
+                                    paymentItems: _paymentItems,
+                                    type: GooglePayButtonType.pay,
+                                    margin: EdgeInsets.zero,
+                                    onPaymentResult: onGooglePayResult,
+                                    loadingIndicator: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
                                       ),
-                                    );
-                                  } catch (e) {
-                                    print('Error creating Google Pay button: $e');
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                print('Error creating Google Pay button: $e');
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          // Apple Pay Button (iOS only)
+                          // Silently hide if not available - don't show errors
+                          // This allows Google Pay to work even if Apple Pay is not set up
+                          if (Platform.isIOS)
+                            FutureBuilder<bool>(
+                              future: _isApplePayAvailable(),
+                              builder: (context, snapshot) {
+                                // Don't show anything while checking
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Only show Apple Pay button if available
+                                // Silently hide if not available (no card, not configured, etc.)
+                                if (snapshot.hasError ||
+                                    !(snapshot.data ?? false)) {
+                                  // Silently hide - don't show error message
+                                  // This allows Google Pay to work independently
+                                  return const SizedBox.shrink();
+                                }
+
+                                // Apple Pay is available, show the button
+                                try {
+                                  if (_applePayConfigString == null) {
                                     return const SizedBox.shrink();
                                   }
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              // Apple Pay Button (iOS only)
-                              // Silently hide if not available - don't show errors
-                              // This allows Google Pay to work even if Apple Pay is not set up
-                              if (Platform.isIOS)
-                                FutureBuilder<bool>(
-                                  future: _isApplePayAvailable(),
-                                  builder: (context, snapshot) {
-                                    // Don't show anything while checking
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const SizedBox.shrink();
-                                    }
-
-                                    // Only show Apple Pay button if available
-                                    // Silently hide if not available (no card, not configured, etc.)
-                                    if (snapshot.hasError ||
-                                        !(snapshot.data ?? false)) {
-                                      // Silently hide - don't show error message
-                                      // This allows Google Pay to work independently
-                                      return const SizedBox.shrink();
-                                    }
-
-                                    // Apple Pay is available, show the button
-                                    try {
-                                      if (_applePayConfigString == null) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.08),
-                                              blurRadius: 6,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        child: ApplePayButton(
-                                          paymentConfiguration:
+                                      ],
+                                    ),
+                                    child: ApplePayButton(
+                                      paymentConfiguration:
                                           PaymentConfiguration.fromJsonString(
-                                            _applePayConfigString!,
-                                          ),
-                                          paymentItems: _paymentItems,
-                                          type: ApplePayButtonType.buy,
-                                          margin: EdgeInsets.zero,
-                                          onPaymentResult: onApplePayResult,
-                                          loadingIndicator: const Center(
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      // Silently hide on error - don't show error message
-                                      // This allows Google Pay to work independently
-                                      print(
-                                          "Apple Pay button error (silently handled): $e");
-                                      return const SizedBox.shrink();
-                                    }
-                                  },
-                                ),
-                              const SizedBox(height: 16),
-                              // Show message if no payment methods are available
-                              FutureBuilder<List<bool>>(
-                                future: Future.wait([
-                                  _isGooglePayAvailable(),
-                                  _isApplePayAvailable(),
-                                ]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-
-                                  final googlePayAvailable =
-                                      snapshot.data?[0] ?? false;
-                                  final applePayAvailable =
-                                      snapshot.data?[1] ?? false;
-
-                                  if (!googlePayAvailable && !applePayAvailable) {
-                                    return Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      margin: const EdgeInsets.only(top: 12.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[50],
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.blue[200]!,
-                                          width: 1,
+                                        _applePayConfigString!,
+                                      ),
+                                      paymentItems: _paymentItems,
+                                      type: ApplePayButtonType.buy,
+                                      margin: EdgeInsets.zero,
+                                      onPaymentResult: onApplePayResult,
+                                      loadingIndicator: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
                                         ),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          const Icon(
-                                            Icons.info_outline,
-                                            size: 40,
-                                            color: Colors.blue,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          const Text(
-                                            'Payment Methods Not Available',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Text(
-                                              Platform.isIOS
-                                                  ? 'No payment methods are available.\n\n'
+                                    ),
+                                  );
+                                } catch (e) {
+                                  // Silently hide on error - don't show error message
+                                  // This allows Google Pay to work independently
+                                  print(
+                                      "Apple Pay button error (silently handled): $e");
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                          const SizedBox(height: 16),
+                          // Show message if no payment methods are available
+                          FutureBuilder<List<bool>>(
+                            future: Future.wait([
+                              _isGooglePayAvailable(),
+                              _isApplePayAvailable(),
+                            ]),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+
+                              final googlePayAvailable =
+                                  snapshot.data?[0] ?? false;
+                              final applePayAvailable =
+                                  snapshot.data?[1] ?? false;
+
+                              if (!googlePayAvailable && !applePayAvailable) {
+                                return Container(
+                                  padding: const EdgeInsets.all(20.0),
+                                  margin: const EdgeInsets.only(top: 12.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.blue[200]!,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      const Icon(
+                                        Icons.info_outline,
+                                        size: 40,
+                                        color: Colors.blue,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      const Text(
+                                        'Payment Methods Not Available',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text(
+                                          Platform.isIOS
+                                              ? 'No payment methods are available.\n\n'
                                                   'For Apple Pay, please check:\n'
                                                   '1. Apple Pay is set up in Settings > Wallet & Apple Pay\n'
                                                   '2. You have a card added to Apple Pay\n'
@@ -1514,48 +1486,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                   '1. Google Pay is installed and set up\n'
                                                   '2. You have a card added to Google Pay\n'
                                                   '3. Testing on a real device'
-                                                  : 'Google Pay is not available on this device.\n'
+                                              : 'Google Pay is not available on this device.\n'
                                                   'Make sure you are testing on a real Android device\n'
                                                   'with Google Pay installed and set up.',
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
                                           ),
-                                          const SizedBox(height: 16),
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            icon: const Icon(Icons.arrow_back,
-                                                size: 18),
-                                            label: const Text('Go Back'),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue,
-                                              foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 20,
-                                                vertical: 10,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    );
-                                  }
+                                      const SizedBox(height: 16),
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        icon: const Icon(Icons.arrow_back,
+                                            size: 18),
+                                        label: const Text('Go Back'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 10,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
 
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                              // Show error display if there's an error
-                              _buildErrorDisplay(),
-                              // Show success display if payment succeeded
-                              _buildSuccessDisplay(),
-                            ],
+                              return const SizedBox.shrink();
+                            },
                           ),
-                        ),
+                          // Show error display if there's an error
+                          _buildErrorDisplay(),
+                          // Show success display if payment succeeded
+                          _buildSuccessDisplay(),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

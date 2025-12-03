@@ -35,13 +35,31 @@ class NmiKeysService {
 
       // API response structure: { "statusCode": 200, "data": { "merchant_id": "...", ... } }
       // Return the inner data object
+      Map<String, dynamic> extractedData;
       if (data['data'] != null) {
-        final extractedData = data['data'] as Map<String, dynamic>;
-        return extractedData;
+        extractedData = data['data'] as Map<String, dynamic>;
+      } else {
+        // Fallback: return the whole response if structure is different
+        extractedData = data;
       }
 
-      // Fallback: return the whole response if structure is different
-      return data;
+      // Extract security_key (try different possible field names)
+      final securityKey = extractedData['security_key']?.toString() ??
+          extractedData['securityKey']?.toString() ??
+          extractedData['securitykey']?.toString();
+
+      // Extract merchant_id
+      final merchantId = extractedData['merchant_id']?.toString();
+
+      // Print NMI keys
+      print('\n[NMI KEYS] Merchant ID: ${merchantId ?? "Not found"}');
+      print('[NMI KEYS] Security Key: ${securityKey ?? "Not found"}');
+      if (securityKey != null && securityKey.isNotEmpty) {
+        print(
+            '[NMI KEYS] Security Key Length: ${securityKey.length} characters');
+      }
+
+      return extractedData;
     } else {
       print('NMI Keys API Error: ${response.statusCode} - ${response.body}');
       throw Exception(
