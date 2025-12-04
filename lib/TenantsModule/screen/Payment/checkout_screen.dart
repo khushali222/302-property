@@ -144,12 +144,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           keysData['securityKey']?.toString() ??
           keysData['securitykey']?.toString();
 
-      // Print merchant ID and security key
+      // Print merchant ID and security key with detailed validation
       print('\n[NMI KEYS] Merchant ID: ${_merchantId ?? "Not found"}');
       print('[NMI KEYS] Security Key: ${_securityKey ?? "Not found"}');
       if (_securityKey != null && _securityKey!.isNotEmpty) {
         print(
             '[NMI KEYS] Security Key Length: ${_securityKey!.length} characters');
+
+        // Validate security key format
+        if (_securityKey!.length < 20) {
+          print(
+              '[NMI KEYS] ⚠️ WARNING: Security key seems too short (should be 32+ chars)');
+        }
+        if (_securityKey!.contains(' ')) {
+          print(
+              '[NMI KEYS] ⚠️ WARNING: Security key contains spaces - may cause auth issues');
+        }
+        if (_securityKey!.contains('\n') || _securityKey!.contains('\r')) {
+          print(
+              '[NMI KEYS] ⚠️ WARNING: Security key contains newlines - may cause auth issues');
+        }
+
+        // Show first/last few characters for verification (don't log full key for security)
+        print(
+            '[NMI KEYS] Security Key Preview: ${_securityKey!.substring(0, _securityKey!.length > 10 ? 10 : _securityKey!.length)}...${_securityKey!.substring(_securityKey!.length > 10 ? _securityKey!.length - 5 : 0)}');
+      } else {
+        print('[NMI KEYS] ❌ ERROR: Security key is missing or empty!');
+        print(
+            '[NMI KEYS] This will cause authentication failures with NMI API');
       }
 
       // Check if merchant_id exists, if not, show helpful error
@@ -522,20 +544,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               final innerToken = tokenData!['token'] as String?;
               if (innerToken != null) {
                 paymentTokenForNmi = innerToken;
-                print(
-                    '[PAYMENT] ✅ Extracted inner token as STRING (${innerToken.length} chars)');
-                print(
-                    '[PAYMENT] ✅ Token sent exactly as received from Google Pay');
-                print(
-                    '[PAYMENT] ✅ Backend will receive it as string and send to NMI correctly');
 
-                try {
-                  final parsed = jsonDecode(innerToken);
-                  print(
-                      '[PAYMENT] ✅ Token is valid JSON with keys: ${(parsed as Map).keys.toList()}');
-                } catch (e) {
-                  print('[PAYMENT] ⚠️ Token validation failed: $e');
-                }
+                // Print token only
+                print('\n[PAYMENT TOKEN]');
+                print(
+                    '═══════════════════════════════════════════════════════════');
+                print(innerToken);
+                print(
+                    '═══════════════════════════════════════════════════════════\n');
               }
             }
           }
@@ -566,21 +582,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'paymentDetails': paymentDetails,
       };
 
-      // Print token being sent to backend
-      if (paymentTokenForNmi is String) {
-        print('\n[PAYMENT] Token Format: STRING');
-        print(
-            '[PAYMENT] Token Length: ${paymentTokenForNmi.length} characters');
-        try {
-          final parsed = jsonDecode(paymentTokenForNmi) as Map<String, dynamic>;
-          print(
-              '[PAYMENT] Token Structure: ${parsed.keys.toList().join(", ")}');
-        } catch (e) {
-          print('[PAYMENT] Token validation: $e');
-        }
-      } else {
-        print('[PAYMENT] Token Format: OBJECT');
+      // Print complete data being sent from Flutter
+      print('\n[FLUTTER DATA SENT TO BACKEND]');
+      print('═══════════════════════════════════════════════════════════');
+      try {
+        final encoder = JsonEncoder.withIndent('  ');
+        final prettyJson = encoder.convert(requestBody);
+        print(prettyJson);
+      } catch (e) {
+        print(jsonEncode(requestBody));
       }
+      print('═══════════════════════════════════════════════════════════\n');
+
       final apiStartTime = DateTime.now();
       final url = Uri.parse('$Api_url/api/nmipayment/wallet-payment');
       final response = await http
@@ -604,24 +617,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         },
       );
 
-      final apiElapsed = DateTime.now().difference(apiStartTime);
-      print(
-          '[PAYMENT] ✅ Response received in ${apiElapsed.inMilliseconds}ms | Status: ${response.statusCode}');
+      // Print NMI API response
+      print('\n[NMI API RESPONSE]');
+      print('═══════════════════════════════════════════════════════════');
 
       try {
+        final encoder = JsonEncoder.withIndent('  ');
         final responseJson = jsonDecode(response.body);
-        print(
-            '[PAYMENT] Response - statusCode: ${responseJson['statusCode']} | message: ${responseJson['message'] ?? 'N/A'}');
-        if (responseJson['data'] != null) {
-          print(
-              '[PAYMENT] Transaction ID: ${responseJson['data']?['transactionid'] ?? 'N/A'}');
-          print(
-              '[PAYMENT] Response Text: ${responseJson['data']?['responsetext'] ?? 'N/A'}');
-        }
+        final prettyJson = encoder.convert(responseJson);
+        print(prettyJson);
       } catch (e) {
-        print('[PAYMENT] ⚠️ Error parsing response: $e');
-        print('[PAYMENT] Raw response: ${response.body}');
+        print(response.body);
       }
+      print('═══════════════════════════════════════════════════════════\n');
 
       // Parse response
       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -736,14 +744,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             data: responseData,
           );
         } else {
-          // Payment was processed but failed (e.g., declined card)
+          // Payment was processed but failed (e.g., declined card or auth error)
+          final responseCode =
+              responseData['data']?['response_code']?.toString() ??
+                  responseData['response_code']?.toString();
+          final responseText =
+              responseData['data']?['responsetext']?.toString() ??
+                  responseData['responsetext']?.toString() ??
+                  '';
+
+          // Check if this is an NMI authentication error
+          if (responseCode == '300' ||
+              responseText.toLowerCase().contains('authentication failed')) {
+            print(
+                '\n[PAYMENT] ❌ NMI AUTHENTICATION ERROR (Response Code: $responseCode)');
+            print(
+                '[PAYMENT] This is an NMI-side authentication failure, not a card decline');
+            print(
+                '[PAYMENT] The security_key being used by backend is incorrect or invalid');
+
+            return PaymentResponse(
+              isSuccess: false,
+              errorType: PaymentErrorType.authenticationError,
+              errorMessage:
+                  'Payment authentication failed. Please contact support. (NMI Auth Error)',
+              errorCode: responseCode ?? responseData['statusCode']?.toString(),
+              data: responseData,
+            );
+          }
+
+          // Regular payment failure (declined card, etc.)
           return PaymentResponse(
             isSuccess: false,
             errorType: PaymentErrorType.paymentFailed,
             errorMessage: responseData['message'] ??
-                responseData['error'] ??
-                'Payment was declined. Please check your payment method.',
-            errorCode: responseData['error_code']?.toString() ??
+                    responseData['error'] ??
+                    responseText.isNotEmpty
+                ? responseText
+                : 'Payment was declined. Please check your payment method.',
+            errorCode: responseCode ??
+                responseData['error_code']?.toString() ??
                 responseData['statusCode']?.toString(),
             data: responseData,
           );
@@ -761,6 +801,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
       } else if (response.statusCode == 401) {
         // Unauthorized - Authentication error
+        print('\n[PAYMENT] ❌ HTTP 401 Authentication Error');
+        print('[PAYMENT] This could be:');
+        print('  1. Your app token is invalid/expired (frontend issue)');
+        print('  2. Backend authentication failed (backend issue)');
+        print(
+            '  3. NMI security_key authentication failed (NMI/backend issue)');
+        print(
+            '[PAYMENT] Check backend logs to see which authentication layer failed');
+
         return PaymentResponse(
           isSuccess: false,
           errorType: PaymentErrorType.authenticationError,
