@@ -70,12 +70,16 @@ String generateGooglePayConfig({
 /// - App Store vs TestFlight vs development builds
 ///
 /// Important: merchantIdentifier must match the one in iOS entitlements file
-/// This is the Apple Merchant ID, NOT the NMI merchant ID
+/// This is the Apple Merchant ID, NOT the NMI merchant
+///
+///
+///
+///
 String generateApplePayConfig({
   required String amount,
   String merchantName = 'Cloud Rental Manager',
   String merchantIdentifier =
-  'merchant.com.hostmerchantservices.cloudrentalmanager',
+      'merchant.com.hostmerchantservices.cloudrentalmanager',
   String currencyCode = 'USD',
   String countryCode = 'US',
 }) {
