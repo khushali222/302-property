@@ -3206,96 +3206,375 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Container(
-                    height: 42,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.grey)),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: daterange,
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        hint: Text(
-                          "Date Range",
-                          style: TextStyle(fontSize: 14, color: Colors.black),
+                  child: DropdownButtonHideUnderline(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                daterange ?? "Date Range",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: daterange == null
+                                      ? const Color(0xFF8A95A8)
+                                      : Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                        items: const [
+                        items: [
                           DropdownMenuItem<String>(
                             value: 'Today',
-                            child: Text('Today'),
+                            child: Text(
+                              'Today',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Yesterday',
+                            child: Text(
+                              'Yesterday',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 7 Days',
+                            child: Text(
+                              'Last 7 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 14 Days',
+                            child: Text(
+                              'Last 14 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 30 Days',
+                            child: Text(
+                              'Last 30 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'This Week',
-                            child: Text('This Week'),
+                            child: Text(
+                              'This Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Week',
+                            child: Text(
+                              'Last Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'This Month',
-                            child: Text('This Month'),
+                            child: Text(
+                              'This Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           DropdownMenuItem<String>(
-                            value: 'This Year',
-                            child: Text('This Year'),
+                            value: 'Last Month',
+                            child: Text(
+                              'Last Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Quarter',
+                            child: Text(
+                              'This Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Quarter',
+                            child: Text(
+                              'Last Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Year to Date',
+                            child: Text(
+                              'Year to Date',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Year',
+                            child: Text(
+                              'Last Year',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           DropdownMenuItem<String>(
                             value: 'Custom',
-                            child: Text('Custom'),
+                            child: Text(
+                              'Custom Date',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
+                        value: daterange,
                         onChanged: (value) {
                           final dateProvider =
                               Provider.of<DateProvider>(context, listen: false);
                           setState(() {
                             daterange = value;
+                            DateTime now = DateTime.now();
+                            customdate = false;
+
                             if (value == "Today") {
-                              customdate = false;
                               String todayApiFormat = DateFormat('yyyy-MM-dd')
                                   .format(DateTime.now());
                               fromDate.text = dateProvider
                                   .formatCurrentDate(todayApiFormat);
                               toDate.text = dateProvider
                                   .formatCurrentDate(todayApiFormat);
-                            } else if (value == "This Week") {
-                              DateTime now = DateTime.now();
-                              customdate = false;
-                              String startWeekApiFormat =
-                                  DateFormat('yyyy-MM-dd').format(now.subtract(
-                                      Duration(days: now.weekday - 1)));
-                              String endWeekApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(now.add(Duration(
-                                      days:
-                                          DateTime.daysPerWeek - now.weekday)));
+                            } else if (value == "Yesterday") {
+                              DateTime yesterday =
+                                  now.subtract(Duration(days: 1));
+                              String yesterdayApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(yesterday);
                               fromDate.text = dateProvider
-                                  .formatCurrentDate(startWeekApiFormat);
+                                  .formatCurrentDate(yesterdayApiFormat);
                               toDate.text = dateProvider
-                                  .formatCurrentDate(endWeekApiFormat);
+                                  .formatCurrentDate(yesterdayApiFormat);
+                            } else if (value == "Last 7 Days") {
+                              // Last 7 Days including today: subtract 6 days (not 7)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 6));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "Last 14 Days") {
+                              // Last 14 Days including today: subtract 13 days (not 14)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 13));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "Last 30 Days") {
+                              // Last 30 Days including today: subtract 29 days (not 30)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 29));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "This Week") {
+                              // Start of current week (Monday)
+                              DateTime startOfWeek =
+                                  now.subtract(Duration(days: now.weekday - 1));
+                              // End of current week (Sunday)
+                              DateTime endOfWeek =
+                                  startOfWeek.add(Duration(days: 6));
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startOfWeek);
+                              String weekEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(endOfWeek);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(weekStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(weekEndApiFormat);
+                            } else if (value == "Last Week") {
+                              // Start of current week (Monday)
+                              DateTime startOfCurrentWeek =
+                                  now.subtract(Duration(days: now.weekday - 1));
+                              // Start of last week (Monday of last week) - subtract 7 days from current week start
+                              DateTime startOfLastWeek = startOfCurrentWeek
+                                  .subtract(Duration(days: 7));
+                              // End of last week (Sunday of last week)
+                              DateTime endOfLastWeek =
+                                  startOfLastWeek.add(Duration(days: 6));
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(startOfLastWeek);
+                              String weekEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(endOfLastWeek);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(weekStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(weekEndApiFormat);
                             } else if (value == "This Month") {
-                              customdate = false;
-                              DateTime now = DateTime.now();
-                              String startMonthApiFormat =
+                              String monthStartApiFormat =
                                   DateFormat('yyyy-MM-dd')
                                       .format(DateTime(now.year, now.month, 1));
-                              String endMonthApiFormat =
+                              String monthEndApiFormat =
                                   DateFormat('yyyy-MM-dd').format(
                                       DateTime(now.year, now.month + 1, 0));
                               fromDate.text = dateProvider
-                                  .formatCurrentDate(startMonthApiFormat);
+                                  .formatCurrentDate(monthStartApiFormat);
                               toDate.text = dateProvider
-                                  .formatCurrentDate(endMonthApiFormat);
-                            } else if (value == "This Year") {
-                              customdate = false;
-                              DateTime now = DateTime.now();
-                              String startYearApiFormat =
+                                  .formatCurrentDate(monthEndApiFormat);
+                            } else if (value == "Last Month") {
+                              DateTime lastMonth =
+                                  DateTime(now.year, now.month - 1, 1);
+                              String monthStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastMonth.year, lastMonth.month, 1));
+                              String monthEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastMonth.year, lastMonth.month + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(monthStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(monthEndApiFormat);
+                            } else if (value == "This Quarter") {
+                              int currentQuarter = ((now.month - 1) ~/ 3) + 1;
+                              int quarterStartMonth =
+                                  (currentQuarter - 1) * 3 + 1;
+                              int quarterEndMonth = currentQuarter * 3;
+                              String quarterStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, quarterStartMonth, 1));
+                              String quarterEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      now.year, quarterEndMonth + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(quarterStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(quarterEndApiFormat);
+                            } else if (value == "Last Quarter") {
+                              int currentQuarter = ((now.month - 1) ~/ 3) + 1;
+                              int lastQuarter =
+                                  currentQuarter == 1 ? 4 : currentQuarter - 1;
+                              int lastQuarterYear =
+                                  currentQuarter == 1 ? now.year - 1 : now.year;
+                              int quarterStartMonth = (lastQuarter - 1) * 3 + 1;
+                              int quarterEndMonth = lastQuarter * 3;
+                              String quarterStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastQuarterYear, quarterStartMonth, 1));
+                              String quarterEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastQuarterYear, quarterEndMonth + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(quarterStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(quarterEndApiFormat);
+                            } else if (value == "Year to Date") {
+                              String yearStartApiFormat =
                                   DateFormat('yyyy-MM-dd')
                                       .format(DateTime(now.year, 1, 1));
-                              String endYearApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(DateTime(now.year, 12, 31));
+                              String yearEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
                               fromDate.text = dateProvider
-                                  .formatCurrentDate(startYearApiFormat);
+                                  .formatCurrentDate(yearStartApiFormat);
                               toDate.text = dateProvider
-                                  .formatCurrentDate(endYearApiFormat);
+                                  .formatCurrentDate(yearEndApiFormat);
+                            } else if (value == "Last Year") {
+                              String yearStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year - 1, 1, 1));
+                              String yearEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime(now.year - 1, 12, 31));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(yearStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(yearEndApiFormat);
                             } else if (value == "Custom") {
                               customdate = true;
                             }
+
                             if (value != "Custom" && customdate == true) {
                               customdate = false;
                               fromDate.text = "";
@@ -3310,6 +3589,35 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           // Handle the selected charge type
                           print(value);
                         },
+                        buttonStyleData: ButtonStyleData(
+                          height: 42,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF8A95A8),
+                            ),
+                            color: Colors.white,
+                          ),
+                          elevation: 0,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          offset: const Offset(-20, 0),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
                       ),
                     ),
                   ),
