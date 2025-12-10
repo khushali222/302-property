@@ -91,71 +91,18 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     // Get date parameters and convert to API format (yyyy-MM-dd)
     String? fromDateParam;
     String? toDateParam;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
 
     if (_fromDateController.text.isNotEmpty) {
       // Convert display date to API format (yyyy-MM-dd)
-      String convertedDate = formatDate(_fromDateController.text);
-      // Ensure the conversion worked - if not, try manual conversion
-      if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(convertedDate)) {
-        // Manual conversion as fallback
-        try {
-          List<String> formats = [
-            'MM/dd/yyyy',
-            'M/d/yyyy',
-            'dd-MM-yyyy',
-            'd-M-yyyy',
-            'yyyy-MM-dd'
-          ];
-          DateTime? parsedDate;
-          for (String format in formats) {
-            try {
-              parsedDate = DateFormat(format).parse(_fromDateController.text);
-              break;
-            } catch (e) {
-              continue;
-            }
-          }
-          if (parsedDate != null) {
-            convertedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
-          }
-        } catch (e) {
-          print('Error converting fromDate: $e');
-        }
-      }
-      fromDateParam = convertedDate;
+      fromDateParam =
+          convertDisplayDateToApiFormat(_fromDateController.text, dateProvider);
     }
 
     if (_toDateController.text.isNotEmpty) {
       // Convert display date to API format (yyyy-MM-dd)
-      String convertedDate = formatDate(_toDateController.text);
-      // Ensure the conversion worked - if not, try manual conversion
-      if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(convertedDate)) {
-        // Manual conversion as fallback
-        try {
-          List<String> formats = [
-            'MM/dd/yyyy',
-            'M/d/yyyy',
-            'dd-MM-yyyy',
-            'd-M-yyyy',
-            'yyyy-MM-dd'
-          ];
-          DateTime? parsedDate;
-          for (String format in formats) {
-            try {
-              parsedDate = DateFormat(format).parse(_toDateController.text);
-              break;
-            } catch (e) {
-              continue;
-            }
-          }
-          if (parsedDate != null) {
-            convertedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
-          }
-        } catch (e) {
-          print('Error converting toDate: $e');
-        }
-      }
-      toDateParam = convertedDate;
+      toDateParam =
+          convertDisplayDateToApiFormat(_toDateController.text, dateProvider);
     }
 
     // Print API parameters for debugging
@@ -606,6 +553,52 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       return formatter.format(date);
     } catch (e) {
       return dateStr; // If the date is not valid, return the original string
+    }
+  }
+
+  // Convert display date back to API format (yyyy-MM-dd)
+  String convertDisplayDateToApiFormat(
+      String displayDate, DateProvider dateProvider) {
+    if (displayDate.isEmpty) return displayDate;
+
+    try {
+      // Get the current date format from DateProvider
+      String currentDateFormat = dateProvider.dateFormat;
+
+      // List of possible date formats to try
+      List<String> formatsToTry = [
+        currentDateFormat, // Try the user's preferred format first
+        'MM/dd/yyyy',
+        'M/d/yyyy',
+        'dd-MM-yyyy',
+        'd-M-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-M-d',
+      ];
+
+      DateTime? parsedDate;
+
+      // Try parsing with each format
+      for (String format in formatsToTry) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break; // Successfully parsed
+        } catch (e) {
+          continue; // Try next format
+        }
+      }
+
+      // If parsing succeeded, format as yyyy-MM-dd
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      // If all parsing attempts failed, return original (shouldn't happen)
+      print('Warning: Could not parse date: $displayDate');
+      return displayDate;
+    } catch (e) {
+      print('Error converting display date to API format: $e');
+      return displayDate;
     }
   }
 

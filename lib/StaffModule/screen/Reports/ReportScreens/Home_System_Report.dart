@@ -479,12 +479,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -521,10 +518,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("    Unit\n    Details",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("    Unit\n    Details",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text("    Unit\n    Details",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          :  Text("    Unit\n    Details",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       const SizedBox(width: 3),
                     ],
                   ),
@@ -552,10 +553,12 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     }
                   });
                 },
-                child: const Row(
+                child:  Row(
                   children: [
                     Text("       Appliance\n       Status",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -2314,12 +2317,12 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         child: Column(
           children: [
             _buildHeaders(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
+              // decoration: BoxDecoration(
+              //   border:
+              //       Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+              // ),
               child: Column(
                 children: data.units?.asMap().entries.map((entry) {
                       int rowIndex = entry.key;
@@ -2327,12 +2330,16 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       bool isRowExpanded = expandedRowIndex == rowIndex;
 
                       return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
+                              ? const Color(0xFFF4F8FF)
+                              : Colors.white,
                           border: Border.all(
-                              color: const Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color(0xFFDBE0E5)),
+                          borderRadius:
+                          BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [

@@ -475,12 +475,9 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
           right: MediaQuery.of(context).size.width > 500 ? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -493,7 +490,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                child: const Icon(
+                child: Icon(
                   Icons.expand_less,
                   color: Colors.transparent,
                 ),
@@ -523,29 +520,34 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Property",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Property",
-                              style: TextStyle(color: Colors.white)),
+                          ? Text("Property",
+                          style: TextStyle( color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15))
+                          : Text("Property",
+                          style: TextStyle( color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
-                      const SizedBox(width: 3),
+                      SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
+                          ? Padding(
+                        padding:  EdgeInsets.only(top: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortUp,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      )
+                          : Padding(
+                        padding:
+                        EdgeInsets.only(bottom: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortDown,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -574,26 +576,28 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   },
                   child: Row(
                     children: [
-                      const Text("Tenant",
-                          style: TextStyle(color: Colors.white)),
-                      const SizedBox(width: 5),
+                      Text("Tenant", style: TextStyle( color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                      SizedBox(width: 5),
                       ascending2
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
+                          ? Padding(
+                        padding:  EdgeInsets.only(top: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortUp,
+                          size: 20,
+                          color:blueColor,
+                        ),
+                      )
+                          : Padding(
+                        padding:
+                        EdgeInsets.only(bottom: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortDown,
+                          size: 20,
+                          color:blueColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1262,12 +1266,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                             ? 10
                                             : 0),
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
+
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1279,17 +1278,17 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                           entry.value;
 
                                       return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(

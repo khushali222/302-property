@@ -626,12 +626,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -644,7 +641,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: const Icon(
+              child: Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -674,10 +671,14 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("  Insurance\n  Company",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("  Insurance\n  Company",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("  Insurance\n  Company",
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15))
+                        : Text("  Insurance\n  Company",
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -723,10 +724,12 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Text("     Effective\n       Date",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     // SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -772,10 +775,12 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Text("      Expiration\n          Date",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -1939,14 +1944,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                 ),
                                 const SizedBox(height: 20),
                                 _buildHeaders(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
+
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1957,17 +1957,17 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       RentersInsuranceData lease = entry.value;
 
                                       return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(

@@ -329,12 +329,9 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -379,29 +376,33 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Property",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Property",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text("Property",
+                          style: TextStyle( color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15))
+                          :  Text("Property",
+                          style: TextStyle( color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
+                          ?  Padding(
+                        padding: EdgeInsets.only(top: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortUp,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      )
+                          :  Padding(
+                        padding: EdgeInsets.only(bottom: 7, left: 2),
+                        child: FaIcon(
+                          FontAwesomeIcons.sortDown,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -431,31 +432,35 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 },
                 child: Row(
                   children: [
-                    const SizedBox(width: 22),
+                    SizedBox(width: 22),
                     width < 400
-                        ? const Text("Lease\nEndDate",
-                            style: TextStyle(color: Colors.white, fontSize: 15))
-                        : const Text("Lease\nEndDate",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15)),
-                    const SizedBox(width: 5),
+                        ?  Text("Lease\nEndDate",
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15))
+                        :  Text("Lease\nEndDate",
+                        style:
+                        TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
+                    SizedBox(width: 5),
                     ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                        ? Padding(
+                      padding:  EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    )
+                        : Padding(
+                      padding:  EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -485,26 +490,28 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 },
                 child: Row(
                   children: [
-                    const SizedBox(width: 25),
-                    const Text("Tenant", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 25),
+                    Text("Tenant", style: TextStyle( color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                    SizedBox(width: 5),
                     ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                        ? Padding(
+                      padding:  EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    )
+                        : Padding(
+                      padding:  EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color:blueColor,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1269,13 +1276,10 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                 filters(data: data),
                                 const SizedBox(height: 10),
                                 _buildHeaders(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 // if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
+
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1289,15 +1293,16 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                       print(rental.rentalData!.rentalAddress);
                                       return Container(
                                         // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: rowIndex % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
