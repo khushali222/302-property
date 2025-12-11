@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -75,36 +76,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     //"Documents", // You can add more tabs here
     // "New Tab", ...
   ];
-  final ScrollController _scrollController = ScrollController();
-  bool _showLeftArrow = false;
-  bool _showRightArrow = true;
-  void _updateArrowVisibility() {
-    if (!_scrollController.hasClients) return;
-
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final offset = _scrollController.offset;
-
-    setState(() {
-      _showLeftArrow = offset > 0;
-      _showRightArrow = offset < maxScroll;
-    });
-  }
-
-  void _scrollLeft() {
-    _scrollController.animateTo(
-      _scrollController.offset - 250,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-  }
-
-  void _scrollRight() {
-    _scrollController.animateTo(
-      _scrollController.offset + 250,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-  }
 
   @override
   void initState() {
@@ -115,7 +86,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       });
     });
     checkInternet();
-    _scrollController.addListener(_updateArrowVisibility);
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
@@ -162,8 +132,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   List<LeaseTenant> leaseTenants = [];
   @override
   void dispose() {
-    _scrollController.removeListener(_updateArrowVisibility);
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -454,121 +422,230 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           Container(
                             height: 60,
                             margin: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 15),
-                            child: Stack(
-                              children: [
-                                // Scrollable Tab Bar
-                                Positioned.fill(
-                                  child: SingleChildScrollView(
-                                    controller: _scrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: List.generate(tabTitles.length,
-                                          (index) {
-                                        bool isSelected =
-                                            _selectedIndex == index;
+                                vertical: 5, horizontal: 0),
+                            child:
 
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _selectedIndex = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 10),
-                                            decoration: BoxDecoration(
-                                              // gradient: isSelected
-                                              //     ? LinearGradient(
-                                              //   colors: [Color(0xFF0F172A), Color(0xFF3B82F6)],
-                                              //   begin: Alignment.centerLeft,
-                                              //   end: Alignment.centerRight,
-                                              // )
-                                              //     : null,
-                                              color: isSelected
-                                                  ? blueColor
-                                                  : const Color(
-                                                      0xFFE5E7EB), // light gray
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                // Dropdown Tab Selector
+                                Container(
+                              width: double.infinity,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              // remove the dropdown default border which have underline
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                underline: const SizedBox(),
+                                hint: Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                value: tabTitles[_selectedIndex],
+                                selectedItemBuilder: (BuildContext context) {
+                                  return tabTitles.map((String item) {
+                                    int index = tabTitles.indexOf(item);
+                                    IconData iconData;
+                                    String iconPath = 'assets/icons/$item.png';
+                                    switch (index) {
+                                      case 0: // Summary
+                                        iconData = Icons.menu;
+                                        iconPath = 'assets/icons/summery.png';
+                                        break;
+                                      case 1: // Financial
+                                        iconData = Icons.attach_money;
+                                        iconPath = 'assets/icons/financial.png';
+                                        break;
+                                      case 2: // Tenant
+                                        iconData = Icons.people;
+                                        iconPath = 'assets/icons/tenants.png';
+                                        break;
+                                      case 3: // Communication
+                                        iconData = Icons.chat_bubble_outline;
+                                        iconPath =
+                                            'assets/icons/communication.png';
+                                        break;
+                                      case 4: // Renter's Insurance
+                                        iconData = Icons.shield;
+                                        iconPath = 'assets/icons/renter.png';
+                                        break;
+                                      case 5: // Documents
+                                        iconData = Icons.description;
+                                        iconPath = 'assets/icons/document.png';
+                                        break;
+                                      case 6: // Notes
+                                        iconData = Icons.note;
+                                        iconPath = 'assets/icons/note.png';
+                                        break;
+                                      default:
+                                        iconData = Icons.circle;
+                                        iconPath = 'assets/icons/summary.png';
+                                    }
+
+                                    return Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        children: [
+                                          Image.asset(iconPath,
+                                              width: 20, height: 20),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            item,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: blueColor,
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList();
+                                },
+                                items: tabTitles.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  String item = entry.value;
+                                  // icon data to image which have store in the assets/icons
+                                  String iconPath = 'assets/icons/$item.png';
+                                  IconData iconData;
+                                  switch (index) {
+                                    case 0: // Summary
+                                      iconData = Icons.menu;
+                                      iconPath = 'assets/icons/summery.png';
+                                      break;
+                                    case 1: // Financial
+                                      iconData = Icons.attach_money;
+                                      iconPath = 'assets/icons/financial.png';
+                                      break;
+                                    case 2: // Tenant
+                                      iconData = Icons.people;
+                                      iconPath = 'assets/icons/tenants.png';
+                                      break;
+                                    case 3: // Communication
+                                      iconData = Icons.chat_bubble_outline;
+                                      iconPath =
+                                          'assets/icons/communication.png';
+                                      break;
+                                    case 4: // Renter's Insurance
+                                      iconData = Icons.shield;
+                                      iconPath = 'assets/icons/renter.png';
+                                      break;
+                                    case 5: // Documents
+                                      iconData = Icons.description;
+                                      iconPath = 'assets/icons/document.png';
+                                      break;
+                                    case 6: // Notes
+                                      iconData = Icons.note;
+                                      iconPath = 'assets/icons/note.png';
+                                      break;
+                                    default:
+                                      iconData = Icons.circle;
+                                      iconPath = 'assets/icons/summary.png';
+                                  }
+
+                                  return DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        // color: Colors.green.withOpacity(0.1),
+                                        border: index < tabTitles.length - 1
+                                            ? Border(
+                                                bottom: BorderSide(
+                                                  color: blueColor
+                                                      .withOpacity(0.2),
+                                                  width: 0.5,
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(iconPath,
+                                              width: 20, height: 20),
+                                          const SizedBox(width: 12),
+                                          Expanded(
                                             child: Text(
-                                              tabTitles[index],
+                                              item,
                                               style: TextStyle(
-                                                color: isSelected
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w500,
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }),
+                                          Icon(
+                                            Icons.chevron_right,
+                                            size: 25,
+                                            color: blueColor,
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      _selectedIndex = tabTitles.indexOf(value);
+                                    });
+                                  }
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.grey.shade500!,
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
                                   ),
                                 ),
-
-                                // Left Arrow Overlay
-                                if (_showLeftArrow)
-                                  Positioned(
-                                    left: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      child: GestureDetector(
-                                        onTap: _scrollLeft,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                Color.fromRGBO(16, 24, 40, 0.8),
-                                            //border: Border.all(color: blueColor),
-                                          ),
-                                          child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 5),
-                                              child: const Icon(
-                                                  Icons.arrow_back_ios,
-                                                  size: 14,
-                                                  color: Colors.white)),
-                                        ),
-                                      ),
-                                    ),
+                                iconStyleData: IconStyleData(
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.grey,
                                   ),
-
-                                // Right Arrow Overlay
-                                if (_showRightArrow)
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: GestureDetector(
-                                      onTap: _scrollRight,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                Color.fromRGBO(16, 24, 40, 0.8),
-                                            //  border: Border.all(color: blueColor),
-                                          ),
-                                          child: const Icon(
-                                              Icons.arrow_forward_ios,
-                                              size: 14,
-                                              color: Colors.white),
-                                        ),
-                                      ),
+                                  iconSize: 24,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 380,
+                                  //padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  //  offset: const Offset(0, -5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey.shade500!,
+                                      width: 1,
                                     ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 10,
+                                        offset: const Offset(10, 10),
+                                      ),
+                                    ],
                                   ),
-                              ],
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: MenuItemStyleData(
+                                  height: 50,
+                                  padding: EdgeInsets.zero,
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.grey[100]),
+                                ),
+                              ),
                             ),
                           ),
                           _buildTabContent(snapshot.data!, context),

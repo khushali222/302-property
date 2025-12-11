@@ -829,12 +829,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     child: Row(
                       children: [
                         width < 400
-                            ?  Text("   Date",
-                                style: TextStyle(   color: blueColor,
+                            ? Text("   Date",
+                                style: TextStyle(
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15))
-                            :  Text("   Date",
-                                style: TextStyle(   color: blueColor,
+                            : Text("   Date",
+                                style: TextStyle(
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
@@ -886,7 +888,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: Row(
                     children: [
                       Text("   Subtotal",
-                          style: TextStyle(   color: blueColor,
+                          style: TextStyle(
+                              color: blueColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 15)),
                     ],
@@ -919,7 +922,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: Row(
                     children: [
                       Text("     Record",
-                          style: TextStyle(   color: blueColor,
+                          style: TextStyle(
+                              color: blueColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 15)),
                     ],
@@ -1912,7 +1916,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             border: Border.all(
                                                 color: const Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -2172,7 +2176,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                 'Type:',
                                                                                 _getDisplayValue(tenant.paymentType),
                                                                                 'Txn Date:',
-                                                                                _getDisplayValue(dateProvider.formatCurrentDate('${tenant.entry?.first.date}'))),
+                                                                                _getDisplayValue(tenant.entry != null && tenant.entry!.isNotEmpty ? dateProvider.formatCurrentDate('${tenant.entry!.first.date}') : 'N/A')),
                                                                             _buildTableRow(
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),

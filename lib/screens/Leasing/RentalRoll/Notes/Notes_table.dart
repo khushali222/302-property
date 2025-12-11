@@ -519,12 +519,9 @@ class _NotesTableState extends State<NotesTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -548,11 +545,15 @@ class _NotesTableState extends State<NotesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Date",
-                            style: TextStyle(color: Colors.white, fontSize: 15))
-                        : const Text("Date",
+                        ?  Text("Date",
+                            style: TextStyle(color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        :  Text("Date",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 15)),
+                                TextStyle(color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     // ascending1
@@ -580,7 +581,9 @@ class _NotesTableState extends State<NotesTable> {
               child: Row(
                 children: [
                   Text("Note Type",
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                      style: TextStyle(color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                   SizedBox(width: 5),
                   // ascending2
                   //     ? Padding(
@@ -722,13 +725,8 @@ class _NotesTableState extends State<NotesTable> {
                       child: Column(
                         children: [
                           _buildHeaders(),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -738,17 +736,17 @@ class _NotesTableState extends State<NotesTable> {
                                     expandedRowIndex == rowIndex;
 
                                 return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 6),
                                   decoration: BoxDecoration(
                                     color: rowIndex % 2 != 0
-                                        ? Colors.white
-                                        : blueColor.withOpacity(0.09),
+                                        ? const Color(0xFFF4F8FF)
+                                        : Colors.white,
                                     border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
+                                        color: const Color(0xFFDBE0E5)),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
                                   ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -907,120 +905,112 @@ class _NotesTableState extends State<NotesTable> {
                                                   ),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
                                                     children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            final shouldRefresh =
-                                                                await showNoteDialog(
-                                                                    context,
-                                                                    noteId: item
-                                                                        .noteId,
-                                                                    content: item
-                                                                        .content,
-                                                                    adminId: item
-                                                                        .adminId,
-                                                                    leaseId: item
-                                                                        .leaseId,
-                                                                    noteType: item
-                                                                        .noteType);
-                                                            if (shouldRefresh ==
-                                                                true) {
-                                                              setState(() {
-                                                                _futureleasenotes =
-                                                                    fetchleasenotedata(); // or whatever your data refresh method is
-                                                              });
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          final shouldRefresh =
+                                                              await showNoteDialog(
+                                                                  context,
+                                                                  noteId: item
+                                                                      .noteId,
+                                                                  content: item
+                                                                      .content,
+                                                                  adminId: item
+                                                                      .adminId,
+                                                                  leaseId: item
+                                                                      .leaseId,
+                                                                  noteType: item
+                                                                      .noteType);
+                                                          if (shouldRefresh ==
+                                                              true) {
+                                                            setState(() {
+                                                              _futureleasenotes =
+                                                                  fetchleasenotedata(); // or whatever your data refresh method is
+                                                            });
+                                                          }
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50), // color:Colors.grey[100],
+                                                          child: const Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 15,
                                                                 color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                                    .green,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        width: 5,
+                                                        width: 10,
                                                       ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            _showDeleteAlert(
-                                                                context,
-                                                                item.noteId ??
-                                                                    "");
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size: 15,
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Delete",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          _showDeleteAlert(
+                                                              context,
+                                                              item.noteId ??
+                                                                  "");
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .red
+                                                                  .shade50),
+                                                          child: const Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .red,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                        width: 15,
+                                                      ),
                                                     ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
                                                   ),
                                                 ],
                                               ),

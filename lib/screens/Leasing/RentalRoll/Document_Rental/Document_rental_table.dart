@@ -82,12 +82,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -99,22 +96,26 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 color: Colors.transparent,
               ),
             ),
-            const Expanded(
+             Expanded(
               child: Row(
                 children: [
                   Text(" Document\nType",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                      style: TextStyle(color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                   SizedBox(width: 5),
                 ],
               ),
             ),
-            const Expanded(
+             Expanded(
               child: Row(
                 children: [
                   Text("    Document\n    Name",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 15)),
+                      style: TextStyle(color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                   SizedBox(width: 5),
                 ],
               ),
@@ -126,14 +127,17 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("           Date ",
+                          ?  Text("           Date ",
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15
                           ))
-                          : const Text("           Date ",
+                          :  Text("           Date ",
                           style:
-                          TextStyle(color: Colors.white, fontSize: 15)),
+                          TextStyle(color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                     ],
@@ -324,13 +328,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                     children: [
                       const SizedBox(height: 5),
                       _buildHeaders(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Color.fromRGBO(152, 162, 179, .5))),
-                        // decoration: BoxDecoration(
-                        //     border: Border.all(color: blueColor)),
                         child: Column(
                           children:
                           currentPageData.asMap().entries.map((entry) {
@@ -339,16 +338,17 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                             bool isRowExpanded = expandedRowIndex == rowIndex;
 
                             return Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 6),
                               decoration: BoxDecoration(
                                 color: rowIndex % 2 != 0
-                                    ? Colors.white
-                                    : blueColor.withOpacity(0.09),
+                                    ? const Color(0xFFF4F8FF)
+                                    : Colors.white,
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5)),
+                                    color: const Color(0xFFDBE0E5)),
+                                borderRadius:
+                                BorderRadius.circular(10),
                               ),
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: blueColor),
-                              // ),
                               child: Column(
                                 children: <Widget>[
                                   ListTile(
@@ -511,79 +511,71 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               ),
                                               SizedBox(height: 5),
                                               Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .end,
                                                 children: [
-                                                  Expanded(
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        // print("calling");
-                                                        // print( "${image_url}${item["document_name"]}");
-                                                        // const PDF().fromUrl(
-                                                        //  "${image_url}${item["document_name"]}",
-                                                        //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                        //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                        // );
-                                                        // String pdfUrl =
-                                                        //     "${image_url}${item["document_name"]}";
-                                                        // print(
-                                                        //     "Opening PDF: $pdfUrl");
-                                                        // Navigator.push(
-                                                        //   context,
-                                                        //   MaterialPageRoute(
-                                                        //     builder: (context) =>
-                                                        //         PDFViewerScreen(
-                                                        //             pdfUrl:
-                                                        //             pdfUrl),
-                                                        //   ),
-                                                        // );
-                                                        // showPdfDialog(context, pdfUrl);
-                                                      },
-                                                      child: Container(
-                                                        height: 40,
-                                                        decoration:
-                                                        BoxDecoration(
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // print("calling");
+                                                      // print( "${image_url}${item["document_name"]}");
+                                                      // const PDF().fromUrl(
+                                                      //  "${image_url}${item["document_name"]}",
+                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                      // );
+                                                      // String pdfUrl =
+                                                      //     "${image_url}${item["document_name"]}";
+                                                      // print(
+                                                      //     "Opening PDF: $pdfUrl");
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         PDFViewerScreen(
+                                                      //             pdfUrl:
+                                                      //             pdfUrl),
+                                                      //   ),
+                                                      // );
+                                                      // showPdfDialog(context, pdfUrl);
+                                                    },
+                                                    child:
+                                                    Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade200,
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            8),
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .eye,
+                                                            size: 15,
                                                             color: Colors
-                                                                .grey[350]),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Image.asset(
-                                                              'assets/icons/view.png',
-                                                              color: blueColor,
-                                                            ),
-                                                            // FaIcon(
-                                                            //   FontAwesomeIcons.trashCan,
-                                                            //   size: 15,
-                                                            //   color:blueColor,
-                                                            // ),
-                                                            SizedBox(
-                                                              width: 8,
-                                                            ),
-                                                            Text(
-                                                              "View Document",
-                                                              style: TextStyle(
-                                                                  fontSize: 11,
-                                                                  color:
-                                                                  blueColor,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                            )
-                                                          ],
-                                                        ),
+                                                                .black,
+                                                          ),
+                                                          SizedBox(
+                                                              width: 2),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 5),
-                                                  Expanded(
-                                                    child: GestureDetector(
+                                                  SizedBox(width: 10),
+                                                  GestureDetector(
                                                       onTap: () {
                                                         // print("calling");
                                                         // print( "${image_url}${item["document_name"]}");
@@ -595,13 +587,19 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                        _showDeleteAlert(context,item["document_id"] );
                                                         // showPdfDialog(context, pdfUrl);
                                                       },
-                                                      child: Container(
-                                                        height: 40,
-                                                        decoration:
-                                                        BoxDecoration(
+                                                      child:
+                                                      Container(
+                                                        height: 35,
+                                                        width: 35,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
                                                             color: Colors
-                                                                .grey[350]),
-                                                        child: Row(
+                                                                .red
+                                                                .shade50),
+                                                        child: const Row(
                                                           mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
@@ -609,34 +607,22 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                           CrossAxisAlignment
                                                               .center,
                                                           children: [
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-
                                                             FaIcon(
-                                                              FontAwesomeIcons.trashCan,
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
                                                               size: 15,
-                                                              color:blueColor,
+                                                              color: Colors
+                                                                  .red,
                                                             ),
-                                                            SizedBox(
-                                                              width: 8,
-                                                            ),
-                                                            Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                  fontSize: 11,
-                                                                  color:
-                                                                  blueColor,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                            )
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  SizedBox(width: 15),
                                                 ],
+                                              ),
+                                              SizedBox(
+                                                height: 15,
                                               ),
                                             ],
                                           ),

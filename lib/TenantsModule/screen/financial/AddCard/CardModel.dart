@@ -253,20 +253,6 @@ class BillingData {
       print('billing_id is ${json["billing_id"]}');
     }
 
-    String? email;
-    if (json["email"] is String) {
-      email = json["email"] as String?;
-    } else if (json["email"] is Map) {
-      email = null;
-    }
-    
-    String? address1;
-    if (json["address_1"] is String) {
-      address1 = json["address_1"] as String?;
-    } else if (json["address_1"] is Map) {
-      address1 = null;
-    }
-
     return BillingData(
         firstName: firstName,
         lastName: lastName,
@@ -277,8 +263,9 @@ class BillingData {
         cvv: cvv,
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
-        email: email,
-        address_1: address1,
+        email: json["email"].runtimeType == Map ? null : json["email"],
+        address_1:
+            json["address_1"].runtimeType == Map ? null : json["address_1"],
         company: companyName);
   }
 }

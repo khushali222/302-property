@@ -963,7 +963,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                   rentals
                                                                       .rentalownerId!);
                                                             },
-                                                            child: Container(
+                                                            child:
+                                                            Container(
                                                               height: 35,
                                                               width: 35,
                                                               decoration: BoxDecoration(
@@ -1015,7 +1016,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                 });
                                                               }
                                                             },
-                                                            child: Container(
+                                                            child:
+                                                            Container(
                                                               height: 35,
                                                               width: 35,
                                                               decoration: BoxDecoration(
@@ -1061,7 +1063,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                                 rentals,
                                                                           )));
                                                             },
-                                                            child: Container(
+                                                            child:
+                                                            Container(
                                                               height: 35,
                                                               width: 35,
                                                               decoration:

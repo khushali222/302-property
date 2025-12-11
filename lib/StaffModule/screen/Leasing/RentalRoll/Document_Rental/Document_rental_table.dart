@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
@@ -70,7 +72,84 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       return [];
     }
   }
+  reloadScreen(){
+    setState(() {
+      _futureRentersInsurance = fetchRentersInsuranceData();
+    });
+  }
+  void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Do You want to delete this document?",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            await deleteNote(noteid: id);
+            reloadScreen();
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
+  Future<Map<String, dynamic>> deleteNote({
+    required String noteid,
+  }) async {
+    try {
+      final Uri uri = Uri.parse('$Api_url/api/lease-document/delete-document/$noteid');
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? adminid = prefs.getString('adminId');
+      String? id = prefs.getString("staff_id");
+      final http.Response response = await http.delete(
+        uri,
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({}),
+      );
+
+      var responseData = json.decode(response.body);
+      print(response.body);
+      // print(renters_insurance_id);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        Navigator.of(context).pop();
+        return json.decode(response.body);
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to delete Insurance');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete Insurance: $e');
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -82,15 +161,11 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -100,44 +175,50 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 color: Colors.transparent,
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Row(
                 children: [
                   Text(" Document\nType",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white,fontSize: 15)),
+                      style: TextStyle(color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                   SizedBox(width: 5),
-
                 ],
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Row(
                 children: [
                   Text("    Document\n    Name",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white,fontSize: 15)),
+                      style: TextStyle(color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                   SizedBox(width: 5),
-
                 ],
               ),
             ),
-
             Expanded(
               child: InkWell(
-
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("           Date ",
-                          style: TextStyle(color: Colors.white ,fontSize: 15,))
-                          : const Text("           Date ",
-                          style: TextStyle(color: Colors.white,fontSize: 15)),
+                          ?  Text("           Date ",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15
+                          ))
+                          :  Text("           Date ",
+                          style:
+                          TextStyle(color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-
                     ],
                   ),
                 ),
@@ -276,14 +357,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                     children: [
                       const SizedBox(height: 5),
                       _buildHeaders(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Color.fromRGBO(
-                                    152, 162, 179, .5))),
-                        // decoration: BoxDecoration(
-                        //     border: Border.all(color: blueColor)),
                         child: Column(
                           children: currentPageData
                               .asMap()
@@ -295,17 +370,17 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                 expandedRowIndex == rowIndex;
 
                             return Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 6),
                               decoration: BoxDecoration(
                                 color: rowIndex % 2 != 0
-                                    ? Colors.white
-                                    : blueColor.withOpacity(0.09),
+                                    ? const Color(0xFFF4F8FF)
+                                    : Colors.white,
                                 border: Border.all(
-                                    color: Color.fromRGBO(
-                                        152, 162, 179, .5)),
+                                    color: const Color(0xFFDBE0E5)),
+                                borderRadius:
+                                BorderRadius.circular(10),
                               ),
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: blueColor),
-                              // ),
                               child: Column(
                                 children: <Widget>[
                                   ListTile(
@@ -485,77 +560,118 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               ),
                                               SizedBox(height: 5),
                                               Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .end,
                                                 children: [
-                                                  Expanded(
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        // print("calling");
-                                                        // print( "${image_url}${item["document_name"]}");
-                                                        // const PDF().fromUrl(
-                                                        //  "${image_url}${item["document_name"]}",
-                                                        //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                        //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                        // );
-                                                        // String pdfUrl =
-                                                        //     "${image_url}${item["document_name"]}";
-                                                        // print(
-                                                        //     "Opening PDF: $pdfUrl");
-                                                        // Navigator.push(
-                                                        //   context,
-                                                        //   MaterialPageRoute(
-                                                        //     builder: (context) =>
-                                                        //         PDFViewerScreen(
-                                                        //             pdfUrl:
-                                                        //             pdfUrl),
-                                                        //   ),
-                                                        // );
-                                                        // showPdfDialog(context, pdfUrl);
-                                                      },
-                                                      child: Container(
-                                                        height: 40,
-                                                        decoration:
-                                                        BoxDecoration(
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // print("calling");
+                                                      // print( "${image_url}${item["document_name"]}");
+                                                      // const PDF().fromUrl(
+                                                      //  "${image_url}${item["document_name"]}",
+                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                      // );
+                                                      // String pdfUrl =
+                                                      //     "${image_url}${item["document_name"]}";
+                                                      // print(
+                                                      //     "Opening PDF: $pdfUrl");
+                                                      // Navigator.push(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder: (context) =>
+                                                      //         PDFViewerScreen(
+                                                      //             pdfUrl:
+                                                      //             pdfUrl),
+                                                      //   ),
+                                                      // );
+                                                      // showPdfDialog(context, pdfUrl);
+                                                    },
+                                                    child:
+                                                    Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        color: Colors
+                                                            .grey
+                                                            .shade200,
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            8),
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .eye,
+                                                            size: 15,
                                                             color: Colors
-                                                                .grey[350]),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Image.asset(
-                                                              'assets/icons/view.png',
-                                                              color: blueColor,
-                                                            ),
-                                                            // FaIcon(
-                                                            //   FontAwesomeIcons.trashCan,
-                                                            //   size: 15,
-                                                            //   color:blueColor,
-                                                            // ),
-                                                            SizedBox(
-                                                              width: 8,
-                                                            ),
-                                                            Text(
-                                                              "View Document",
-                                                              style: TextStyle(
-                                                                  fontSize: 11,
-                                                                  color:
-                                                                  blueColor,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                            )
-                                                          ],
-                                                        ),
+                                                                .black,
+                                                          ),
+                                                          SizedBox(
+                                                              width: 2),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
+                                                  SizedBox(width: 10),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // print("calling");
+                                                      // print( "${image_url}${item["document_name"]}");
+                                                      // const PDF().fromUrl(
+                                                      //  "${image_url}${item["document_name"]}",
+                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                      // );
+                                                      _showDeleteAlert(context,item["document_id"] );
+                                                      // showPdfDialog(context, pdfUrl);
+                                                    },
+                                                    child:
+                                                    Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              8),
+                                                          color: Colors
+                                                              .red
+                                                              .shade50),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
+                                                            size: 15,
+                                                            color: Colors
+                                                                .red,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 15),
                                                 ],
+                                              ),
+                                              SizedBox(
+                                                height: 15,
                                               ),
                                             ],
                                           ),

@@ -1,4 +1,3 @@
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -256,12 +255,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -306,10 +302,16 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("  Insurance\n  Company",
-                              style: TextStyle(color: Colors.white ,fontSize: 15))
-                          : const Text("  Insurance\n  Company",
-                              style: TextStyle(color: Colors.white,fontSize: 15)),
+                          ? Text("  Insurance\n  Company",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("  Insurance\n  Company",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -359,7 +361,10 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 child: Row(
                   children: [
                     Text("     Expiration\n        Date",
-                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -408,7 +413,10 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 child: Row(
                   children: [
                     Text("      Effective\n         Date",
-                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -468,10 +476,11 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -508,9 +517,10 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                           // Provider.of<SelectedApplicantProvider>(context,
                           //     listen: false)
                           //     .clearApplicant();
-                          final result = await Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => LeaseAddRentersInsurance(
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LeaseAddRentersInsurance(
                                         tenantid: widget.tenantId,
                                         leaseId: widget.leaseId,
                                       )));
@@ -557,7 +567,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
 
                   const SizedBox(height: 8),
                   if (MediaQuery.of(context).size.width < 500)
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
@@ -635,14 +645,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                             child: Column(
                               children: [
                                 _buildHeaders(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -654,17 +658,17 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                           expandedRowIndex == rowIndex;
 
                                       return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: rowIndex % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(
@@ -713,7 +717,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     ),
                                                     Expanded(
                                                       flex:
-                                                      4, // Larger size for the first field
+                                                          4, // Larger size for the first field
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -778,11 +782,13 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                          item.effectiveDate?.isNotEmpty ==
-                                                              true
-                                                              ? dateProvider
-                                                              .formatCurrentDate('${item?.effectiveDate?.split('T').first}')
-                                                              : 'N/A',
+                                                        item.effectiveDate
+                                                                    ?.isNotEmpty ==
+                                                                true
+                                                            ? dateProvider
+                                                                .formatCurrentDate(
+                                                                    '${item?.effectiveDate?.split('T').first}')
+                                                            : 'N/A',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -837,12 +843,14 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                     TextSpan(
                                                                       // text: formatDate(
                                                                       //     '${Propertytype.updatedAt}'),
-                                                                      text: item.tenantDetails != null && item.tenantDetails!.isNotEmpty
-                                                                          ? item.tenantDetails!
-                                                                          .map((tenant) =>
-                                                                      '${tenant.tenantFirstName ?? '-'} ${tenant.tenantLastName ?? '-'}')
-                                                                          .join(', ')
-                                                                          : 'N/A' ,
+                                                                      text: item.tenantDetails != null &&
+                                                                              item
+                                                                                  .tenantDetails!.isNotEmpty
+                                                                          ? item
+                                                                              .tenantDetails!
+                                                                              .map((tenant) => '${tenant.tenantFirstName ?? '-'} ${tenant.tenantLastName ?? '-'}')
+                                                                              .join(', ')
+                                                                          : 'N/A',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -911,186 +919,163 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                           ),*/
                                                           ],
                                                         ),
-
                                                         SizedBox(
                                                           height: 15,
                                                         ),
                                                         Row(
-                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  var check = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                          EditRentersInsurance(tenantid: widget.tenantId, leaseId: widget.leaseId, renters_insurance_id:  item.rentersInsuranceId ?? "",)));
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                            () {
-                                                                              _futureRentersInsurance = RentersInsuranceService()
-                                                                                  .fetchRentersInsurance(widget.leaseId);
-                                                                        });
-                                                                  }
-                                                                },
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => EditRentersInsurance(
+                                                                              tenantid: widget.tenantId,
+                                                                              leaseId: widget.leaseId,
+                                                                              renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                            )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    _futureRentersInsurance =
+                                                                        RentersInsuranceService()
+                                                                            .fetchRentersInsurance(widget.leaseId);
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
                                                                       color: Colors
-                                                                              .grey[
-                                                                          350]), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                          .green,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _showDeleteAlert(
-                                                                      context,
-                                                                      item.rentersInsuranceId ??
-                                                                          "");
-                                                                },
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _showDeleteAlert(
+                                                                    context,
+                                                                    item.rentersInsuranceId ??
+                                                                        "");
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50),
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
                                                                       color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                          .red,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => ViewRentersDetails(tenantid: widget.tenantId, leaseId: widget.leaseId, renters_insurance_id:  item.rentersInsuranceId ?? "",)));
-                                                                },
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            ViewRentersDetails(
+                                                                              tenantid: widget.tenantId,
+                                                                              leaseId: widget.leaseId,
+                                                                              renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                            )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
                                                                 child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration: BoxDecoration(
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
                                                                       color: Colors
-                                                                              .grey[
-                                                                          350]),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
+                                                                          .black,
+                                                                    ),
+                                                                    SizedBox(
                                                                         width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Details",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                            2),
+                                                                  ],
                                                                 ),
                                                               ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 15,
                                                             ),
                                                           ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15,
                                                         ),
                                                       ],
                                                     ),
