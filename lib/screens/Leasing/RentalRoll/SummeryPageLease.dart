@@ -226,7 +226,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         currentpage: "Leases",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: _connectivityResult != ConnectivityResult.
+      none
           ? SingleChildScrollView(
               child: FutureBuilder<LeaseSummary>(
                   future: futureLeaseSummary,
@@ -732,7 +733,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   Widget _buildTabContent(LeaseSummary snapshot, BuildContext context) {
     switch (_selectedIndex) {
       case 0:
-        return SummaryPage();
+        return
+          SummaryPage();
       case 1:
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -951,6 +953,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   color: Colors.grey.shade600, // Icon color
                                   size: 24, // Icon size
                                 ),
+
+
                               ),
                             ],
                           ),
