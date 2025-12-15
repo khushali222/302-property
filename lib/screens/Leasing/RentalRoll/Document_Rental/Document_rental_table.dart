@@ -8,11 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Document_Rental/pdf_view.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Send_email.dart';
 import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../widgets/CustomTableShimmer.dart';
+import '../../../../widgets/file_viewer.dart';
 import 'Add_DocumentRental.dart';
 
 class DocumentRentalTable extends StatefulWidget {
@@ -517,27 +516,14 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      // print("calling");
-                                                      // print( "${image_url}${item["document_name"]}");
-                                                      // const PDF().fromUrl(
-                                                      //  "${image_url}${item["document_name"]}",
-                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                      // );
-                                                      // String pdfUrl =
-                                                      //     "${image_url}${item["document_name"]}";
-                                                      // print(
-                                                      //     "Opening PDF: $pdfUrl");
-                                                      // Navigator.push(
-                                                      //   context,
-                                                      //   MaterialPageRoute(
-                                                      //     builder: (context) =>
-                                                      //         PDFViewerScreen(
-                                                      //             pdfUrl:
-                                                      //             pdfUrl),
-                                                      //   ),
-                                                      // );
-                                                      // showPdfDialog(context, pdfUrl);
+                                                      if (item["document_name"] != null && item["document_name"].toString().isNotEmpty) {
+                                                        FileViewer.showReceiptDialog(context, item["document_name"]);
+                                                      } else {
+                                                        Fluttertoast.showToast(
+                                                          msg: "Document not available",
+                                                          backgroundColor: Colors.red,
+                                                        );
+                                                      }
                                                     },
                                                     child:
                                                     Container(

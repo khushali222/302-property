@@ -27,119 +27,134 @@ class FileViewer extends StatefulWidget {
     print('Api_url: $Api_url');
     print('Full URL would be: ${image_url}$fileName');
 
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.8,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
+    try {
+      print('=== SHOWING DIALOG ===');
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierColor: Colors.black54,
+        builder: (BuildContext dialogContext) {
+          print('=== DIALOG BUILDER CALLED ===');
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(20),
+            child: Container(
+              width: MediaQuery.of(dialogContext).size.width * 0.9,
+              height: MediaQuery.of(dialogContext).size.height * 0.8,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            fileName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const FaIcon(
+                            FontAwesomeIcons.xmark,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Expanded(
-                      //   child: Text(
-                      //     fileName,
-                      //     style: const TextStyle(
-                      //       color: Colors.white,
-                      //       fontWeight: FontWeight.bold,
-                      //       fontSize: 16,
-                      //     ),
-                      //     overflow: TextOverflow.ellipsis,
-                      //   ),
-                      // ),
-                      IconButton(
-                        icon: const FaIcon(
-                          FontAwesomeIcons.expand,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        onPressed: () => _openFullScreen(context, fileName),
-                        tooltip: 'View More',
-                      ),
-                      IconButton(
-                        icon: const FaIcon(
-                          FontAwesomeIcons.xmark,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
+                  // Content - wrapped in error boundary
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        try {
+                          return FileViewer(
+                            fileName: fileName,
+                            showInDialog: true,
+                          );
+                        } catch (e) {
+                          print('Error in FileViewer widget: $e');
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const FaIcon(
+                                  FontAwesomeIcons.triangleExclamation,
+                                  size: 64,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Error loading document',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'File: $fileName',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-                // Content
-                Expanded(
-                  child: FileViewer(
-                    fileName: fileName,
-                    showInDialog: true,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  static void _openFullScreen(BuildContext context, String fileName) {
-    // Close the dialog first
-    Navigator.of(context).pop();
-
-    // Then open full screen viewer
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FileViewer(
-          fileName: fileName,
-          showInDialog: false, // This will show full screen
-        ),
-      ),
-    );
-  }
-
-  static Future<void> _openFileExternally(
-      BuildContext context, String fileName) async {
-    try {
-      final url = '${image_url}$fileName';
-      final uri = Uri.parse(url);
-
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Cannot open file externally'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+          );
+        },
+      ).then((_) {
+        print('=== DIALOG CLOSED ===');
+      }).catchError((error) {
+        print('=== DIALOG ERROR ===');
+        print('Error: $error');
+      });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error opening file: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
+      print('Error showing dialog: $e');
+      // Fallback: Show a simple error dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to open document: ${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -155,17 +170,26 @@ class _FileViewerState extends State<FileViewer> {
   @override
   void initState() {
     super.initState();
+    print('=== FILE VIEWER INIT STATE ===');
+    print('fileName: ${widget.fileName}');
+    print('showInDialog: ${widget.showInDialog}');
     _checkFileAvailability();
   }
 
   void _checkFileAvailability() {
+    print('=== CHECKING FILE AVAILABILITY ===');
     setState(() {
       _isLoading = false;
     });
+    print('_isLoading set to false');
   }
 
   String _getFileExtension(String fileName) {
-    return fileName.split('.').last.toLowerCase();
+    final extension = fileName.split('.').last.toLowerCase();
+    print('=== FILE EXTENSION DEBUG ===');
+    print('fileName: $fileName');
+    print('extension: $extension');
+    return extension;
   }
 
   bool _isImageFile(String fileName) {
@@ -178,11 +202,23 @@ class _FileViewerState extends State<FileViewer> {
       'tiff',
       'webp'
     ];
-    return imageExtensions.contains(_getFileExtension(fileName));
+    final extension = _getFileExtension(fileName);
+    final isImage = imageExtensions.contains(extension);
+    print('=== IS IMAGE CHECK ===');
+    print('fileName: $fileName');
+    print('extension: $extension');
+    print('isImage: $isImage');
+    return isImage;
   }
 
   bool _isPdfFile(String fileName) {
-    return _getFileExtension(fileName) == 'pdf';
+    final extension = _getFileExtension(fileName);
+    final isPdf = extension == 'pdf';
+    print('=== IS PDF CHECK ===');
+    print('fileName: $fileName');
+    print('extension: $extension');
+    print('isPdf: $isPdf');
+    return isPdf;
   }
 
   String _getFileUrl() {
@@ -232,7 +268,7 @@ class _FileViewerState extends State<FileViewer> {
       fit: BoxFit.contain,
       placeholder: (context, url) {
         print('Image loading placeholder for: $url');
-        return  Center(
+        return Center(
           child: SpinKitFadingCircle(
             color: Colors.black,
             size: 45,
@@ -325,29 +361,32 @@ class _FileViewerState extends State<FileViewer> {
             color: Colors.grey[400],
           ),
           const SizedBox(height: 16),
-          Text(
-            message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                onPressed: _openFileExternally,
-                icon: const FaIcon(FontAwesomeIcons.externalLinkAlt),
-                label: const Text('Open Externally'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: blueColor,
-                  foregroundColor: Colors.white,
-                ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
               ),
-              if (!widget.showInDialog) ...[
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (!widget.showInDialog) ...[
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _openFileExternally,
+                  icon: const FaIcon(FontAwesomeIcons.externalLinkAlt),
+                  label: const Text('Open Externally'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
                   onPressed: () {
@@ -369,14 +408,19 @@ class _FileViewerState extends State<FileViewer> {
                   ),
                 ),
               ],
-            ],
-          ),
+            ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildUnsupportedFileWidget() {
+    print('=== BUILDING UNSUPPORTED FILE WIDGET ===');
+    print('fileName: ${widget.fileName}');
+    print('showInDialog: ${widget.showInDialog}');
+    print('Will show external button: ${!widget.showInDialog}');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -387,34 +431,54 @@ class _FileViewerState extends State<FileViewer> {
             color: Colors.grey[400],
           ),
           const SizedBox(height: 16),
-          Text(
-            'File type not supported for preview',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'File type not supported for preview',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(
-            'File: ${widget.fileName}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: _openFileExternally,
-            icon: const FaIcon(FontAwesomeIcons.externalLinkAlt),
-            label: const Text('Open Externally'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: blueColor,
-              foregroundColor: Colors.white,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'File: ${widget.fileName}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'URL: ${_getFileUrl()}',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[400],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (!widget.showInDialog) ...[
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _openFileExternally,
+              icon: const FaIcon(FontAwesomeIcons.externalLinkAlt),
+              label: const Text('Open Externally'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -422,22 +486,48 @@ class _FileViewerState extends State<FileViewer> {
 
   @override
   Widget build(BuildContext context) {
+    print('=== FILE VIEWER BUILD ===');
+    print('showInDialog: ${widget.showInDialog}');
+    print('fileName: ${widget.fileName}');
+    print('_isLoading: $_isLoading');
+    print('_error: $_error');
+
     // If showing in dialog, don't wrap with Scaffold
     if (widget.showInDialog) {
-      return _isLoading
-          ? const Center(
-        child: SpinKitFadingCircle(
-          color: Colors.black,
-          size: 45,
-        ),
-      )
-          : _error != null
-              ? _buildErrorWidget(_error!, FontAwesomeIcons.exclamationTriangle)
-              : _isImageFile(widget.fileName)
-                  ? _buildImageWidget()
-                  : _isPdfFile(widget.fileName)
-                      ? _buildPdfWidget()
-                      : _buildUnsupportedFileWidget();
+      print('=== BUILDING DIALOG CONTENT ===');
+
+      if (_isLoading) {
+        print('Returning loading widget');
+        return const Center(
+          child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 45,
+          ),
+        );
+      }
+
+      if (_error != null) {
+        print('Returning error widget: $_error');
+        return _buildErrorWidget(_error!, FontAwesomeIcons.exclamationTriangle);
+      }
+
+      final isImage = _isImageFile(widget.fileName);
+      final isPdf = _isPdfFile(widget.fileName);
+
+      print('=== FILE TYPE DETERMINATION ===');
+      print('isImage: $isImage');
+      print('isPdf: $isPdf');
+
+      if (isImage) {
+        print('Building image widget');
+        return _buildImageWidget();
+      } else if (isPdf) {
+        print('Building PDF widget');
+        return _buildPdfWidget();
+      } else {
+        print('Building unsupported file widget');
+        return _buildUnsupportedFileWidget();
+      }
     }
 
     // Original full-screen implementation
@@ -465,11 +555,11 @@ class _FileViewerState extends State<FileViewer> {
       ),
       body: _isLoading
           ? const Center(
-        child: SpinKitFadingCircle(
-          color: Colors.black,
-          size: 45,
-        ),
-      )
+              child: SpinKitFadingCircle(
+                color: Colors.black,
+                size: 45,
+              ),
+            )
           : _error != null
               ? _buildErrorWidget(_error!, FontAwesomeIcons.exclamationTriangle)
               : _isImageFile(widget.fileName)
