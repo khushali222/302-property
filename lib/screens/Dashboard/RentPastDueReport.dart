@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -353,12 +352,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -400,29 +396,34 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Property",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Property",
-                              style: TextStyle(color: Colors.white)),
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       const SizedBox(width: 3),
                       // Show sort indicator if sorting by property
                       if (sortKey == 'property')
                         sortOrder == 'asc'
                             ? Padding(
-                                padding: const EdgeInsets.only(top: 7, left: 2),
+                                padding: EdgeInsets.only(top: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortUp,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               )
                             : Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 7, left: 2),
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: blueColor,
                                 ),
                               ),
                     ],
@@ -455,7 +456,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 28),
-                    Text("  Tenant", style: TextStyle(color: Colors.white)),
+                    Text("  Tenant",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -487,7 +492,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 30),
-                    Text("Amount", style: TextStyle(color: Colors.white)),
+                    Text("Amount",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     // SizedBox(width: 5),
                   ],
                 ),
@@ -540,6 +549,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
+    // Get DateProvider for date formatting
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
@@ -558,7 +570,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
     pdf.addPage(
       pw.MultiPage(
@@ -591,7 +602,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text}',
+                    'Date : - ${dateProvider.formatCurrentDate(fromDate.text)}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -805,6 +816,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
     // Save to file
     final DateTime now = DateTime.now();
+    // Format date using DateProvider - use format that's safe for filenames
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_past_due_report_$formattedDate.xlsx';
 
@@ -1324,9 +1336,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
             if (currentPageData.length > 0)
               Container(
-                decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                // decoration: BoxDecoration(
+                //     border:
+                //         Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                 child: Column(
                   children: currentPageData.asMap().entries.where((entry) {
                     // Filter the data based on the search input
@@ -1352,15 +1364,13 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     //for the payment data
                     // Payment rental = entry.value;
                     return Container(
-                      // decoration: BoxDecoration(
-                      //   border: Border.all(color: blueColor),
-                      // ),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[

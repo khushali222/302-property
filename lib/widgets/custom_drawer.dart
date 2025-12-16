@@ -264,7 +264,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   size: 20,
                   color: blueColor,
                 ),
-                "Communication",
+                "Communications",
                 [
                   "Send E-mail",
                   "E-mail Logs",

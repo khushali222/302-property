@@ -26,6 +26,8 @@ import '../../../model/rental_properties.dart';
 import '../../../../provider/add_property.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/rental_properties.dart';
+import '../../../repository/Rental_ownersData.dart';
+import '../../../../Model/RentalOwnersData.dart' as RentalOwnerModel;
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
@@ -86,6 +88,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
   ];
   String? selectedApplicantStatus = 'All';
   String? selectedApplicantOcuupied = 'All';
+  String? selectedRentalOwner;
+  late Future<List<RentalOwnerModel.RentalOwnerData>> futureRentalOwnersList;
 
   List<Rentals> get _pagedData {
     if (_tableData.isEmpty) return [];
@@ -136,6 +140,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
       data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
       return data;
     });
+    futureRentalOwnersList = RentalOwnerService().fetchRentalOwners(null);
     fetchRentaladded();
     // Set initial sorting to createdAt
     sorting1 = false;
@@ -463,24 +468,23 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                  ascending1
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortUp,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              )
-                            : Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortDown,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              )
+                    ascending1
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                   ],
                 ),
               ),
@@ -1082,6 +1086,178 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   const SizedBox(
                     height: 10,
                   ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //     left: 11,
+                  //     right: 11,
+                  //   ),
+                  //   child: Row(
+                  //     children: [
+                  //       if (MediaQuery.of(context).size.width < 500)
+                  //         const SizedBox(width: 2),
+                  //       if (MediaQuery.of(context).size.width > 500)
+                  //         const SizedBox(width: 18),
+                  //       Expanded(
+                  //         flex: 1,
+                  //         child: FutureBuilder<
+                  //             List<RentalOwnerModel.RentalOwnerData>>(
+                  //           future: futureRentalOwnersList,
+                  //           builder: (context, snapshot) {
+                  //             List<String> ownerOptions = ['All'];
+                  //             if (snapshot.hasData && snapshot.data != null) {
+                  //               // Sort rental owners alphabetically by name
+                  //               List<RentalOwnerModel.RentalOwnerData>
+                  //                   sortedOwners = List.from(snapshot.data!);
+                  //               sortedOwners.sort((a, b) {
+                  //                 String nameA =
+                  //                     (a.rentalOwnername ?? '').toLowerCase();
+                  //                 String nameB =
+                  //                     (b.rentalOwnername ?? '').toLowerCase();
+                  //                 return nameA.compareTo(nameB);
+                  //               });
+                  //               ownerOptions.addAll(sortedOwners
+                  //                   .where((owner) =>
+                  //                       owner.rentalownerId != null &&
+                  //                       owner.rentalownerId!.isNotEmpty)
+                  //                   .map((owner) => owner.rentalownerId!)
+                  //                   .toList());
+                  //             }
+                  //             return DropdownButtonHideUnderline(
+                  //               child: Material(
+                  //                 elevation: 3,
+                  //                 borderRadius: BorderRadius.circular(8),
+                  //                 child: DropdownButton2<String>(
+                  //                   isExpanded: true,
+                  //                   hint: Row(
+                  //                     children: [
+                  //                       SizedBox(width: 4),
+                  //                       Expanded(
+                  //                         child: Text(
+                  //                           'Select Owner',
+                  //                           style: TextStyle(
+                  //                             fontSize: screenHeight > 677
+                  //                                 ? 13.6
+                  //                                 : 13,
+                  //                             fontWeight: FontWeight.bold,
+                  //                             color: Color(0xFF495160),
+                  //                           ),
+                  //                           overflow: TextOverflow.ellipsis,
+                  //                         ),
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                   buttonStyleData: ButtonStyleData(
+                  //                     height:
+                  //                         MediaQuery.of(context).size.width <
+                  //                                 500
+                  //                             ? 45
+                  //                             : 50,
+                  //                     padding: const EdgeInsets.only(
+                  //                         left: 8, right: 6),
+                  //                     decoration: BoxDecoration(
+                  //                       borderRadius: BorderRadius.circular(8),
+                  //                       border: Border.all(
+                  //                         color: const Color(0xFF8A95A8),
+                  //                       ),
+                  //                       color: Colors.white,
+                  //                     ),
+                  //                     elevation: 0,
+                  //                   ),
+                  //                   dropdownStyleData: DropdownStyleData(
+                  //                     maxHeight: 200,
+                  //                     width: 200,
+                  //                     decoration: BoxDecoration(
+                  //                       borderRadius: BorderRadius.circular(14),
+                  //                     ),
+                  //                     offset: const Offset(-20, 0),
+                  //                     scrollbarTheme: ScrollbarThemeData(
+                  //                       radius: const Radius.circular(40),
+                  //                       thickness: MaterialStateProperty.all(6),
+                  //                       thumbVisibility:
+                  //                           MaterialStateProperty.all(true),
+                  //                     ),
+                  //                   ),
+                  //                   menuItemStyleData: const MenuItemStyleData(
+                  //                     height: 40,
+                  //                     padding:
+                  //                         EdgeInsets.only(left: 14, right: 14),
+                  //                   ),
+                  //                   items: ownerOptions.map((String item) {
+                  //                     String displayText = item;
+                  //                     if (item != 'All' &&
+                  //                         snapshot.hasData &&
+                  //                         snapshot.data != null) {
+                  //                       try {
+                  //                         // Use sorted owners for consistent lookup
+                  //                         List<RentalOwnerModel.RentalOwnerData>
+                  //                             sortedOwners =
+                  //                             List.from(snapshot.data!);
+                  //                         sortedOwners.sort((a, b) {
+                  //                           String nameA =
+                  //                               (a.rentalOwnername ?? '')
+                  //                                   .toLowerCase();
+                  //                           String nameB =
+                  //                               (b.rentalOwnername ?? '')
+                  //                                   .toLowerCase();
+                  //                           return nameA.compareTo(nameB);
+                  //                         });
+                  //                         final owner = sortedOwners.firstWhere(
+                  //                           (o) =>
+                  //                               o.rentalownerId != null &&
+                  //                               o.rentalownerId == item,
+                  //                         );
+                  //                         displayText =
+                  //                             owner.rentalOwnername ?? item;
+                  //                       } catch (e) {
+                  //                         displayText = item;
+                  //                       }
+                  //                     }
+                  //                     return DropdownMenuItem<String>(
+                  //                       value: item,
+                  //                       child: Text(
+                  //                         displayText,
+                  //                         style: const TextStyle(
+                  //                           fontSize: 14,
+                  //                           fontWeight: FontWeight.bold,
+                  //                           color: Colors.black,
+                  //                         ),
+                  //                         overflow: TextOverflow.ellipsis,
+                  //                       ),
+                  //                     );
+                  //                   }).toList(),
+                  //                   value: selectedRentalOwner,
+                  //                   onChanged: (value) {
+                  //                     setState(() {
+                  //                       selectedRentalOwner = value;
+                  //                       if (_currentPage != 0)
+                  //                         _currentPage =
+                  //                             0; // Reset to first page when filter changes
+                  //                     });
+                  //                   },
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //       const SizedBox(width: 10),
+                  //       Expanded(
+                  //         flex: 1,
+                  //         child: Container(
+                  //             // Placeholder for count or other content
+                  //             // You can add your count widget here
+                  //             ),
+                  //       ),
+                  //       if (MediaQuery.of(context).size.width < 500)
+                  //         const SizedBox(width: 2),
+                  //       if (MediaQuery.of(context).size.width > 500)
+                  //         const SizedBox(width: 14),
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
                   // Row(
                   //   children: [
                   //     Spacer(),
@@ -1236,6 +1412,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     properties.tenantsData!.length == 0)
                                 .toList();
                           }
+
+                          if (selectedRentalOwner != null &&
+                              selectedRentalOwner != "All") {
+                            data = data
+                                .where((properties) =>
+                                    properties.rentalOwnerData?.rentalOwnerId ==
+                                    selectedRentalOwner)
+                                .toList();
+                          }
+
                           sortData(data);
 
                           // Store the filtered and sorted data
