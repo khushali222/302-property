@@ -10,7 +10,7 @@
 // TEST: Use for development and testing (works without Google Pay Console registration)
 // PRODUCTION: Use for live payments (requires Google Pay Console merchant registration)
 const String PAYMENT_ENVIRONMENT =
-    'PRODUCTION'; // Set to 'PRODUCTION' for live payments
+    'TEST'; // Change to 'PRODUCTION' for live payments
 
 /// Generate Google Pay configuration dynamically with merchant ID and amount
 String generateGooglePayConfig({
@@ -103,7 +103,7 @@ const String defaultGooglePayConfigString = '''
 {
   "provider": "google_pay",
   "data": {
-    "environment": "PRODUCTION",
+    "environment": "TEST",
     "apiVersion": 2,
     "apiVersionMinor": 0,
     "allowedPaymentMethods": [
