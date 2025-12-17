@@ -71,35 +71,35 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 padding: const EdgeInsets.all(25.0),
                 child: _brandLogoBase64 != null
                     ? Container(
-                  // color: Colors.blue,
-                  child: Image.memory(
-                    base64Decode(_brandLogoBase64!),
-                    //  height: 100,
-                    // width: 100,
-                  ),
-                )
+                        // color: Colors.blue,
+                        child: Image.memory(
+                          base64Decode(_brandLogoBase64!),
+                          //  height: 100,
+                          // width: 100,
+                        ),
+                      )
                     : Image.asset(
-                  "assets/images/logo.png",
-                  // height: 100,
-                ),
+                        "assets/images/logo.png",
+                        // height: 100,
+                      ),
               ),
               // const SizedBox(height: 5),
               buildListTile(
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                  "assets/images/tenants/dashboard1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                )
+                        "assets/images/tenants/dashboard1.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                      )
                     : SvgPicture.asset(
-                  "assets/images/tenants/dashboard.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                  color: blueColor,
-                ),
+                        "assets/images/tenants/dashboard.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                        color: blueColor,
+                      ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -192,18 +192,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                   widget.currentpage == "Upcoming Renewal"
                       ? SvgPicture.asset(
-                    "assets/images/upcoming white.svg",
-                    fit: BoxFit.cover,
-                    height: 27,
-                    width: 27,
-                  )
+                          "assets/images/upcoming white.svg",
+                          fit: BoxFit.cover,
+                          height: 27,
+                          width: 27,
+                        )
                       : SvgPicture.asset(
-                    "assets/images/upcoming renewal.svg",
-                    fit: BoxFit.cover,
-                    height: 27,
-                    width: 27,
-                    color: blueColor,
-                  ),
+                          "assets/images/upcoming renewal.svg",
+                          fit: BoxFit.cover,
+                          height: 27,
+                          width: 27,
+                          color: blueColor,
+                        ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 20,
@@ -314,7 +314,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FontAwesomeIcons.userClock,
                   size: 20,
                   color:
-                  widget.currentpage == "Staff" ? Colors.white : blueColor,
+                      widget.currentpage == "Staff" ? Colors.white : blueColor,
                 ),
                 "Staff",
                 widget.currentpage == "Staff",

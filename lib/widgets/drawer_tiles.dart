@@ -26,11 +26,11 @@ import '../screens/Staff_Member/Staffmemvertable.dart';
 import '../screens/Profile/Settings_screen.dart';
 
 Widget buildListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    bool active,
-    ) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  bool active,
+) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
@@ -43,25 +43,25 @@ Widget buildListTile(
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => Dashboard(),
+            (context) => Dashboard(),
             "Dashboard",
           );
         } else if (title == "Staff" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => StaffTable(),
+            (context) => StaffTable(),
             "Staff",
           );
         } else if (title == "Reports" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => ReportsMainScreen(),
+            (context) => ReportsMainScreen(),
             "Reports",
           );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => TabBarExample(),
+            (context) => TabBarExample(),
             "Settings",
           );
         }
@@ -108,14 +108,14 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 }
 
 Widget buildDropdownListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    List<String> subTopics,
-    List<Widget> subTopicIcons, {
-      String? selectedSubtopic,
-      bool? initvalue,
-    }) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  List<String> subTopics,
+  List<Widget> subTopicIcons, {
+  String? selectedSubtopic,
+  bool? initvalue,
+}) {
   // Check if the selectedSubtopic is in the list of subTopics
   bool isExpanded =
       selectedSubtopic != null && subTopics.contains(selectedSubtopic);
