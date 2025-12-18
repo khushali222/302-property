@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 //import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -15,8 +14,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/Model/WorkOrderSetting.dart';
-import 'package:three_zero_two_property/provider/color_theme.dart';
+import 'package:three_zero_two_property/Model/WorkOrderSetting.dart'
+    as WorkOrderModel;
 import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 
 import 'package:three_zero_two_property/repository/setting.dart';
@@ -31,15 +30,22 @@ import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
 import '../../widgets/CustomTableShimmer.dart';
-import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 import '../Rental/Tenants/add_tenants.dart';
 import 'manage_template.dart';
 import 'package:three_zero_two_property/Model/All_categories_model.dart';
 import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
+import '../Maintenance/Vendor/edit_vendor.dart' hide CustomTextField;
+import '../Maintenance/Vendor/add_vendor.dart' hide CustomTextField;
+import '../../Model/vendor.dart';
+import '../../repository/vendor_repository.dart';
 
 class TabBarExample extends StatefulWidget {
+  final String? initialTab; // Optional parameter to specify which tab to open
+
+  const TabBarExample({super.key, this.initialTab});
+
   @override
   State<TabBarExample> createState() => _TabBarExampleState();
 }
@@ -58,6 +64,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController replyToEmail = TextEditingController();
   TextEditingController categories = TextEditingController();
   late Future<List<categories_model>> futureCategories;
+  late Future<List<Vendor>> futureVendors;
   bool rentDueReminderEmail = false;
 
   String surge_id = "";
@@ -81,7 +88,18 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool iscategories = false;
   bool ismanagetemplate = false;
   bool ischargesetting = false;
+  bool isvendor = false;
   bool _isStaffUser = false;
+  // Vendor table state variables
+  String vendorSearchValue = "";
+  int vendorCurrentPage = 0;
+  int vendorItemsPerPage = 10;
+  List<int> vendorItemsPerPageOptions = [10, 25, 50, 100];
+  int? vendorExpandedIndex;
+  bool vendorSorting1 = true;
+  bool vendorSorting2 = false;
+  bool vendorAscending1 = true;
+  bool vendorAscending2 = false;
   ConnectivityResult? _connectivityResult;
   String? selectedAccount;
   // 1. Add state variables
@@ -117,11 +135,28 @@ class _TabBarExampleState extends State<TabBarExample> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       dateProvider.loadDateFormat();
+
+      // Set initial tab if specified
+      if (widget.initialTab == 'Vendor') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = true;
+        });
+      }
     });
     // _customDateController.text = customdate!;
     //  customdate = customdate ?? "2025-01-23"; // Example default date
     //  _customDateController.text = customdate!;
     futureCategories = accountRepository().fetchCategories();
+    futureVendors = VendorRepository(baseUrl: '').getVendors();
     _loadDropdownCategories();
   }
 
@@ -1534,7 +1569,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
     try {
-      Data workorder = await fetchWorkOrderSetting();
+      WorkOrderModel.Data workorder = await fetchWorkOrderSetting();
       String? entryAllowedString;
       if (workorder.workDefaults?.entryAllowed != null) {
         entryAllowedString =
@@ -1727,6 +1762,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                   },
                                   child: Container(
@@ -1774,6 +1810,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                     await fetchAccountsData();
                                     await fetchlatefeeData();
@@ -1830,6 +1867,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       isworkorder = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                   },
                                   child: Container(
@@ -1874,6 +1912,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                   },
                                   child: Container(
@@ -1927,6 +1966,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                   },
                                   child: Container(
@@ -1974,6 +2014,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -2045,6 +2086,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ismanagetemplate = true;
                                       iscategories = false;
+                                      isvendor = false;
                                       //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
                                     });
                                   },
@@ -2090,6 +2132,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       ismanagetemplate = false;
                                       iscategories = false;
+                                      isvendor = false;
                                     });
                                     await _loadDropdownCategories(); // Always fetch latest categories from backend
                                     await fetchWorkData(); // Fetch work order settings after categories are loaded
@@ -2194,6 +2237,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       ischargesetting = false;
                                       ismanagetemplate = false;
+                                      isvendor = false;
                                     });
                                   },
                                   child: Visibility(
@@ -2220,6 +2264,50 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? 15
                                                   : 20),
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color:
+                                          !isvendor ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Vendor",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: isvendor
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
                                       ),
                                     ),
                                   ),
@@ -7217,6 +7305,608 @@ class _TabBarExampleState extends State<TabBarExample> {
                               const SizedBox(height: 10),
                             ],
                           ),
+                        if (isvendor)
+                          Column(
+                            children: [
+                              const SizedBox(height: 15),
+                              // Header with Title and Add Button
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "Manage Vendor",
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 18
+                                                : 25,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final result = await Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Add_vendor()));
+                                      if (result == true) {
+                                        setState(() {
+                                          futureVendors =
+                                              VendorRepository(baseUrl: '')
+                                                  .getVendors();
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.width <
+                                                  768
+                                              ? 50
+                                              : 60,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "+ Add Vendor",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              // Search Bar
+                              Material(
+                                elevation: 3,
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color: const Color(0xFF8A95A8))),
+                                  child: TextField(
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 12
+                                                : 14),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        vendorSearchValue = value;
+                                        if (vendorCurrentPage != 0)
+                                          vendorCurrentPage = 0;
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14
+                                              : 18,
+                                          color: const Color(0xFF8A95A8),
+                                        ),
+                                        contentPadding: const EdgeInsets.only(
+                                            left: 5, bottom: 10, top: 4)),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              // Vendor Table
+                              FutureBuilder<List<Vendor>>(
+                                future: futureVendors,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return ColabShimmerLoadingWidget();
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                        child:
+                                            Text('Error: ${snapshot.error}'));
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .5,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/no_data.jpg",
+                                              height: 200,
+                                              width: 200,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              "No Data Available",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor,
+                                                  fontSize: 16),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    var data = snapshot.data!;
+                                    if (vendorSearchValue != "") {
+                                      data = snapshot.data!
+                                          .where((vendor) =>
+                                              vendor.vendorName!
+                                                  .toLowerCase()
+                                                  .contains(vendorSearchValue
+                                                      .toLowerCase()) ||
+                                              vendor.vendorPhoneNumber!
+                                                  .toLowerCase()
+                                                  .contains(vendorSearchValue
+                                                      .toLowerCase()) ||
+                                              vendor.vendorEmail!
+                                                  .toLowerCase()
+                                                  .contains(vendorSearchValue
+                                                      .toLowerCase()))
+                                          .toList();
+                                    }
+                                    vendorSortData(data);
+                                    final totalPages =
+                                        (data.length / vendorItemsPerPage)
+                                            .ceil();
+                                    final currentPageData = data
+                                        .skip(vendorCurrentPage *
+                                            vendorItemsPerPage)
+                                        .take(vendorItemsPerPage)
+                                        .toList();
+                                    return SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(height: 10),
+                                          _buildVendorHeaders(),
+                                          const SizedBox(height: 10),
+                                          Container(
+                                            child: Column(
+                                              children: currentPageData
+                                                  .asMap()
+                                                  .entries
+                                                  .map((entry) {
+                                                int index = entry.key;
+                                                bool isExpanded =
+                                                    vendorExpandedIndex ==
+                                                        index;
+                                                Vendor vendor = entry.value;
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (vendorExpandedIndex ==
+                                                          index) {
+                                                        vendorExpandedIndex =
+                                                            null;
+                                                      } else {
+                                                        vendorExpandedIndex =
+                                                            index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin: const EdgeInsets
+                                                        .symmetric(vertical: 6),
+                                                    decoration: BoxDecoration(
+                                                      color: index % 2 != 0
+                                                          ? const Color(
+                                                              0xFFF4F8FF)
+                                                          : Colors.white,
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFFDBE0E5)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        ListTile(
+                                                          contentPadding:
+                                                              EdgeInsets.zero,
+                                                          title: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: <Widget>[
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      if (vendorExpandedIndex ==
+                                                                          index) {
+                                                                        vendorExpandedIndex =
+                                                                            null;
+                                                                      } else {
+                                                                        vendorExpandedIndex =
+                                                                            index;
+                                                                      }
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    margin: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            5),
+                                                                    padding: !isExpanded
+                                                                        ? const EdgeInsets
+                                                                            .only(
+                                                                            bottom:
+                                                                                10)
+                                                                        : const EdgeInsets
+                                                                            .only(
+                                                                            top:
+                                                                                10),
+                                                                    child:
+                                                                        FaIcon(
+                                                                      isExpanded
+                                                                          ? FontAwesomeIcons
+                                                                              .sortUp
+                                                                          : FontAwesomeIcons
+                                                                              .sortDown,
+                                                                      size: 20,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        if (vendorExpandedIndex ==
+                                                                            index) {
+                                                                          vendorExpandedIndex =
+                                                                              null;
+                                                                        } else {
+                                                                          vendorExpandedIndex =
+                                                                              index;
+                                                                        }
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              8.0),
+                                                                      child:
+                                                                          Text(
+                                                                        '${vendor.vendorName}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              13,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        .08),
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    formatPhoneNumber(
+                                                                        '${vendor.vendorPhoneNumber}'),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          13,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        if (isExpanded)
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        2.0),
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    bottom: 2),
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              child: Column(
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        isExpanded
+                                                                            ? FontAwesomeIcons.sortUp
+                                                                            : FontAwesomeIcons.sortDown,
+                                                                        size:
+                                                                            50,
+                                                                        color: Colors
+                                                                            .transparent,
+                                                                      ),
+                                                                      Expanded(
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: <Widget>[
+                                                                            Text.rich(
+                                                                              TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Email : ',
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                                                                                  ),
+                                                                                  TextSpan(
+                                                                                    text: '${vendor.vendorEmail}',
+                                                                                    style: TextStyle(fontWeight: FontWeight.w700, color: grey),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          10),
+                                                                  Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () async {
+                                                                            var check = await Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                    builder: (context) => edit_vendor(
+                                                                                          vender_id: vendor.vendorId,
+                                                                                        )));
+                                                                            if (check ==
+                                                                                true) {
+                                                                              setState(() {
+                                                                                futureVendors = VendorRepository(baseUrl: '').getVendors();
+                                                                              });
+                                                                            }
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            height:
+                                                                                40,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                                              borderRadius: BorderRadius.circular(8),
+                                                                            ),
+                                                                            child:
+                                                                                const Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                FaIcon(FontAwesomeIcons.edit, size: 15, color: Colors.green),
+                                                                                SizedBox(width: 10),
+                                                                                Text("Edit", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              5),
+                                                                      Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            _showDeleteVendorAlert(context,
+                                                                                vendor.vendorId!);
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            height:
+                                                                                40,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(color: Colors.red, width: 1.5),
+                                                                              borderRadius: BorderRadius.circular(8),
+                                                                            ),
+                                                                            child:
+                                                                                const Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                                              children: [
+                                                                                FaIcon(FontAwesomeIcons.trashCan, size: 15, color: Colors.red),
+                                                                                SizedBox(width: 10),
+                                                                                Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 10),
+                                                  Material(
+                                                    elevation: 3,
+                                                    child: Container(
+                                                      height: 40,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 12.0),
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Colors.grey),
+                                                      ),
+                                                      child:
+                                                          DropdownButtonHideUnderline(
+                                                        child:
+                                                            DropdownButton<int>(
+                                                          value:
+                                                              vendorItemsPerPage,
+                                                          items:
+                                                              vendorItemsPerPageOptions
+                                                                  .map((int
+                                                                      value) {
+                                                            return DropdownMenuItem<
+                                                                int>(
+                                                              value: value,
+                                                              child: Text(value
+                                                                  .toString()),
+                                                            );
+                                                          }).toList(),
+                                                          onChanged: data
+                                                                      .length >
+                                                                  vendorItemsPerPageOptions
+                                                                      .first
+                                                              ? (newValue) {
+                                                                  setState(() {
+                                                                    vendorItemsPerPage =
+                                                                        newValue!;
+                                                                    vendorCurrentPage =
+                                                                        0;
+                                                                  });
+                                                                }
+                                                              : null,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: FaIcon(
+                                                      FontAwesomeIcons
+                                                          .circleChevronLeft,
+                                                      color:
+                                                          vendorCurrentPage == 0
+                                                              ? Colors.grey
+                                                              : blueColor,
+                                                    ),
+                                                    onPressed:
+                                                        vendorCurrentPage == 0
+                                                            ? null
+                                                            : () {
+                                                                setState(() {
+                                                                  vendorCurrentPage--;
+                                                                });
+                                                              },
+                                                  ),
+                                                  Text(
+                                                      'Page ${vendorCurrentPage + 1} of $totalPages'),
+                                                  IconButton(
+                                                    icon: FaIcon(
+                                                      FontAwesomeIcons
+                                                          .circleChevronRight,
+                                                      color: vendorCurrentPage <
+                                                              totalPages - 1
+                                                          ? blueColor
+                                                          : Colors.grey,
+                                                    ),
+                                                    onPressed:
+                                                        vendorCurrentPage <
+                                                                totalPages - 1
+                                                            ? () {
+                                                                setState(() {
+                                                                  vendorCurrentPage++;
+                                                                });
+                                                              }
+                                                            : null,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          ),
                       ],
                     ),
                   ),
@@ -7742,6 +8432,190 @@ class _TabBarExampleState extends State<TabBarExample> {
                   .DeleteCategories(categories_id: id, reason: reason.text);
               setState(() {
                 futureCategories = accountRepository().fetchCategories();
+              });
+              Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
+
+  // Vendor table helper functions
+  void vendorSortData(List<Vendor> data) {
+    if (vendorSorting1) {
+      data.sort((a, b) => vendorAscending1
+          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
+          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
+    } else if (vendorSorting2) {
+      data.sort((a, b) => vendorAscending2
+          ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
+          : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
+    }
+  }
+
+  Widget _buildVendorHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: const Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (vendorSorting1 == true) {
+                      vendorSorting2 = false;
+                      vendorAscending1 =
+                          vendorSorting1 ? !vendorAscending1 : true;
+                      vendorAscending2 = false;
+                    } else {
+                      vendorSorting1 = !vendorSorting1;
+                      vendorSorting2 = false;
+                      vendorAscending1 =
+                          vendorSorting1 ? !vendorAscending1 : true;
+                      vendorAscending2 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Name ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 3),
+                    vendorSorting1
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(FontAwesomeIcons.sortDown,
+                                size: 20, color: blueColor),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (vendorSorting2) {
+                      vendorSorting1 = false;
+                      vendorAscending2 =
+                          vendorSorting2 ? !vendorAscending2 : true;
+                      vendorAscending1 = false;
+                    } else {
+                      vendorSorting1 = false;
+                      vendorSorting2 = !vendorSorting2;
+                      vendorAscending2 =
+                          vendorSorting2 ? !vendorAscending2 : true;
+                      vendorAscending1 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Phone Number ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Phone Number",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 3),
+                    vendorSorting2
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(FontAwesomeIcons.sortDown,
+                                size: 20, color: blueColor),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Add this function to show a delete confirmation dialog for vendors
+  void _showDeleteVendorAlert(BuildContext context, String id) {
+    print("calling this delete vendor 1");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this vendor!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for deletion',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            print("calling this delete vendor 2");
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await VendorRepository(baseUrl: '')
+                  .DeleteVender(vender_id: id, reason: reason.text);
+              setState(() {
+                futureVendors = VendorRepository(baseUrl: '').getVendors();
               });
               Navigator.pop(context);
             }

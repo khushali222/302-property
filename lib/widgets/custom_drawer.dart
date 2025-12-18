@@ -229,33 +229,47 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),
-              buildDropdownListTile(
+              // Commented out Maintenance dropdown - Vendor moved to Settings
+              // buildDropdownListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.screwdriverWrench,
+              //     size: 20,
+              //     color: blueColor,
+              //   ),
+              //   "Maintenance",
+              //   ["Vendor", "Work Order"],
+              //   [
+              //     FaIcon(
+              //       FontAwesomeIcons.solidCircleUser,
+              //       size: 20,
+              //       color: widget.currentpage == "Vendor"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ), // Icon for Properties
+              //     FaIcon(
+              //       FontAwesomeIcons.bookBookmark,
+              //       size: 20,
+              //       color: widget.currentpage == "Work Order"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ), // Icon for RentalOwner
+              //     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+              //   ],
+              //   selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              // ),
+              // Work Order as direct item (Vendor moved to Settings)
+              buildListTile(
                 context,
                 FaIcon(
-                  FontAwesomeIcons.screwdriverWrench,
+                  FontAwesomeIcons.bookBookmark,
                   size: 20,
-                  color: blueColor,
+                  color: widget.currentpage == "Work Order"
+                      ? Colors.white
+                      : blueColor,
                 ),
-                "Maintenance",
-                ["Vendor", "Work Order"],
-                [
-                  FaIcon(
-                    FontAwesomeIcons.solidCircleUser,
-                    size: 20,
-                    color: widget.currentpage == "Vendor"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for Properties
-                  FaIcon(
-                    FontAwesomeIcons.bookBookmark,
-                    size: 20,
-                    color: widget.currentpage == "Work Order"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for RentalOwner
-                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-                ],
-                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+                "Work Order",
+                widget.currentpage == "Work Order",
               ),
               buildDropdownListTile(
                 context,

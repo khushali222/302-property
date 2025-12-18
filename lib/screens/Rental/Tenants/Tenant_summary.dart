@@ -2073,8 +2073,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                   onTap: () {
                                                                                     _showAlert(context, Propertytype.tenantInsuranceId!);
                                                                                   },
-                                                                                  child:
-                                                                                  Container(
+                                                                                  child: Container(
                                                                                     height: 35,
                                                                                     width: 35,
                                                                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
@@ -2729,7 +2728,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                             style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                           ),
                                                                                           TextSpan(
-                                                                                            text: '${Propertytype.rentAmount!}',
+                                                                                            text: formatCurrency(Propertytype.rentAmount),
                                                                                             style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                           ),
                                                                                         ],
@@ -4354,7 +4353,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                         fontWeight:
                                                             FontWeight.w500))),
                                                 DataCell(Text(
-                                                    '${lease.rentAmount}',
+                                                    formatCurrency(
+                                                        lease.rentAmount),
                                                     style: const TextStyle(
                                                         fontSize: 16,
                                                         color:
@@ -4431,5 +4431,18 @@ String determineStatus(String? startDate, String? endDate) {
     return 'PAST';
   } else {
     return 'ACTIVE';
+  }
+}
+
+String formatCurrency(dynamic amount) {
+  if (amount == null) return '\$0.00';
+  try {
+    // Handle both String and numeric types
+    double value = amount is String ? double.parse(amount) : amount.toDouble();
+    // Format with currency symbol and 2 decimal places
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    return formatter.format(value);
+  } catch (e) {
+    return '\$0.00';
   }
 }

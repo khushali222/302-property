@@ -5416,7 +5416,8 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutNoticeGivenDate}'),
+                dateProvider
+                    .formatCurrentDate('${tenant.moveoutNoticeGivenDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
@@ -5444,7 +5445,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutDate}'),
+                dateProvider.formatCurrentDate('${tenant.moveoutDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,

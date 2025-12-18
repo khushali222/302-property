@@ -4613,7 +4613,6 @@ class _Summery_pageState extends State<Summery_page>
                         columnWidths: const {
                           0: FlexColumnWidth(2),
                           1: FlexColumnWidth(2),
-
                         },
                         border: TableBorder(
                           horizontalInside:
@@ -4777,7 +4776,6 @@ class _Summery_pageState extends State<Summery_page>
                             columnWidths: const {
                               0: FlexColumnWidth(2),
                               1: FlexColumnWidth(2),
-
                             },
                             border: TableBorder(
                               horizontalInside: BorderSide(
@@ -6447,7 +6445,8 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutNoticeGivenDate}'),
+                dateProvider
+                    .formatCurrentDate('${tenant.moveoutNoticeGivenDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
@@ -6475,7 +6474,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutDate}'),
+                dateProvider.formatCurrentDate('${tenant.moveoutDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
