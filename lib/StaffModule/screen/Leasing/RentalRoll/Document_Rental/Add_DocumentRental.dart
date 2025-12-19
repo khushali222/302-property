@@ -45,7 +45,8 @@ class _AddDocumentState extends State<AddDocument> {
     "Insurance policy Docs",
     "Lease agreements",
     "Lease renewal offers",
-    "Lease renewal letters"
+    "Lease renewal letters",
+    "Other"
   ];
   String? selectedValue;
   bool isLoading = false;

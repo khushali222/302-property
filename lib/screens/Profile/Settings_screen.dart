@@ -4507,78 +4507,74 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 5),
-                                      Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
+                                      DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
                                           borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value:
-                                                selectedAccountName.isNotEmpty
-                                                    ? selectedAccountName
-                                                    : null,
-                                            hint: Text(
-                                              "Select Account",
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .037,
-                                                color: const Color(0xFF8A95A8),
-                                              ),
-                                            ),
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
                                             isExpanded: true,
-                                            items: [
-                                              // Static "Late Fee Income" option
-                                              DropdownMenuItem<String>(
-                                                value: "Late Fee Income",
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 13),
+                                            hint: Row(
+                                              children: [
+                                                const SizedBox(width: 4),
+                                                Expanded(
                                                   child: Text(
-                                                    "Late Fee Income",
+                                                    'Select Account',
                                                     style: TextStyle(
                                                       fontSize:
                                                           MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                      color: blueColor,
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                      color: const Color(
+                                                          0xFF8A95A8),
                                                     ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
-                                              ),
-                                              // Dynamic accounts from API
-                                              ...accounts
-                                                  .map((Setting4 account) {
+                                              ],
+                                            ),
+                                            items: [
+                                              // Combine "Late Fee Income" with accounts and sort alphabetically
+                                              ...([
+                                                "Late Fee Income",
+                                                ...accounts
+                                                    .map((a) => a.account ?? '')
+                                                    .where((a) => a.isNotEmpty)
+                                              ]..sort((a, b) => a
+                                                      .toLowerCase()
+                                                      .compareTo(
+                                                          b.toLowerCase())))
+                                                  .map((String accountName) {
                                                 return DropdownMenuItem<String>(
-                                                  value: account.account ?? '',
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 13),
-                                                    child: Text(
-                                                      account.account ?? '',
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                        color: blueColor,
-                                                      ),
+                                                  value: accountName,
+                                                  child: Text(
+                                                    accountName,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
                                                     ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
                                             ],
+                                            value:
+                                                selectedAccountName.isNotEmpty
+                                                    ? selectedAccountName
+                                                    : null,
                                             onChanged: (String? newValue) {
                                               setState(() {
                                                 selectedAccountName =
@@ -4603,6 +4599,62 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 }
                                               });
                                             },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .98, // Leave small margin
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .98, // Match button width
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Colors.white,
+                                              ),
+                                              offset: const Offset(-2, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                                thumbColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade400),
+                                                trackColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade100),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -4630,110 +4682,141 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 5),
-                                      Material(
-                                        elevation: 4,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          height: 50,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .6,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                              value:
-                                                  selectedAccountName.isNotEmpty
-                                                      ? selectedAccountName
-                                                      : null,
-                                              hint: Text(
-                                                "Select Account",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .037,
+                                      DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: Row(
+                                              children: [
+                                                const SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Select Account',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: const Color(
+                                                          0xFF8A95A8),
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            items: [
+                                              // Combine "Late Fee Income" with accounts and sort alphabetically
+                                              ...([
+                                                "Late Fee Income",
+                                                ...accounts
+                                                    .map((a) => a.account ?? '')
+                                                    .where((a) => a.isNotEmpty)
+                                              ]..sort((a, b) => a
+                                                      .toLowerCase()
+                                                      .compareTo(
+                                                          b.toLowerCase())))
+                                                  .map((String accountName) {
+                                                return DropdownMenuItem<String>(
+                                                  value: accountName,
+                                                  child: Text(
+                                                    accountName,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ],
+                                            value:
+                                                selectedAccountName.isNotEmpty
+                                                    ? selectedAccountName
+                                                    : null,
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                selectedAccountName =
+                                                    newValue ?? '';
+                                                // Handle static "Late Fee Income" option
+                                                if (newValue ==
+                                                    "Late Fee Income") {
+                                                  selectedAccountId = "";
+                                                } else {
+                                                  // Find the account ID for the selected account
+                                                  Setting4? selectedAccount =
+                                                      accounts.firstWhere(
+                                                    (account) =>
+                                                        account.account ==
+                                                        newValue,
+                                                    orElse: () => Setting4(),
+                                                  );
+                                                  selectedAccountId =
+                                                      selectedAccount
+                                                              .accountId ??
+                                                          '';
+                                                }
+                                              });
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
                                                   color:
                                                       const Color(0xFF8A95A8),
                                                 ),
+                                                color: Colors.white,
                                               ),
-                                              isExpanded: true,
-                                              items: [
-                                                // Static "Late Fee Income" option
-                                                DropdownMenuItem<String>(
-                                                  value: "Late Fee Income",
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 13),
-                                                    child: Text(
-                                                      "Late Fee Income",
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                        color: blueColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Dynamic accounts from API
-                                                ...accounts
-                                                    .map((Setting4 account) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value:
-                                                        account.account ?? '',
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 13),
-                                                      child: Text(
-                                                        account.account ?? '',
-                                                        style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ],
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  selectedAccountName =
-                                                      newValue ?? '';
-                                                  // Handle static "Late Fee Income" option
-                                                  if (newValue ==
-                                                      "Late Fee Income") {
-                                                    selectedAccountId = "";
-                                                  } else {
-                                                    // Find the account ID for the selected account
-                                                    Setting4? selectedAccount =
-                                                        accounts.firstWhere(
-                                                      (account) =>
-                                                          account.account ==
-                                                          newValue,
-                                                      orElse: () => Setting4(),
-                                                    );
-                                                    selectedAccountId =
-                                                        selectedAccount
-                                                                .accountId ??
-                                                            '';
-                                                  }
-                                                });
-                                              },
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6, // Match button width
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Colors.white,
+                                              ),
+                                              offset: const Offset(0, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                                thumbColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade400),
+                                                trackColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade100),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
                                             ),
                                           ),
                                         ),
