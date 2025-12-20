@@ -241,6 +241,9 @@ class _NotesTableState extends State<NotesTable> {
     TextEditingController contentController = content != null
         ? TextEditingController(text: content)
         : TextEditingController();
+    // Store original values for comparison when editing
+    String? originalNoteType = noteType;
+    String? originalContent = content;
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -423,6 +426,23 @@ class _NotesTableState extends State<NotesTable> {
                           onPressed: () async {
                             if (!_formKey.currentState!.validate()) return;
 
+                            // Check if editing and no changes were made
+                            if (noteId != null) {
+                              bool hasChanges =
+                                  (selectedNoteType != originalNoteType) ||
+                                      (contentController.text.trim() !=
+                                          (originalContent ?? '').trim());
+
+                              if (!hasChanges) {
+                                Fluttertoast.showToast(
+                                  msg: "No changes made",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                );
+                                return;
+                              }
+                            }
+
                             setState(() {
                               isLoading = true;
                             });
@@ -545,15 +565,16 @@ class _NotesTableState extends State<NotesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ?  Text("Date",
-                        style: TextStyle(color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15))
-                        :  Text("Date",
-                        style:
-                        TextStyle(color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
+                        ? Text("Date",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("Date",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     // ascending1
@@ -581,7 +602,8 @@ class _NotesTableState extends State<NotesTable> {
               child: Row(
                 children: [
                   Text("Note Type",
-                      style: TextStyle(color: blueColor,
+                      style: TextStyle(
+                          color: blueColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
                   SizedBox(width: 5),
@@ -736,16 +758,15 @@ class _NotesTableState extends State<NotesTable> {
                                     expandedRowIndex == rowIndex;
 
                                 return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 6),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
                                     color: rowIndex % 2 != 0
                                         ? const Color(0xFFF4F8FF)
                                         : Colors.white,
                                     border: Border.all(
                                         color: const Color(0xFFDBE0E5)),
-                                    borderRadius:
-                                    BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -905,8 +926,7 @@ class _NotesTableState extends State<NotesTable> {
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .end,
+                                                        MainAxisAlignment.end,
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       GestureDetector(
@@ -932,25 +952,24 @@ class _NotesTableState extends State<NotesTable> {
                                                             });
                                                           }
                                                         },
-                                                        child:
-                                                        Container(
+                                                        child: Container(
                                                           height: 35,
                                                           width: 35,
                                                           decoration: BoxDecoration(
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  8),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                               color: Colors
                                                                   .green
                                                                   .shade50), // color:Colors.grey[100],
                                                           child: const Row(
                                                             mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                                                CrossAxisAlignment
+                                                                    .center,
                                                             children: [
                                                               FaIcon(
                                                                 FontAwesomeIcons
@@ -973,32 +992,30 @@ class _NotesTableState extends State<NotesTable> {
                                                               item.noteId ??
                                                                   "");
                                                         },
-                                                        child:
-                                                        Container(
+                                                        child: Container(
                                                           height: 35,
                                                           width: 35,
                                                           decoration: BoxDecoration(
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  8),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                               color: Colors
-                                                                  .red
-                                                                  .shade50),
+                                                                  .red.shade50),
                                                           child: const Row(
                                                             mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                                                CrossAxisAlignment
+                                                                    .center,
                                                             children: [
                                                               FaIcon(
                                                                 FontAwesomeIcons
                                                                     .trashCan,
                                                                 size: 15,
-                                                                color: Colors
-                                                                    .red,
+                                                                color:
+                                                                    Colors.red,
                                                               ),
                                                             ],
                                                           ),

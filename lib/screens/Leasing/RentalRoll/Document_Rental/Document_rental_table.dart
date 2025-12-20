@@ -53,7 +53,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     // RentersInsuranceService service = RentersInsuranceService();
     try {
       List<Map<String, dynamic>> data =
-      await fetchDocumentRental(widget.leaseId);
+          await fetchDocumentRental(widget.leaseId);
       setState(() {
         rentersInsuranceModel = data;
         isLoading = false;
@@ -64,7 +64,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       setState(() {
         isLoading = false;
         errorMessage =
-        'Failed to load renters insurance data. Please try again later.';
+            'Failed to load renters insurance data. Please try again later.';
       });
       return [];
     }
@@ -95,24 +95,26 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 color: Colors.transparent,
               ),
             ),
-             Expanded(
+            Expanded(
               child: Row(
                 children: [
                   Text(" Document\nType",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: blueColor,
+                      style: TextStyle(
+                          color: blueColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
                   SizedBox(width: 5),
                 ],
               ),
             ),
-             Expanded(
+            Expanded(
               child: Row(
                 children: [
                   Text("    Document\n    Name",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: blueColor,
+                      style: TextStyle(
+                          color: blueColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
                   SizedBox(width: 5),
@@ -126,17 +128,16 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("           Date ",
-                          style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15
-                          ))
-                          :  Text("           Date ",
-                          style:
-                          TextStyle(color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
+                          ? Text("           Date ",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("           Date ",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                     ],
@@ -149,8 +150,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       ),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -227,14 +226,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   //     listen: false)
                   //     .clearApplicant();
                   final result =
-                  await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => AddDocument(
-                        leaseId: widget.leaseId,
-                      )));
+                      await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AddDocument(
+                                leaseId: widget.leaseId,
+                              )));
                   if (result == true) {
+                    // Force refresh by creating a new Future instance
                     setState(() {
+                      isLoading = true; // Show loading state
                       _futureRentersInsurance = fetchRentersInsuranceData();
-                      //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                     });
                   }
                 },
@@ -256,7 +256,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize:
-                        MediaQuery.of(context).size.width < 500 ? 14 : 22,
+                            MediaQuery.of(context).size.width < 500 ? 14 : 22,
                       ),
                     ),
                   ),
@@ -331,22 +331,20 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                       Container(
                         child: Column(
                           children:
-                          currentPageData.asMap().entries.map((entry) {
+                              currentPageData.asMap().entries.map((entry) {
                             int rowIndex = entry.key;
                             var item = entry.value;
                             bool isRowExpanded = expandedRowIndex == rowIndex;
 
                             return Container(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 6),
+                              margin: const EdgeInsets.symmetric(vertical: 6),
                               decoration: BoxDecoration(
                                 color: rowIndex % 2 != 0
                                     ? const Color(0xFFF4F8FF)
                                     : Colors.white,
-                                border: Border.all(
-                                    color: const Color(0xFFDBE0E5)),
-                                borderRadius:
-                                BorderRadius.circular(10),
+                                border:
+                                    Border.all(color: const Color(0xFFDBE0E5)),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
                                 children: <Widget>[
@@ -356,9 +354,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                       padding: const EdgeInsets.all(2.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                         children: <Widget>[
                                           InkWell(
                                             onTap: () {
@@ -376,9 +374,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   left: 5),
                                               padding: !isRowExpanded
                                                   ? const EdgeInsets.only(
-                                                  bottom: 10)
+                                                      bottom: 10)
                                                   : const EdgeInsets.only(
-                                                  top: 10),
+                                                      top: 10),
                                               child: FaIcon(
                                                 isRowExpanded
                                                     ? FontAwesomeIcons.sortUp
@@ -391,7 +389,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                           SizedBox(width: 2),
                                           Expanded(
                                             flex:
-                                            3, // Larger size for the first field
+                                                3, // Larger size for the first field
                                             child: Padding(
                                               padding: const EdgeInsets.only(
                                                   left: 8.0),
@@ -412,11 +410,11 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     children: [
                                                       TextSpan(
                                                         text:
-                                                        '${item["file_type"] ?? '-'}',
+                                                            '${item["file_type"] ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -458,7 +456,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                   if (isRowExpanded)
                                     Container(
                                       padding:
-                                      EdgeInsets.only(left: 2, right: 2),
+                                          EdgeInsets.only(left: 2, right: 2),
                                       margin: EdgeInsets.only(bottom: 2),
                                       child: SingleChildScrollView(
                                         child: Container(
@@ -467,14 +465,14 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                             children: [
                                               Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                 children: [
                                                   FaIcon(
                                                     isRowExpanded
                                                         ? FontAwesomeIcons
-                                                        .sortUp
+                                                            .sortUp
                                                         : FontAwesomeIcons
-                                                        .sortDown,
+                                                            .sortDown,
                                                     size: 40,
                                                     color: Colors.transparent,
                                                   ),
@@ -484,23 +482,23 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                            'Created By : ',
+                                                                'Created By : ',
                                                             style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold,
+                                                                    FontWeight
+                                                                        .bold,
                                                                 color:
-                                                                grey), // Bold and black
+                                                                    grey), // Bold and black
                                                           ),
                                                           TextSpan(
                                                             text:
-                                                            '${item["adminDetails"]["first_name"]} ${item["adminDetails"]["last_name"]}',
+                                                                '${item["adminDetails"]["first_name"]} ${item["adminDetails"]["last_name"]}',
                                                             style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold,
+                                                                    FontWeight
+                                                                        .bold,
                                                                 color:
-                                                                blueColor), // Bold and black
+                                                                    blueColor), // Bold and black
                                                           ),
                                                         ],
                                                       ),
@@ -511,99 +509,99 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                               SizedBox(height: 5),
                                               Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .end,
+                                                    MainAxisAlignment.end,
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (item["document_name"] != null && item["document_name"].toString().isNotEmpty) {
-                                                        FileViewer.showReceiptDialog(context, item["document_name"]);
+                                                      if (item["document_name"] !=
+                                                              null &&
+                                                          item["document_name"]
+                                                              .toString()
+                                                              .isNotEmpty) {
+                                                        FileViewer
+                                                            .showReceiptDialog(
+                                                                context,
+                                                                item[
+                                                                    "document_name"]);
                                                       } else {
                                                         Fluttertoast.showToast(
-                                                          msg: "Document not available",
-                                                          backgroundColor: Colors.red,
+                                                          msg:
+                                                              "Document not available",
+                                                          backgroundColor:
+                                                              Colors.red,
                                                         );
                                                       }
                                                     },
-                                                    child:
-                                                    Container(
+                                                    child: Container(
                                                       height: 35,
                                                       width: 35,
-                                                      decoration:
-                                                      BoxDecoration(
+                                                      decoration: BoxDecoration(
                                                         color: Colors
-                                                            .grey
-                                                            .shade200,
+                                                            .grey.shade200,
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(
-                                                            8),
+                                                            BorderRadius
+                                                                .circular(8),
                                                       ),
                                                       child: const Row(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                            MainAxisAlignment
+                                                                .center,
                                                         crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                         children: [
                                                           FaIcon(
                                                             FontAwesomeIcons
                                                                 .eye,
                                                             size: 15,
-                                                            color: Colors
-                                                                .black,
+                                                            color: Colors.black,
                                                           ),
-                                                          SizedBox(
-                                                              width: 2),
+                                                          SizedBox(width: 2),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
                                                   GestureDetector(
-                                                      onTap: () {
-                                                        // print("calling");
-                                                        // print( "${image_url}${item["document_name"]}");
-                                                        // const PDF().fromUrl(
-                                                        //  "${image_url}${item["document_name"]}",
-                                                        //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                        //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                        // );
-                                                       _showDeleteAlert(context,item["document_id"] );
-                                                        // showPdfDialog(context, pdfUrl);
-                                                      },
-                                                      child:
-                                                      Container(
-                                                        height: 35,
-                                                        width: 35,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                8),
-                                                            color: Colors
-                                                                .red
-                                                                .shade50),
-                                                        child: const Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                          children: [
-                                                            FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .trashCan,
-                                                              size: 15,
-                                                              color: Colors
-                                                                  .red,
-                                                            ),
-                                                          ],
-                                                        ),
+                                                    onTap: () {
+                                                      // print("calling");
+                                                      // print( "${image_url}${item["document_name"]}");
+                                                      // const PDF().fromUrl(
+                                                      //  "${image_url}${item["document_name"]}",
+                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                      // );
+                                                      _showDeleteAlert(context,
+                                                          item["document_id"]);
+                                                      // showPdfDialog(context, pdfUrl);
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .red.shade50),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
+                                                            size: 15,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
+                                                  ),
                                                   SizedBox(width: 15),
                                                 ],
                                               ),
@@ -641,7 +639,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                     child: DropdownButton<int>(
                                       value: itemsPerPage,
                                       items:
-                                      itemsPerPageOptions.map((int value) {
+                                          itemsPerPageOptions.map((int value) {
                                         return DropdownMenuItem<int>(
                                           value: value,
                                           child: Text(value.toString()),
@@ -651,7 +649,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                         setState(() {
                                           itemsPerPage = newValue!;
                                           currentPage =
-                                          0; // Reset to first page when items per page change
+                                              0; // Reset to first page when items per page change
                                         });
                                       },
                                     ),
@@ -672,10 +670,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                 onPressed: currentPage == 0
                                     ? null
                                     : () {
-                                  setState(() {
-                                    currentPage--;
-                                  });
-                                },
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
                               ),
                               Text('Page ${currentPage + 1} of $totalPages'),
                               IconButton(
@@ -687,10 +685,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                 ),
                                 onPressed: currentPage < totalPages - 1
                                     ? () {
-                                  setState(() {
-                                    currentPage++;
-                                  });
-                                }
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
                                     : null,
                               ),
                             ],
@@ -708,11 +706,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     );
   }
 
-  reloadScreen(){
+  reloadScreen() {
     setState(() {
       _futureRentersInsurance = fetchRentersInsuranceData();
     });
   }
+
   void _showDeleteAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
     Alert(
@@ -735,10 +734,11 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -751,6 +751,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       ],
     ).show();
   }
+
   Future<List<Map<String, dynamic>>> fetchDocumentRental(String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -792,7 +793,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     required String noteid,
   }) async {
     try {
-      final Uri uri = Uri.parse('$Api_url/api/lease-document/delete-document/$noteid');
+      final Uri uri =
+          Uri.parse('$Api_url/api/lease-document/delete-document/$noteid');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');

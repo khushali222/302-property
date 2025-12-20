@@ -264,9 +264,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                 leaseId: widget.leaseId,
                               )));
                   if (result == true) {
+                    // Force refresh by creating a new Future instance
                     setState(() {
+                      isLoading = true; // Show loading state
                       _futureRentersInsurance = fetchRentersInsuranceData();
-                      //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                     });
                   }
                 },
