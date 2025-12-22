@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/Utilities/Utilities_table.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../Model/All_categories_model.dart';
 import '../../../Model/Properties_revenue_model.dart';
@@ -1980,7 +1981,11 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 6 : 5
                           },
                           {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
-                          //{"title": "Property Tax", "index": isMultiUnit ? 8 : 7},
+                          // {
+                          //   "title": "Property Tax",
+                          //   "index": isMultiUnit ? 8 : 7
+                          // },
+                          // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
                         return Row(
@@ -2711,6 +2716,14 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
           return PropertyTax_page(data);
+        } else if (_selectedIndex == 8) {
+          if (isMultiUnit) {
+            return PropertyTax_page(data);
+          } else {
+            return Utilities_Page(data);
+          }
+        } else if (_selectedIndex == 9 && isMultiUnit) {
+          return Utilities_Page(data);
         }
 
         return Container();
@@ -4297,7 +4310,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Insured Values Section
+                // Historical Insured Values Section
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
@@ -4309,7 +4322,7 @@ class _Summery_pageState extends State<Summery_page>
                         width: 5,
                       ),
                     Text(
-                      "Insured Values",
+                      "Historical Insured Values",
                       style: TextStyle(
                           color: blueColor,
                           fontSize:
@@ -12979,6 +12992,10 @@ class _Summery_pageState extends State<Summery_page>
       showDrawer: false,
       showAddButton: true,
     );
+  }
+
+  Utilities_Page(List<unit_properties> unit) {
+    return Utilities_table(rentalId: widget.properties.rentalId ?? "");
   }
 
   Workorder(BuildContext context) {

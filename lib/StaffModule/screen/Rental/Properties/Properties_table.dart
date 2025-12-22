@@ -1422,13 +1422,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   .toList();
                             }
                             if (selectedApplicantStatus ==
-                                'Accepting Applicant') {
+                                'Accepting Applications') {
                               data = data
                                   .where((properties) =>
                                       properties.is_available == true)
                                   .toList();
                             } else if (selectedApplicantStatus ==
-                                'Not Accepting Applicant') {
+                                'Not Accepting Applications') {
                               data = data
                                   .where((properties) =>
                                       properties.is_available == false)
