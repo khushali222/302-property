@@ -23,6 +23,7 @@ class RentalOwnerData {
   String? postalCode;
   List<ProcessorList>? processorList;
   List<String>? processorLists;
+  String? achProcessorId;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
@@ -52,6 +53,7 @@ class RentalOwnerData {
         this.country,
         this.postalCode,
         this.processorList,
+        this.achProcessorId,
         this.createdAt,
         this.updatedAt,
         this.isDelete,
@@ -82,6 +84,7 @@ class RentalOwnerData {
     state = json['state']??"";
     country = json['country']??"";
     postalCode = json['postal_code']??"";
+    achProcessorId = json['ach_processor_id']??"";
     if (json['processor_list'] != null) {
       processorList = <ProcessorList>[];
       json['processor_list'].forEach((v) {
@@ -115,6 +118,7 @@ class RentalOwnerData {
     data['state'] = this.state;
     data['country'] = this.country;
     data['postal_code'] = this.postalCode;
+    data['ach_processor_id'] = this.achProcessorId;
     if (this.processorList != null) {
       data['processor_list'] =
           this.processorList!.map((v) => v.toJson()).toList();

@@ -154,8 +154,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
           .compareTo((b.propertysubType ?? '').toLowerCase()));
     });
 
+    // Sort property types alphabetically (A-Z)
+    var sortedKeys = groupedProperties.keys.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
     Map<String, List<propertytype>> sortedGroupedProperties = {};
-    for (var key in groupedProperties.keys) {
+    for (var key in sortedKeys) {
       sortedGroupedProperties[key] = groupedProperties[key]!;
     }
 
@@ -902,7 +906,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   BorderRadius.circular(10),
                                             ),
                                             child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<String>(
+                                              child: DropdownButton2<String>(
                                                 value: selectedProperty,
                                                 hint: Text(
                                                   'Add Property Type',
@@ -1390,6 +1394,49 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   ),
                                                 ],
                                                 isExpanded: true,
+                                                buttonStyleData:
+                                                    ButtonStyleData(
+                                                  height: 50,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Colors.transparent,
+                                                  ),
+                                                ),
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
+                                                  maxHeight: 300,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            40),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -2542,6 +2589,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     } else {
                                       List<Staffmembers> staffMembers =
                                           snapshot.data!;
+
+                                      // Sort staff members alphabetically by name (A-Z)
+                                      staffMembers.sort((a, b) =>
+                                          (a.staffmemberName ?? '')
+                                              .toLowerCase()
+                                              .compareTo(
+                                                  (b.staffmemberName ?? '')
+                                                      .toLowerCase()));
+
                                       List<DropdownMenuItem<String>>
                                           dropdownItems = staffMembers
                                               .map<DropdownMenuItem<String>>(
@@ -3706,7 +3762,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 BorderRadius.circular(10),
                                           ),
                                           child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
+                                            child: DropdownButton2<String>(
                                               value: selectedStaff,
                                               hint: Text(
                                                 'Select',
@@ -3778,6 +3834,50 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               },
                                               items: dropdownItems,
                                               isExpanded: true,
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 50,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.transparent,
+                                                ),
+                                              ),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                maxHeight: 300,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .5,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.white,
+                                                ),
+                                                offset: const Offset(0, -5),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(40),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 8),
+                                              ),
                                             ),
                                           ),
                                         ),

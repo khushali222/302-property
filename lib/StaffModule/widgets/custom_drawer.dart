@@ -62,18 +62,18 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 context,
                 widget.currentpage == "Dashboard"
                     ? SvgPicture.asset(
-                  "assets/images/tenants/dashboard1.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                )
+                        "assets/images/tenants/dashboard1.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                      )
                     : SvgPicture.asset(
-                  "assets/images/tenants/dashboard.svg",
-                  fit: BoxFit.cover,
-                  height: 20,
-                  width: 20,
-                  color: blueColor,
-                ),
+                        "assets/images/tenants/dashboard.svg",
+                        fit: BoxFit.cover,
+                        height: 20,
+                        width: 20,
+                        color: blueColor,
+                      ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
@@ -139,7 +139,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     ),
                   ],
                   selectedSubtopic:
-                  !widget.dropdown ? null : widget.currentpage,
+                      !widget.dropdown ? null : widget.currentpage,
                 ),
               // Only show Leasing section if staff has leasing-related permissions
               if (permissions != null &&
@@ -178,18 +178,18 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
 
                     widget.currentpage == "Upcoming Renewal"
                         ? SvgPicture.asset(
-                      "assets/images/upcoming white.svg",
-                      fit: BoxFit.cover,
-                      height: 27,
-                      width: 27,
-                    )
+                            "assets/images/upcoming white.svg",
+                            fit: BoxFit.cover,
+                            height: 27,
+                            width: 27,
+                          )
                         : SvgPicture.asset(
-                      "assets/images/upcoming renewal.svg",
-                      fit: BoxFit.cover,
-                      height: 27,
-                      width: 27,
-                      color: blueColor,
-                    ),
+                            "assets/images/upcoming renewal.svg",
+                            fit: BoxFit.cover,
+                            height: 27,
+                            width: 27,
+                            color: blueColor,
+                          ),
                     FaIcon(
                       FontAwesomeIcons.clock,
                       size: 20,
@@ -207,46 +207,60 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                   ],
                   selectedSubtopic:
-                  !widget.dropdown ? null : widget.currentpage,
+                      !widget.dropdown ? null : widget.currentpage,
                 ),
-              // Only show Maintenance section if staff has maintenance-related permissions
-              if (permissions != null &&
-                  (permissions.vendorView == true ||
-                      permissions.workorderView == true))
-                buildDropdownListTile(
+              // Only show Work Order if staff has workorder permission (Vendor removed - shown in Settings)
+              if (permissions != null && permissions.workorderView == true)
+                buildListTile(
                   context,
                   FaIcon(
-                    FontAwesomeIcons.screwdriverWrench,
+                    FontAwesomeIcons.bookBookmark,
                     size: 20,
-                    color: blueColor,
+                    color: widget.currentpage == "Work Order"
+                        ? Colors.white
+                        : blueColor,
                   ),
-                  "Maintenance",
-                  [
-                    if (permissions.vendorView == true) "Vendor",
-                    if (permissions.workorderView == true) "Work Order",
-                  ],
-                  [
-                    if (permissions.vendorView ?? false)
-                      FaIcon(
-                        FontAwesomeIcons.solidCircleUser,
-                        size: 20,
-                        color: widget.currentpage == "Vendor"
-                            ? Colors.white
-                            : blueColor,
-                      ), // Icon for Vendor
-                    if (permissions.workorderView ?? false)
-                      FaIcon(
-                        FontAwesomeIcons.bookBookmark,
-                        size: 20,
-                        color: widget.currentpage == "Work Order"
-                            ? Colors.white
-                            : blueColor,
-                      ), // Icon for RentalOwner
-                    //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-                  ],
-                  selectedSubtopic:
-                  !widget.dropdown ? null : widget.currentpage,
+                  "Work Order",
+                  widget.currentpage == "Work Order",
                 ),
+              // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
+              // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Order in future
+              // if (permissions != null &&
+              //     (permissions.vendorView == true ||
+              //         permissions.workorderView == true))
+              //   buildDropdownListTile(
+              //     context,
+              //     FaIcon(
+              //       FontAwesomeIcons.screwdriverWrench,
+              //       size: 20,
+              //       color: blueColor,
+              //     ),
+              //     "Maintenance",
+              //     [
+              //       if (permissions.vendorView == true) "Vendor",
+              //       if (permissions.workorderView == true) "Work Order",
+              //     ],
+              //     [
+              //       if (permissions.vendorView ?? false)
+              //         FaIcon(
+              //           FontAwesomeIcons.solidCircleUser,
+              //           size: 20,
+              //           color: widget.currentpage == "Vendor"
+              //               ? Colors.white
+              //               : blueColor,
+              //         ), // Icon for Vendor
+              //       if (permissions.workorderView ?? false)
+              //         FaIcon(
+              //           FontAwesomeIcons.bookBookmark,
+              //           size: 20,
+              //           color: widget.currentpage == "Work Order"
+              //               ? Colors.white
+              //               : blueColor,
+              //         ), // Icon for Work Order
+              //     ],
+              //     selectedSubtopic:
+              //     !widget.dropdown ? null : widget.currentpage,
+              //   ),
               buildDropdownListTile(
                 context,
                 FaIcon(

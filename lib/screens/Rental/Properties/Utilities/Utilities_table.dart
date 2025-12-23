@@ -45,6 +45,7 @@ class _Utilities_tableState extends State<Utilities_table> {
       final fetchedUnits = await _unitRepository.fetchunit(widget.rentalId);
       setState(() {
         units = fetchedUnits;
+        // Set isMultiUnit based on number of units - this determines if dropdown should show
         isMultiUnit = fetchedUnits.length > 1;
         if (fetchedUnits.isNotEmpty) {
           selectedUnit = fetchedUnits.first;
@@ -64,13 +65,17 @@ class _Utilities_tableState extends State<Utilities_table> {
       return [];
     }
 
-    if (!isMultiUnit || selectedUnit == null) {
-      // Single unit - return all utilities
+    // Check if utilities have unit_id (grouped by unit)
+    bool utilitiesHaveUnitId =
+        utilitiesByUnit!.keys.any((key) => key != 'single');
+
+    if (!utilitiesHaveUnitId || selectedUnit == null) {
+      // No unit_id in utilities or no unit selected - return all utilities
       return utilitiesByUnit!['single'] ??
           utilitiesByUnit!.values.expand((list) => list).toList();
     }
 
-    // Multi unit - return utilities for selected unit
+    // Utilities have unit_id - return utilities for selected unit
     String unitId = selectedUnit!.unitId ?? '';
     return utilitiesByUnit![unitId] ?? [];
   }
@@ -113,7 +118,8 @@ class _Utilities_tableState extends State<Utilities_table> {
 
           setState(() {
             isLoading = false;
-            isMultiUnit = hasUnitId;
+            // Don't change isMultiUnit here - it's set by _loadUnits based on unit count
+            // This allows dropdown to show even when no utilities exist yet
             if (hasUnitId) {
               // Group by unit_id
               utilitiesByUnit = {};
@@ -124,9 +130,24 @@ class _Utilities_tableState extends State<Utilities_table> {
                 }
                 utilitiesByUnit![unitId]!.add(utility);
               }
+              // Update selectedUnit to match utilities if needed
+              if (units != null && units!.isNotEmpty) {
+                // Find the first unit that has utilities
+                for (var unit in units!) {
+                  if (utilitiesByUnit!.containsKey(unit.unitId)) {
+                    selectedUnit = unit;
+                    break;
+                  }
+                }
+                // If no matching unit found, keep current selectedUnit or use first unit
+                if (selectedUnit == null) {
+                  selectedUnit = units!.first;
+                }
+              }
             } else {
-              // Single unit - store all utilities under a single key
+              // No unit_id in utilities - store all utilities under a single key
               utilitiesByUnit = {'single': utilities};
+              // Keep selectedUnit so dropdown can still work for adding new utilities
             }
             isLoading = false;
             errorMessage = null;

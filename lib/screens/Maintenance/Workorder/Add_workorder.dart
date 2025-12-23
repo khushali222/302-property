@@ -299,8 +299,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               data['rental_adress'].toString();
         });
 
+        // Sort properties alphabetically by address (A-Z)
+        final sortedEntries = addresses.entries.toList()
+          ..sort(
+              (a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase()));
+        final sortedAddresses = Map<String, String>.fromEntries(sortedEntries);
+
         setState(() {
-          properties = addresses;
+          properties = sortedAddresses;
           _isLoading = false;
         });
       } else {
@@ -1816,11 +1822,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
+                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -4856,12 +4868,20 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
+                                                      maxHeight: 300,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .5,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(6),
                                                         color: Colors.white,
                                                       ),
+                                                      offset:
+                                                          const Offset(0, -5),
                                                       scrollbarTheme:
                                                           ScrollbarThemeData(
                                                         radius: const Radius
