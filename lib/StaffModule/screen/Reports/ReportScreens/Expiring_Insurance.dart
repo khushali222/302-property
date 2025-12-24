@@ -672,13 +672,15 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   children: [
                     width < 400
                         ? Text("  Insurance\n  Company",
-                        style: TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
                         : Text("  Insurance\n  Company",
-                        style: TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -727,7 +729,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     Text("     Effective\n       Date",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     // SizedBox(width: 5),
@@ -778,7 +781,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     Text("      Expiration\n          Date",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -1684,8 +1688,32 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                               child: ColabShimmerLoadingWidget(),
                             );
                           } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No expiring insurance found",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Container(
@@ -1946,7 +1974,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1966,7 +1993,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -2396,8 +2423,32 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             ConnectionState.waiting) {
                           return ShimmerTabletTable();
                         } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No expiring insurance found",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(

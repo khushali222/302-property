@@ -671,11 +671,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   children: [
                     width < 400
                         ? Text("  Insurance\n  Company",
-                            style: TextStyle( color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15))
                         : Text("  Insurance\n  Company",
-                            style: TextStyle( color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -726,7 +728,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     Text("     Effective\n       Date",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     // SizedBox(width: 5),
@@ -777,7 +780,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     Text("      Expiration\n          Date",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -994,7 +998,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                           // Date Range Dropdown
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 5.0),
+                                const EdgeInsets.symmetric(horizontal: 5.0),
                             child: Row(
                               children: [
                                 Expanded(
@@ -1203,64 +1207,81 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
 
                                             if (value == "Today") {
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime.now().toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime.now()
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime.now().toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime.now()
+                                                              .toString());
                                             } else if (value == "Yesterday") {
-                                              DateTime yesterday =
-                                                  now.subtract(Duration(days: 1));
+                                              DateTime yesterday = now
+                                                  .subtract(Duration(days: 1));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      yesterday.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          yesterday.toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      yesterday.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          yesterday.toString());
                                             } else if (value == "Last 7 Days") {
                                               // Last 7 Days including today: subtract 6 days (not 7)
-                                              DateTime startDate =
-                                                  now.subtract(Duration(days: 6));
+                                              DateTime startDate = now
+                                                  .subtract(Duration(days: 6));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      startDate.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          startDate.toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      now.toString());
-                                            } else if (value == "Last 14 Days") {
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          now.toString());
+                                            } else if (value ==
+                                                "Last 14 Days") {
                                               // Last 14 Days including today: subtract 13 days (not 14)
                                               DateTime startDate = now
                                                   .subtract(Duration(days: 13));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      startDate.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          startDate.toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      now.toString());
-                                            } else if (value == "Last 30 Days") {
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          now.toString());
+                                            } else if (value ==
+                                                "Last 30 Days") {
                                               // Last 30 Days including today: subtract 29 days (not 30)
                                               DateTime startDate = now
                                                   .subtract(Duration(days: 29));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      startDate.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          startDate.toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      now.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          now.toString());
                                             } else if (value == "This Week") {
                                               // Start of current week (Monday)
-                                              DateTime startOfWeek = now.subtract(
-                                                  Duration(
+                                              DateTime startOfWeek =
+                                                  now.subtract(Duration(
                                                       days: now.weekday - 1));
                                               // End of current week (Sunday)
                                               DateTime endOfWeek = startOfWeek
                                                   .add(Duration(days: 6));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      startOfWeek.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          startOfWeek
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      endOfWeek.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          endOfWeek.toString());
                                             } else if (value == "Last Week") {
                                               // Start of current week (Monday)
                                               DateTime startOfCurrentWeek =
@@ -1275,38 +1296,54 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   startOfLastWeek
                                                       .add(Duration(days: 6));
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      startOfLastWeek.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          startOfLastWeek
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      endOfLastWeek.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          endOfLastWeek
+                                                              .toString());
                                             } else if (value == "This Month") {
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(now.year,
-                                                              now.month, 1)
-                                                          .toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(now.year,
+                                                                  now.month, 1)
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(now.year,
-                                                              now.month + 1, 0)
-                                                          .toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(
+                                                                  now.year,
+                                                                  now.month + 1,
+                                                                  0)
+                                                              .toString());
                                             } else if (value == "Last Month") {
                                               DateTime lastMonth = DateTime(
                                                   now.year, now.month - 1, 1);
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(lastMonth.year,
-                                                              lastMonth.month, 1)
-                                                          .toString());
-                                              _toDateController.text =
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(
+                                                                  lastMonth
+                                                                      .year,
+                                                                  lastMonth
+                                                                      .month,
+                                                                  1)
+                                                              .toString());
+                                              _toDateController
+                                                      .text =
                                                   dateProvider.formatCurrentDate(
                                                       DateTime(
                                                               lastMonth.year,
-                                                              lastMonth.month + 1,
+                                                              lastMonth.month +
+                                                                  1,
                                                               0)
                                                           .toString());
-                                            } else if (value == "This Quarter") {
+                                            } else if (value ==
+                                                "This Quarter") {
                                               int currentQuarter =
                                                   ((now.month - 1) ~/ 3) + 1;
                                               int quarterStartMonth =
@@ -1320,14 +1357,17 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                               quarterStartMonth,
                                                               1)
                                                           .toString());
-                                              _toDateController.text =
+                                              _toDateController
+                                                      .text =
                                                   dateProvider.formatCurrentDate(
                                                       DateTime(
                                                               now.year,
-                                                              quarterEndMonth + 1,
+                                                              quarterEndMonth +
+                                                                  1,
                                                               0)
                                                           .toString());
-                                            } else if (value == "Last Quarter") {
+                                            } else if (value ==
+                                                "Last Quarter") {
                                               int currentQuarter =
                                                   ((now.month - 1) ~/ 3) + 1;
                                               int lastQuarter =
@@ -1349,31 +1389,40 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                               quarterStartMonth,
                                                               1)
                                                           .toString());
-                                              _toDateController.text =
+                                              _toDateController
+                                                      .text =
                                                   dateProvider.formatCurrentDate(
                                                       DateTime(
                                                               lastQuarterYear,
-                                                              quarterEndMonth + 1,
+                                                              quarterEndMonth +
+                                                                  1,
                                                               0)
                                                           .toString());
-                                            } else if (value == "Year to Date") {
+                                            } else if (value ==
+                                                "Year to Date") {
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(now.year, 1, 1)
-                                                          .toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(now.year, 1,
+                                                                  1)
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      now.toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          now.toString());
                                             } else if (value == "Last Year") {
                                               _fromDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(now.year - 1, 1, 1)
-                                                          .toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(now.year - 1,
+                                                                  1, 1)
+                                                              .toString());
                                               _toDateController.text =
-                                                  dateProvider.formatCurrentDate(
-                                                      DateTime(now.year - 1, 12,
-                                                              31)
-                                                          .toString());
+                                                  dateProvider
+                                                      .formatCurrentDate(
+                                                          DateTime(now.year - 1,
+                                                                  12, 31)
+                                                              .toString());
                                             } else if (value == "Custom") {
                                               customdate = true;
                                             }
@@ -1684,8 +1733,32 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                               child: ColabShimmerLoadingWidget(),
                             );
                           } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No expiring insurance found",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Container(
@@ -1946,7 +2019,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                 _buildHeaders(),
                                 SizedBox(height: 10),
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1966,7 +2038,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -2394,8 +2466,32 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             ConnectionState.waiting) {
                           return ShimmerTabletTable();
                         } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No expiring insurance found",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(

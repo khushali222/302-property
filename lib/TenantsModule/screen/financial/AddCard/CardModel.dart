@@ -103,7 +103,11 @@ class AddCreditCard {
   String? billingId;
   String? ccNumber;
   AddCreditCard(
-      {this.tenantId, this.customerVaultId, this.responseCode, this.billingId,this.ccNumber});
+      {this.tenantId,
+      this.customerVaultId,
+      this.responseCode,
+      this.billingId,
+      this.ccNumber});
 
   AddCreditCard.fromJson(Map<String, dynamic> json) {
     tenantId = json['tenant_id'];
@@ -253,6 +257,22 @@ class BillingData {
       print('billing_id is ${json["billing_id"]}');
     }
 
+    // Safely parse email
+    String? email;
+    if (json["email"] is String) {
+      email = json["email"] as String?;
+    } else if (json["email"] is Map || json["email"] == null) {
+      email = null;
+    }
+
+    // Safely parse address_1
+    String? address_1;
+    if (json["address_1"] is String) {
+      address_1 = json["address_1"] as String?;
+    } else if (json["address_1"] is Map || json["address_1"] == null) {
+      address_1 = null;
+    }
+
     return BillingData(
         firstName: firstName,
         lastName: lastName,
@@ -263,9 +283,8 @@ class BillingData {
         cvv: cvv,
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
-        email: json["email"].runtimeType == Map ? null : json["email"],
-        address_1:
-            json["address_1"].runtimeType == Map ? null : json["address_1"],
+        email: email,
+        address_1: address_1,
         company: companyName);
   }
 }

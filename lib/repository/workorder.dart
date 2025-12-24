@@ -42,6 +42,68 @@ class WorkOrderRepository {
     }
   }
 
+  Future<Map<String, dynamic>> fetchWorkOrdersPaginated({
+    int page = 1,
+    int limit = 10,
+    String sortBy = 'createdAt',
+    String sortOrder = 'desc',
+    List<String>? status,
+    String? search,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    // Build query parameters
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'limit': limit.toString(),
+      'sortBy': sortBy,
+      'sortOrder': sortOrder,
+    };
+
+    // Add status filter if provided
+    if (status != null && status.isNotEmpty && !status.contains('All')) {
+      queryParams['status'] = status.join(',');
+    }
+
+    // Add search if provided
+    if (search != null && search.isNotEmpty) {
+      queryParams['search'] = search;
+    }
+
+    final uri = Uri.parse('$Api_url/api/work-order/work-orders/$id')
+        .replace(queryParameters: queryParams);
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      List jsonData = jsonResponse['data'];
+      return {
+        'data': jsonData.map((data) => Data.fromJson(data)).toList(),
+        'pagination': jsonResponse['pagination'],
+      };
+    } else {
+      print('Failed to fetch workorders: ${response.body}');
+      return {
+        'data': <Data>[],
+        'pagination': {
+          'currentPage': 1,
+          'totalPages': 1,
+          'totalItems': 0,
+          'itemsPerPage': limit,
+        },
+      };
+    }
+  }
+
   Future<Map<String, dynamic>> addWorkOrder({
     String? adminId,
     String? workSubject,
@@ -88,7 +150,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
-      'notificationTime':notificationTime,
+      'notificationTime': notificationTime,
       // 'parts': parts,
     };
     print("'status': $status");
@@ -110,13 +172,13 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
     //print('Response status: ${response.statusCode}');
-     print('Response body add: ${response.body}');
-     print('Response notifi: ${notificationTime}');
+    print('Response body add: ${response.body}');
+    print('Response notifi: ${notificationTime}');
 
     var responseData = json.decode(response.body);
 
@@ -129,7 +191,8 @@ class WorkOrderRepository {
     }
   }
 
-  Future<EditData> fetchWorkordersDetails(BuildContext context,String workorderId) async {
+  Future<EditData> fetchWorkordersDetails(
+      BuildContext context, String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -154,13 +217,15 @@ class WorkOrderRepository {
         title: "Workorder data not found",
         style: const AlertStyle(
           backgroundColor: Colors.white,
-          titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+          titleStyle: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         content: Column(
-          mainAxisSize: MainAxisSize.min,  // Ensures the Column doesn't take too much space
+          mainAxisSize: MainAxisSize
+              .min, // Ensures the Column doesn't take too much space
           children: [
-            SizedBox(height: 10), // Add some space between the title and content
-
+            SizedBox(
+                height: 10), // Add some space between the title and content
           ],
         ),
         buttons: [
@@ -228,7 +293,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
-      'notificationTime':notificationTime,
+      'notificationTime': notificationTime,
       // 'parts': parts,
     };
 
@@ -246,7 +311,7 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -264,21 +329,20 @@ class WorkOrderRepository {
   }
 
   Future<Map<String, dynamic>> DeleteWorkOrder(
-      {required String? workOrderid,String? reason}) async {
+      {required String? workOrderid, String? reason}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
     final http.Response response = await http.delete(
-      Uri.parse('$Api_url/api/work-order/delete_workorder/$workOrderid'),
-      headers: <String, String>{
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-        body: jsonEncode({"reason":reason})
-    );
+        Uri.parse('$Api_url/api/work-order/delete_workorder/$workOrderid'),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason": reason}));
     var responseData = json.decode(response.body);
     print('$Api_url/work-order/delete_workorder/$workOrderid');
     print(workOrderid);
@@ -293,7 +357,6 @@ class WorkOrderRepository {
   }
 
   static Future<WorkOrderData_summery> getworkorderSummary(
-
       String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -330,7 +393,7 @@ class WorkOrderRepository {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({"workOrder": workorder}));
-   print('update workorder ${response.body}');
+    print('update workorder ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
       return true;
