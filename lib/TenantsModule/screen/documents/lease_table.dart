@@ -1216,7 +1216,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.leaseAmount}',
+                                                                                '\$${Propertytype.leaseAmount}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),
@@ -1234,7 +1234,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.deposite ?? 0}',
+                                                                                '\$${Propertytype.deposite ?? 0}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),
@@ -1252,7 +1252,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.recurringCharge ?? 0}',
+                                                                                '\$${Propertytype.recurringCharge ?? 0}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),

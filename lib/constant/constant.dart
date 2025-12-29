@@ -9,16 +9,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url =  "https://staging.cloudrentalmanager.com/api/images/get-file/";
+String image_url =
+    "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.1.37:4000/api/images/get-file/";
 //String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.37:4000";
+// String Api_url = "http://192.168.1.50:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
-//String Api_url = "https://development.cloudrentalmanager.com";
+// String Api_url = "https://staging.cloudrentalmanager.com";
+String Api_url = "https://development.cloudrentalmanager.com";
 
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
@@ -111,7 +112,6 @@ formatDate(String dateTime) {
   print("formatDate output: '$result'");
   return result;
 }
-
 
 String formatDate4(String dateTime) {
   if (dateTime.isEmpty) {
@@ -469,11 +469,11 @@ class PhoneNumberFormatter extends TextInputFormatter {
     String formatted = '';
     if (digitsOnly.length >= 1) {
       formatted +=
-      '(${digitsOnly.substring(0, digitsOnly.length >= 3 ? 3 : digitsOnly.length)}';
+          '(${digitsOnly.substring(0, digitsOnly.length >= 3 ? 3 : digitsOnly.length)}';
     }
     if (digitsOnly.length >= 4) {
       formatted +=
-      ') ${digitsOnly.substring(3, digitsOnly.length >= 6 ? 6 : digitsOnly.length)}';
+          ') ${digitsOnly.substring(3, digitsOnly.length >= 6 ? 6 : digitsOnly.length)}';
     }
     if (digitsOnly.length >= 7) {
       formatted += '-${digitsOnly.substring(6)}';
@@ -581,10 +581,10 @@ class _VideoItemState extends State<VideoItem> {
         child: Container(
           child: _controller!.value!.isInitialized
               ? Container(
-            width: 100.0,
-            height: 56.0,
-            child: VideoPlayer(_controller!),
-          )
+                  width: 100.0,
+                  height: 56.0,
+                  child: VideoPlayer(_controller!),
+                )
               : CircularProgressIndicator(),
         ),
       ),
@@ -622,19 +622,19 @@ class CustomTableView extends StatelessWidget {
                 decoration: BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
                 children: titles
                     .map((item) => Padding(
-                  padding:
-                  EdgeInsets.symmetric(vertical: 9, horizontal: 1),
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ))
+                          padding:
+                              EdgeInsets.symmetric(vertical: 9, horizontal: 1),
+                          child: Text(
+                            item,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ))
                     .toList(),
               ),
             ...data.asMap().entries.map(
-                  (entry) {
+              (entry) {
                 int index = entry.key;
                 List<String> row = entry.value;
                 return TableRow(
@@ -646,16 +646,16 @@ class CustomTableView extends StatelessWidget {
                   children: row
                       .map(
                         (cell) => Padding(
-                      padding:
-                      EdgeInsets.symmetric(vertical: 7, horizontal: 6),
-                      child: Text(
-                        cell,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  )
+                          padding:
+                              EdgeInsets.symmetric(vertical: 7, horizontal: 6),
+                          child: Text(
+                            cell,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
                       .toList(),
                 );
               },

@@ -12,11 +12,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/payment_service.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
@@ -145,12 +147,22 @@ class _MakePaymentState extends State<MakePayment> {
     //   await fetchPaymentSettings(widget.tenantId, widget.leaseId);
     // });
     DateTime today = DateTime.now();
+
     _startDate.text = DateFormat('yyyy-MM-dd').format(today);
     print("id tenant ${widget.tenantId}");
     print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final dateProvider = Provider.of<DateProvider>(context);
+    _startDate.text = dateProvider
+        .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    print("formatted date $_startDate.text");
   }
 
   void _updateTotalAmount() {
@@ -1103,6 +1115,7 @@ class _MakePaymentState extends State<MakePayment> {
   String? selected_account = "full";
   Map<int, bool> selectedRows = {};
   int? surCharge;
+  bool? scheduledPayment = false;
 
   dynamic? surChargeAchper;
   dynamic? surChargeAchflat;
@@ -1299,6 +1312,7 @@ class _MakePaymentState extends State<MakePayment> {
   bool iserror = false;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
         key: key,
         appBar: widget_302.App_Bar(
@@ -1551,10 +1565,12 @@ class _MakePaymentState extends State<MakePayment> {
                               if (pickedDate != null) {
                                 bool isfuture =
                                     pickedDate.isAfter(DateTime.now());
-                                String formattedDate =
-                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                // use dateProvider to format the date
+                                String formattedDate = dateProvider
+                                    .formatCurrentDate(pickedDate.toString());
                                 setState(() {
                                   futuredate = isfuture;
+
                                   _startDate.text = formattedDate;
                                 });
                               }
@@ -2653,6 +2669,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   print('start date ${_startDate.text}');
                                   await PaymentService()
                                       .makePaymentforcard(
+                                    scheduledPayment: scheduledPayment ?? false,
                                     entries: manualEntries,
                                     paymentAmountType: selected_account ?? '',
                                     adminId: id ?? "",
@@ -2778,7 +2795,37 @@ class _MakePaymentState extends State<MakePayment> {
                               ),
                             ),
                           ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: scheduledPayment,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
+                              activeColor: blueColor,
+                              checkColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  scheduledPayment = value!;
+                                });
+                              },
+                            ),
+                            Text(
+                              "Schedule Payment",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor),
+                            ),
+                          ],
+                        ),
                       ],
+
+                      // add a checkbox to schedule the payment
                     ),
                   )
                 ],

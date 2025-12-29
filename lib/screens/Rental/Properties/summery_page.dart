@@ -1981,10 +1981,10 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 6 : 5
                           },
                           {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
-                          // {
-                          //   "title": "Property Tax",
-                          //   "index": isMultiUnit ? 8 : 7
-                          // },
+                          {
+                            "title": "Property Tax",
+                            "index": isMultiUnit ? 8 : 7
+                          },
                           // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
@@ -2260,7 +2260,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ),
                   );
-                } else {
+                } else { 
                   var data = snapshot.data!;
 
                   // Search Filter

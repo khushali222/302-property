@@ -39,6 +39,7 @@ Widget buildListTile(
     ),
     padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
+      dense: true,
       onTap: () {
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -149,6 +150,7 @@ Widget buildDropdownListTile(
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
+              dense: true,
               leading: subTopicIcons[index], // Add icon here
               title: Text(
                 subTopic,

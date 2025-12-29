@@ -53,8 +53,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     return ClipRRect(
       borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(80),
-        bottomRight: Radius.circular(80),
+        topRight: Radius.circular(16),
+        bottomRight: Radius.circular(16),
       ),
       child: Drawer(
         backgroundColor: Colors.white,
@@ -62,7 +62,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 80),
+              _brandLogoBase64 != null
+                  ? const SizedBox(height: 10)
+                  : const SizedBox(height: 80),
               // Padding(
               //   padding: const EdgeInsets.all(20.0),
               //   child: Image.asset("assets/images/logo.png"),
@@ -90,14 +92,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ? SvgPicture.asset(
                         "assets/images/tenants/dashboard1.svg",
                         fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
+                        height: 18,
+                        width: 18,
                       )
                     : SvgPicture.asset(
                         "assets/images/tenants/dashboard.svg",
                         fit: BoxFit.cover,
-                        height: 20,
-                        width: 20,
+                        height: 18,
+                        width: 18,
                         color: blueColor,
                       ),
                 "Dashboard",
@@ -122,35 +124,35 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 [
                   FaIcon(
                     FontAwesomeIcons.buildingUser,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Properties"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties
                   FaIcon(
                     FontAwesomeIcons.houseChimneyUser,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Rental Owner"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for RentalOwner
                   FaIcon(
                     FontAwesomeIcons.users,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Tenants"
                         ? Colors.white
                         : blueColor,
                   ),
                   FaIcon(
                     FontAwesomeIcons.house,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Property Type"
                         ? Colors.white
                         : blueColor,
                   ),
                   FaIcon(
                     FontAwesomeIcons.handHoldingDollar,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Mortgage"
                         ? Colors.white
                         : blueColor,
@@ -163,7 +165,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.thumbsUp,
-                  size: 20,
+                  size: 22,
                   color: blueColor,
                 ),
                 "Leasing",
@@ -177,14 +179,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 [
                   FaIcon(
                     FontAwesomeIcons.wallet,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Leases"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties
                   FaIcon(
                     FontAwesomeIcons.addressCard,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Applicants"
                         ? Colors.white
                         : blueColor,
@@ -194,31 +196,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ? SvgPicture.asset(
                           "assets/images/upcoming white.svg",
                           fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
+                          height: 23,
+                          width: 23,
                         )
                       : SvgPicture.asset(
                           "assets/images/upcoming renewal.svg",
                           fit: BoxFit.cover,
-                          height: 27,
-                          width: 27,
+                          height: 23,
+                          width: 23,
                           color: blueColor,
                         ),
                   FaIcon(
                     FontAwesomeIcons.clock,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Scheduled Payment"
                         ? Colors.white
                         : blueColor,
                   ),
                   Icon(
                     Icons.calendar_month,
-                    size: 25,
+                    size: 22,
                     color: widget.currentpage == "Scheduled Charges"
                         ? Colors.white
                         : blueColor,
                   ) // Icon for RentalOwner
-                  // FaIcon(
+                  // FaIcon(      
                   //   FontAwesomeIcons.clock,
                   //   size: 20,
                   //   color: widget.currentpage == "Scheduled Charges"
@@ -287,14 +289,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 [
                   FaIcon(
                     FontAwesomeIcons.envelopeCircleCheck,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Send E-mail"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties
                   FaIcon(
                     FontAwesomeIcons.envelopeOpenText,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "E-mail Logs"
                         ? Colors.white
                         : blueColor,
@@ -302,7 +304,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                   FaIcon(
                     FontAwesomeIcons.wallet,
-                    size: 20,
+                    size: 18,
                     color: widget.currentpage == "Templates"
                         ? Colors.white
                         : blueColor,
@@ -315,6 +317,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.folderOpen,
+                  size: 18,
                   color: widget.currentpage == "Reports"
                       ? Colors.white
                       : blueColor,
@@ -326,7 +329,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.userClock,
-                  size: 20,
+                  size: 18,
                   color:
                       widget.currentpage == "Staff" ? Colors.white : blueColor,
                 ),
@@ -337,6 +340,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.cog,
+                  size: 18,
                   color: widget.currentpage == "Settings"
                       ? Colors.white
                       : blueColor,
