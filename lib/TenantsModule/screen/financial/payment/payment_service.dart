@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
@@ -22,10 +23,10 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
+    required bool scheduledPayment,
     required List<Map<String, dynamic>> entries,
     String? notificationTime,
     required String paymentAmountType,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -49,9 +50,10 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
         'lease_id': leaseid,
-        'entry':entries,
+        'entry': entries,
+        'scheduledPayment': scheduledPayment,
       };
       print(paymentDetails);
 
@@ -77,23 +79,23 @@ class PaymentService {
           // Wait for both services to complete using Future.wait
           await Future.wait([
             storePayment(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentAmountType: paymentAmountType,
-              paymentType: "Card",
-              customerVaultId: customerVaultId,
-              billingId: billingId,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: "",
-              date: date,
-              transactionId: jsonData["data"]["transactionid"],
-              responseText: "SUCCESS",
-              surcharge: surcharge,
-                notificationTime: notificationTime
-            ),
+                companyName: company_name,
+                adminId: adminId,
+                tenantId: tenantId,
+                leaseId: leaseid,
+                paymentAmountType: paymentAmountType,
+                paymentType: "Card",
+                customerVaultId: customerVaultId,
+                billingId: billingId,
+                totalAmount: amount,
+                isLeaseAdded: false,
+                uploadedFile: "",
+                date: date,
+                scheduledPayment: scheduledPayment,
+                transactionId: jsonData["data"]["transactionid"],
+                responseText: "SUCCESS",
+                surcharge: surcharge,
+                notificationTime: notificationTime),
           ]);
           return "Payment Success";
         } else {
@@ -106,24 +108,23 @@ class PaymentService {
       try {
         // Store payment for future transactions
         await storePayment(
-          companyName: company_name,
-          adminId: adminId,
-          tenantId: tenantId,
-          leaseId: leaseid,
-          paymentType: "Card",
-          customerVaultId: customerVaultId,
-          billingId: billingId,
-          paymentAmountType: paymentAmountType,
-          totalAmount: amount,
-          isLeaseAdded: false,
-          uploadedFile: "",
-          transactionId: "",
-          date: date,
-          responseText: "PENDING",
-          surcharge: surcharge,
-
-            notificationTime: notificationTime
-        );
+            companyName: company_name,
+            adminId: adminId,
+            tenantId: tenantId,
+            leaseId: leaseid,
+            paymentType: "Card",
+            customerVaultId: customerVaultId,
+            billingId: billingId,
+            paymentAmountType: paymentAmountType,
+            totalAmount: amount,
+            isLeaseAdded: false,
+            scheduledPayment: scheduledPayment,
+            uploadedFile: "",
+            transactionId: "",
+            date: date,
+            responseText: "PENDING",
+            surcharge: surcharge,
+            notificationTime: notificationTime);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -149,6 +150,7 @@ class PaymentService {
     required String surcharge,
     required String paymentAmountType,
     required String date,
+    required bool scheduledPayment,
   }) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -156,6 +158,25 @@ class PaymentService {
     String? token = prefs.getString('token');
     print(totalAmount);
     print((double.parse(totalAmount) - double.parse(surcharge)).toString());
+    log(jsonEncode(<String, dynamic>{
+      'company_name': companyName,
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+      'lease_id': leaseId,
+      'payment_type': paymentType,
+      'paymentAmountType': paymentAmountType,
+      'customer_vault_id': customerVaultId,
+      'billing_id': billingId,
+      'notificationTime': notificationTime,
+      'total_amount': double.parse(totalAmount),
+      'surcharge': double.parse(surcharge),
+      'is_leaseAdded': isLeaseAdded,
+      'uploaded_file': uploadedFile,
+      'transaction_id': transactionId,
+      'response': responseText,
+      'date': date,
+      'scheduleRecurring': scheduledPayment
+    }));
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -172,15 +193,15 @@ class PaymentService {
         'paymentAmountType': paymentAmountType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
-        'notificationTime':notificationTime,
-        'total_amount':
-            double.parse(totalAmount) ,
+        'notificationTime': notificationTime,
+        'total_amount': double.parse(totalAmount),
         'surcharge': double.parse(surcharge),
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
         'date': date,
+        'scheduleRecurring': scheduledPayment
       }),
     );
 
@@ -261,19 +282,19 @@ class PaymentService {
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
           await Future.wait([
-          storePaymentAch(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "ACH",
-              entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: "",
-              transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge)
+            storePaymentAch(
+                companyName: company_name,
+                adminId: adminId,
+                tenantId: tenantId,
+                leaseId: leaseid,
+                paymentType: "ACH",
+                entries: entries,
+                totalAmount: amount,
+                isLeaseAdded: false,
+                uploadedFile: "",
+                transactionId: jsonData["data"]["transactionid"],
+                responseText: jsonData["data"]["responsetext"],
+                surcharge: surcharge)
           ]);
 
           return "Payment Success";
@@ -451,7 +472,7 @@ class PaymentService {
             adminId: adminId,
             tenantId: tenantId,
             leaseId: leaseid,
-            paymentType:payment_method,
+            paymentType: payment_method,
             entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,

@@ -558,16 +558,15 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   //       width: 10,
                                   //     ),
                                   //     Text(
-                                  //       "Work Order : # ${snapshot.data!.ticketNumber ?? 'N/A'}",
+                                  //       "Work Order : #${snapshot.data!.ticketNumber ?? 'N/A'}",
                                   //       style: TextStyle(
-                                  //         fontSize: 16,
+                                  //         fontSize: 14,
                                   //         fontWeight: FontWeight.bold,
                                   //         color: blueColor,
                                   //       ),
                                   //     ),
                                   //   ],
                                   // ),
-                                  //
                                   // const SizedBox(
                                   //   height: 10,
                                   // ),

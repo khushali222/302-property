@@ -6,10 +6,10 @@ import '../../StaffModule/model/staffpermission.dart';
 import '../../StaffModule/repository/staffpermission_provider.dart';
 import '../../StaffModule/screen/Dashboard/cronjob_payment_table.dart';
 import '../../StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
-import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
 import '../../StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
 import '../../StaffModule/screen/Rental/Properties/Properties_table.dart';
 import '../../StaffModule/screen/Rental/Tenants/Tenants_table.dart';
+import '../../screens/Profile/Settings_screen.dart';
 import '../../constant/constant.dart';
 
 // Add your StaffModule table screens here
@@ -56,7 +56,7 @@ class DashboardMobileSimple extends StatelessWidget {
     } else if (label == 'Vendors') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Vendor_table()),
+        MaterialPageRoute(builder: (context) => const TabBarExample(initialTab: 'Vendor')),
       );
     } else if (label == 'Work Orders') {
       Navigator.push(

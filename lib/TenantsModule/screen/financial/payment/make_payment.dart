@@ -12,11 +12,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/payment_service.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
@@ -145,12 +147,22 @@ class _MakePaymentState extends State<MakePayment> {
     //   await fetchPaymentSettings(widget.tenantId, widget.leaseId);
     // });
     DateTime today = DateTime.now();
+
     _startDate.text = DateFormat('yyyy-MM-dd').format(today);
     print("id tenant ${widget.tenantId}");
     print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final dateProvider = Provider.of<DateProvider>(context);
+    _startDate.text = dateProvider
+        .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    print("formatted date $_startDate.text");
   }
 
   void _updateTotalAmount() {
@@ -750,6 +762,8 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Future<void> fetchcreditcard(String tenantId) async {
+    print("========== fetchcreditcard START ==========");
+    print("Tenant ID: $tenantId");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
@@ -760,56 +774,142 @@ class _MakePaymentState extends State<MakePayment> {
       cardDetails = []; // Clear previous card details
     });
 
-    final response = await http.get(
-      Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
-    );
-    print("cards ${response.body}");
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      customervaultid = jsonResponse['customer_vault_id'];
-      List<dynamic> cardDetailsList = jsonResponse['card_detail'];
+    try {
+      final url = '$Api_url/api/creditcard/getCreditCards/$tenantId';
+      print('Credit Card API URL: $url');
+      print('Token: ${token != null ? "Present" : "Missing"}');
+      print('Tenant ID from prefs: $id');
 
-      // Debug print to check the response structure
-      // print('JSON Response: $jsonResponse');
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      );
 
-      for (var cardDetail in cardDetailsList) {
-        // Debug print to check each card detail
-        //    print('Card Detail: $cardDetail');
+      print("Credit Card Response Status Code: ${response.statusCode}");
+      print("Credit Card Response body: ${response.body}");
+      print("Credit Card Response body type: ${response.body.runtimeType}");
 
-        //  BillingData billingData = BillingData.fromJson(cardDetail);
-        // print('Parsed Billing ID: ${billingData.billingId}');
+      if (response.statusCode == 200) {
+        try {
+          var jsonResponse = json.decode(response.body);
+          print(
+              'Credit Card Decoded Response type: ${jsonResponse.runtimeType}');
+          print('Credit Card Decoded Response: $jsonResponse');
 
-        // Assuming this is part of the logic to print billing_id
-        //    print('Billing ID: ${cardDetail['billing_id']}');
-      }
+          if (jsonResponse is Map<String, dynamic>) {
+            print('Credit Card jsonResponse is Map');
+            print('Credit Card jsonResponse keys: ${jsonResponse.keys}');
 
-      CustomerData? customerData = await postBillingCustomerVault(
-          customervaultid.toString(), cardDetailsList);
-      if (customerData != null) {
-        print("Debit card is Accespted $debitCardAccepted");
-        print("Credit card is Accespted $creditCardAccepted");
-        setState(() {
-          cardDetails = customerData.billing;
-        });
-        if (cardDetails.length == 1) {
-          if (debitCardAccepted && creditCardAccepted) {
-            selectedcardindex = 0;
+            // Check customer_vault_id
+            if (jsonResponse.containsKey('customer_vault_id')) {
+              var vaultId = jsonResponse['customer_vault_id'];
+              print('customer_vault_id type: ${vaultId.runtimeType}');
+              print('customer_vault_id value: $vaultId');
+              if (vaultId != null) {
+                if (vaultId is int) {
+                  customervaultid = vaultId;
+                } else if (vaultId is String) {
+                  customervaultid = int.tryParse(vaultId);
+                } else {
+                  customervaultid = int.tryParse(vaultId.toString());
+                }
+              } else {
+                customervaultid = null;
+              }
+              print('customervaultid set to: $customervaultid');
+            } else {
+              print("WARNING: 'customer_vault_id' key not found");
+            }
 
-            fetchSurcharge();
+            // Check card_detail
+            if (jsonResponse.containsKey('card_detail')) {
+              var cardDetail = jsonResponse['card_detail'];
+              print('card_detail type: ${cardDetail.runtimeType}');
+              print('card_detail: $cardDetail');
+
+              if (cardDetail is List) {
+                List<dynamic> cardDetailsList = cardDetail;
+                print('cardDetailsList length: ${cardDetailsList.length}');
+
+                for (int i = 0; i < cardDetailsList.length; i++) {
+                  print('Card Detail $i: ${cardDetailsList[i]}');
+                  print(
+                      'Card Detail $i type: ${cardDetailsList[i].runtimeType}');
+                }
+
+                if (customervaultid != null) {
+                  print(
+                      "Calling postBillingCustomerVault with vaultId: $customervaultid");
+                  CustomerData? customerData = await postBillingCustomerVault(
+                      customervaultid.toString(), cardDetailsList);
+
+                  if (customerData != null) {
+                    print("postBillingCustomerVault returned data");
+                    print("Billing data count: ${customerData.billing.length}");
+                    print("Debit card is Accepted: $debitCardAccepted");
+                    print("Credit card is Accepted: $creditCardAccepted");
+
+                    setState(() {
+                      cardDetails = customerData.billing;
+                    });
+
+                    print("cardDetails set. Count: ${cardDetails.length}");
+
+                    if (cardDetails.length == 1) {
+                      if (debitCardAccepted && creditCardAccepted) {
+                        selectedcardindex = 0;
+                        print("Auto-selected card index 0");
+                        fetchSurcharge();
+                      } else {
+                        print(
+                            "Card not auto-selected. debitCardAccepted: $debitCardAccepted, creditCardAccepted: $creditCardAccepted");
+                      }
+                    }
+                  } else {
+                    print("ERROR: postBillingCustomerVault returned null");
+                  }
+                } else {
+                  print("ERROR: customervaultid is null");
+                }
+              } else {
+                print(
+                    "ERROR: 'card_detail' is not a List. Type: ${cardDetail.runtimeType}");
+              }
+            } else {
+              print("WARNING: 'card_detail' key not found in response");
+              print("No cards available for this tenant");
+            }
+          } else {
+            print(
+                "ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}");
           }
+        } catch (e, stackTrace) {
+          print("========== Error parsing credit card response ==========");
+          print("Error: $e");
+          print("Stack trace: $stackTrace");
+          print("========================================================");
         }
+      } else if (response.statusCode == 404) {
+        print('customer_vault_id not found (404)');
+        print('No cards available for tenant: $tenantId');
+      } else {
+        print(
+            'Failed to load credit card data. Status: ${response.statusCode}');
+        print('Response: ${response.body}');
       }
-    } else if (response.statusCode == 404) {
-      print('customer_vault_id not found');
-    } else {
-      throw Exception('Failed to load credit card data');
+    } catch (e, stackTrace) {
+      print("========== Error in fetchcreditcard ==========");
+      print("Error: $e");
+      print("Stack trace: $stackTrace");
+      print("==============================================");
+    } finally {
+      setState(() {
+        isLoading = false;
+        isloading = false;
+      });
+      print("cardDetails final count: ${cardDetails.length}");
+      print("========== fetchcreditcard END ==========");
     }
-
-    setState(() {
-      isLoading = false;
-      isloading = false;
-    });
   }
 
   Future<String> binCheck(String ccBin) async {
@@ -836,6 +936,10 @@ class _MakePaymentState extends State<MakePayment> {
 
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
+    print("========== postBillingCustomerVault START ==========");
+    print("customerVaultId: $customerVaultId");
+    print("cardDetailsList length: ${cardDetailsList.length}");
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? adminId = prefs.getString("adminId");
@@ -846,57 +950,153 @@ class _MakePaymentState extends State<MakePayment> {
       "admin_id": adminId.toString(),
     };
 
-    final response = await http.post(
-      Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
-      headers: {
-        'Content-Type': 'application/json',
-        "id": "CRM $id",
-        "authorization": "CRM $token",
-      },
-      body: json.encode(requestBody),
-    );
-    //  print(response.body);
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      //  print(jsonResponse);
-      var customerJson = jsonResponse['data']['customer'];
-      if (customerJson == null) {
-        print('Failed to post data: ${response.statusCode}');
+    print("Request body: $requestBody");
+    print("API URL: $Api_url/api/nmipayment/get-billing-customer-vault");
+
+    try {
+      final response = await http.post(
+        Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+        headers: {
+          'Content-Type': 'application/json',
+          "id": "CRM $id",
+          "authorization": "CRM $token",
+        },
+        body: json.encode(requestBody),
+      );
+
+      print("Billing Vault Response Status Code: ${response.statusCode}");
+      print("Billing Vault Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        try {
+          var jsonResponse = json.decode(response.body);
+          print(
+              'Billing Vault Decoded Response type: ${jsonResponse.runtimeType}');
+          print('Billing Vault Decoded Response: $jsonResponse');
+
+          if (jsonResponse is Map<String, dynamic>) {
+            if (jsonResponse.containsKey('data')) {
+              var data = jsonResponse['data'];
+              print('Data type: ${data.runtimeType}');
+              print('Data: $data');
+
+              if (data is Map<String, dynamic>) {
+                if (data.containsKey('customer')) {
+                  var customerJson = data['customer'];
+                  print('customerJson type: ${customerJson.runtimeType}');
+                  print('customerJson: $customerJson');
+
+                  if (customerJson == null) {
+                    print('ERROR: customerJson is null');
+                    return null;
+                  }
+
+                  CustomerData customerData =
+                      CustomerData.fromJson(customerJson);
+                  print('CustomerData parsed successfully');
+                  print(
+                      'Billing count before filter: ${customerData.billing.length}');
+
+                  customerData.billing.forEach((billing) {
+                    print(
+                        'CC Bin: ${billing.ccBin}, Billing ID: ${billing.billingId}');
+                  });
+
+                  print('cardDetailsList: $cardDetailsList');
+                  Set<String> cardBillingIds = cardDetailsList
+                      .map((card) {
+                        print('Processing card: $card');
+                        print('Card type: ${card.runtimeType}');
+                        if (card is Map) {
+                          print('Card keys: ${card.keys}');
+                          if (card.containsKey('billing_id')) {
+                            var billingId = card['billing_id'];
+                            print(
+                                'billing_id value: $billingId, type: ${billingId.runtimeType}');
+                            return billingId.toString();
+                          } else {
+                            print('WARNING: billing_id not found in card');
+                            return '';
+                          }
+                        } else {
+                          print('WARNING: card is not a Map');
+                          return '';
+                        }
+                      })
+                      .where((id) => id.isNotEmpty)
+                      .toSet();
+
+                  print('cardBillingIds: $cardBillingIds');
+
+                  // Filter customerData.billing to only include matching billing IDs
+                  List<BillingData> filteredCards =
+                      customerData.billing.where((billing) {
+                    bool matches = cardBillingIds.contains(billing.billingId);
+                    print('Billing ID ${billing.billingId} matches: $matches');
+                    return matches;
+                  }).toList();
+
+                  customerData.billing = filteredCards;
+                  print(
+                      'Billing count after filter: ${customerData.billing.length}');
+
+                  // Assign card types
+                  for (int i = 0;
+                      i < cardDetailsList.length &&
+                          i < customerData.billing.length;
+                      i++) {
+                    if (cardDetailsList[i] is Map &&
+                        cardDetailsList[i].containsKey("card_type")) {
+                      customerData.billing[i].binResult =
+                          cardDetailsList[i]["card_type"];
+                      print(
+                          'Assigned card_type ${cardDetailsList[i]["card_type"]} to billing[$i]');
+                    } else {
+                      print(
+                          'WARNING: cardDetailsList[$i] does not have card_type');
+                    }
+                  }
+
+                  print(
+                      "========== postBillingCustomerVault SUCCESS ==========");
+                  return customerData;
+                } else {
+                  print('ERROR: "customer" key not found in data');
+                  return null;
+                }
+              } else {
+                print('ERROR: data is not a Map. Type: ${data.runtimeType}');
+                return null;
+              }
+            } else {
+              print('ERROR: "data" key not found in response');
+              return null;
+            }
+          } else {
+            print(
+                'ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}');
+            return null;
+          }
+        } catch (e, stackTrace) {
+          print("========== Error parsing billing vault response ==========");
+          print("Error: $e");
+          print("Stack trace: $stackTrace");
+          print("==========================================================");
+          return null;
+        }
+      } else {
+        print('ERROR: Failed to post data. Status: ${response.statusCode}');
+        print('Response: ${response.body}');
         return null;
       }
-      CustomerData customerData = CustomerData.fromJson(customerJson);
-
-      customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
-      });
-      Set<String> cardBillingIds = cardDetailsList
-          .map((card) =>
-              card['billing_id'].toString()) // Ensure conversion to string
-          .toSet();
-
-      // Filter customerData.billing to only include matching billing IDs
-      List<BillingData> filteredCards = customerData.billing
-          .where((billing) => cardBillingIds.contains(billing.billingId))
-          .toList();
-      customerData.billing = filteredCards;
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // //  print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
-      for (int i = 0; i < cardDetailsList.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
-      }
-
-      return customerData;
-    } else {
-      print('Failed to post data: ${response.statusCode}');
+    } catch (e, stackTrace) {
+      print("========== Error in postBillingCustomerVault ==========");
+      print("Error: $e");
+      print("Stack trace: $stackTrace");
+      print("=======================================================");
       return null;
+    } finally {
+      print("========== postBillingCustomerVault END ==========");
     }
   }
 
@@ -915,6 +1115,7 @@ class _MakePaymentState extends State<MakePayment> {
   String? selected_account = "full";
   Map<int, bool> selectedRows = {};
   int? surCharge;
+  bool? scheduledPayment = false;
 
   dynamic? surChargeAchper;
   dynamic? surChargeAchflat;
@@ -1004,7 +1205,9 @@ class _MakePaymentState extends State<MakePayment> {
   bool isCardTwoEnabled = false;
 
   Future<void> fetchPaymentSettings(String tenantId, String leaseid) async {
-    print("abc calling");
+    print("========== fetchPaymentSettings START ==========");
+    print("Tenant ID: $tenantId");
+    print("Lease ID: $leaseid");
     setState(() {
       isloading = true;
     });
@@ -1014,43 +1217,94 @@ class _MakePaymentState extends State<MakePayment> {
 
     final url = '${Api_url}/api/tenant/payment_settings/${tenantId}/${leaseid}';
     print('API URL: $url');
+    print('Token: ${token != null ? "Present" : "Missing"}');
+    print('Tenant ID from prefs: $id');
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        "id": "CRM $id",
-        "authorization": "CRM $token",
-      },
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "id": "CRM $id",
+          "authorization": "CRM $token",
+        },
+      );
 
-    print("Response Status Code: ${response.statusCode}");
-    print("Response body: ${response.body}");
+      print("Response Status Code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      print("Response body type: ${response.body.runtimeType}");
 
-    if (response.statusCode == 200) {
-      try {
-        var jsonResponse = json.decode(response.body);
-        print('Decoded Response: $jsonResponse');
+      if (response.statusCode == 200) {
+        try {
+          var jsonResponse = json.decode(response.body);
+          print('Decoded Response type: ${jsonResponse.runtimeType}');
+          print('Decoded Response: $jsonResponse');
 
+          // Check if data exists and is a Map
+          if (jsonResponse is Map<String, dynamic>) {
+            print('jsonResponse is Map');
+            print('jsonResponse keys: ${jsonResponse.keys}');
+
+            if (jsonResponse.containsKey('data')) {
+              var data = jsonResponse['data'];
+              print('Data type: ${data.runtimeType}');
+              print('Data: $data');
+
+              if (data is Map<String, dynamic>) {
+                print('Data is Map');
+                print('Data keys: ${data.keys}');
+
+                setState(() {
+                  creditCardAccepted = data['creditCardAccepted'] ?? false;
+                  debitCardAccepted = data['debitCardAccepted'] ?? false;
+
+                  // Print values to ensure state is being updated correctly
+                  print("creditCardAccepted: $creditCardAccepted");
+                  print("debitCardAccepted: $debitCardAccepted");
+                  print("isCardOneEnabled: $isCardOneEnabled");
+                  print("isCardTwoEnabled: $isCardTwoEnabled");
+                });
+
+                // Fetch the credit card details
+                print("Calling fetchcreditcard with tenantId: $tenantId");
+                await fetchcreditcard(tenantId);
+              } else {
+                print("ERROR: 'data' is not a Map. Type: ${data.runtimeType}");
+              }
+            } else {
+              print("ERROR: 'data' key not found in response");
+              print("Available keys: ${jsonResponse.keys}");
+            }
+          } else {
+            print(
+                "ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}");
+          }
+        } catch (e, stackTrace) {
+          print("========== Error parsing response body ==========");
+          print("Error: $e");
+          print("Stack trace: $stackTrace");
+          print("================================================");
+        } finally {
+          setState(() {
+            isloading = false;
+          });
+        }
+      } else {
+        print('Failed to fetch payment settings');
+        print('Response Status Code: ${response.statusCode}');
         setState(() {
-          creditCardAccepted = jsonResponse['data']['creditCardAccepted'];
-          debitCardAccepted = jsonResponse['data']['debitCardAccepted'];
-
-          // Print values to ensure state is being updated correctly
-          print("creditCardAccepted: $creditCardAccepted");
-          print("debitCardAccepted: $debitCardAccepted");
-          print("isCardOneEnabled: $isCardOneEnabled");
-          print("isCardTwoEnabled: $isCardTwoEnabled");
+          isloading = false;
         });
-
-        // Fetch the credit card details
-        await fetchcreditcard(tenantId);
-      } catch (e) {
-        print("Error parsing response body: $e");
       }
-    } else {
-      print('Failed to fetch payment settings');
-      print('Response Status Code: ${response.statusCode}');
+    } catch (e, stackTrace) {
+      print("========== Error in fetchPaymentSettings ==========");
+      print("Error: $e");
+      print("Stack trace: $stackTrace");
+      print("===================================================");
+      setState(() {
+        isloading = false;
+      });
     }
+    print("========== fetchPaymentSettings END ==========");
   }
 
   String? _errorText;
@@ -1058,6 +1312,7 @@ class _MakePaymentState extends State<MakePayment> {
   bool iserror = false;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
         key: key,
         appBar: widget_302.App_Bar(
@@ -1147,10 +1402,19 @@ class _MakePaymentState extends State<MakePayment> {
                                         hint: const Text('Select Lease'),
                                         value: selectedTenantId,
                                         items: tenants.map((tenant) {
+                                          String status = tenant['status']
+                                                  ?.toString()
+                                                  .trim() ??
+                                              '';
+                                          String displayText =
+                                              tenant['tenant_name']!;
+                                          if (status.isNotEmpty) {
+                                            displayText =
+                                                "$displayText ($status)";
+                                          }
                                           return DropdownMenuItem<String>(
                                             value: tenant['tenant_id'],
-                                            child: Text(
-                                                "${tenant['tenant_name']!} (${tenant['status']})"),
+                                            child: Text(displayText),
                                           );
                                         }).toList(),
                                         style: TextStyle(
@@ -1301,10 +1565,12 @@ class _MakePaymentState extends State<MakePayment> {
                               if (pickedDate != null) {
                                 bool isfuture =
                                     pickedDate.isAfter(DateTime.now());
-                                String formattedDate =
-                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                // use dateProvider to format the date
+                                String formattedDate = dateProvider
+                                    .formatCurrentDate(pickedDate.toString());
                                 setState(() {
                                   futuredate = isfuture;
+
                                   _startDate.text = formattedDate;
                                 });
                               }
@@ -1663,15 +1929,17 @@ class _MakePaymentState extends State<MakePayment> {
                                                             "CREDIT"))
                                                       Row(
                                                         children: [
-                                                          SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Text(
-                                                            'CREDIT card types not accepted by rentl owner',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red,
-                                                                fontSize: 14),
+                                                          Expanded(
+                                                            child: Text(
+                                                              'CREDIT card types not accepted by rentl owner',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .justify,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  fontSize: 14),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -1810,10 +2078,14 @@ class _MakePaymentState extends State<MakePayment> {
                                             hint: const Text('Select Lease'),
                                             value: selectedTenantId,
                                             items: tenants.map((tenant) {
+                                              String status = tenant['status']?.toString().trim() ?? '';
+                                              String displayText = tenant['tenant_name']!;
+                                              if (status.isNotEmpty) {
+                                                displayText = "$displayText ($status)";
+                                              }
                                               return DropdownMenuItem<String>(
                                                 value: tenant['tenant_id'],
-                                                child: Text(
-                                                    "${tenant['tenant_name']!} (${tenant['status']})"),
+                                                child: Text(displayText),
                                               );
                                             }).toList(),
                                             style: TextStyle(
@@ -2397,6 +2669,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   print('start date ${_startDate.text}');
                                   await PaymentService()
                                       .makePaymentforcard(
+                                    scheduledPayment: scheduledPayment ?? false,
                                     entries: manualEntries,
                                     paymentAmountType: selected_account ?? '',
                                     adminId: id ?? "",
@@ -2522,7 +2795,37 @@ class _MakePaymentState extends State<MakePayment> {
                               ),
                             ),
                           ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: scheduledPayment,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
+                              activeColor: blueColor,
+                              checkColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  scheduledPayment = value!;
+                                });
+                              },
+                            ),
+                            Text(
+                              "Schedule Payment",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor),
+                            ),
+                          ],
+                        ),
                       ],
+
+                      // add a checkbox to schedule the payment
                     ),
                   )
                 ],

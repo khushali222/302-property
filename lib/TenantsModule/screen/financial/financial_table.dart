@@ -102,7 +102,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ),*/
 
             Expanded(
-              flex: 2,
+              flex: 3,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -178,7 +178,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("    Balance",
+                    Text("Balance",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -1042,18 +1042,24 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 .03),
                                                         Expanded(
                                                           flex: 2,
-                                                          child: Text(
-                                                            Tenant_financial
-                                                                        .balance! <
-                                                                    0
-                                                                ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
-                                                                : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
+                                                          // right align the text
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              Tenant_financial
+                                                                          .balance! <
+                                                                      0
+                                                                  ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
+                                                                  : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),

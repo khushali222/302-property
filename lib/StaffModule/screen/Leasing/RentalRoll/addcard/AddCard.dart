@@ -210,8 +210,8 @@ class _AddCardState extends State<AddCard> {
         print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
+      CustomerData? customerData = await postBillingCustomerVault(
+          customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
         setState(() {
@@ -255,7 +255,8 @@ class _AddCardState extends State<AddCard> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? staffId = prefs.getString("staff_id");
@@ -650,33 +651,43 @@ class _AddCardState extends State<AddCard> {
                                                 const Text('Card Number *',
                                                     style: TextStyle(
                                                         fontSize: 13,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: Colors.grey)),
                                                 CustomTextField(
                                                   validator: (value) {
                                                     if (value == null ||
                                                         value.isEmpty &&
-                                                            !isValidLuhn(value.replaceAll(' ', ''))) {
-                                                      return !isValidLuhn(value!.replaceAll(' ', ''))
+                                                            !isValidLuhn(value
+                                                                .replaceAll(
+                                                                    ' ', ''))) {
+                                                      return !isValidLuhn(value!
+                                                              .replaceAll(
+                                                                  ' ', ''))
                                                           ? 'Invalid credit card number'
                                                           : 'Please enter a credit card number';
-                                                    } else if (!isValidLuhn(value.replaceAll(' ', ''))) {
+                                                    } else if (!isValidLuhn(
+                                                        value.replaceAll(
+                                                            ' ', ''))) {
                                                       return 'Invalid credit card number';
                                                     }
                                                     return null;
                                                   },
                                                   formatter: [
                                                     CardNumberInputFormatter(),
-                                                    LengthLimitingTextInputFormatter(19),
+                                                    LengthLimitingTextInputFormatter(
+                                                        19),
                                                   ],
                                                   label: "enter card number",
-                                                  keyboardType: TextInputType.number,
-                                                  hintText: '0000 0000 0000 0000',
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  hintText:
+                                                      '0000 0000 0000 0000',
                                                   controller: cardNumber,
                                                   cardnum: true,
                                                   optional: false,
                                                   allerror: true,
-                                                  onErrorcard:  (String? error) {
+                                                  onErrorcard: (String? error) {
                                                     setState(() {
                                                       _cardNumberError = error;
                                                     });
@@ -685,7 +696,9 @@ class _AddCardState extends State<AddCard> {
                                                 if (_cardNumberError != null)
                                                   Text(
                                                     _cardNumberError!,
-                                                    style: TextStyle(color: Colors.red, fontSize: 12),
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 12),
                                                   ),
                                                 const SizedBox(
                                                   height: 8,
@@ -693,16 +706,21 @@ class _AddCardState extends State<AddCard> {
                                                 const Text('Expiration Date *',
                                                     style: TextStyle(
                                                         fontSize: 13,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: Colors.grey)),
                                                 CustomTextField(
-                                                  keyboardType: TextInputType.text,
+                                                  keyboardType:
+                                                      TextInputType.text,
                                                   hintText: 'MM/YYYY',
                                                   controller: expirationDate,
-                                                  label: "Enter Expiration Date",
+                                                  label:
+                                                      "Enter Expiration Date",
                                                   //  allerror: true,
                                                   //isexpirydate: true,
-                                                  formatter: [ExpiryDateInputFormatter()],
+                                                  formatter: [
+                                                    ExpiryDateInputFormatter()
+                                                  ],
                                                   expirydate: true,
                                                   optional: false,
                                                   allerror: true,
@@ -715,7 +733,9 @@ class _AddCardState extends State<AddCard> {
                                                 if (_errorMessage != null)
                                                   Text(
                                                     _errorMessage!,
-                                                    style: TextStyle(color: Colors.red, fontSize: 12),
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 12),
                                                   ),
                                                 const SizedBox(
                                                   height: 8,
@@ -723,10 +743,12 @@ class _AddCardState extends State<AddCard> {
                                                 const Text('CVV *',
                                                     style: TextStyle(
                                                         fontSize: 13,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: Colors.grey)),
                                                 CustomTextField(
-                                                  keyboardType: TextInputType.text,
+                                                  keyboardType:
+                                                      TextInputType.text,
                                                   hintText: 'CVV',
                                                   allerror: true,
                                                   controller: cvv,
@@ -744,12 +766,14 @@ class _AddCardState extends State<AddCard> {
                                                 if (_cvvError != null)
                                                   Text(
                                                     _cvvError!,
-                                                    style: TextStyle(color: Colors.red, fontSize: 12),
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 12),
                                                   ),
                                                 const SizedBox(
                                                   height: 10,
                                                 ),
-                                                const Text('First Name *',
+                                                const Text('First Name',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -760,6 +784,7 @@ class _AddCardState extends State<AddCard> {
                                                       TextInputType.text,
                                                   hintText: 'Enter First Name',
                                                   controller: firstName,
+                                                  optional: true,
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -767,7 +792,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Last Name *',
+                                                const Text('Last Name',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -778,6 +803,7 @@ class _AddCardState extends State<AddCard> {
                                                       TextInputType.text,
                                                   hintText: 'Enter Last Name',
                                                   controller: lastName,
+                                                  optional: true,
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -785,7 +811,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Email *',
+                                                const Text('Email',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -797,6 +823,7 @@ class _AddCardState extends State<AddCard> {
                                                   hintText: 'Enter Email',
                                                   controller: email,
                                                   email: true,
+                                                  optional: true,
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -804,7 +831,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Phone Number*',
+                                                const Text('Phone Number',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -825,6 +852,7 @@ class _AddCardState extends State<AddCard> {
                                                   ],
                                                   controller: phoneNumber,
                                                   phone: true,
+                                                  optional: true,
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -832,7 +860,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Address *',
+                                                const Text('Address',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -843,6 +871,7 @@ class _AddCardState extends State<AddCard> {
                                                       TextInputType.text,
                                                   hintText: 'Enter Address',
                                                   controller: address,
+                                                  optional: true,
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -1497,7 +1526,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('First Name *',
+                                        const Text('First Name',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1506,6 +1535,7 @@ class _AddCardState extends State<AddCard> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter First Name',
                                           controller: firstName,
+                                          optional: true,
                                         ),
                                         const SizedBox(
                                           height: 8,
@@ -1513,7 +1543,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Last Name *',
+                                        const Text('Last Name',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1522,6 +1552,7 @@ class _AddCardState extends State<AddCard> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter Last Name',
                                           controller: lastName,
+                                          optional: true,
                                         ),
                                         const SizedBox(
                                           height: 8,
@@ -1529,7 +1560,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Email *',
+                                        const Text('Email',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1539,6 +1570,7 @@ class _AddCardState extends State<AddCard> {
                                           hintText: 'Enter Email',
                                           controller: email,
                                           email: true,
+                                          optional: true,
                                         ),
                                         const SizedBox(
                                           height: 8,
@@ -1546,7 +1578,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Phone Number*',
+                                        const Text('Phone Number',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1564,6 +1596,7 @@ class _AddCardState extends State<AddCard> {
                                           hintText: 'Enter Phone Number',
                                           controller: phoneNumber,
                                           phone: true,
+                                          optional: true,
                                         ),
                                         const SizedBox(
                                           height: 8,
@@ -1571,7 +1604,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Address *',
+                                        const Text('Address',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1580,6 +1613,7 @@ class _AddCardState extends State<AddCard> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter Address',
                                           controller: address,
+                                          optional: true,
                                         ),
                                         const SizedBox(
                                           height: 8,
@@ -1771,11 +1805,15 @@ class _AddCardState extends State<AddCard> {
                                                 if (_formKey.currentState
                                                         ?.validate() ??
                                                     false) {
-                                                  if(_cardNumberError != null || _errorMessage!.isNotEmpty || _cvvError != null ){
-
-                                                    Fluttertoast.showToast(msg: "Add Card faileds");
-                                                  }
-                                                else  {
+                                                  if (_cardNumberError !=
+                                                          null ||
+                                                      _errorMessage!
+                                                          .isNotEmpty ||
+                                                      _cvvError != null) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Add Card faileds");
+                                                  } else {
                                                     SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
@@ -1795,57 +1833,64 @@ class _AddCardState extends State<AddCard> {
                                                     CardModel
                                                         cardwithOutVaultId =
                                                         CardModel(
-                                                      firstName: firstName.text.trim(),
-                                                      lastName: lastName.text.trim(),
-                                                      ccnumber: cardNumber.text.trim()
+                                                      firstName:
+                                                          firstName.text.trim(),
+                                                      lastName:
+                                                          lastName.text.trim(),
+                                                      ccnumber: cardNumber.text
+                                                          .trim()
                                                           .replaceAll(' ', ''),
-                                                      ccexp:
-                                                          expirationDate.text.trim(),
-                                                      address1: address.text.trim(),
+                                                      ccexp: expirationDate.text
+                                                          .trim(),
+                                                      address1:
+                                                          address.text.trim(),
                                                       address2: '',
                                                       city: city.text.trim(),
                                                       state: state.text.trim(),
                                                       zip: zip.text.trim(),
-                                                      country: country.text.trim(),
-                                                      phone: phoneNumber.text.trim(),
+                                                      country:
+                                                          country.text.trim(),
+                                                      phone: phoneNumber.text
+                                                          .trim(),
                                                       email: email.text.trim(),
                                                       company: comapanyName,
                                                       billingId: randomNumber,
                                                       adminId: id,
                                                     );
 
-                                                    CardModel cardwithVaultId =
-                                                        CardModel(
-                                                            phone: phoneNumber
-                                                                .text.trim(),
-                                                            adminId: id,
-                                                            company:
-                                                                comapanyName,
-                                                            firstName:
-                                                                firstName.text.trim(),
-                                                            lastName:
-                                                                lastName.text.trim(),
-                                                            ccnumber: cardNumber
-                                                                .text.trim()
-                                                                .replaceAll(
-                                                                    ' ', ''),
-                                                            ccexp:
-                                                                expirationDate
-                                                                    .text.trim(),
-                                                            address1:
-                                                                address.text.trim(),
-                                                            address2: '',
-                                                            zip: zip.text.trim(),
-                                                            state: state.text.trim(),
-                                                            city: city.text.trim(),
-                                                            billingId:
-                                                                randomNumber,
-                                                            email: email.text.trim(),
-                                                            country:
-                                                                country.text.trim(),
-                                                            customervaultid:
-                                                                customervaultid
-                                                                    .toString());
+                                                    CardModel cardwithVaultId = CardModel(
+                                                        phone: phoneNumber.text
+                                                            .trim(),
+                                                        adminId: id,
+                                                        company: comapanyName,
+                                                        firstName: firstName
+                                                            .text
+                                                            .trim(),
+                                                        lastName: lastName.text
+                                                            .trim(),
+                                                        ccnumber: cardNumber
+                                                            .text
+                                                            .trim()
+                                                            .replaceAll(
+                                                                ' ', ''),
+                                                        ccexp: expirationDate
+                                                            .text
+                                                            .trim(),
+                                                        address1:
+                                                            address.text.trim(),
+                                                        address2: '',
+                                                        zip: zip.text.trim(),
+                                                        state:
+                                                            state.text.trim(),
+                                                        city: city.text.trim(),
+                                                        billingId: randomNumber,
+                                                        email:
+                                                            email.text.trim(),
+                                                        country:
+                                                            country.text.trim(),
+                                                        customervaultid:
+                                                            customervaultid
+                                                                .toString());
 
                                                     AddCardService
                                                         addCardService =
@@ -2280,7 +2325,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   late FocusNode _focusNode;
   @override
@@ -2297,7 +2342,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2320,6 +2365,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+
   String exprmessage = "";
   bool isValidLuhn(String input) {
     input = input.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
@@ -2351,10 +2397,14 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional!
-              ? null
-              : (value) {
-            if (widget.controller!.text.trim().isEmpty) {
+          validator: (value) {
+            // If field is optional and empty, no validation needed
+            if (widget.optional! && widget.controller!.text.trim().isEmpty) {
+              return null;
+            }
+
+            // If field is required and empty, show error
+            if (!widget.optional! && widget.controller!.text.trim().isEmpty) {
               setState(() {
                 if (widget.label == null)
                   _errorMessage = 'Please ${widget.hintText}';
@@ -2363,71 +2413,23 @@ class CustomTextFieldState extends State<CustomTextField> {
               });
               return '';
             }
-            // else if (widget.cvv != null) {
-            //   String formattedCVV =
-            //   widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-            //
-            //   // Removed the empty check
-            //   if (formattedCVV.length != 3) {
-            //     setState(() {
-            //       _errorMessage = "Cvv number must be 3 digits";
-            //     });
-            //     return '';
-            //   }
-            // }
-            // else if (widget.cardnum != null) {
-            //   String? validationMessage =
-            //   ValidateExpirationDate(widget.controller!.text);
-            //   if (validationMessage != null) {
-            //     setState(() {
-            //       _errorMessage = validationMessage;
-            //     });
-            //     return '';
-            //   }
-            // }
-            // if (widget.cardnum != null) {
-            //   final sanitizedValue =widget.controller!.text.replaceAll(' ', '');
-            //
-            //   // Check if the card number length is less than 16
-            //   if (sanitizedValue == null || sanitizedValue.length < 16) {
-            //     return 'Card number must be at least 16 digits';
-            //   }
-            //
-            //   // Validate using the Luhn algorithm
-            //   if (!isValidLuhn(sanitizedValue)) {
-            //     return 'Invalid credit card number';
-            //   }
-            // }
-            // else if (widget.cardnum != null) {
-            //   String cardNumber = widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-            //
-            //   // Removed the empty check
-            //   if (cardNumber.length != 16) {
-            //     setState(() {
-            //       _errorMessage = "Card number must be 16 digits";
-            //     });
-            //     return '';
-            //   }
-            //   if (!isValidLuhn(cardNumber)) {
-            //     setState(() {
-            //       _errorMessage = "Invalid credit card number";
-            //     });
-            //     return '';
-            //   }
-            // }
-            else if (widget.phone != null) {
-              String formattedPhoneNumber =
-              widget.controller!.text.trim().replaceAll(RegExp(r'\D'), '');
 
-              // Removed the empty check
-              if (formattedPhoneNumber.length != 10) {
+            // Validate format if field has value (for optional fields) or is required
+            if (widget.phone != null) {
+              String formattedPhoneNumber =
+                  widget.controller!.text.trim().replaceAll(RegExp(r'\D'), '');
+
+              if (formattedPhoneNumber.isNotEmpty &&
+                  formattedPhoneNumber.length != 10) {
                 setState(() {
                   _errorMessage = "Phone number must be 10 digits";
                 });
                 return '';
               }
             } else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text.trim())) {
+              String emailValue = widget.controller!.text.trim();
+              if (emailValue.isNotEmpty &&
+                  !EmailValidator.validate(emailValue)) {
                 setState(() {
                   _errorMessage = "Email is not valid";
                 });
@@ -2450,7 +2452,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2488,7 +2490,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       onFieldSubmitted: widget.onChanged2,
                       onChanged: (value) {
                         //  print("object calin $value");
-                        if (widget.expirydate == true ) {
+                        if (widget.expirydate == true) {
                           String? validationMessage;
 
                           // If the field is empty, set the error message to null
@@ -2496,31 +2498,38 @@ class CustomTextFieldState extends State<CustomTextField> {
                             validationMessage = null;
                           } else {
                             // If not empty, validate the expiration date
-                            validationMessage = ValidateExpirationDate(value); // Assuming ValidateExpirationDate() checks for expiration date format
+                            validationMessage = ValidateExpirationDate(
+                                value); // Assuming ValidateExpirationDate() checks for expiration date format
                           }
 
                           print(validationMessage);
 
                           setState(() {
                             if (validationMessage != null) {
-                              exprmessage = validationMessage; // Display error message if invalid
+                              exprmessage =
+                                  validationMessage; // Display error message if invalid
                             } else {
-                              exprmessage = ""; // Clear error message if valid or empty
-                              _errorMessage = null; // Clear general error message
+                              exprmessage =
+                                  ""; // Clear error message if valid or empty
+                              _errorMessage =
+                                  null; // Clear general error message
                             }
                           });
 
                           if (widget.onError != null) {
-                            widget.onError!(exprmessage); // Pass the error message to the parent
+                            widget.onError!(
+                                exprmessage); // Pass the error message to the parent
                           }
                         }
                         if (widget.cardnum != null && widget.allerror != null) {
-                          String cardNumber = value.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
+                          String cardNumber = value.replaceAll(
+                              RegExp(r'\D'), ''); // Remove non-digit characters
 
                           // If the card number is empty, clear the error message
                           if (cardNumber.isEmpty) {
                             setState(() {
-                              _errorMessage = null; // Clear error message if the field is empty
+                              _errorMessage =
+                                  null; // Clear error message if the field is empty
                             });
                           } else if (cardNumber.length != 16) {
                             setState(() {
@@ -2541,17 +2550,22 @@ class CustomTextFieldState extends State<CustomTextField> {
                           }
 
                           // Notify parent about the error message (if any)
-                          if (widget.onErrorcard != null ) {
-                            widget.onErrorcard!(_errorMessage); // Pass the error message to the parent
+                          if (widget.onErrorcard != null) {
+                            widget.onErrorcard!(
+                                _errorMessage); // Pass the error message to the parent
                           }
                         }
-                        if (widget.cvv != null&& widget.allerror != null) {
-                          String formattedCVV = widget.controller!.text.trim().replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
+                        if (widget.cvv != null && widget.allerror != null) {
+                          String formattedCVV = widget.controller!.text
+                              .trim()
+                              .replaceAll(RegExp(r'\D'),
+                                  ''); // Remove non-digit characters
 
                           // Check if the CVV field is empty
                           if (formattedCVV.isEmpty) {
                             setState(() {
-                              _errorMessage = null; // Clear error message if the field is empty
+                              _errorMessage =
+                                  null; // Clear error message if the field is empty
                             });
                           } else if (formattedCVV.length != 3) {
                             setState(() {
@@ -2568,10 +2582,10 @@ class CustomTextFieldState extends State<CustomTextField> {
 
                           // Notify parent about the error message (if any)
                           if (widget.onErrorcvv != null) {
-                            widget.onErrorcvv!(_errorMessage); // Pass the error message to the parent
+                            widget.onErrorcvv!(
+                                _errorMessage); // Pass the error message to the parent
                           }
                         }
-
 
                         if (value.isNotEmpty) {
                           setState(() {
@@ -2599,19 +2613,20 @@ class CustomTextFieldState extends State<CustomTextField> {
                         }
                         return null;
                       },
-
                       controller: widget.controller,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
-
                       ),
                       style: TextStyle(
-                          color: widget.allerror ==true?exprmessage != ""? Colors.red : Colors.green : Colors.black
-                      ),
+                          color: widget.allerror == true
+                              ? exprmessage != ""
+                                  ? Colors.red
+                                  : Colors.green
+                              : Colors.black),
                     ),
                   ),
                 ),
@@ -2639,19 +2654,19 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: widget.amount_check != null
-          ? widget.amount_check!
-          ? 75
-          : 60
-          : _errorMessage != null
-          ? 75
-          : 60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: widget.amount_check != null
+                ? widget.amount_check!
+                    ? 75
+                    : 60
+                : _errorMessage != null
+                    ? 75
+                    : 60,
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }

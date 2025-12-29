@@ -54,12 +54,15 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   void _setTodayDateAndFetch() {
-    // Fetch data without date filters
-    _fetchOpenWorkOrders(
-      fromDate: null,
-      toDate: null,
-      status: null,
-    );
+    // Set today's date in the fields
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String todayDisplayFormat = dateProvider
+        .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    _fromDateController.text = todayDisplayFormat;
+    _toDateController.text = todayDisplayFormat;
+
+    // Set default date range to "Today"
+    daterange = "Today";
   }
 
   void checkInternet() async {
@@ -85,12 +88,102 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     // Get status parameter
     String? statusParam = statusType == 'All Statuses' ? null : statusType;
 
-    // Fetch data with status filter only
+    // Get date parameters and convert to API format (yyyy-MM-dd)
+    String? fromDateParam;
+    String? toDateParam;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
+    if (_fromDateController.text.isNotEmpty) {
+      // Convert display date to API format (yyyy-MM-dd)
+      fromDateParam =
+          convertDisplayDateToApiFormat(_fromDateController.text, dateProvider);
+    }
+
+    if (_toDateController.text.isNotEmpty) {
+      // Convert display date to API format (yyyy-MM-dd)
+      toDateParam =
+          convertDisplayDateToApiFormat(_toDateController.text, dateProvider);
+    }
+
+    // Print API parameters for debugging
+    print('=== API DEBUG INFO (OPEN WORK ORDERS) ===');
+    print('From Date (Display): ${_fromDateController.text}');
+    print('To Date (Display): ${_toDateController.text}');
+    print('From Date (API): $fromDateParam');
+    print('To Date (API): $toDateParam');
+    print('Status: $statusParam');
+    print('========================================');
+
+    // Fetch data with filters
     _fetchOpenWorkOrders(
-      fromDate: null,
-      toDate: null,
+      fromDate: fromDateParam,
+      toDate: toDateParam,
       status: statusParam,
     );
+  }
+
+  // Date picker methods
+  Future<void> _pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
+  }
+
+  Future<void> _endDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor,
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        _toDateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+      });
+    }
   }
 
   Widget _buildDataCell(String text) {
@@ -132,6 +225,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
   // Filter variables
   String? statusType;
+  String? daterange;
+  bool customdate = false;
+  final TextEditingController _fromDateController = TextEditingController();
+  final TextEditingController _toDateController = TextEditingController();
+  DateTime? _selectedDate;
 
   List<WorkOrderReportData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
@@ -455,6 +553,52 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       return formatter.format(date);
     } catch (e) {
       return dateStr; // If the date is not valid, return the original string
+    }
+  }
+
+  // Convert display date back to API format (yyyy-MM-dd)
+  String convertDisplayDateToApiFormat(
+      String displayDate, DateProvider dateProvider) {
+    if (displayDate.isEmpty) return displayDate;
+
+    try {
+      // Get the current date format from DateProvider
+      String currentDateFormat = dateProvider.dateFormat;
+
+      // List of possible date formats to try
+      List<String> formatsToTry = [
+        currentDateFormat, // Try the user's preferred format first
+        'MM/dd/yyyy',
+        'M/d/yyyy',
+        'dd-MM-yyyy',
+        'd-M-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-M-d',
+      ];
+
+      DateTime? parsedDate;
+
+      // Try parsing with each format
+      for (String format in formatsToTry) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break; // Successfully parsed
+        } catch (e) {
+          continue; // Try next format
+        }
+      }
+
+      // If parsing succeeded, format as yyyy-MM-dd
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      // If all parsing attempts failed, return original (shouldn't happen)
+      print('Warning: Could not parse date: $displayDate');
+      return displayDate;
+    } catch (e) {
+      print('Error converting display date to API format: $e');
+      return displayDate;
     }
   }
 
@@ -793,6 +937,542 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     ),
                     child: Column(
                       children: [
+                        // Date Range Dropdown
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: Row(
+                                        children: [
+                                          const SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              daterange ?? "Date Range",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: daterange == null
+                                                    ? const Color(0xFF8A95A8)
+                                                    : Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: [
+                                        DropdownMenuItem<String>(
+                                          value: 'Today',
+                                          child: Text(
+                                            'Today',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Yesterday',
+                                          child: Text(
+                                            'Yesterday',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 7 Days',
+                                          child: Text(
+                                            'Last 7 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 14 Days',
+                                          child: Text(
+                                            'Last 14 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 30 Days',
+                                          child: Text(
+                                            'Last 30 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Week',
+                                          child: Text(
+                                            'This Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Week',
+                                          child: Text(
+                                            'Last Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Month',
+                                          child: Text(
+                                            'This Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Month',
+                                          child: Text(
+                                            'Last Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Quarter',
+                                          child: Text(
+                                            'This Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Quarter',
+                                          child: Text(
+                                            'Last Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Year to Date',
+                                          child: Text(
+                                            'Year to Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Year',
+                                          child: Text(
+                                            'Last Year',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Custom',
+                                          child: Text(
+                                            'Custom Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                      value: daterange,
+                                      onChanged: (value) {
+                                        final dateProvider =
+                                            Provider.of<DateProvider>(context,
+                                                listen: false);
+                                        setState(() {
+                                          daterange = value;
+                                          DateTime now = DateTime.now();
+                                          customdate = false;
+
+                                          if (value == "Today") {
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime.now().toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime.now().toString());
+                                          } else if (value == "Yesterday") {
+                                            DateTime yesterday =
+                                                now.subtract(Duration(days: 1));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterday.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterday.toString());
+                                          } else if (value == "Last 7 Days") {
+                                            // Last 7 Days including today: subtract 6 days (not 7)
+                                            DateTime startDate =
+                                                now.subtract(Duration(days: 6));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startDate.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    now.toString());
+                                          } else if (value == "Last 14 Days") {
+                                            // Last 14 Days including today: subtract 13 days (not 14)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 13));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startDate.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    now.toString());
+                                          } else if (value == "Last 30 Days") {
+                                            // Last 30 Days including today: subtract 29 days (not 30)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 29));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startDate.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    now.toString());
+                                          } else if (value == "This Week") {
+                                            // Start of current week (Monday)
+                                            DateTime startOfWeek = now.subtract(
+                                                Duration(
+                                                    days: now.weekday - 1));
+                                            // End of current week (Sunday)
+                                            DateTime endOfWeek = startOfWeek
+                                                .add(Duration(days: 6));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startOfWeek.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endOfWeek.toString());
+                                          } else if (value == "Last Week") {
+                                            // Start of current week (Monday)
+                                            DateTime startOfCurrentWeek =
+                                                now.subtract(Duration(
+                                                    days: now.weekday - 1));
+                                            // Start of last week (Monday of last week) - subtract 7 days from current week start
+                                            DateTime startOfLastWeek =
+                                                startOfCurrentWeek.subtract(
+                                                    Duration(days: 7));
+                                            // End of last week (Sunday of last week)
+                                            DateTime endOfLastWeek =
+                                                startOfLastWeek
+                                                    .add(Duration(days: 6));
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startOfLastWeek.toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endOfLastWeek.toString());
+                                          } else if (value == "This Month") {
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(now.year,
+                                                            now.month, 1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(now.year,
+                                                            now.month + 1, 0)
+                                                        .toString());
+                                          } else if (value == "Last Month") {
+                                            DateTime lastMonth = DateTime(
+                                                now.year, now.month - 1, 1);
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(lastMonth.year,
+                                                            lastMonth.month, 1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(
+                                                            lastMonth.year,
+                                                            lastMonth.month + 1,
+                                                            0)
+                                                        .toString());
+                                          } else if (value == "This Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int quarterStartMonth =
+                                                (currentQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                currentQuarter * 3;
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(
+                                                            now.year,
+                                                            quarterStartMonth,
+                                                            1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(
+                                                            now.year,
+                                                            quarterEndMonth + 1,
+                                                            0)
+                                                        .toString());
+                                          } else if (value == "Last Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int lastQuarter =
+                                                currentQuarter == 1
+                                                    ? 4
+                                                    : currentQuarter - 1;
+                                            int lastQuarterYear =
+                                                currentQuarter == 1
+                                                    ? now.year - 1
+                                                    : now.year;
+                                            int quarterStartMonth =
+                                                (lastQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                lastQuarter * 3;
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(
+                                                            lastQuarterYear,
+                                                            quarterStartMonth,
+                                                            1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(
+                                                            lastQuarterYear,
+                                                            quarterEndMonth + 1,
+                                                            0)
+                                                        .toString());
+                                          } else if (value == "Year to Date") {
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(now.year, 1, 1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    now.toString());
+                                          } else if (value == "Last Year") {
+                                            _fromDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(now.year - 1, 1, 1)
+                                                        .toString());
+                                            _toDateController.text =
+                                                dateProvider.formatCurrentDate(
+                                                    DateTime(now.year - 1, 12,
+                                                            31)
+                                                        .toString());
+                                          } else if (value == "Custom") {
+                                            customdate = true;
+                                          }
+
+                                          if (value != "Custom" &&
+                                              customdate == true) {
+                                            customdate = false;
+                                            _fromDateController.text = "";
+                                            _toDateController.text = "";
+                                          }
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 42,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: const Color(0xFF8A95A8),
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // From Date and To Date fields with theme
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF8A95A8),
+                                      colorScheme: ColorScheme.light(
+                                        primary: Color(0xFF8A95A8),
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _fromDateController,
+                                      onTap: customdate
+                                          ? () {
+                                              _pickDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "From",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: blueColor,
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: _toDateController,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      onTap: customdate
+                                          ? () {
+                                              _endDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "To",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         // Status and Run Report Button
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0),

@@ -34,6 +34,7 @@ class _AddDocumentState extends State<AddDocument> {
   @override
   void initState() {
     super.initState();
+    fetchTenants();
   }
 
   final TextEditingController firstName = TextEditingController();
@@ -44,7 +45,8 @@ class _AddDocumentState extends State<AddDocument> {
     "Insurance policy Docs",
     "Lease agreements",
     "Lease renewal offers",
-    "Lease renewal letters"
+    "Lease renewal letters",
+    "Other"
   ];
   String? selectedValue;
   bool isLoading = false;
@@ -56,6 +58,11 @@ class _AddDocumentState extends State<AddDocument> {
   File? _image;
   List<File> _images = [];
   String? _uploadedFileName;
+
+  // Tenant dropdown variables
+  List<Map<String, dynamic>> tenants = [];
+  String? selectedTenantId;
+  bool isLoadingTenants = false;
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +247,113 @@ class _AddDocumentState extends State<AddDocument> {
                               },
                             ),
                           ],
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Text('Associate with Tenant (Optional)',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: blueColor)),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Select Tenant (optional)',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            items: [
+                              // Add "No tenant association" option
+                              const DropdownMenuItem<String>(
+                                value: null,
+                                child: Text(
+                                  'No tenant association',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              // Add tenant options
+                              ...tenants.map((tenant) {
+                                String displayName =
+                                    '${tenant['tenant_firstName'] ?? ''} ${tenant['tenant_lastName'] ?? ''}'
+                                        .trim();
+                                return DropdownMenuItem<String>(
+                                  value: tenant['tenant_id']?.toString(),
+                                  child: Text(
+                                    displayName.isEmpty
+                                        ? 'Unknown Tenant'
+                                        : displayName,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                            value: selectedTenantId,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedTenantId = value;
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              height: 50,
+                              width: 230,
+                              padding:
+                                  const EdgeInsets.only(left: 14, right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                ),
+                                color: Colors.white,
+                              ),
+                              elevation: 3,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 200,
+                              width: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              offset: const Offset(-20, 0),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(40),
+                                thickness: MaterialStateProperty.all(6),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                              padding: EdgeInsets.only(left: 14, right: 14),
+                            ),
+                          ),
                         ),
                         const SizedBox(
                           height: 12,
@@ -478,6 +592,43 @@ class _AddDocumentState extends State<AddDocument> {
     }
   }
 
+  Future<void> fetchTenants() async {
+    setState(() {
+      isLoadingTenants = true;
+    });
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/tenants/${widget.leaseId}'),
+        headers: <String, String>{
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+        if (responseData['success'] == true &&
+            responseData['tenants'] != null) {
+          setState(() {
+            tenants = List<Map<String, dynamic>>.from(responseData['tenants']);
+          });
+        }
+      } else {
+        print('Failed to fetch tenants: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching tenants: $error');
+    } finally {
+      setState(() {
+        isLoadingTenants = false;
+      });
+    }
+  }
+
   addDocument() async {
     setState(() {
       isLoading = true; // Start loading
@@ -502,6 +653,11 @@ class _AddDocumentState extends State<AddDocument> {
         "created_date": DateFormat("yyyy-MM-dd h:mm:ss").format(DateTime.now()),
         "created_by": adminId, // Ensure it's properly formatted
       };
+
+      // Add tenant_id if a tenant is selected
+      if (selectedTenantId != null && selectedTenantId!.isNotEmpty) {
+        values["tenant_id"] = selectedTenantId;
+      }
 
       print(jsonEncode(values)); // Debugging: Check final JSON format
 
@@ -530,19 +686,25 @@ class _AddDocumentState extends State<AddDocument> {
       if (response.statusCode == 200) {
         // Use "message" instead of "Document added successfully"
         Fluttertoast.showToast(msg: "Document added successfully");
-        Navigator.pop(context, true); // optional: close page after success
+        setState(() {
+          isLoading = false; // Stop loading before popping
+        });
+        Navigator.pop(context, true); // Return true to trigger table refresh
         return responseData;
       } else {
         Fluttertoast.showToast(msg: "Failed to add document");
-        throw Exception('Failed to add document');
+        setState(() {
+          isLoading = false;
+        });
+        return null; // Return null on failure
       }
     } catch (error) {
       print('Error: $error');
       Fluttertoast.showToast(msg: 'Something went wrong');
-    } finally {
       setState(() {
-        isLoading = false; // Stop loading
+        isLoading = false; // Stop loading on error
       });
+      return null; // Return null on error
     }
   }
 }

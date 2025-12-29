@@ -260,12 +260,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -310,29 +307,33 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                     child: Row(
                       children: [
                         width < 400
-                            ? const Text("Leases",
-                                style: TextStyle(color: Colors.white))
-                            : const Text("Leases",
-                                style: TextStyle(color: Colors.white)),
+                            ?  Text("Leases",
+                            style: TextStyle( color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                            :  Text("Leases",
+                            style: TextStyle( color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
                         const SizedBox(width: 3),
                         ascending1
-                            ? const Padding(
-                                padding: EdgeInsets.only(top: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortUp,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Padding(
-                                padding: EdgeInsets.only(bottom: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortDown,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            ?  Padding(
+                          padding: EdgeInsets.only(top: 7, left: 2),
+                          child: FaIcon(
+                            FontAwesomeIcons.sortUp,
+                            size: 20,
+                            color: blueColor,
+                          ),
+                        )
+                            :  Padding(
+                          padding: EdgeInsets.only(bottom: 7, left: 2),
+                          child: FaIcon(
+                            FontAwesomeIcons.sortDown,
+                            size: 20,
+                            color:blueColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1101,12 +1102,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                 ),
                                 const SizedBox(height: 20),
                                 _buildHeaders(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 Padding(
                                   padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor)),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1118,8 +1117,16 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                             expandedRowIndex == rowIndex;
 
                                         return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
+                                            color: rowIndex % 2 != 0
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

@@ -366,6 +366,9 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   List<int> amountList = List.filled(2, 0);
   String convertDateFormat(String dateStr) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    if (dateStr.isEmpty || dateStr == 'null') {
+      return 'N/A';
+    }
     return dateProvider.formatCurrentDate(dateStr);
   }
 
@@ -411,6 +414,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   Widget build(BuildContext context) {
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
+    final dateProvider = Provider.of<DateProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         return await _showExitPopup(context);
@@ -449,12 +453,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                         const SizedBox(height: 20),
 
                         // Recent Transactions
-                        _buildRecentTransactions(),
+                        _buildRecentTransactions(dateProvider),
 
                         const SizedBox(height: 20),
 
                         // Scheduled and Recurring Payments
-                        _buildScheduledPayments(),
+                        _buildScheduledPayments(dateProvider),
                       ],
                     ),
                   )
@@ -647,7 +651,40 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     );
   }
 
-  Widget _buildRecentTransactions() {
+  String _formatPaymentAmount(dynamic amount) {
+    if (amount == null) {
+      return "\$0.00";
+    }
+
+    // Handle List type - amount is already in dollars
+    if (amount is List) {
+      if (amount.isEmpty) {
+        return "\$0.00";
+      }
+      final value = amount[0];
+      if (value is num) {
+        return "\$${value.toStringAsFixed(2)}";
+      }
+      return "\$${double.tryParse(value.toString())?.toStringAsFixed(2) ?? '0.00'}";
+    }
+
+    // Handle numeric types (int, double) - amount is already in dollars
+    if (amount is num) {
+      return "\$${amount.toStringAsFixed(2)}";
+    }
+
+    // Handle string type
+    if (amount is String) {
+      final parsed = double.tryParse(amount);
+      if (parsed != null) {
+        return "\$${parsed.toStringAsFixed(2)}";
+      }
+    }
+
+    return "\$0.00";
+  }
+
+  Widget _buildRecentTransactions(DateProvider dateProvider) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -744,7 +781,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "${transaction['payment_type'] ?? 'Payment'} - ${transaction['date'] ?? ''}",
+                                "${transaction['payment_type'] ?? 'Payment'} - ${transaction['date'] != null && transaction['date'].toString().isNotEmpty ? dateProvider.formatCurrentDate(transaction['date'].toString()) : ''}",
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
@@ -782,7 +819,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     );
   }
 
-  Widget _buildScheduledPayments() {
+  Widget _buildScheduledPayments(DateProvider dateProvider) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -971,7 +1008,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    "Due Date – ${payment['date'] ?? ''}",
+                                    "Due Date – ${payment['date'] != null && payment['date'].toString().isNotEmpty ? dateProvider.formatCurrentDate(payment['date'].toString()) : ''}",
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
@@ -1010,24 +1047,14 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        if (payment['amount'].runtimeType == List<dynamic>)
-                          Text(
-                            "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                        Text(
+                          _formatPaymentAmount(payment['amount']),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
-                        if (payment['amount'].runtimeType == double)
-                          Text(
-                            "\$${payment['amount'].toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
+                        ),
                       ],
                     ),
                   ),

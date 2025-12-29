@@ -138,31 +138,84 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
 
   @override
   void didPopNext() {
-    // Always refetch categories when returning to this screen
-    _loadDropdownCategories();
+    // Only refetch categories if they're not already loaded
+    // This prevents clearing the dropdown unnecessarily
+    if (_dropdownCategories.isEmpty) {
+      _loadDropdownCategories();
+    }
     super.didPopNext();
   }
 
-  Future<void> _loadDropdownCategories() async {
+  Future<void> _loadDropdownCategories({bool forceRefresh = false}) async {
+    // Prevent refetch if categories are already loaded (unless forced)
+    if (!forceRefresh &&
+        _dropdownCategories.isNotEmpty &&
+        !_isLoadingCategories) {
+      print('=== Categories already loaded, skipping fetch ===');
+      return;
+    }
+
+    // Preserve the selected category ID before refetching
+    String? selectedCategoryId = _selectedDropdownCategory?.categoryId;
+
     setState(() {
       _isLoadingCategories = true;
     });
     try {
+      print('=== Starting to fetch categories in AddWorkOrderForMobile ===');
       final cats = await FetchAllcategories().fetchAllCategories();
+      print('=== Categories fetched successfully ===');
+      print('Total categories count: ${cats.length}');
+
+      // Print each category details
+      for (int i = 0; i < cats.length; i++) {
+        print(
+            'Category $i: id=${cats[i].categoryId}, name=${cats[i].name}, admin_id=${cats[i].adminId}');
+      }
+
       // Sort categories alphabetically by name
       cats.sort((a, b) {
         final nameA = (a.name ?? '').toLowerCase();
         final nameB = (b.name ?? '').toLowerCase();
         return nameA.compareTo(nameB);
       });
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
+      print('Fetched categories in AddWorkOrderForMobile: ${cats.toString()}');
+      print('Categories after sorting: ${cats.map((c) => c.name).toList()}');
+
+      // Restore the selected category if it exists
+      allcategories_model? restoredCategory;
+      String? categoryIdToRestore = selectedCategoryId ?? _pendingCategoryId;
+
+      if (categoryIdToRestore != null && cats.isNotEmpty) {
+        try {
+          restoredCategory = cats.firstWhere(
+            (cat) => cat.categoryId == categoryIdToRestore,
+          );
+          print(
+              '=== Restoring selected category: ${restoredCategory.name} ===');
+          _pendingCategoryId =
+              null; // Clear pending ID after successful restore
+        } catch (e) {
+          // Category not found in new list, keep it as null
+          print(
+              '=== Selected category not found in new list, clearing selection ===');
+          restoredCategory = null;
+        }
+      }
+
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
+        // Restore selected category if it was previously selected or pending
+        if (restoredCategory != null) {
+          _selectedDropdownCategory = restoredCategory;
+        }
       });
+      print('=== Categories set in state: ${_dropdownCategories.length} ===');
     } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
-          e.toString());
+      print('=== Error fetching categories in AddWorkOrderForMobile ===');
+      print('Error: ${e.toString()}');
+      print('Stack trace: ${StackTrace.current}');
       setState(() {
         _isLoadingCategories = false;
       });
@@ -194,17 +247,28 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                   : workorder.workDefaults?.staffmemberId;
           _selectedEntry = entryAllowedString;
           print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
-          if (fetchedCategoryId != null && _dropdownCategories.isNotEmpty) {
-            final match = _dropdownCategories
-                .where((cat) => cat.categoryId == fetchedCategoryId)
-                .toList();
-            if (match.length == 1) {
-              _selectedDropdownCategory = match.first;
+          if (fetchedCategoryId != null) {
+            if (_dropdownCategories.isNotEmpty) {
+              // Categories already loaded, set selected category immediately
+              final match = _dropdownCategories
+                  .where((cat) => cat.categoryId == fetchedCategoryId)
+                  .toList();
+              if (match.length == 1) {
+                _selectedDropdownCategory = match.first;
+                print(
+                    '=== Set selected category from work defaults: ${match.first.name} ===');
+              } else {
+                _selectedDropdownCategory = null;
+              }
             } else {
-              _selectedDropdownCategory = null;
+              // Categories not loaded yet, store the ID for later
+              _pendingCategoryId = fetchedCategoryId;
+              print(
+                  '=== Storing pending category ID: $fetchedCategoryId (categories not loaded yet) ===');
             }
           } else {
             _selectedDropdownCategory = null;
+            _pendingCategoryId = null;
           }
         });
       }
@@ -235,8 +299,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               data['rental_adress'].toString();
         });
 
+        // Sort properties alphabetically by address (A-Z)
+        final sortedEntries = addresses.entries.toList()
+          ..sort(
+              (a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase()));
+        final sortedAddresses = Map<String, String>.fromEntries(sortedEntries);
+
         setState(() {
-          properties = addresses;
+          properties = sortedAddresses;
           _isLoading = false;
         });
       } else {
@@ -608,15 +678,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: MediaQuery.of(context).size.width < 500
-                    ? 45
-                    : 50,
+                height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                 // width: 180,
                 // width: MediaQuery.of(context).size.width < 500
                 //     ? MediaQuery.of(context).size.width * .38
                 //     : MediaQuery.of(context).size.width * .4,
-                padding:
-                const EdgeInsets.only(left: 14, right: 14),
+                padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -638,8 +705,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                 scrollbarTheme: ScrollbarThemeData(
                   radius: const Radius.circular(40),
                   thickness: MaterialStateProperty.all(6),
-                  thumbVisibility:
-                  MaterialStateProperty.all(true),
+                  thumbVisibility: MaterialStateProperty.all(true),
                 ),
               ),
               menuItemStyleData: const MenuItemStyleData(
@@ -1252,6 +1318,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   List<allcategories_model> _dropdownCategories = [];
   allcategories_model? _selectedDropdownCategory;
   bool _isLoadingCategories = false;
+  String?
+      _pendingCategoryId; // Store category ID from work defaults until categories are loaded
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -1754,11 +1822,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
+                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -2085,67 +2159,104 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           //   },
                           // ),
                           DropdownButtonHideUnderline(
-                            child: DropdownButton2<allcategories_model>(
-                              isExpanded: true,
-                              hint: Text(_isLoadingCategories
-                                  ? 'Loading categories...'
-                                  : 'Select Category'),
-                              value: _dropdownCategories
-                                      .contains(_selectedDropdownCategory)
-                                  ? _selectedDropdownCategory
-                                  : null,
-                              items: _dropdownCategories.map((cat) {
-                                return DropdownMenuItem<allcategories_model>(
-                                  value: cat,
-                                  child: Text(cat.name ?? ''),
-                                );
-                              }).toList(),
-                              onChanged: _isLoadingCategories
-                                  ? null // disables dropdown while loading
-                                  : (allcategories_model? newValue) {
-                                      setState(() {
-                                        _selectedDropdownCategory = newValue;
-                                        _showTextField =
-                                            newValue?.name == 'Other';
-                                      });
-                                    },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: const Color(0xFFCED4DA),
-                                    width: 1.5,
+                            child: Builder(
+                              builder: (context) {
+                                print(
+                                    '=== Building Category Dropdown (Mobile) ===');
+                                print(
+                                    '_isLoadingCategories: $_isLoadingCategories');
+                                print(
+                                    '_dropdownCategories.length: ${_dropdownCategories.length}');
+                                print(
+                                    '_selectedDropdownCategory: ${_selectedDropdownCategory?.name ?? 'null'}');
+                                print(
+                                    'Dropdown items count: ${_dropdownCategories.length}');
+                                if (_dropdownCategories.isNotEmpty) {
+                                  print(
+                                      'First category: ${_dropdownCategories.first.name}');
+                                  print(
+                                      'Last category: ${_dropdownCategories.last.name}');
+                                }
+
+                                return DropdownButton2<allcategories_model>(
+                                  key: ValueKey(
+                                      'category_dropdown_${_dropdownCategories.length}'),
+                                  isExpanded: true,
+                                  hint: Text(_isLoadingCategories
+                                      ? 'Loading categories...'
+                                      : _dropdownCategories.isEmpty
+                                          ? 'No categories available'
+                                          : 'Select Category'),
+                                  value: _selectedDropdownCategory != null &&
+                                          _dropdownCategories.any((cat) =>
+                                              cat.categoryId ==
+                                              _selectedDropdownCategory
+                                                  ?.categoryId)
+                                      ? _selectedDropdownCategory
+                                      : null,
+                                  items: _dropdownCategories.isEmpty
+                                      ? []
+                                      : _dropdownCategories.map((cat) {
+                                          print(
+                                              'Creating dropdown item for: ${cat.name}');
+                                          return DropdownMenuItem<
+                                              allcategories_model>(
+                                            value: cat,
+                                            child: Text(cat.name ?? ''),
+                                          );
+                                        }).toList(),
+                                  onChanged: _isLoadingCategories
+                                      ? null // disables dropdown while loading
+                                      : (allcategories_model? newValue) {
+                                          print(
+                                              'Category selected: ${newValue?.name}');
+                                          setState(() {
+                                            _selectedDropdownCategory =
+                                                newValue;
+                                            _showTextField =
+                                                newValue?.name == 'Other';
+                                          });
+                                        },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 45,
+                                    padding: const EdgeInsets.only(
+                                        left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: const Color(0xFFCED4DA),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    elevation: 0,
                                   ),
-                                ),
-                                elevation: 0,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 250,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 50,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 250,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           _showTextField
@@ -4757,12 +4868,20 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
+                                                      maxHeight: 300,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .5,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(6),
                                                         color: Colors.white,
                                                       ),
+                                                      offset:
+                                                          const Offset(0, -5),
                                                       scrollbarTheme:
                                                           ScrollbarThemeData(
                                                         radius: const Radius

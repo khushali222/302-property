@@ -1442,7 +1442,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const Text('Relation With Tenant',
+                                                const Text(
+                                                    'Relation With Tenant',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -1753,8 +1754,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                 entry.value;
                                                             //return CustomExpansionTile(data: Propertytype, index: index);
                                                             return Container(
-                                                              margin: const EdgeInsets
-                                                                  .symmetric(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
                                                                       vertical:
                                                                           5),
                                                               decoration:
@@ -2491,8 +2493,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                               entry.value;
                                                           //return CustomExpansionTile(data: Propertytype, index: index);
                                                           return Container(
-                                                            margin: const EdgeInsets
-                                                                .symmetric(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
                                                                     vertical:
                                                                         5),
                                                             decoration:
@@ -2715,7 +2718,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                             style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                           ),
                                                                                           TextSpan(
-                                                                                            text: '${Propertytype.rentAmount!}',
+                                                                                            text: formatCurrency(Propertytype.rentAmount),
                                                                                             style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                           ),
                                                                                         ],
@@ -4358,7 +4361,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                   FontWeight
                                                                       .w500))),
                                                       DataCell(Text(
-                                                          '${lease.rentAmount}',
+                                                          formatCurrency(
+                                                              lease.rentAmount),
                                                           style: const TextStyle(
                                                               fontSize: 16,
                                                               color: Color(
@@ -4459,5 +4463,18 @@ String determineStatus(String? startDate, String? endDate) {
     return 'PAST';
   } else {
     return 'ACTIVE';
+  }
+}
+
+String formatCurrency(dynamic amount) {
+  if (amount == null) return '\$0.00';
+  try {
+    // Handle both String and numeric types
+    double value = amount is String ? double.parse(amount) : amount.toDouble();
+    // Format with currency symbol and 2 decimal places
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    return formatter.format(value);
+  } catch (e) {
+    return '\$0.00';
   }
 }

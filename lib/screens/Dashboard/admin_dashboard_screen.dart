@@ -14,8 +14,8 @@ import 'dashbordpolices_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/Properties_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
-import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 
 class DashboardAdminSample extends StatefulWidget {
   List<int> countList = [];
@@ -187,7 +187,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Vendor_table()));
+                                builder: (context) =>
+                                    const TabBarExample(initialTab: 'Vendor')));
                       },
                     ),
                     _dashboardCard(

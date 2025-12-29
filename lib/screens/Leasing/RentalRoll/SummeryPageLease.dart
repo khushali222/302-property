@@ -72,6 +72,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<List<LeaseTenant>> futureLeasetenant;
   late Future<LeaseLedger?> _leaseLedgerFuture;
   late Future<LeaseCharges?> _leaseChargesFuture;
+  late Future<List<Map<String, dynamic>>> _leaseHistoryFuture;
   TabController? _tabController;
   ConnectivityResult? _connectivityResult;
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -91,6 +92,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     _leaseLedgerFuture =
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _leaseChargesFuture = LeaseRepository().fetchLeaseCharges(widget.leaseId);
+    _leaseHistoryFuture = fetchLeaseHistory();
     _tabController = TabController(length: 3, vsync: this);
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     // moveOutDate = widget.enddate!;
@@ -191,6 +193,145 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     }
   }
 
+  // Function to fetch lease history from API
+  Future<List<Map<String, dynamic>>> fetchLeaseHistory() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? adminId = prefs.getString("adminId");
+
+      final url =
+          Uri.parse('$Api_url/api/leases/lease_history/${widget.leaseId}');
+
+      final response = await http.get(
+        url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $adminId",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        List<Map<String, dynamic>> leaseHistory = [];
+
+        // Handle different response structures
+        if (jsonData['data'] != null) {
+          List<dynamic> data =
+              jsonData['data'] is List ? jsonData['data'] : [jsonData['data']];
+
+          for (var entry in data) {
+            leaseHistory.add({
+              'date': entry['date'] ??
+                  entry['created_at'] ??
+                  entry['updated_at'] ??
+                  '',
+              'type': entry['type'] ??
+                  entry['action'] ??
+                  entry['event_type'] ??
+                  'N/A',
+              'description': entry['description'] ?? entry['notes'] ?? '',
+              'amount': (entry['amount'] ?? 0).toDouble(),
+              'entry_id': entry['entry_id'] ?? entry['id'] ?? '',
+            });
+          }
+        }
+
+        // Store all data for pagination
+        setState(() {
+          _allLeaseHistory = leaseHistory;
+          _currentPage = 1; // Reset to first page when data is fetched
+        });
+
+        return leaseHistory;
+      } else {
+        throw Exception('Failed to load lease history: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching lease history: $e');
+      throw Exception('Error fetching lease history: $e');
+    }
+  }
+
+  // Get paginated lease history data
+  List<Map<String, dynamic>> getPaginatedLeaseHistory() {
+    final startIndex = (_currentPage - 1) * _itemsPerPage;
+    final endIndex = startIndex + _itemsPerPage;
+    return _allLeaseHistory.length > startIndex
+        ? _allLeaseHistory.sublist(
+            startIndex,
+            endIndex > _allLeaseHistory.length
+                ? _allLeaseHistory.length
+                : endIndex)
+        : [];
+  }
+
+  // Get total pages
+  int getTotalPages() {
+    return (_allLeaseHistory.length / _itemsPerPage).ceil();
+  }
+
+  // Format date and time with AM/PM
+  String _formatDateTimeWithAMPM(String dateTimeString) {
+    if (dateTimeString.isEmpty) return '';
+
+    try {
+      // List of possible date formats
+      List<String> dateFormats = [
+        'yyyy-MM-dd HH:mm:ss',
+        'yyyy-MM-dd HH:mm',
+        'yyyy-MM-dd h:mm:ss a',
+        'yyyy-MM-dd h:mm a',
+        'yyyy-MM-dd',
+        'yyyy-M-d HH:mm:ss',
+        'yyyy-M-d HH:mm',
+        'MM/dd/yyyy HH:mm:ss',
+        'MM/dd/yyyy HH:mm',
+        'MM/dd/yyyy h:mm:ss a',
+        'MM/dd/yyyy h:mm a',
+        'MM/dd/yyyy',
+        'dd-MM-yyyy HH:mm:ss',
+        'dd-MM-yyyy HH:mm',
+        'dd-MM-yyyy h:mm:ss a',
+        'dd-MM-yyyy h:mm a',
+        'dd-MM-yyyy',
+        'M/d/yyyy, h:mm:ss a',
+        'M/d/yyyy, h:mm a',
+        'yyyy-MM-ddTHH:mm:ss',
+        'yyyy-MM-ddTHH:mm:ssZ',
+        'yyyy-MM-ddTHH:mm:ss.SSSZ',
+      ];
+
+      DateTime? parsedDate;
+
+      // Try to parse with different formats
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(dateTimeString);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate == null) {
+        // If parsing fails, return original string
+        return dateTimeString;
+      }
+
+      // Format with date and time in AM/PM format
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String formattedDate = dateProvider
+          .formatCurrentDate(DateFormat('yyyy-MM-dd').format(parsedDate));
+      String formattedTime = DateFormat('h:mm a').format(parsedDate);
+
+      return '$formattedDate $formattedTime';
+    } catch (e) {
+      print('Error formatting date: $e');
+      return dateTimeString;
+    }
+  }
+
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
@@ -214,6 +355,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
+
+  // Pagination variables for Lease History
+  int _currentPage = 1;
+  int _itemsPerPage = 10;
+  List<Map<String, dynamic>> _allLeaseHistory = [];
 
   @override
   Widget build(BuildContext context) {
@@ -784,6 +930,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       recurringChargeExpandedIndex; // Separate variable for recurring charge table
   int?
       renewableHistoryExpandedIndex; // Separate variable for renewable history table
+  int? leaseHistoryExpandedIndex; // Separate variable for lease history table
   bool isExpanded = false;
 
   String determineStatus(String? startDate, String? endDate) {
@@ -3791,6 +3938,434 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           //     }
                           //   },
                           // ),
+                          //  Lease History Table
+                          // FutureBuilder<List<Map<String, dynamic>>>(
+                          //   future: _leaseHistoryFuture,
+                          //   builder: (context, leaseHistorySnapshot) {
+                          //     if (leaseHistorySnapshot.connectionState ==
+                          //         ConnectionState.waiting) {
+                          //       return const SizedBox(
+                          //         height: 50,
+                          //         child: Center(
+                          //           child: CircularProgressIndicator(),
+                          //         ),
+                          //       );
+                          //     } else if (leaseHistorySnapshot.hasError) {
+                          //       return Padding(
+                          //         padding: const EdgeInsets.all(8.0),
+                          //         child: Text(
+                          //           'Error loading lease history: ${leaseHistorySnapshot.error}',
+                          //           style: const TextStyle(color: Colors.red),
+                          //         ),
+                          //       );
+                          //     } else if (!leaseHistorySnapshot.hasData ||
+                          //         leaseHistorySnapshot.data!.isEmpty) {
+                          //       return const SizedBox.shrink();
+                          //     } else {
+                          //       final paginatedData =
+                          //           getPaginatedLeaseHistory();
+                          //       final totalPages = getTotalPages();
+
+                          //       return Column(
+                          //         children: [
+                          //           Row(
+                          //             children: [
+                          //               const SizedBox(
+                          //                 width: 2,
+                          //               ),
+                          //               Text(
+                          //                 "Lease History",
+                          //                 style: TextStyle(
+                          //                     color: blueColor,
+                          //                     fontWeight: FontWeight.bold,
+                          //                     fontSize: 16),
+                          //               ),
+                          //               const Spacer(),
+                          //               Text(
+                          //                 "Total: ${_allLeaseHistory.length}",
+                          //                 style: TextStyle(
+                          //                     color: blueColor,
+                          //                     fontWeight: FontWeight.w500,
+                          //                     fontSize: 14),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           const SizedBox(
+                          //             height: 10,
+                          //           ),
+                          //           Container(
+                          //             decoration: BoxDecoration(
+                          //                 color: const Color(0xFFF4F8FF),
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10),
+                          //                 border: Border.all(
+                          //                     color: const Color(0xFFDBE0E5))),
+                          //             child: ListTile(
+                          //               contentPadding: EdgeInsets.zero,
+                          //               title: Row(
+                          //                 mainAxisAlignment:
+                          //                     MainAxisAlignment.start,
+                          //                 children: <Widget>[
+                          //                   Expanded(
+                          //                     flex: 3,
+                          //                     child: InkWell(
+                          //                       onTap: () {},
+                          //                       child: Row(
+                          //                         children: [
+                          //                           width < 400
+                          //                               ? Padding(
+                          //                                   padding:
+                          //                                       EdgeInsets.only(
+                          //                                           left: 20.0),
+                          //                                   child: Text(
+                          //                                     "Date & Time",
+                          //                                     style: TextStyle(
+                          //                                         color:
+                          //                                             blueColor,
+                          //                                         fontWeight:
+                          //                                             FontWeight
+                          //                                                 .bold,
+                          //                                         fontSize: 14),
+                          //                                     textAlign:
+                          //                                         TextAlign
+                          //                                             .center,
+                          //                                   ),
+                          //                                 )
+                          //                               : Text(
+                          //                                   "     Date & Time",
+                          //                                   style: TextStyle(
+                          //                                       color:
+                          //                                           blueColor,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .bold,
+                          //                                       fontSize: 14),
+                          //                                   textAlign: TextAlign
+                          //                                       .center),
+                          //                         ],
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                   Expanded(
+                          //                     flex: 2,
+                          //                     child: InkWell(
+                          //                       onTap: () {},
+                          //                       child: Row(
+                          //                         children: [
+                          //                           Padding(
+                          //                             padding: EdgeInsets.only(
+                          //                                 left: 0.0),
+                          //                             child: Text("Type",
+                          //                                 style: TextStyle(
+                          //                                     color: blueColor,
+                          //                                     fontWeight:
+                          //                                         FontWeight
+                          //                                             .bold,
+                          //                                     fontSize: 14)),
+                          //                           ),
+                          //                           SizedBox(width: 5),
+                          //                         ],
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           Container(
+                          //             child: Column(
+                          //               children: paginatedData
+                          //                   .asMap()
+                          //                   .entries
+                          //                   .map((entry) {
+                          //                 int index = entry.key;
+                          //                 Map<String, dynamic> historyItem =
+                          //                     entry.value;
+                          //                 bool isExpanded =
+                          //                     leaseHistoryExpandedIndex ==
+                          //                         index;
+
+                          //                 // Format date with AM/PM
+                          //                 String formattedDate =
+                          //                     _formatDateTimeWithAMPM(
+                          //                         historyItem['date'] ?? '');
+
+                          //                 return Container(
+                          //                   margin: const EdgeInsets.symmetric(
+                          //                       vertical: 6),
+                          //                   decoration: BoxDecoration(
+                          //                     color: index % 2 != 0
+                          //                         ? const Color(0xFFF4F8FF)
+                          //                         : Colors.white,
+                          //                     border: Border.all(
+                          //                         color:
+                          //                             const Color(0xFFDBE0E5)),
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(10),
+                          //                   ),
+                          //                   child: Column(
+                          //                     children: <Widget>[
+                          //                       ListTile(
+                          //                         contentPadding:
+                          //                             EdgeInsets.zero,
+                          //                         title: Padding(
+                          //                           padding:
+                          //                               const EdgeInsets.all(
+                          //                                   2.0),
+                          //                           child: Row(
+                          //                             mainAxisAlignment:
+                          //                                 MainAxisAlignment
+                          //                                     .start,
+                          //                             crossAxisAlignment:
+                          //                                 CrossAxisAlignment
+                          //                                     .center,
+                          //                             children: <Widget>[
+                          //                               InkWell(
+                          //                                 onTap: () {
+                          //                                   setState(() {
+                          //                                     if (leaseHistoryExpandedIndex ==
+                          //                                         index) {
+                          //                                       leaseHistoryExpandedIndex =
+                          //                                           null;
+                          //                                     } else {
+                          //                                       leaseHistoryExpandedIndex =
+                          //                                           index;
+                          //                                     }
+                          //                                   });
+                          //                                 },
+                          //                                 child: Container(
+                          //                                   margin:
+                          //                                       const EdgeInsets
+                          //                                           .only(
+                          //                                           left: 5),
+                          //                                   padding: !isExpanded
+                          //                                       ? const EdgeInsets
+                          //                                           .only(
+                          //                                           bottom: 10)
+                          //                                       : const EdgeInsets
+                          //                                           .only(
+                          //                                           top: 10),
+                          //                                   child: FaIcon(
+                          //                                     isExpanded
+                          //                                         ? FontAwesomeIcons
+                          //                                             .sortUp
+                          //                                         : FontAwesomeIcons
+                          //                                             .sortDown,
+                          //                                     size: 20,
+                          //                                     color: blueColor,
+                          //                                   ),
+                          //                                 ),
+                          //                               ),
+                          //                               Expanded(
+                          //                                 flex: 3,
+                          //                                 child: InkWell(
+                          //                                   onTap: () {
+                          //                                     setState(() {
+                          //                                       if (leaseHistoryExpandedIndex ==
+                          //                                           index) {
+                          //                                         leaseHistoryExpandedIndex =
+                          //                                             null;
+                          //                                       } else {
+                          //                                         leaseHistoryExpandedIndex =
+                          //                                             index;
+                          //                                       }
+                          //                                     });
+                          //                                   },
+                          //                                   child: Padding(
+                          //                                     padding:
+                          //                                         const EdgeInsets
+                          //                                             .only(
+                          //                                             left:
+                          //                                                 5.0),
+                          //                                     child: Text(
+                          //                                       formattedDate,
+                          //                                       style:
+                          //                                           TextStyle(
+                          //                                         color:
+                          //                                             blueColor,
+                          //                                         fontWeight:
+                          //                                             FontWeight
+                          //                                                 .bold,
+                          //                                         fontSize: 13,
+                          //                                       ),
+                          //                                     ),
+                          //                                   ),
+                          //                                 ),
+                          //                               ),
+                          //                               Expanded(
+                          //                                 flex: 2,
+                          //                                 child: Text(
+                          //                                   historyItem[
+                          //                                           'type'] ??
+                          //                                       'N/A',
+                          //                                   style: TextStyle(
+                          //                                     color: blueColor,
+                          //                                     fontWeight:
+                          //                                         FontWeight
+                          //                                             .bold,
+                          //                                     fontSize: 13,
+                          //                                   ),
+                          //                                 ),
+                          //                               ),
+                          //                             ],
+                          //                           ),
+                          //                         ),
+                          //                       ),
+                          //                       if (isExpanded)
+                          //                         Container(
+                          //                           margin:
+                          //                               const EdgeInsets.only(
+                          //                                   bottom: 20),
+                          //                           child:
+                          //                               SingleChildScrollView(
+                          //                             child: Column(
+                          //                               children: [
+                          //                                 Row(
+                          //                                   mainAxisAlignment:
+                          //                                       MainAxisAlignment
+                          //                                           .start,
+                          //                                   children: [
+                          //                                     FaIcon(
+                          //                                       isExpanded
+                          //                                           ? FontAwesomeIcons
+                          //                                               .sortUp
+                          //                                           : FontAwesomeIcons
+                          //                                               .sortDown,
+                          //                                       size: 50,
+                          //                                       color: Colors
+                          //                                           .transparent,
+                          //                                     ),
+                          //                                     Expanded(
+                          //                                       child: Column(
+                          //                                         crossAxisAlignment:
+                          //                                             CrossAxisAlignment
+                          //                                                 .start,
+                          //                                         children: <Widget>[
+                          //                                           if (historyItem['action'] !=
+                          //                                                   null &&
+                          //                                               historyItem['action']
+                          //                                                   .toString()
+                          //                                                   .isNotEmpty)
+                          //                                             Text.rich(
+                          //                                               TextSpan(
+                          //                                                 children: [
+                          //                                                   TextSpan(
+                          //                                                     text: 'Action: ',
+                          //                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                          //                                                   ),
+                          //                                                   TextSpan(
+                          //                                                     text: '${historyItem['action']}',
+                          //                                                     style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                          //                                                   ),
+                          //                                                 ],
+                          //                                               ),
+                          //                                             ),
+                          //                                           if (historyItem['action'] != null &&
+                          //                                               historyItem['action']
+                          //                                                   .toString()
+                          //                                                   .isNotEmpty &&
+                          //                                               historyItem['description'] !=
+                          //                                                   null &&
+                          //                                               historyItem['description']
+                          //                                                   .toString()
+                          //                                                   .isNotEmpty)
+                          //                                             const SizedBox(
+                          //                                               height:
+                          //                                                   4,
+                          //                                             ),
+                          //                                           if (historyItem['description'] !=
+                          //                                                   null &&
+                          //                                               historyItem['description']
+                          //                                                   .toString()
+                          //                                                   .isNotEmpty)
+                          //                                             Text.rich(
+                          //                                               TextSpan(
+                          //                                                 children: [
+                          //                                                   TextSpan(
+                          //                                                     text: 'Description: ',
+                          //                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                          //                                                   ),
+                          //                                                   TextSpan(
+                          //                                                     text: '${historyItem['description']}',
+                          //                                                     style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                          //                                                   ),
+                          //                                                 ],
+                          //                                               ),
+                          //                                             ),
+                          //                                         ],
+                          //                                       ),
+                          //                                     ),
+                          //                                   ],
+                          //                                 ),
+                          //                               ],
+                          //                             ),
+                          //                           ),
+                          //                         ),
+                          //                     ],
+                          //                   ),
+                          //                 );
+                          //               }).toList(),
+                          //             ),
+                          //           ),
+                          //           // Pagination Controls
+                          //           if (totalPages > 1)
+                          //             Padding(
+                          //               padding: const EdgeInsets.symmetric(
+                          //                   vertical: 15.0),
+                          //               child: Row(
+                          //                 mainAxisAlignment:
+                          //                     MainAxisAlignment.end,
+                          //                 children: [
+                          //                   IconButton(
+                          //                     icon: FaIcon(
+                          //                       FontAwesomeIcons
+                          //                           .circleChevronLeft,
+                          //                       size: 30,
+                          //                       color: _currentPage <= 1
+                          //                           ? Colors.grey
+                          //                           : blueColor,
+                          //                     ),
+                          //                     onPressed: _currentPage <= 1
+                          //                         ? null
+                          //                         : () {
+                          //                             setState(() {
+                          //                               _currentPage--;
+                          //                             });
+                          //                           },
+                          //                   ),
+                          //                   Text(
+                          //                     'Page $_currentPage of $totalPages',
+                          //                     style:
+                          //                         const TextStyle(fontSize: 18),
+                          //                   ),
+                          //                   IconButton(
+                          //                     icon: FaIcon(
+                          //                       FontAwesomeIcons
+                          //                           .circleChevronRight,
+                          //                       size: 30,
+                          //                       color:
+                          //                           _currentPage >= totalPages
+                          //                               ? Colors.grey
+                          //                               : blueColor,
+                          //                     ),
+                          //                     onPressed:
+                          //                         _currentPage >= totalPages
+                          //                             ? null
+                          //                             : () {
+                          //                                 setState(() {
+                          //                                   _currentPage++;
+                          //                                 });
+                          //                               },
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //         ],
+                          //       );
+                          //     }
+                          //   },
+                          // ),
+                        
                         ],
                       ),
                     ),

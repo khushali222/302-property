@@ -332,12 +332,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
           right: MediaQuery.of(context).size.width > 500 ? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           title: Row(
@@ -374,38 +371,34 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                     child: Row(
                       children: [
                         width < 400
-                            ? const Text("   Tenant",
-                                style: TextStyle(color: Colors.white))
-                            : const Text("   Tenant",
-                                style: TextStyle(color: Colors.white)),
+                            ? Text("   Tenant",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15))
+                            : Text("   Tenant",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
                         const SizedBox(width: 3),
-                        !sorting1
-                            ? const Padding(
+                        ascending1
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              )
+                            : Padding(
                                 padding: EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
-                                  size: 16,
-                                  color: Colors.white70,
+                                  size: 20,
+                                  color: blueColor,
                                 ),
-                              )
-                            : ascending1
-                                ? const Padding(
-                                    padding: EdgeInsets.only(top: 7, left: 2),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.sortUp,
-                                      size: 20,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: 7, left: 2),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.sortDown,
-                                      size: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                              ),
                       ],
                     ),
                   ),
@@ -434,34 +427,28 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   child: Row(
                     children: [
                       Text("Insurance\n Provider",
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
-                      !sorting2
-                          ? const Padding(
+                      ascending2
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
+                          : Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
-                                size: 16,
-                                color: Colors.white70,
+                                size: 20,
+                                color: blueColor,
                               ),
-                            )
-                          : ascending2
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 7, left: 2),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.sortUp,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Padding(
-                                  padding: EdgeInsets.only(bottom: 7, left: 2),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.sortDown,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            ),
                     ],
                   ),
                 ),
@@ -489,34 +476,28 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   child: Row(
                     children: [
                       Text("     Policy Id",
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
-                      !sorting3
-                          ? const Padding(
+                      ascending3
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
+                          : Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
-                                size: 16,
-                                color: Colors.white70,
+                                size: 20,
+                                color: blueColor,
                               ),
-                            )
-                          : ascending3
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 7, left: 2),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.sortUp,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Padding(
-                                  padding: EdgeInsets.only(bottom: 7, left: 2),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.sortDown,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            ),
                     ],
                   ),
                 ),
@@ -1200,10 +1181,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                             ? 10
                                             : 0),
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
@@ -1217,17 +1198,17 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                           expandedRowIndex == rowIndex;
 
                                       return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: rowIndex % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(

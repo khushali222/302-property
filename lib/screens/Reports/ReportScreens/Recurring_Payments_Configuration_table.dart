@@ -85,13 +85,17 @@ class _Recurring_Payments_Configuration_ReportState
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: const BorderRadius.only(
+      //     topLeft: Radius.circular(8),
+      //     topRight: Radius.circular(8),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -116,10 +120,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Property",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Property",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text("Property",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          :  Text("Property",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                     ],
@@ -134,10 +142,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Lease End Date",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Lease End Date",
-                              style: TextStyle(color: Colors.white)),
+                          ?  Text("Lease End Date",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          :  Text("Lease End Date",
+                              style: TextStyle( color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                     ],
@@ -394,13 +406,16 @@ class _Recurring_Payments_Configuration_ReportState
                                         "${rowIndex}${LeaserowIndex}";
                                     totalDisplayData++;
                                     return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: totalDisplayData % 2 == 0
-                                            ? Colors.white
-                                            : blueColor.withOpacity(0.09),
+                                        color: totalDisplayData % 2 != 0
+                                            ? const Color(0xFFF4F8FF)
+                                            : Colors.white,
                                         border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5)),
+                                            color: const Color(0xFFDBE0E5)),
+                                        borderRadius:
+                                        BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         children: [

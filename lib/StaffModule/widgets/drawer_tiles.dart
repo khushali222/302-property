@@ -23,42 +23,48 @@ import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
 
 Widget buildListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    bool active,
-    ) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  bool active,
+) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
       onTap: () {
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => Dashboard_staff(),
+            (context) => Dashboard_staff(),
             "Dashboard",
           );
         } else if (title == "Profile") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => Profile_screen(),
+            (context) => Profile_screen(),
             "Profile",
           );
         } else if (title == "Reports" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => ReportsMainScreen(),
+            (context) => ReportsMainScreen(),
             "Reports",
+          );
+        } else if (title == "Work Order" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Workorder_table(),
+            "Work Order",
           );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => TabBarExample(),
+            (context) => TabBarExample(),
             "Settings",
           );
         }
@@ -81,7 +87,8 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
     "Property Type": (context) => PropertyTable(),
-    "Vendor": (context) => Vendor_table(),
+    "Vendor": (context) =>
+        Vendor_table(), // Vendor accessible through Settings, not sidebar
     "Work Order": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
@@ -104,21 +111,21 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 }
 
 Widget buildDropdownListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    List<String> subTopics,
-    List<Widget> subTopicIcons, {
-      String? selectedSubtopic,
-      bool? initvalue,
-    }) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  List<String> subTopics,
+  List<Widget> subTopicIcons, {
+  String? selectedSubtopic,
+  bool? initvalue,
+}) {
   // Check if the selectedSubtopic is in the list of subTopics
   bool isExpanded =
       selectedSubtopic != null && subTopics.contains(selectedSubtopic);
 
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     child: ExpansionTile(
       initiallyExpanded: isExpanded,
       leading: leadingIcon,
@@ -132,7 +139,7 @@ Widget buildDropdownListTile(
         bool active = selectedSubtopic == subTopic;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Container(
             decoration: BoxDecoration(
               color: active ? blueColor : Colors.transparent,

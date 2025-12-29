@@ -687,6 +687,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               date: currentDate,
               transactionId: transactionId,
               responseText: responseText,
+              scheduledPayment: false,
               surcharge: widget.surchargeamount.toString(),
               notificationTime: null, // Add if needed
             );
@@ -721,6 +722,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               adminId: adminId,
               tenantId: widget.tenantId,
               leaseId: widget.leaseId,
+              scheduledPayment: false,
               paymentAmountType: widget.paymentAmountType,
               paymentType: wallet == 'googlepay' ? 'Google Pay' : 'Apple Pay',
               customerVaultId: '',

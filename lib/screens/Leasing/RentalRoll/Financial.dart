@@ -520,12 +520,12 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Type",
+                        ? Text("Date",
                             style: TextStyle(
                                 color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15))
-                        : Text("Type",
+                        : Text("Date",
                             style: TextStyle(
                                 color: blueColor,
                                 fontWeight: FontWeight.bold,
@@ -560,7 +560,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Balance      ",
+                    Text("      Type",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -594,8 +594,9 @@ class _FinancialTableState extends State<FinancialTable> {
                   });
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("      Date",
+                    Text("   Balance    ",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -756,6 +757,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   String fdate = "";
   String edate = "";
+  String _fromDateApiFormat = ""; // Store API format (yyyy-MM-dd)
+  String _toDateApiFormat = ""; // Store API format (yyyy-MM-dd)
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
@@ -769,16 +772,26 @@ class _FinancialTableState extends State<FinancialTable> {
 
   void sortData(List<Data> data) {
     if (sorting1) {
-      data.sort((a, b) =>
-          ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
+      data.sort((a, b) {
+        String aDate = (a.entry != null &&
+                a.entry!.isNotEmpty &&
+                a.entry!.first.date != null)
+            ? a.entry!.first.date!
+            : '';
+        String bDate = (b.entry != null &&
+                b.entry!.isNotEmpty &&
+                b.entry!.first.date != null)
+            ? b.entry!.first.date!
+            : '';
+        return ascending1 ? aDate.compareTo(bDate) : bDate.compareTo(aDate);
+      });
     } else if (sorting2) {
-      data.sort((a, b) => ascending2
-          ? a.balance!.compareTo(b.balance!)
-          : b.balance!.compareTo(a.balance!));
+      data.sort((a, b) =>
+          ascending2 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.createdAt!.compareTo(b.createdAt!)
-          : b.createdAt!.compareTo(a.createdAt!));
+          ? a.balance!.compareTo(b.balance!)
+          : b.balance!.compareTo(a.balance!));
     }
   }
 
@@ -1411,14 +1424,30 @@ class _FinancialTableState extends State<FinancialTable> {
   late TextEditingController _toDateController;
 
   void _fetchData() {
-    if (_fromDateController.text.isNotEmpty &&
-        _toDateController.text.isNotEmpty) {
+    String? fromDate;
+    String? toDate;
+
+    print("========== _fetchData() called ==========");
+    print("_fromDateApiFormat: $_fromDateApiFormat");
+    print("_toDateApiFormat: $_toDateApiFormat");
+
+    // Only send date parameters to API when BOTH dates are selected
+    // This matches web app behavior - when only "From Date" is selected,
+    // fetch all data and filter client-side
+    if (_fromDateApiFormat.isNotEmpty && _toDateApiFormat.isNotEmpty) {
+      // Both dates selected - send both to API for server-side filtering
+      fromDate = _fromDateApiFormat;
+      toDate = _toDateApiFormat;
+      print(
+          "API CALL: Sending BOTH dates to API - fromDate: $fromDate, toDate: $toDate");
       _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
-          leaseId: widget.leaseId,
-          fromDate: _fromDateController.text,
-          toDate: _toDateController.text);
+          leaseId: widget.leaseId, fromDate: fromDate, toDate: toDate);
     } else {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger();
+      // Only one date or no dates selected - fetch all data, filter client-side
+      print(
+          "API CALL: Fetching ALL data (no date params) - will filter client-side");
+      _leaseLedgerFuture =
+          LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     }
     setState(() {});
   }
@@ -1433,7 +1462,9 @@ class _FinancialTableState extends State<FinancialTable> {
       BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _fromDateApiFormat.isNotEmpty
+          ? DateTime.parse(_fromDateApiFormat)
+          : DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -1458,13 +1489,20 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
-        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
-        // controller.text = formattedDate;
-        print(picked);
-
-        //  _filterData();
-        controller.text = picked.toLocal().toString().split(' ')[0];
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Store API format (yyyy-MM-dd)
+        _fromDateApiFormat = DateFormat('yyyy-MM-dd').format(picked);
+        // Display in DateProvider format
+        controller.text = dateProvider.formatCurrentDate(_fromDateApiFormat);
         fdate = controller.text;
+
+        print("========== FROM DATE SELECTED ==========");
+        print("Selected date: $picked");
+        print("API format stored: $_fromDateApiFormat");
+        print("Display format: ${controller.text}");
+        print("=========================================");
+
+        _fetchData(); // Trigger API call with new date
       });
     }
   }
@@ -1473,12 +1511,14 @@ class _FinancialTableState extends State<FinancialTable> {
       BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _fromDateController.text.isEmpty
-          ? DateTime.now()
-          : DateTime.parse(_fromDateController.text),
-      firstDate: _fromDateController.text.isEmpty
-          ? DateTime.now()
-          : DateTime.parse(_fromDateController.text),
+      initialDate: _toDateApiFormat.isNotEmpty
+          ? DateTime.parse(_toDateApiFormat)
+          : (_fromDateApiFormat.isNotEmpty
+              ? DateTime.parse(_fromDateApiFormat)
+              : DateTime.now()),
+      firstDate: _fromDateApiFormat.isNotEmpty
+          ? DateTime.parse(_fromDateApiFormat)
+          : DateTime.now(),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -1502,11 +1542,20 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Store API format (yyyy-MM-dd)
+        _toDateApiFormat = DateFormat('yyyy-MM-dd').format(picked);
+        // Display in DateProvider format
+        controller.text = dateProvider.formatCurrentDate(_toDateApiFormat);
         edate = picked.toString();
-        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
-        // controller.text = formattedDate;
-        //  _filterData();
-        controller.text = picked.toLocal().toString().split(' ')[0];
+
+        print("========== TO DATE SELECTED ==========");
+        print("Selected date: $picked");
+        print("API format stored: $_toDateApiFormat");
+        print("Display format: ${controller.text}");
+        print("=======================================");
+
+        _fetchData(); // Trigger API call with new date
       });
     }
   }
@@ -1524,9 +1573,18 @@ class _FinancialTableState extends State<FinancialTable> {
 
       // Filter the data based on the selected date range
       filteredData = allData.where((data) {
-        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(
-            data.entry!.first.date!); // Adjust according to your data structure
-        return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
+        if (data.entry == null ||
+            data.entry!.isEmpty ||
+            data.entry!.first.date == null) {
+          return false;
+        }
+        try {
+          DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(data
+              .entry!.first.date!); // Adjust according to your data structure
+          return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
+        } catch (e) {
+          return false;
+        }
       }).toList();
     } catch (e) {
       print("Date parsing error: $e");
@@ -1862,10 +1920,25 @@ class _FinancialTableState extends State<FinancialTable> {
                     } else {
                       final leaseLedger = snapshot.data!;
                       var data = leaseLedger.data?.toList() ?? [];
+
+                      print("========== DATA RECEIVED FROM API ==========");
+                      print("Total records from API: ${data.length}");
+                      print("First 5 records dates:");
+                      for (int i = 0;
+                          i < (data.length > 5 ? 5 : data.length);
+                          i++) {
+                        if (data[i].entry != null &&
+                            data[i].entry!.isNotEmpty) {
+                          print(
+                              "  Record $i: Date=${data[i].entry!.first.date}, Type=${data[i].type}, Amount=${data[i].totalAmount}");
+                        }
+                      }
+
                       //final data = data.reversed.toList();
                       if (searchvalue != null &&
                           searchvalue!.isNotEmpty &&
                           searchvalue != "All") {
+                        print("Applying search filter: $searchvalue");
                         data = data
                             .where((lease) =>
                                 lease.type!
@@ -1875,49 +1948,146 @@ class _FinancialTableState extends State<FinancialTable> {
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()))
                             .toList();
+                        print("Records after search filter: ${data.length}");
                       }
 
-                      if (_fromDateController.text.isNotEmpty &&
-                          _toDateController.text.isNotEmpty) {
-                        try {
-                          // Use DateFormat to parse the dates
-                          print(_fromDateController.text);
-                          DateTime fromDate = DateFormat('yyyy-MM-dd')
-                              .parse(_fromDateController.text);
-                          DateTime toDate = DateFormat('yyyy-MM-dd')
-                              .parse(_toDateController.text);
-                          print("From Date: $fromDate");
-                          print("To Date: $toDate");
+                      // Handle date filtering - show all data from fromDate onwards (inclusive)
+                      String? filterFromDate;
+                      String? filterToDate;
 
-                          if (fromDate.isAtSameMomentAs(toDate)) {
-                            // If both dates are the same, only include leases with the same date
-                            data = data.where((lease) {
-                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
-                                  .parse(lease.entry!.first.date!);
-                              print("Lease Date: $leaseDate");
-                              return leaseDate.isAtSameMomentAs(fromDate);
-                            }).toList();
-                          } else {
-                            // If dates are different, use the original condition
-                            data = data.where((lease) {
-                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
-                                  .parse(lease.entry!.first.date!);
-                              print("Lease Date: $leaseDate");
-                              return (leaseDate.isAfter(fromDate) &&
-                                  leaseDate.isBefore(toDate));
-                            }).toList();
-                          }
+                      if (_fromDateApiFormat.isNotEmpty &&
+                          _toDateApiFormat.isNotEmpty) {
+                        // Both dates selected - show all data from fromDate onwards (inclusive)
+                        filterFromDate = _fromDateApiFormat;
+                        filterToDate =
+                            null; // No upper limit - show all future dates
+                      } else if (_fromDateApiFormat.isNotEmpty) {
+                        // Only from date selected - show all data from fromDate onwards
+                        filterFromDate = _fromDateApiFormat;
+                        filterToDate =
+                            null; // No upper limit - show all future dates
+                      } else if (_toDateApiFormat.isNotEmpty) {
+                        // Only to date selected - show all data up to toDate (inclusive)
+                        filterFromDate = '2000-01-01';
+                        filterToDate = _toDateApiFormat;
+                      }
+
+                      if (filterFromDate != null) {
+                        try {
+                          print("========== APPLYING DATE FILTER ==========");
+                          print("Filter From Date API: $filterFromDate");
+                          print("Filter To Date API: $filterToDate");
+                          print("Records before date filter: ${data.length}");
+
+                          // Parse API format dates (yyyy-MM-dd)
+                          DateTime fromDate =
+                              DateFormat('yyyy-MM-dd').parse(filterFromDate);
+                          DateTime? toDate = filterToDate != null
+                              ? DateFormat('yyyy-MM-dd').parse(filterToDate)
+                              : null;
+                          print("Parsed From Date: $fromDate");
+                          print("Parsed To Date: $toDate");
+
+                          // Filter: show all records >= fromDate (inclusive)
+                          // If toDate is set, also filter <= toDate (inclusive)
+                          // Normalize dates to midnight for accurate date-only comparison
+                          DateTime normalizedFromDate = DateTime(
+                              fromDate.year, fromDate.month, fromDate.day);
+                          DateTime? normalizedToDate = toDate != null
+                              ? DateTime(toDate.year, toDate.month, toDate.day)
+                              : null;
+                          print("Normalized From Date: $normalizedFromDate");
+                          print("Normalized To Date: $normalizedToDate");
+
+                          int includedCount = 0;
+                          int excludedCount = 0;
+
+                          data = data.where((lease) {
+                            if (lease.entry == null ||
+                                lease.entry!.isEmpty ||
+                                lease.entry!.first.date == null) {
+                              excludedCount++;
+                              print(
+                                  "  EXCLUDED: No entry date - Type: ${lease.type}");
+                              return false;
+                            }
+                            try {
+                              DateTime leaseDateParsed =
+                                  DateFormat('yyyy-MM-dd')
+                                      .parse(lease.entry!.first.date!);
+                              // Normalize lease date to midnight for comparison
+                              DateTime leaseDate = DateTime(
+                                  leaseDateParsed.year,
+                                  leaseDateParsed.month,
+                                  leaseDateParsed.day);
+
+                              // Check if leaseDate is >= fromDate (inclusive)
+                              bool isAfterOrEqualFromDate =
+                                  leaseDate.isAfter(normalizedFromDate) ||
+                                      leaseDate
+                                          .isAtSameMomentAs(normalizedFromDate);
+
+                              // If toDate is set, also check if leaseDate is <= toDate (inclusive)
+                              bool shouldInclude;
+                              if (normalizedToDate != null) {
+                                bool isBeforeOrEqualToDate =
+                                    leaseDate.isBefore(normalizedToDate) ||
+                                        leaseDate
+                                            .isAtSameMomentAs(normalizedToDate);
+                                shouldInclude = isAfterOrEqualFromDate &&
+                                    isBeforeOrEqualToDate;
+                              } else {
+                                // No upper limit - show all future dates
+                                shouldInclude = isAfterOrEqualFromDate;
+                              }
+
+                              if (shouldInclude) {
+                                includedCount++;
+                                print(
+                                    "  INCLUDED: Date=$leaseDate, Type=${lease.type}, Amount=${lease.totalAmount}");
+                              } else {
+                                excludedCount++;
+                                print(
+                                    "  EXCLUDED: Date=$leaseDate (not in range), Type=${lease.type}");
+                              }
+
+                              return shouldInclude;
+                            } catch (e) {
+                              excludedCount++;
+                              print(
+                                  "  EXCLUDED: Date parsing error - $e, Type: ${lease.type}");
+                              return false;
+                            }
+                          }).toList();
+
+                          print("========== DATE FILTER RESULTS ==========");
+                          print("Records included: $includedCount");
+                          print("Records excluded: $excludedCount");
+                          print("Final filtered records: ${data.length}");
                         } catch (e) {
                           print("Date parsing error: $e");
                         }
+                      } else {
+                        print(
+                            "No date filter applied - showing all ${data.length} records");
                       }
 
                       sortData(data);
+                      print("========== FINAL DATA SUMMARY ==========");
+                      print("Total records after all filters: ${data.length}");
+                      print("Items per page: $itemsPerPage");
+                      print("Current page: ${currentPage + 1}");
+
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+
+                      print("Total pages: $totalPages");
+                      print(
+                          "Records on current page: ${currentPageData.length}");
+                      print("=========================================");
 
                       return SingleChildScrollView(
                         child: Column(
@@ -2497,7 +2667,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: Text(
-                                                      ' ${data.type}' ?? "",
+                                                      dateProvider.formatCurrentDate(data
+                                                                      .entry !=
+                                                                  null &&
+                                                              data.entry!
+                                                                  .isNotEmpty
+                                                          ? '${data.entry!.first.date}'
+                                                          : 'N/A'),
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2507,36 +2683,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08,
-                                                ),
-                                                if (data.balance! >= 0)
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' \$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                if (data.balance! < 0)
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' -\$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
                                                 SizedBox(
                                                   width: MediaQuery.of(context)
                                                           .size
@@ -2544,14 +2690,47 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       .08,
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    dateProvider.formatCurrentDate(
-                                                        '${data.entry!.first.date}'),
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      ' ${data.type}' ?? "",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .08,
+                                                ),
+                                                Expanded(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        data.balance! >= 0
+                                                            ? ' \$${data.balance!.abs().toStringAsFixed(2)}'
+                                                            : ' -\$${data.balance!.abs().toStringAsFixed(2)}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),

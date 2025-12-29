@@ -13,7 +13,7 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
-import '../screens/Maintenance/Vendor/Vendor_table.dart';
+// import '../screens/Maintenance/Vendor/Vendor_table.dart'; // Vendor moved to Settings
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
@@ -26,11 +26,11 @@ import '../screens/Staff_Member/Staffmemvertable.dart';
 import '../screens/Profile/Settings_screen.dart';
 
 Widget buildListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    bool active,
-    ) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  bool active,
+) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
@@ -39,29 +39,36 @@ Widget buildListTile(
     ),
     padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
+      dense: true,
       onTap: () {
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => Dashboard(),
+            (context) => Dashboard(),
             "Dashboard",
           );
         } else if (title == "Staff" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => StaffTable(),
+            (context) => StaffTable(),
             "Staff",
           );
         } else if (title == "Reports" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => ReportsMainScreen(),
+            (context) => ReportsMainScreen(),
             "Reports",
+          );
+        } else if (title == "Work Order" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Workorder_table(),
+            "Work Order",
           );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => TabBarExample(),
+            (context) => TabBarExample(),
             "Settings",
           );
         }
@@ -84,7 +91,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
     "Property Type": (context) => PropertyTable(),
-    "Vendor": (context) => Vendor_table(),
+    // "Vendor": (context) => Vendor_table(), // Vendor moved to Settings
     "Work Order": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
@@ -108,14 +115,14 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 }
 
 Widget buildDropdownListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    List<String> subTopics,
-    List<Widget> subTopicIcons, {
-      String? selectedSubtopic,
-      bool? initvalue,
-    }) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  List<String> subTopics,
+  List<Widget> subTopicIcons, {
+  String? selectedSubtopic,
+  bool? initvalue,
+}) {
   // Check if the selectedSubtopic is in the list of subTopics
   bool isExpanded =
       selectedSubtopic != null && subTopics.contains(selectedSubtopic);
@@ -143,6 +150,7 @@ Widget buildDropdownListTile(
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
+              dense: true,
               leading: subTopicIcons[index], // Add icon here
               title: Text(
                 subTopic,

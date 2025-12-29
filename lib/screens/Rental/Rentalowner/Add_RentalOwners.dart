@@ -47,6 +47,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   TextEditingController proid = TextEditingController();
   TextEditingController taxtype = TextEditingController();
   TextEditingController taxid = TextEditingController();
+  TextEditingController achProcessorId = TextEditingController();
 
   bool nameerror = false;
   bool lastnameerror = false;
@@ -395,8 +396,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   controller: name,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    hintText:
-                                                        "Enter first name",
+                                                    hintText: "Enter name",
                                                     hintStyle: TextStyle(
                                                       fontSize:
                                                           MediaQuery.of(context)
@@ -448,7 +448,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Company Name",
+                                        "Company Name *",
                                         style: TextStyle(
                                             // color: Colors.grey,
                                             color: const Color(0xFF101828),
@@ -771,6 +771,69 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 ),
                               ],
                             ),*/
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  "ACH Processor ID",
+                                  style: TextStyle(
+                                      color: const Color(0xFF101828),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 20),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Material(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: const Color(0xFFCED4DA)),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: TextField(
+                                        controller: achProcessorId,
+                                        cursorColor: blueColor,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding: const EdgeInsets.only(
+                                              top: 12.5,
+                                              bottom: 12.5,
+                                              left: 15),
+                                          hintText: "Enter ACH Processor ID",
+                                          hintStyle: TextStyle(
+                                            color: const Color(0xFFA1A8B0),
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 19,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -3392,16 +3455,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           nameerror = false;
                         });
                       }
-                      // if (comname.text.trim().isEmpty) {
-                      //   setState(() {
-                      //     comnameerror = true;
-                      //     comnamemessage = "required";
-                      //   });
-                      // } else {
-                      //   setState(() {
-                      //     comnameerror = false;
-                      //   });
-                      // }
+                      if (comname.text.trim().isEmpty) {
+                        setState(() {
+                          comnameerror = true;
+                          comnamemessage = "required";
+                        });
+                      } else {
+                        setState(() {
+                          comnameerror = false;
+                        });
+                      }
                       // if (birthdateController.text.isEmpty) {
                       //   setState(() {
                       //     birthdateerror = true;
@@ -3628,7 +3691,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         });
                       }*/
                       if (!nameerror &&
-                              //!comnameerror &&
+                              !comnameerror &&
                               !primaryemailerror &&
                               !alternativeerror &&
                               !phonenumerror &&
@@ -3700,6 +3763,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           texpayerId: taxid.text.trim(),
                           // processorLists:processorIds,
                           processorList: processorList,
+                          achProcessorId: achProcessorId.text.trim(),
                         );
                         print(processorList);
                         // print(processorIds);

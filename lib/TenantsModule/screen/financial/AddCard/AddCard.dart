@@ -103,9 +103,15 @@ class _AddCardState extends State<AddCard> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    print("token $token");
-    print("Admin $id");
-    fetchcreditcard(id!);
+    if (id == null) {
+      setState(() {
+        isLoading = false;
+        messageCardAvailable = 'Tenant ID not found';
+      });
+      return;
+    }
+
+    fetchcreditcard(id);
     /*  final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_tenant/${id}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
@@ -168,64 +174,74 @@ class _AddCardState extends State<AddCard> {
   }
 
   Future<void> fetchcreditcard(String tenantId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("tenant_id");
-    String? admin_id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? admin_id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
 
-    setState(() {
-      isLoading = true;
-      cardDetails = []; // Clear previous card details
-    });
+      setState(() {
+        isLoading = true;
+        cardDetails = []; // Clear previous card details
+        messageCardAvailable = null;
+      });
 
-    final response = await http.get(
-      Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
-    );
+      final response = await http.get(
+        Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
+        headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      );
 
-    print('$Api_url/api/creditcard/getCreditCards/$tenantId');
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      customervaultid = jsonResponse['customer_vault_id'];
-      List<dynamic> cardDetailsList = jsonResponse['card_detail'];
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        customervaultid = jsonResponse['customer_vault_id'];
+        List<dynamic> cardDetailsList = jsonResponse['card_detail'] ?? [];
 
-      // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
+        if (cardDetailsList.isEmpty) {
+          setState(() {
+            isLoading = false;
+            cardDetails = [];
+            messageCardAvailable = 'No cards added.';
+          });
+          return;
+        }
 
-      for (var cardDetail in cardDetailsList) {
-        // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
+        CustomerData? customerData = await postBillingCustomerVault(
+            customervaultid.toString(), cardDetailsList);
 
-        //  BillingData billingData = BillingData.fromJson(cardDetail);
-        // print('Parsed Billing ID: ${billingData.billingId}');
-
-        // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
-      }
-
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
-
-      if (customerData != null) {
+        if (customerData != null) {
+          setState(() {
+            customervaultid = jsonResponse['customer_vault_id'];
+            cardDetails = customerData.billing;
+            messageCardAvailable = cardDetails.isEmpty ? 'No cards added.' : '';
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+            cardDetails = [];
+            messageCardAvailable = 'No cards added.';
+          });
+        }
+      } else if (response.statusCode == 404) {
         setState(() {
-          customervaultid = jsonResponse['customer_vault_id'];
-          cardDetails = customerData.billing;
-
-          messageCardAvailable = '';
+          isLoading = false;
+          cardDetails = [];
+          messageCardAvailable = 'No cards added.';
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          cardDetails = [];
+          messageCardAvailable = 'Failed to load credit card data';
         });
       }
-    } else if (response.statusCode == 404) {
-      print('customer_vault_id not found');
+    } catch (e, stackTrace) {
       setState(() {
-        messageCardAvailable = 'No card found for this tenant';
+        isLoading = false;
+        cardDetails = [];
+        messageCardAvailable = 'No cards added.';
       });
-    } else {
-      throw Exception('Failed to load credit card data');
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<String> binCheck(String ccBin) async {
@@ -250,67 +266,63 @@ class _AddCardState extends State<AddCard> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("tenant_id");
-    String? admin_id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    print(admin_id);
-    Map<String, String> requestBody = {
-      "customer_vault_id": customerVaultId,
-      "admin_id": admin_id.toString(),
-    };
-    print(requestBody);
-    final response = await http.post(
-      Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
-      headers: {
-        'Content-Type': 'application/json',
-        "id": "CRM $id",
-        "authorization": "CRM $token",
-      },
-      body: json.encode(requestBody),
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? admin_id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
 
-      var customerJson = jsonResponse['data']['customer'];
-      if (customerJson == null) {
-        print('Failed to post data: ${response.statusCode}');
+      Map<String, String> requestBody = {
+        "customer_vault_id": customerVaultId,
+        "admin_id": admin_id.toString(),
+      };
+
+      final response = await http.post(
+        Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+        headers: {
+          'Content-Type': 'application/json',
+          "id": "CRM $id",
+          "authorization": "CRM $token",
+        },
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        var customerJson = jsonResponse['data']?['customer'];
+
+        if (customerJson == null) {
+          return null;
+        }
+
+        CustomerData customerData = CustomerData.fromJson(customerJson);
+
+        Set<String> cardBillingIds = cardDetailsList
+            .map((card) =>
+                card['billing_id'].toString()) // Ensure conversion to string
+            .toSet();
+
+        // Filter customerData.billing to only include matching billing IDs
+        List<BillingData> filteredCards = customerData.billing
+            .where((billing) => cardBillingIds.contains(billing.billingId))
+            .toList();
+
+        customerData.billing = filteredCards;
+
+        // Set binResult for each card
+        for (int i = 0;
+            i < filteredCards.length && i < cardDetailsList.length;
+            i++) {
+          filteredCards[i].binResult = cardDetailsList[i]["card_type"] ?? '';
+        }
+
+        return customerData;
+      } else {
         return null;
       }
-      CustomerData customerData = CustomerData.fromJson(customerJson);
-
-      customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
-      });
-      Set<String> cardBillingIds = cardDetailsList
-          .map((card) => card['billing_id'].toString()) // Ensure conversion to string
-          .toSet();
-
-      // Filter customerData.billing to only include matching billing IDs
-      List<BillingData> filteredCards = customerData.billing
-          .where((billing) => cardBillingIds.contains(billing.billingId))
-          .toList();
-      customerData.billing = filteredCards;
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
-      for (int i = 0; i < cardDetailsList.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
-      }
-
-
-      return customerData;
-    } else {
-      print('Failed to post data: ${response.statusCode}');
+    } catch (e, stackTrace) {
       return null;
     }
   }
@@ -417,16 +429,17 @@ class _AddCardState extends State<AddCard> {
     print(randomNumber);
     return randomNumber;
   }
+
   String? _errorMessage;
   String? _cardNumberError;
   String? _cvvError;
   // Callback to handle error messages
-  void handleError
-      (String? error) {
+  void handleError(String? error) {
     setState(() {
       _errorMessage = error;
     });
   }
+
   bool showmessage = true;
   String? errorMessageDropdown = 'Please select any one Tenant.';
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -518,7 +531,7 @@ class _AddCardState extends State<AddCard> {
                       cardnum: true,
                       optional: false,
                       allerror: true,
-                      onErrorcard:  (String? error) {
+                      onErrorcard: (String? error) {
                         setState(() {
                           _cardNumberError = error;
                         });
@@ -545,7 +558,7 @@ class _AddCardState extends State<AddCard> {
                       hintText: 'MM/YYYY',
                       controller: expirationDate,
                       label: "Enter Expiration Date",
-                    //  allerror: true,
+                      //  allerror: true,
                       //isexpirydate: true,
                       formatter: [ExpiryDateInputFormatter()],
                       expirydate: true,
@@ -597,7 +610,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('First Name *',
+                    const Text('First Name',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -606,6 +619,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter First Name',
                       controller: firstName,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -613,7 +627,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Last Name *',
+                    const Text('Last Name',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -622,6 +636,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Last Name',
                       controller: lastName,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -629,7 +644,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Email *',
+                    const Text('Email',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -639,6 +654,7 @@ class _AddCardState extends State<AddCard> {
                       hintText: 'Enter Email',
                       email: true,
                       controller: email,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -646,17 +662,15 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Phone Number*',
+                    const Text('Phone Number',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey)),
                     CustomTextField(
                       formatter: [
-                        FilteringTextInputFormatter
-                            .digitsOnly,
-                        LengthLimitingTextInputFormatter(
-                            10),
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
                         PhoneNumberFormatter(),
                       ],
                       keyboardType: TextInputType.number,
@@ -664,6 +678,7 @@ class _AddCardState extends State<AddCard> {
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
                       phone: true,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -671,7 +686,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Address *',
+                    const Text('Address',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -680,6 +695,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Address',
                       controller: address,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -687,7 +703,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('City *',
+                    const Text('City',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -696,7 +712,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter City',
                       controller: city,
-                      optional: false,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -704,7 +720,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('State *',
+                    const Text('State',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -713,7 +729,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter State',
                       controller: state,
-                      optional: false,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -721,7 +737,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Country *',
+                    const Text('Country',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -730,7 +746,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Country',
                       controller: country,
-                      optional: false,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -738,7 +754,7 @@ class _AddCardState extends State<AddCard> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text('Zip *',
+                    const Text('Zip',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -747,7 +763,7 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.number,
                       hintText: 'Enter Zip',
                       controller: zip,
-                      optional: false,
+                      optional: true,
                     ),
                     const SizedBox(
                       height: 8,
@@ -798,8 +814,16 @@ class _AddCardState extends State<AddCard> {
                       )
                     : cardDetails.isEmpty
                         ? Center(
-                            child: Text(messageCardAvailable ??
-                                'No card details available'),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                messageCardAvailable ?? 'No cards added.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -974,32 +998,33 @@ class _AddCardState extends State<AddCard> {
                             onPressed: () async {
                               print(_formKey.currentState!.validate());
                               if (_formKey.currentState!.validate()) {
-
                                 print(_cardNumberError != null);
-                                print(_errorMessage =="");
+                                print(_errorMessage == "");
                                 print(_cvvError != null);
                                 print(_errorMessage!.isNotEmpty);
-                                if(_cardNumberError != null || _errorMessage!.isNotEmpty || _cvvError != null ){
-
-                                  Fluttertoast.showToast(msg: "Add Card faileds");
-                                }
-                                else{
+                                if (_cardNumberError != null ||
+                                    _errorMessage!.isNotEmpty ||
+                                    _cvvError != null) {
+                                  Fluttertoast.showToast(
+                                      msg: "Add Card faileds");
+                                } else {
                                   setState(() {
                                     isLoading1 = true;
                                   });
-                                  try
-                                  {
+                                  try {
                                     print("calling");
 
                                     SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
+                                        await SharedPreferences.getInstance();
                                     String? id = prefs.getString("adminId");
                                     String? token = prefs.getString('token');
-                                    selectedTenantId = prefs.getString('tenant_id');
-                                    String randomNumber = generateRandomNumber(10);
+                                    selectedTenantId =
+                                        prefs.getString('tenant_id');
+                                    String randomNumber =
+                                        generateRandomNumber(10);
 
                                     String? comapanyName =
-                                    await fetchCompanyName(id!);
+                                        await fetchCompanyName(id!);
 
                                     CardModel cardwithOutVaultId = CardModel(
                                       firstName: firstName.text.trim(),
@@ -1038,69 +1063,84 @@ class _AddCardState extends State<AddCard> {
                                         email: email.text.trim(),
                                         country: country.text.trim(),
                                         customervaultid:
-                                        customervaultid.toString());
+                                            customervaultid.toString());
 
                                     AddCardService addCardService =
-                                    AddCardService();
+                                        AddCardService();
 
-                                    if (messageCardAvailable == "No card found for this tenant") {
-                                      print('create api and billing post api both');
+                                    if (messageCardAvailable ==
+                                        "No card found for this tenant") {
+                                      print(
+                                          'create api and billing post api both');
                                       CardResponse? cardResponse =
-                                      await addCardService.postCardDetails(cardwithOutVaultId);
+                                          await addCardService.postCardDetails(
+                                              cardwithOutVaultId);
 
                                       if (cardResponse != null) {
-                                        print('Customer Vault ID: ${cardResponse.customerVaultId}');
-                                        print('Response Code: ${cardResponse.responseCode}');
+                                        print(
+                                            'Customer Vault ID: ${cardResponse.customerVaultId}');
+                                        print(
+                                            'Response Code: ${cardResponse.responseCode}');
 
                                         AddCreditCard addcard = AddCreditCard(
-                                          tenantId: selectedTenantId,
-                                          billingId: randomNumber,
-                                          customerVaultId:
-                                          cardResponse?.customerVaultId,
-                                          responseCode: cardResponse?.responseCode,
-                                            ccNumber: cardNumber.text
-                                        );
+                                            tenantId: selectedTenantId,
+                                            billingId: randomNumber,
+                                            customerVaultId:
+                                                cardResponse?.customerVaultId,
+                                            responseCode:
+                                                cardResponse?.responseCode,
+                                            ccNumber: cardNumber.text);
 
-                                        await addCardService.postAddCreditCard(addcard).then((value) {
+                                        await addCardService
+                                            .postAddCreditCard(addcard)
+                                            .then((value) {
                                           setState(() {
                                             isLoading1 = false;
                                           });
                                         });
 
                                         Navigator.pop(context);
-                                        Fluttertoast.showToast(msg: 'Add Card Successfully');
+                                        Fluttertoast.showToast(
+                                            msg: 'Add Card Successfully');
                                       } else {
                                         setState(() {
                                           isLoading1 = false;
                                         });
-                                        Fluttertoast.showToast(msg: 'Failed to add card');
+                                        Fluttertoast.showToast(
+                                            msg: 'Failed to add card');
                                       }
-                                    }
-                                    else {
+                                    } else {
                                       CardResponse? cardResponses =
-                                      await addCardService.postCardWithVaultId(cardwithVaultId);
+                                          await addCardService
+                                              .postCardWithVaultId(
+                                                  cardwithVaultId);
 
                                       if (cardResponses != null) {
-                                        print('Customer Vault ID: ${cardResponses.customerVaultId}');
-                                        print('Response Code: ${cardResponses.responseCode}');
+                                        print(
+                                            'Customer Vault ID: ${cardResponses.customerVaultId}');
+                                        print(
+                                            'Response Code: ${cardResponses.responseCode}');
 
                                         AddCreditCard addcards = AddCreditCard(
-                                          tenantId: selectedTenantId,
-                                          billingId: randomNumber,
-                                          customerVaultId: cardResponses.customerVaultId,
-                                          responseCode: cardResponses.responseCode,
+                                            tenantId: selectedTenantId,
+                                            billingId: randomNumber,
+                                            customerVaultId:
+                                                cardResponses.customerVaultId,
+                                            responseCode:
+                                                cardResponses.responseCode,
+                                            ccNumber: cardNumber.text);
 
-                                            ccNumber: cardNumber.text
-                                        );
-
-                                        await addCardService.postAddCreditCard(addcards).then((value) {
+                                        await addCardService
+                                            .postAddCreditCard(addcards)
+                                            .then((value) {
                                           setState(() {
                                             isLoading1 = false;
                                           });
                                         });
 
                                         Navigator.pop(context, true);
-                                        Fluttertoast.showToast(msg: 'Add Card Successfully');
+                                        Fluttertoast.showToast(
+                                            msg: 'Add Card Successfully');
                                       }
                                       // else {
                                       //   setState(() {
@@ -1114,19 +1154,21 @@ class _AddCardState extends State<AddCard> {
                                       isLoading1 = false;
                                     });
                                     print("Error occurred: $e");
-                                    Fluttertoast.showToast(msg: 'An error occurred, please try again');
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            'An error occurred, please try again');
                                   }
                                 }
-
                               } else {
                                 // Handle the case where form validation fails
                                 setState(() {
                                   isLoading1 = false;
                                 });
-                                Fluttertoast.showToast(msg: 'Form is invalid. Please check the details.');
+                                Fluttertoast.showToast(
+                                    msg:
+                                        'Form is invalid. Please check the details.');
                               }
                             },
-
                             child: isLoading1
                                 ? Center(
                                     child: SpinKitFadingCircle(
@@ -1507,6 +1549,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+
   String exprmessage = "";
   bool isValidLuhn(String input) {
     input = input.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
@@ -1538,96 +1581,52 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional!
-              ? null
-              : (value) {
-                  if (widget.controller!.text.isEmpty) {
-                    setState(() {
-                      if (widget.label == null)
-                        _errorMessage = 'Please ${widget.hintText}';
-                      else
-                        _errorMessage = 'Please ${widget.label}';
-                    });
-                    return '';
-                  }
-                  // else if (widget.cvv != null) {
-                  //   String formattedCVV =
-                  //   widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-                  //
-                  //   // Removed the empty check
-                  //   if (formattedCVV.length != 3) {
-                  //     setState(() {
-                  //       _errorMessage = "Cvv number must be 3 digits";
-                  //     });
-                  //     return '';
-                  //   }
-                  // }
-                  // else if (widget.cardnum != null) {
-                  //   String? validationMessage =
-                  //   ValidateExpirationDate(widget.controller!.text);
-                  //   if (validationMessage != null) {
-                  //     setState(() {
-                  //       _errorMessage = validationMessage;
-                  //     });
-                  //     return '';
-                  //   }
-                  // }
-                  // if (widget.cardnum != null) {
-                  //   final sanitizedValue =widget.controller!.text.replaceAll(' ', '');
-                  //
-                  //   // Check if the card number length is less than 16
-                  //   if (sanitizedValue == null || sanitizedValue.length < 16) {
-                  //     return 'Card number must be at least 16 digits';
-                  //   }
-                  //
-                  //   // Validate using the Luhn algorithm
-                  //   if (!isValidLuhn(sanitizedValue)) {
-                  //     return 'Invalid credit card number';
-                  //   }
-                  // }
-                  // else if (widget.cardnum != null) {
-                  //   String cardNumber = widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-                  //
-                  //   // Removed the empty check
-                  //   if (cardNumber.length != 16) {
-                  //     setState(() {
-                  //       _errorMessage = "Card number must be 16 digits";
-                  //     });
-                  //     return '';
-                  //   }
-                  //   if (!isValidLuhn(cardNumber)) {
-                  //     setState(() {
-                  //       _errorMessage = "Invalid credit card number";
-                  //     });
-                  //     return '';
-                  //   }
-                  // }
-                  else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+          validator: (value) {
+            // If field is optional and empty, no validation needed
+            if (widget.optional! && widget.controller!.text.trim().isEmpty) {
+              return null;
+            }
 
-                    // Removed the empty check
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
-                  } else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
-                      setState(() {
-                        _errorMessage = "Email is not valid";
-                      });
-                      return '';
-                    }
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  return null;
-                },
+            // If field is required and empty, show error
+            if (!widget.optional! && widget.controller!.text.trim().isEmpty) {
+              setState(() {
+                if (widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
+              });
+              return '';
+            }
+
+            // Validate format if field has value (for optional fields) or is required
+            if (widget.phone != null) {
+              String formattedPhoneNumber =
+                  widget.controller!.text.trim().replaceAll(RegExp(r'\D'), '');
+
+              if (formattedPhoneNumber.isNotEmpty &&
+                  formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+            } else if (widget.email != null) {
+              String emailValue = widget.controller!.text.trim();
+              if (emailValue.isNotEmpty &&
+                  !EmailValidator.validate(emailValue)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text.trim()) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -1675,7 +1674,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       onFieldSubmitted: widget.onChanged2,
                       onChanged: (value) {
                         //  print("object calin $value");
-                        if (widget.expirydate == true ) {
+                        if (widget.expirydate == true) {
                           String? validationMessage;
 
                           // If the field is empty, set the error message to null
@@ -1683,31 +1682,38 @@ class CustomTextFieldState extends State<CustomTextField> {
                             validationMessage = null;
                           } else {
                             // If not empty, validate the expiration date
-                            validationMessage = ValidateExpirationDate(value); // Assuming ValidateExpirationDate() checks for expiration date format
+                            validationMessage = ValidateExpirationDate(
+                                value); // Assuming ValidateExpirationDate() checks for expiration date format
                           }
 
                           print(validationMessage);
 
                           setState(() {
                             if (validationMessage != null) {
-                              exprmessage = validationMessage; // Display error message if invalid
+                              exprmessage =
+                                  validationMessage; // Display error message if invalid
                             } else {
-                              exprmessage = ""; // Clear error message if valid or empty
-                              _errorMessage = null; // Clear general error message
+                              exprmessage =
+                                  ""; // Clear error message if valid or empty
+                              _errorMessage =
+                                  null; // Clear general error message
                             }
                           });
 
                           if (widget.onError != null) {
-                            widget.onError!(exprmessage); // Pass the error message to the parent
+                            widget.onError!(
+                                exprmessage); // Pass the error message to the parent
                           }
                         }
                         if (widget.cardnum != null && widget.allerror != null) {
-                          String cardNumber = value.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
+                          String cardNumber = value.replaceAll(
+                              RegExp(r'\D'), ''); // Remove non-digit characters
 
                           // If the card number is empty, clear the error message
                           if (cardNumber.isEmpty) {
                             setState(() {
-                              _errorMessage = null; // Clear error message if the field is empty
+                              _errorMessage =
+                                  null; // Clear error message if the field is empty
                             });
                           } else if (cardNumber.length != 16) {
                             setState(() {
@@ -1728,17 +1734,21 @@ class CustomTextFieldState extends State<CustomTextField> {
                           }
 
                           // Notify parent about the error message (if any)
-                          if (widget.onErrorcard != null ) {
-                            widget.onErrorcard!(_errorMessage); // Pass the error message to the parent
+                          if (widget.onErrorcard != null) {
+                            widget.onErrorcard!(
+                                _errorMessage); // Pass the error message to the parent
                           }
                         }
-                         if (widget.cvv != null&& widget.allerror != null) {
-                          String formattedCVV = widget.controller!.text.replaceAll(RegExp(r'\D'), ''); // Remove non-digit characters
+                        if (widget.cvv != null && widget.allerror != null) {
+                          String formattedCVV = widget.controller!.text
+                              .replaceAll(RegExp(r'\D'),
+                                  ''); // Remove non-digit characters
 
                           // Check if the CVV field is empty
                           if (formattedCVV.isEmpty) {
                             setState(() {
-                              _errorMessage = null; // Clear error message if the field is empty
+                              _errorMessage =
+                                  null; // Clear error message if the field is empty
                             });
                           } else if (formattedCVV.length != 3) {
                             setState(() {
@@ -1755,10 +1765,10 @@ class CustomTextFieldState extends State<CustomTextField> {
 
                           // Notify parent about the error message (if any)
                           if (widget.onErrorcvv != null) {
-                            widget.onErrorcvv!(_errorMessage); // Pass the error message to the parent
+                            widget.onErrorcvv!(
+                                _errorMessage); // Pass the error message to the parent
                           }
                         }
-
 
                         if (value.isNotEmpty) {
                           setState(() {
@@ -1786,7 +1796,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                         }
                         return null;
                       },
-
                       controller: widget.controller,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
@@ -1794,11 +1803,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                             TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
-
                       ),
                       style: TextStyle(
-                        color: widget.allerror ==true?exprmessage != ""? Colors.red : Colors.green : Colors.black
-                      ),
+                          color: widget.allerror == true
+                              ? exprmessage != ""
+                                  ? Colors.red
+                                  : Colors.green
+                              : Colors.black),
                     ),
                   ),
                 ),
