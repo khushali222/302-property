@@ -270,6 +270,16 @@ class _Applicants_tableState extends State<Applicants_table> {
   final List<String> items = ['Approved', "Rejected", 'Undecided', "All"];
   String? selectedValue = "Undecided";
   String searchvalue = "";
+
+  // Date filter options
+  final List<String> dateFilterItems = [
+    'Last 15 Days',
+    'Last 30 Days',
+    'Last 45 Days',
+    'Last 60 Days',
+    'All Time'
+  ];
+  String? selectedDateFilter = "All Time";
   @override
   void initState() {
     super.initState();
@@ -763,6 +773,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                   ),
                   const SizedBox(height: 10),
 
+                  // Search bar - full width
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
@@ -771,159 +782,228 @@ class _Applicants_tableState extends State<Applicants_table> {
                           const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
                           const SizedBox(width: 19),
-                        Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .45
-                                : MediaQuery.of(context).size.width * .4,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                            ),
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                  if (currentPage != 0) currentPage = 0;
-                                });
-                              },
-                              cursorColor: Colors.blue,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                contentPadding: EdgeInsets.all(11),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                        DropdownButtonHideUnderline(
+                        Expanded(
                           child: Material(
                             elevation: 3,
                             borderRadius: BorderRadius.circular(8),
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Type',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        // fontWeight: FontWeight.bold,
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border:
+                                    Border.all(color: const Color(0xFF8A95A8)),
                               ),
-                              items: items
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
-                                  .toList(),
-                              value: selectedValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedValue = value;
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                // width: 180,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .39
-                                    : MediaQuery.of(context).size.width * .4,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    // color: Colors.black26,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  color: Colors.white,
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchvalue = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                cursorColor: Colors.blue,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle:
+                                      TextStyle(color: Color(0xFF8A95A8)),
+                                  contentPadding: EdgeInsets.all(11),
                                 ),
-                                elevation: 0,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  //color: Colors.redAccent,
-                                ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
                           ),
                         ),
-                        // Column(
-                        //   mainAxisAlignment: MainAxisAlignment.end,
-                        //   crossAxisAlignment: CrossAxisAlignment.end,
-                        //   children: [
-                        //     Text(
-                        //       'Added : ${applicantCount.toString()}',
-                        //       // 'Added : 5',
-                        //       style: TextStyle(
-                        //         fontWeight: FontWeight.bold,
-                        //         color: const Color(0xFF8A95A8),
-                        //         fontSize:
-                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        //       ),
-                        //     ),
-                        //     const SizedBox(
-                        //       width: 5,
-                        //     ),
-                        //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                        //     Text(
-                        //       'Total: ${applicantCountLimit.toString()}',
-                        //       // 'Total: 10',
-                        //       style: TextStyle(
-                        //         fontWeight: FontWeight.bold,
-                        //         color: const Color(0xFF8A95A8),
-                        //         fontSize:
-                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 25),
+                      ],
+                    ),
+                  ),
+
+                  // Date filter dropdown - full width, side by side with status filter
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 19),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Time Range',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                items: dateFilterItems
+                                    .map((String item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: selectedDateFilter,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedDateFilter = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
+                                  padding: const EdgeInsets.only(
+                                      left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Type',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                items: items
+                                    .map((String item) =>
+                                        DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: selectedValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedValue = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
+                                  padding: const EdgeInsets.only(
+                                      left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  elevation: 0,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
@@ -1002,10 +1082,6 @@ class _Applicants_tableState extends State<Applicants_table> {
                                             .contains(searchvalue.toLowerCase())))
                                 .toList();
                           } else {
-                            // data = snapshot.data!
-                            //     .where((applicant) =>
-                            //         applicant.applicantFirstName == selectedValue)
-                            //     .toList();
                             data = snapshot.data!.where((applicant) {
                               // If "Undecided" is selected, include applicants with no status
                               if (selectedValue == "Undecided") {
@@ -1018,6 +1094,68 @@ class _Applicants_tableState extends State<Applicants_table> {
                                       selectedValue;
                             }).toList();
                           }
+
+                          // Apply date filter (15, 30, 45, 60 days or All time)
+                          if (selectedDateFilter != null &&
+                              selectedDateFilter != "All Time") {
+                            int? daysAgo;
+                            if (selectedDateFilter == "Last 15 Days") {
+                              daysAgo = 15;
+                            } else if (selectedDateFilter == "Last 30 Days") {
+                              daysAgo = 30;
+                            } else if (selectedDateFilter == "Last 45 Days") {
+                              daysAgo = 45;
+                            } else if (selectedDateFilter == "Last 60 Days") {
+                              daysAgo = 60;
+                            }
+
+                            if (daysAgo != null) {
+                              final cutoffDate = DateTime.now()
+                                  .subtract(Duration(days: daysAgo));
+                              final cutoffDateStart = DateTime(cutoffDate.year,
+                                  cutoffDate.month, cutoffDate.day);
+
+                              data = data.where((applicant) {
+                                if (applicant.createdAt == null) return false;
+                                try {
+                                  final applicantDate = DateTime.parse(
+                                      applicant.createdAt.toString());
+                                  final applicantDateStart = DateTime(
+                                      applicantDate.year,
+                                      applicantDate.month,
+                                      applicantDate.day);
+                                  return applicantDateStart
+                                          .isAfter(cutoffDateStart) ||
+                                      applicantDateStart
+                                          .isAtSameMomentAs(cutoffDateStart);
+                                } catch (e) {
+                                  return false;
+                                }
+                              }).toList();
+                            }
+                          }
+
+                          // Filter out applicants who have moved in or have leases created
+                          data = data.where((applicant) {
+                            // Exclude applicants with isMovedin: true (moved in/became tenants)
+                            if (applicant.isMovedin == true) {
+                              return false;
+                            }
+                            // Exclude applicants with lease != null (have leases created)
+                            if (applicant.lease != null) {
+                              return false;
+                            }
+                            return true;
+                          }).toList();
+
+                          // Print filtered applicant count
+                          print("Filtered Applicant Count: ${data.length}");
+                          print(
+                              "Total Applicants (before filters): ${snapshot.data!.length}");
+                          print("Date Filter: $selectedDateFilter");
+                          print("Status Filter: $selectedValue");
+                          print("Search Value: $searchvalue");
+
                           if (data.isEmpty) {
                             return Center(
                               child: Column(
