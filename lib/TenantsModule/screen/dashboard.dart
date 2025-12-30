@@ -107,12 +107,13 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         "authorization": "CRM $token",
         "Content-Type": "application/json"
       });
-      print(response.body);
+      print("response.body tenant count $response.body");
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         print(jsonData);
         setState(() {
-          //countList[0] = jsonData["data"]['all_workorders'];
+          //  countList[0] = jsonData["data"]['all_workorders'] ?? 0;
+          countList[0] = jsonData["data"]['workOrder'] ?? 0;
           //  countList[1] = jsonData['rentalCount'];
           countList[2] = jsonData["data"]['rent'];
           countList[3] =
@@ -138,6 +139,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     } catch (e) {
       print(e);
       setState(() {
+        countList[0] = 0;
         countList[2] = 0;
         countList[3] = "--/--/----";
         countList[4] = "--/--/----";
@@ -226,7 +228,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           print(newwork);
           newworkorder = newwork;
           overdueworkorder = overdue;
-          countList[0] = data["all_workorders"];
+          // countList[0] is now set from fetchDatacount() - don't overwrite it
+          // countList[0] = data["all_workorders"];
           print(data);
         });
       } else {

@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
+// import 'package:provider/provider.dart'; // Unused import
+// import 'package:cupertino_icons/cupertino_icons.dart'; // Unused import
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer_tiles.dart';
@@ -106,61 +106,91 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 widget.currentpage == "Dashboard",
               ),
 
-              buildDropdownListTile(
+              // Properties as top-level menu item
+              buildListTile(
                 context,
                 FaIcon(
-                  FontAwesomeIcons.key,
-                  size: 20,
-                  color: blueColor,
+                  FontAwesomeIcons.buildingUser,
+                  size: 18,
+                  color: widget.currentpage == "Properties"
+                      ? Colors.white
+                      : blueColor,
                 ),
-                "Rentals",
-                [
-                  "Properties",
-                  "Rental Owner",
-                  "Tenants",
-                  "Property Type",
-                  "Mortgage"
-                ],
-                [
-                  FaIcon(
-                    FontAwesomeIcons.buildingUser,
-                    size: 18,
-                    color: widget.currentpage == "Properties"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for Properties
-                  FaIcon(
-                    FontAwesomeIcons.houseChimneyUser,
-                    size: 18,
-                    color: widget.currentpage == "Rental Owner"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for RentalOwner
-                  FaIcon(
-                    FontAwesomeIcons.users,
-                    size: 18,
-                    color: widget.currentpage == "Tenants"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  FaIcon(
-                    FontAwesomeIcons.house,
-                    size: 18,
-                    color: widget.currentpage == "Property Type"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  FaIcon(
-                    FontAwesomeIcons.handHoldingDollar,
-                    size: 18,
-                    color: widget.currentpage == "Mortgage"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  // Icon for Tenants
-                ],
-                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+                "Properties",
+                widget.currentpage == "Properties",
               ),
+
+              // Tenants as top-level menu item
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.users,
+                  size: 18,
+                  color: widget.currentpage == "Tenants"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Tenants",
+                widget.currentpage == "Tenants",
+              ),
+
+              // Rentals dropdown removed - Rental Owner and Property Type moved to Settings
+              // Mortgage commented out (not deleted)
+              // buildDropdownListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.key,
+              //     size: 20,
+              //     color: blueColor,
+              //   ),
+              //   "Rentals",
+              //   [
+              //     "Properties",
+              //     "Rental Owner",
+              //     "Tenants",
+              //     "Property Type",
+              //     "Mortgage"
+              //   ],
+              //   [
+              //     FaIcon(
+              //       FontAwesomeIcons.buildingUser,
+              //       size: 18,
+              //       color: widget.currentpage == "Properties"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ), // Icon for Properties
+              //     FaIcon(
+              //       FontAwesomeIcons.houseChimneyUser,
+              //       size: 18,
+              //       color: widget.currentpage == "Rental Owner"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ), // Icon for RentalOwner
+              //     FaIcon(
+              //       FontAwesomeIcons.users,
+              //       size: 18,
+              //       color: widget.currentpage == "Tenants"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ),
+              //     FaIcon(
+              //       FontAwesomeIcons.house,
+              //       size: 18,
+              //       color: widget.currentpage == "Property Type"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ),
+              //     FaIcon(
+              //       FontAwesomeIcons.handHoldingDollar,
+              //       size: 18,
+              //       color: widget.currentpage == "Mortgage"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ),
+              //     // Icon for Tenants
+              //   ],
+              //   selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              // ),
               buildDropdownListTile(
                 context,
                 FaIcon(
@@ -220,7 +250,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ? Colors.white
                         : blueColor,
                   ) // Icon for RentalOwner
-                  // FaIcon(      
+                  // FaIcon(
                   //   FontAwesomeIcons.clock,
                   //   size: 20,
                   //   color: widget.currentpage == "Scheduled Charges"

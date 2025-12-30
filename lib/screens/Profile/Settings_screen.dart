@@ -40,6 +40,16 @@ import '../Maintenance/Vendor/edit_vendor.dart' hide CustomTextField;
 import '../Maintenance/Vendor/add_vendor.dart' hide CustomTextField;
 import '../../Model/vendor.dart';
 import '../../repository/vendor_repository.dart';
+import '../Rental/Rentalowner/Rentalowner_table.dart';
+import '../Property_Type/Property_type_table.dart';
+import '../Maintenance/Vendor/Vendor_table.dart';
+// Staff module table widgets
+import '../../StaffModule/screen/Rental/Rentalowner/Rentalowner_table.dart'
+    as StaffRentalOwner;
+import '../../StaffModule/screen/Property_Type/Property_type_table.dart'
+    as StaffPropertyType;
+import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart'
+    as StaffVendor;
 
 class TabBarExample extends StatefulWidget {
   final String? initialTab; // Optional parameter to specify which tab to open
@@ -89,6 +99,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool ismanagetemplate = false;
   bool ischargesetting = false;
   bool isvendor = false;
+  bool ispropertyowner = false;
+  bool ispropertytype = false;
   bool _isStaffUser = false;
   // Vendor table state variables
   String vendorSearchValue = "";
@@ -148,7 +160,39 @@ class _TabBarExampleState extends State<TabBarExample> {
           ismanagetemplate = false;
           ischargesetting = false;
           iscategories = false;
+          ispropertyowner = false;
+          ispropertytype = false;
           isvendor = true;
+        });
+      } else if (widget.initialTab == 'Property Owners') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = false;
+          ispropertytype = false;
+          ispropertyowner = true;
+        });
+      } else if (widget.initialTab == 'Property Type') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = false;
+          ispropertyowner = false;
+          ispropertytype = true;
         });
       }
     });
@@ -1763,6 +1807,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1811,6 +1857,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                     await fetchAccountsData();
                                     await fetchlatefeeData();
@@ -1868,6 +1916,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1913,6 +1963,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1967,6 +2019,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -2012,6 +2066,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
@@ -2085,6 +2141,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = true;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                       iscategories = false;
                                       isvendor = false;
                                       //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
@@ -2133,6 +2191,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       iscategories = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                     await _loadDropdownCategories(); // Always fetch latest categories from backend
                                     await fetchWorkData(); // Fetch work order settings after categories are loaded
@@ -2238,6 +2298,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       ismanagetemplate = false;
                                       isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Visibility(
@@ -2285,7 +2347,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       ischargesetting = false;
                                       ismanagetemplate = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                       isvendor = true;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -2300,6 +2366,111 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: isvendor
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertytype = false;
+                                      ispropertyowner = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertyowner
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Owners",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertyowner
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertytype
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Type",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertytype
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
@@ -7389,607 +7560,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ],
                           ),
                         if (isvendor)
-                          Column(
-                            children: [
-                              const SizedBox(height: 15),
-                              // Header with Title and Add Button
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Manage Vendor",
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 18
-                                                : 25,
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final result = await Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Add_vendor()));
-                                      if (result == true) {
-                                        setState(() {
-                                          futureVendors =
-                                              VendorRepository(baseUrl: '')
-                                                  .getVendors();
-                                        });
-                                      }
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.width <
-                                                  768
-                                              ? 50
-                                              : 60,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      decoration: BoxDecoration(
-                                        color: blueColor,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "+ Add Vendor",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              // Search Bar
-                              Material(
-                                elevation: 3,
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  height:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 45
-                                          : 50,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                          color: const Color(0xFF8A95A8))),
-                                  child: TextField(
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 14),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        vendorSearchValue = value;
-                                        if (vendorCurrentPage != 0)
-                                          vendorCurrentPage = 0;
-                                      });
-                                    },
-                                    cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                          color: const Color(0xFF8A95A8),
-                                        ),
-                                        contentPadding: const EdgeInsets.only(
-                                            left: 5, bottom: 10, top: 4)),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              // Vendor Table
-                              FutureBuilder<List<Vendor>>(
-                                future: futureVendors,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return ColabShimmerLoadingWidget();
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                        child:
-                                            Text('Error: ${snapshot.error}'));
-                                  } else if (!snapshot.hasData ||
-                                      snapshot.data!.isEmpty) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .5,
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "assets/images/no_data.jpg",
-                                              height: 200,
-                                              width: 200,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              "No Data Available",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor,
-                                                  fontSize: 16),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    var data = snapshot.data!;
-                                    if (vendorSearchValue != "") {
-                                      data = snapshot.data!
-                                          .where((vendor) =>
-                                              vendor.vendorName!
-                                                  .toLowerCase()
-                                                  .contains(vendorSearchValue
-                                                      .toLowerCase()) ||
-                                              vendor.vendorPhoneNumber!
-                                                  .toLowerCase()
-                                                  .contains(vendorSearchValue
-                                                      .toLowerCase()) ||
-                                              vendor.vendorEmail!
-                                                  .toLowerCase()
-                                                  .contains(vendorSearchValue
-                                                      .toLowerCase()))
-                                          .toList();
-                                    }
-                                    vendorSortData(data);
-                                    final totalPages =
-                                        (data.length / vendorItemsPerPage)
-                                            .ceil();
-                                    final currentPageData = data
-                                        .skip(vendorCurrentPage *
-                                            vendorItemsPerPage)
-                                        .take(vendorItemsPerPage)
-                                        .toList();
-                                    return SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          const SizedBox(height: 10),
-                                          _buildVendorHeaders(),
-                                          const SizedBox(height: 10),
-                                          Container(
-                                            child: Column(
-                                              children: currentPageData
-                                                  .asMap()
-                                                  .entries
-                                                  .map((entry) {
-                                                int index = entry.key;
-                                                bool isExpanded =
-                                                    vendorExpandedIndex ==
-                                                        index;
-                                                Vendor vendor = entry.value;
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (vendorExpandedIndex ==
-                                                          index) {
-                                                        vendorExpandedIndex =
-                                                            null;
-                                                      } else {
-                                                        vendorExpandedIndex =
-                                                            index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: const EdgeInsets
-                                                        .symmetric(vertical: 6),
-                                                    decoration: BoxDecoration(
-                                                      color: index % 2 != 0
-                                                          ? const Color(
-                                                              0xFFF4F8FF)
-                                                          : Colors.white,
-                                                      border: Border.all(
-                                                          color: const Color(
-                                                              0xFFDBE0E5)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        ListTile(
-                                                          contentPadding:
-                                                              EdgeInsets.zero,
-                                                          title: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(2.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: <Widget>[
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      if (vendorExpandedIndex ==
-                                                                          index) {
-                                                                        vendorExpandedIndex =
-                                                                            null;
-                                                                      } else {
-                                                                        vendorExpandedIndex =
-                                                                            index;
-                                                                      }
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            5),
-                                                                    padding: !isExpanded
-                                                                        ? const EdgeInsets
-                                                                            .only(
-                                                                            bottom:
-                                                                                10)
-                                                                        : const EdgeInsets
-                                                                            .only(
-                                                                            top:
-                                                                                10),
-                                                                    child:
-                                                                        FaIcon(
-                                                                      isExpanded
-                                                                          ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                          : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                      size: 20,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child:
-                                                                      GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        if (vendorExpandedIndex ==
-                                                                            index) {
-                                                                          vendorExpandedIndex =
-                                                                              null;
-                                                                        } else {
-                                                                          vendorExpandedIndex =
-                                                                              index;
-                                                                        }
-                                                                      });
-                                                                    },
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              8.0),
-                                                                      child:
-                                                                          Text(
-                                                                        '${vendor.vendorName}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              13,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width *
-                                                                        .08),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    formatPhoneNumber(
-                                                                        '${vendor.vendorPhoneNumber}'),
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          13,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        if (isExpanded)
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        2.0),
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    bottom: 2),
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        isExpanded
-                                                                            ? FontAwesomeIcons.sortUp
-                                                                            : FontAwesomeIcons.sortDown,
-                                                                        size:
-                                                                            50,
-                                                                        color: Colors
-                                                                            .transparent,
-                                                                      ),
-                                                                      Expanded(
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: <Widget>[
-                                                                            Text.rich(
-                                                                              TextSpan(
-                                                                                children: [
-                                                                                  TextSpan(
-                                                                                    text: 'Email : ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                                                                                  ),
-                                                                                  TextSpan(
-                                                                                    text: '${vendor.vendorEmail}',
-                                                                                    style: TextStyle(fontWeight: FontWeight.w700, color: grey),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          10),
-                                                                  Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            GestureDetector(
-                                                                          onTap:
-                                                                              () async {
-                                                                            var check = await Navigator.push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                    builder: (context) => edit_vendor(
-                                                                                          vender_id: vendor.vendorId,
-                                                                                        )));
-                                                                            if (check ==
-                                                                                true) {
-                                                                              setState(() {
-                                                                                futureVendors = VendorRepository(baseUrl: '').getVendors();
-                                                                              });
-                                                                            }
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            height:
-                                                                                40,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              border: Border.all(color: Colors.green, width: 1.5),
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                            ),
-                                                                            child:
-                                                                                const Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                              children: [
-                                                                                FaIcon(FontAwesomeIcons.edit, size: 15, color: Colors.green),
-                                                                                SizedBox(width: 10),
-                                                                                Text("Edit", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              5),
-                                                                      Expanded(
-                                                                        child:
-                                                                            GestureDetector(
-                                                                          onTap:
-                                                                              () {
-                                                                            _showDeleteVendorAlert(context,
-                                                                                vendor.vendorId!);
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            height:
-                                                                                40,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              border: Border.all(color: Colors.red, width: 1.5),
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                            ),
-                                                                            child:
-                                                                                const Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                              children: [
-                                                                                FaIcon(FontAwesomeIcons.trashCan, size: 15, color: Colors.red),
-                                                                                SizedBox(width: 10),
-                                                                                Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 20),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 10),
-                                                  Material(
-                                                    elevation: 3,
-                                                    child: Container(
-                                                      height: 40,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 12.0),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: Colors.grey),
-                                                      ),
-                                                      child:
-                                                          DropdownButtonHideUnderline(
-                                                        child:
-                                                            DropdownButton<int>(
-                                                          value:
-                                                              vendorItemsPerPage,
-                                                          items:
-                                                              vendorItemsPerPageOptions
-                                                                  .map((int
-                                                                      value) {
-                                                            return DropdownMenuItem<
-                                                                int>(
-                                                              value: value,
-                                                              child: Text(value
-                                                                  .toString()),
-                                                            );
-                                                          }).toList(),
-                                                          onChanged: data
-                                                                      .length >
-                                                                  vendorItemsPerPageOptions
-                                                                      .first
-                                                              ? (newValue) {
-                                                                  setState(() {
-                                                                    vendorItemsPerPage =
-                                                                        newValue!;
-                                                                    vendorCurrentPage =
-                                                                        0;
-                                                                  });
-                                                                }
-                                                              : null,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  IconButton(
-                                                    icon: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .circleChevronLeft,
-                                                      color:
-                                                          vendorCurrentPage == 0
-                                                              ? Colors.grey
-                                                              : blueColor,
-                                                    ),
-                                                    onPressed:
-                                                        vendorCurrentPage == 0
-                                                            ? null
-                                                            : () {
-                                                                setState(() {
-                                                                  vendorCurrentPage--;
-                                                                });
-                                                              },
-                                                  ),
-                                                  Text(
-                                                      'Page ${vendorCurrentPage + 1} of $totalPages'),
-                                                  IconButton(
-                                                    icon: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .circleChevronRight,
-                                                      color: vendorCurrentPage <
-                                                              totalPages - 1
-                                                          ? blueColor
-                                                          : Colors.grey,
-                                                    ),
-                                                    onPressed:
-                                                        vendorCurrentPage <
-                                                                totalPages - 1
-                                                            ? () {
-                                                                setState(() {
-                                                                  vendorCurrentPage++;
-                                                                });
-                                                              }
-                                                            : null,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
+                          _isStaff
+                              ? StaffVendor.Vendor_table(isEmbedded: true)
+                              : Vendor_table(isEmbedded: true),
+                        if (ispropertyowner)
+                          _isStaff
+                              ? StaffRentalOwner.Rentalowner_table(
+                                  isEmbedded: true)
+                              : Rentalowner_table(isEmbedded: true),
+                        if (ispropertytype)
+                          _isStaff
+                              ? StaffPropertyType.PropertyTable(
+                                  isEmbedded: true)
+                              : PropertyTable(isEmbedded: true),
                       ],
                     ),
                   ),

@@ -78,69 +78,101 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 widget.currentpage == "Dashboard",
               ),
 
-              // Only show Rentals section if staff has any rental-related permissions
-              if (permissions != null &&
-                  (permissions.propertyView == true ||
-                      permissions.rentalownerView == true ||
-                      permissions.tenantView == true ||
-                      permissions.propertytypeView == true))
-                buildDropdownListTile(
+              // Properties as top-level menu item (with permission check)
+              if (permissions != null && permissions.propertyView == true)
+                buildListTile(
                   context,
                   FaIcon(
-                    FontAwesomeIcons.key,
+                    FontAwesomeIcons.buildingUser,
                     size: 20,
-                    color: blueColor,
+                    color: widget.currentpage == "Properties"
+                        ? Colors.white
+                        : blueColor,
                   ),
-                  "Rentals",
-                  // Filter the options based on permissions
-                  [
-                    if (permissions.propertyView == true) "Properties",
-                    if (permissions.rentalownerView == true) "Rental Owner",
-                    if (permissions.tenantView == true) "Tenants",
-                    if (permissions.propertytypeView == true) "Property Type",
-                    "Mortgage",
-                  ],
-                  // Filter the icons based on permissions in the same order
-                  [
-                    if (permissions.propertyView == true)
-                      FaIcon(FontAwesomeIcons.buildingUser,
-                          size: 20,
-                          color: widget.currentpage == "Properties"
-                              ? Colors.white
-                              : blueColor), // Icon for Properties
-                    if (permissions.rentalownerView == true)
-                      FaIcon(FontAwesomeIcons.users,
-                          size: 20,
-                          color: widget.currentpage == "Rental Owner"
-                              ? Colors.white
-                              : blueColor), // Icon for RentalOwner
-
-                    if (permissions.tenantView == true)
-                      FaIcon(FontAwesomeIcons.houseChimneyUser,
-                          size: 20,
-                          color: widget.currentpage == "Tenants"
-                              ? Colors.white
-                              : blueColor), // Icon for Tenants
-                    if (permissions.propertytypeView == true)
-                      FaIcon(
-                        FontAwesomeIcons.house,
-                        size: 20,
-                        color: widget.currentpage == "Property Type"
-                            ? Colors.white
-                            : blueColor,
-                      ),
-                    // if (permissions!.propertytypeView == true)
-                    FaIcon(
-                      FontAwesomeIcons.handHoldingDollar,
-                      size: 20,
-                      color: widget.currentpage == "Mortgage"
-                          ? Colors.white
-                          : blueColor,
-                    ),
-                  ],
-                  selectedSubtopic:
-                      !widget.dropdown ? null : widget.currentpage,
+                  "Properties",
+                  widget.currentpage == "Properties",
                 ),
+
+              // Tenants as top-level menu item (with permission check)
+              if (permissions != null && permissions.tenantView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.houseChimneyUser,
+                    size: 20,
+                    color: widget.currentpage == "Tenants"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Tenants",
+                  widget.currentpage == "Tenants",
+                ),
+
+              // Rentals dropdown removed - Rental Owner and Property Type moved to Settings
+              // Mortgage commented out (not deleted)
+              // Only show Rentals section if staff has any rental-related permissions
+              // if (permissions != null &&
+              //     (permissions.propertyView == true ||
+              //         permissions.rentalownerView == true ||
+              //         permissions.tenantView == true ||
+              //         permissions.propertytypeView == true))
+              //   buildDropdownListTile(
+              //     context,
+              //     FaIcon(
+              //       FontAwesomeIcons.key,
+              //       size: 20,
+              //       color: blueColor,
+              //     ),
+              //     "Rentals",
+              //     // Filter the options based on permissions
+              //     [
+              //       if (permissions.propertyView == true) "Properties",
+              //       if (permissions.rentalownerView == true) "Rental Owner",
+              //       if (permissions.tenantView == true) "Tenants",
+              //       if (permissions.propertytypeView == true) "Property Type",
+              //       "Mortgage",
+              //     ],
+              //     // Filter the icons based on permissions in the same order
+              //     [
+              //       if (permissions.propertyView == true)
+              //         FaIcon(FontAwesomeIcons.buildingUser,
+              //             size: 20,
+              //             color: widget.currentpage == "Properties"
+              //                 ? Colors.white
+              //                 : blueColor), // Icon for Properties
+              //       if (permissions.rentalownerView == true)
+              //         FaIcon(FontAwesomeIcons.users,
+              //             size: 20,
+              //             color: widget.currentpage == "Rental Owner"
+              //                 ? Colors.white
+              //                 : blueColor), // Icon for RentalOwner
+              //
+              //       if (permissions.tenantView == true)
+              //         FaIcon(FontAwesomeIcons.houseChimneyUser,
+              //             size: 20,
+              //             color: widget.currentpage == "Tenants"
+              //                 ? Colors.white
+              //                 : blueColor), // Icon for Tenants
+              //       if (permissions.propertytypeView == true)
+              //         FaIcon(
+              //           FontAwesomeIcons.house,
+              //           size: 20,
+              //           color: widget.currentpage == "Property Type"
+              //               ? Colors.white
+              //               : blueColor,
+              //         ),
+              //       // if (permissions!.propertytypeView == true)
+              //       FaIcon(
+              //         FontAwesomeIcons.handHoldingDollar,
+              //         size: 20,
+              //         color: widget.currentpage == "Mortgage"
+              //             ? Colors.white
+              //             : blueColor,
+              //       ),
+              //     ],
+              //     selectedSubtopic:
+              //         !widget.dropdown ? null : widget.currentpage,
+              //   ),
               // Only show Leasing section if staff has leasing-related permissions
               if (permissions != null &&
                   (permissions.leaseView == true ||
@@ -161,20 +193,22 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     "Scheduled Charges",
                   ],
                   [
-                    FaIcon(
-                      FontAwesomeIcons.wallet,
-                      size: 20,
-                      color: widget.currentpage == "Leases"
-                          ? Colors.white
-                          : blueColor,
-                    ), // Icon for Properties
-                    FaIcon(
-                      FontAwesomeIcons.addressCard,
-                      size: 20,
-                      color: widget.currentpage == "Applicants"
-                          ? Colors.white
-                          : blueColor,
-                    ),
+                    if (permissions.leaseView == true)
+                      FaIcon(
+                        FontAwesomeIcons.wallet,
+                        size: 20,
+                        color: widget.currentpage == "Leases"
+                            ? Colors.white
+                            : blueColor,
+                      ), // Icon for Leases
+                    if (permissions.applicantView == true)
+                      FaIcon(
+                        FontAwesomeIcons.addressCard,
+                        size: 20,
+                        color: widget.currentpage == "Applicants"
+                            ? Colors.white
+                            : blueColor,
+                      ),
 
                     widget.currentpage == "Upcoming Renewal"
                         ? SvgPicture.asset(
@@ -203,7 +237,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                       color: widget.currentpage == "Scheduled Charges"
                           ? Colors.white
                           : blueColor,
-                    ) // Icon for RentalOwner
+                    ) // Icon for Scheduled Charges
                     //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                   ],
                   selectedSubtopic:

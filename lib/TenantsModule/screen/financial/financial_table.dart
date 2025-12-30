@@ -135,15 +135,15 @@ class _FinancialTableState extends State<FinancialTable> {
                   children: [
                     width < 400
                         ? Text("       Date ",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
                         : Text("       Date",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     /*ascending1
@@ -245,11 +245,12 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("     Balance",
+                    Text("Balance",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
+                            
                     // SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -277,7 +278,6 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
-
 
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
