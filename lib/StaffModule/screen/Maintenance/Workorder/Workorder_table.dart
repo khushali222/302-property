@@ -1036,14 +1036,38 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   .map((item) => item as Data)
                                   .toList();
 
+                          // Filter by search value (including ticket number)
+                          List<Data> searchFilteredData = data;
+                          if (searchvalue.isNotEmpty) {
+                            searchFilteredData = data.where((workorder) {
+                              final ticketNumber =
+                                  workorder.workOrderData?.ticketNumber ?? '';
+                              final rentalAddress =
+                                  workorder.rentalAddress?.rentalAdress ?? '';
+                              final workSubject =
+                                  workorder.workOrderData?.workSubject ?? '';
+                              final searchLower = searchvalue.toLowerCase();
+
+                              return ticketNumber
+                                      .toLowerCase()
+                                      .contains(searchLower) ||
+                                  rentalAddress
+                                      .toLowerCase()
+                                      .contains(searchLower) ||
+                                  workSubject
+                                      .toLowerCase()
+                                      .contains(searchLower);
+                            }).toList();
+                          }
+
                           // Filter by billable if checked
                           final List<Data> filteredData = isChecked
-                              ? data
+                              ? searchFilteredData
                                   .where((workorder) =>
                                       workorder.workOrderData!.isBillable ==
                                       true)
                                   .toList()
-                              : data;
+                              : searchFilteredData;
 
                           final currentPageData = filteredData;
                           final totalPages = paginationInfo != null
@@ -1118,37 +1142,20 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            workOrder.workOrderData?.status ??
+                                            workOrder.workOrderData
+                                                    ?.ticketNumber ??
                                                 'N/A',
                                             style: TextStyle(
                                               fontSize: 13,
                                               color: blueColor,
                                               fontWeight: FontWeight.bold,
                                             ),
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            softWrap: true,
+                                            textAlign: TextAlign.end,
+                                            maxLines: 1,
+                                            softWrap: false,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        // const Spacer(),
-                                        // Expanded(
-                                        //   flex: 2,
-                                        //   child: Text(
-                                        //     workOrder.workOrderData
-                                        //             ?.ticketNumber ??
-                                        //         'N/A',
-                                        //     style: TextStyle(
-                                        //       fontSize: 13,
-                                        //       color: blueColor,
-                                        //       fontWeight: FontWeight.bold,
-                                        //     ),
-                                        //     textAlign: TextAlign.end,
-                                        //     maxLines: 1,
-                                        //     softWrap: false,
-                                        //     overflow: TextOverflow.ellipsis,
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                     if (isExpanded)
@@ -1176,7 +1183,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                     Text(
                                                       workOrder.staffMember
                                                               ?.staffmemberName ??
-                                                          "-",
+                                                          "N/A",
                                                       style: TextStyle(
                                                           fontSize: 12),
                                                     ),
@@ -1189,9 +1196,58 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             fontSize: 13)),
                                                     SizedBox(height: 2),
                                                     Text(
-                                                      dateProvider.formatCurrentDate(
-                                                              '${workOrder.workOrderData?.date}') ??
-                                                          "-",
+                                                      (workOrder.workOrderData
+                                                                      ?.date ==
+                                                                  null ||
+                                                              workOrder
+                                                                      .workOrderData
+                                                                      ?.date
+                                                                      .toString()
+                                                                      .isEmpty ==
+                                                                  true)
+                                                          ? "N/A"
+                                                          : (dateProvider
+                                                                      .formatCurrentDate(
+                                                                          '${workOrder.workOrderData?.date}')
+                                                                      ?.isEmpty ==
+                                                                  true
+                                                              ? "N/A"
+                                                              : dateProvider
+                                                                      .formatCurrentDate(
+                                                                          '${workOrder.workOrderData?.date}') ??
+                                                                  "N/A"),
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Text('Created:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      (workOrder.workOrderData
+                                                                      ?.createdAt ==
+                                                                  null ||
+                                                              workOrder
+                                                                      .workOrderData
+                                                                      ?.createdAt
+                                                                      .toString()
+                                                                      .isEmpty ==
+                                                                  true)
+                                                          ? "N/A"
+                                                          : (dateProvider
+                                                                      .formatCurrentDate(
+                                                                          '${workOrder.workOrderData?.createdAt}')
+                                                                      ?.isEmpty ==
+                                                                  true
+                                                              ? "N/A"
+                                                              : dateProvider
+                                                                      .formatCurrentDate(
+                                                                          '${workOrder.workOrderData?.createdAt}') ??
+                                                                  "N/A"),
                                                       style: TextStyle(
                                                           fontSize: 12),
                                                     ),
@@ -1207,6 +1263,21 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
+                                                    Text('Status:',
+                                                        style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13)),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      workOrder.workOrderData
+                                                              ?.status ??
+                                                          "N/A",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    SizedBox(height: 8),
                                                     Text('Billable:',
                                                         style: TextStyle(
                                                             color: blueColor,
@@ -1220,21 +1291,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                               true
                                                           ? "Yes"
                                                           : "No",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                    SizedBox(height: 8),
-                                                    Text('Created:',
-                                                        style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13)),
-                                                    SizedBox(height: 2),
-                                                    Text(
-                                                      dateProvider.formatCurrentDate(
-                                                              '${workOrder.workOrderData?.createdAt}') ??
-                                                          "-",
                                                       style: TextStyle(
                                                           fontSize: 12),
                                                     ),
@@ -1385,28 +1441,15 @@ class _Workorder_tableState extends State<Workorder_table> {
                                       Expanded(
                                         flex: 2,
                                         child: Text(
-                                          "Status",
+                                          "Ticket #",
                                           style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
                                           ),
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.end,
                                         ),
                                       ),
-                                      // const Spacer(),
-                                      // Expanded(
-                                      //   flex: 2,
-                                      //   child: Text(
-                                      //     "Ticket #",
-                                      //     style: TextStyle(
-                                      //       color: blueColor,
-                                      //       fontWeight: FontWeight.bold,
-                                      //       fontSize: 14,
-                                      //     ),
-                                      //     textAlign: TextAlign.end,
-                                      //   ),
-                                      // ),
                                       SizedBox(
                                         width: 8,
                                       ),

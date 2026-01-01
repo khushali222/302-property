@@ -3741,213 +3741,213 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             height: 10,
                           ),
                           // Late Fees Table
-                          // FutureBuilder<List<Map<String, dynamic>>>(
-                          //   future: fetchLateFees(),
-                          //   builder: (context, lateFeeSnapshot) {
-                          //     if (lateFeeSnapshot.connectionState ==
-                          //         ConnectionState.waiting) {
-                          //       return const SizedBox(
-                          //         height: 50,
-                          //         child: Center(
-                          //           child: CircularProgressIndicator(),
-                          //         ),
-                          //       );
-                          //     } else if (lateFeeSnapshot.hasError) {
-                          //       return Padding(
-                          //         padding: const EdgeInsets.all(8.0),
-                          //         child: Text(
-                          //           'Error loading late fees: ${lateFeeSnapshot.error}',
-                          //           style: const TextStyle(color: Colors.red),
-                          //         ),
-                          //       );
-                          //     } else if (!lateFeeSnapshot.hasData ||
-                          //         lateFeeSnapshot.data!.isEmpty) {
-                          //       return const SizedBox.shrink();
-                          //     } else {
-                          //       final lateFees = lateFeeSnapshot.data!;
-                          //       return Column(
-                          //         children: [
-                          //           Row(
-                          //             children: [
-                          //               const SizedBox(
-                          //                 width: 2,
-                          //               ),
-                          //               Text(
-                          //                 "Late Fees",
-                          //                 style: TextStyle(
-                          //                     color: blueColor,
-                          //                     fontWeight: FontWeight.bold,
-                          //                     fontSize: 16),
-                          //               ),
-                          //               Spacer(),
-                          //               Text(
-                          //                 "Late Fee Count : ${lateFees.length}",
-                          //                 style: TextStyle(
-                          //                     color: blueColor,
-                          //                     fontWeight: FontWeight.bold,
-                          //                     fontSize: 13),
-                          //               ),
-                          //             ],
-                          //           ),
-                          //           const SizedBox(
-                          //             height: 10,
-                          //           ),
-                          //           Container(
-                          //             decoration: BoxDecoration(
-                          //                 color: const Color(0xFFF4F8FF),
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(10),
-                          //                 border: Border.all(
-                          //                     color: const Color(0xFFDBE0E5))),
-                          //             child: ListTile(
-                          //               contentPadding: EdgeInsets.zero,
-                          //               title: Row(
-                          //                 mainAxisAlignment:
-                          //                     MainAxisAlignment.start,
-                          //                 children: <Widget>[
-                          //                   Expanded(
-                          //                     flex: 3,
-                          //                     child: InkWell(
-                          //                       onTap: () {},
-                          //                       child: Row(
-                          //                         children: [
-                          //                           width < 400
-                          //                               ? Padding(
-                          //                                   padding:
-                          //                                       EdgeInsets.only(
-                          //                                           left: 20.0),
-                          //                                   child: Text(
-                          //                                     "Date",
-                          //                                     style: TextStyle(
-                          //                                         color:
-                          //                                             blueColor,
-                          //                                         fontWeight:
-                          //                                             FontWeight
-                          //                                                 .bold,
-                          //                                         fontSize: 14),
-                          //                                     textAlign:
-                          //                                         TextAlign
-                          //                                             .center,
-                          //                                   ),
-                          //                                 )
-                          //                               : Text("     Date",
-                          //                                   style: TextStyle(
-                          //                                       color:
-                          //                                           blueColor,
-                          //                                       fontWeight:
-                          //                                           FontWeight
-                          //                                               .bold,
-                          //                                       fontSize: 14),
-                          //                                   textAlign: TextAlign
-                          //                                       .center),
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                   ),
-                          //                   Expanded(
-                          //                     flex: 2,
-                          //                     child: InkWell(
-                          //                       onTap: () {},
-                          //                       child: Row(
-                          //                         children: [
-                          //                           Padding(
-                          //                             padding: EdgeInsets.only(
-                          //                                 left: 0.0),
-                          //                             child: Text("Amount",
-                          //                                 style: TextStyle(
-                          //                                     color: blueColor,
-                          //                                     fontWeight:
-                          //                                         FontWeight
-                          //                                             .bold,
-                          //                                     fontSize: 14)),
-                          //                           ),
-                          //                           SizedBox(width: 5),
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //           ),
-                          //           Container(
-                          //             child: Column(
-                          //               children: lateFees
-                          //                   .asMap()
-                          //                   .entries
-                          //                   .map((entry) {
-                          //                 int index = entry.key;
-                          //                 Map<String, dynamic> lateFee =
-                          //                     entry.value;
-                          //                 return Container(
-                          //                   margin: const EdgeInsets.symmetric(
-                          //                       vertical: 6),
-                          //                   decoration: BoxDecoration(
-                          //                     color: index % 2 != 0
-                          //                         ? const Color(0xFFF4F8FF)
-                          //                         : Colors.white,
-                          //                     border: Border.all(
-                          //                         color:
-                          //                             const Color(0xFFDBE0E5)),
-                          //                     borderRadius:
-                          //                         BorderRadius.circular(10),
-                          //                   ),
-                          //                   child: ListTile(
-                          //                     contentPadding: EdgeInsets.zero,
-                          //                     title: Padding(
-                          //                       padding:
-                          //                           const EdgeInsets.all(2.0),
-                          //                       child: Row(
-                          //                         mainAxisAlignment:
-                          //                             MainAxisAlignment.start,
-                          //                         crossAxisAlignment:
-                          //                             CrossAxisAlignment.center,
-                          //                         children: <Widget>[
-                          //                           Expanded(
-                          //                             flex: 3,
-                          //                             child: Padding(
-                          //                               padding:
-                          //                                   const EdgeInsets
-                          //                                       .only(
-                          //                                       left: 20.0),
-                          //                               child: Text(
-                          //                                 lateFee['date'] ?? '',
-                          //                                 style: TextStyle(
-                          //                                   color: blueColor,
-                          //                                   fontWeight:
-                          //                                       FontWeight.bold,
-                          //                                   fontSize: 13,
-                          //                                 ),
-                          //                               ),
-                          //                             ),
-                          //                           ),
-                          //                           Expanded(
-                          //                             flex: 2,
-                          //                             child: Text(
-                          //                               formatCurrency(
-                          //                                   lateFee['amount'] ??
-                          //                                       0.0),
-                          //                               style: TextStyle(
-                          //                                 color: Colors.orange,
-                          //                                 fontWeight:
-                          //                                     FontWeight.bold,
-                          //                                 fontSize: 13,
-                          //                               ),
-                          //                             ),
-                          //                           ),
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                   ),
-                          //                 );
-                          //               }).toList(),
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       );
-                          //     }
-                          //   },
-                          // ),
+                          FutureBuilder<List<Map<String, dynamic>>>(
+                            future: fetchLateFees(),
+                            builder: (context, lateFeeSnapshot) {
+                              if (lateFeeSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox(
+                                  height: 50,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              } else if (lateFeeSnapshot.hasError) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Error loading late fees: ${lateFeeSnapshot.error}',
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                );
+                              } else if (!lateFeeSnapshot.hasData ||
+                                  lateFeeSnapshot.data!.isEmpty) {
+                                return const SizedBox.shrink();
+                              } else {
+                                final lateFees = lateFeeSnapshot.data!;
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          "Late Fees",
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          "Late Fee Count : ${lateFees.length}",
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFF4F8FF),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5))),
+                                      child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 3,
+                                              child: InkWell(
+                                                onTap: () {},
+                                                child: Row(
+                                                  children: [
+                                                    width < 400
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20.0),
+                                                            child: Text(
+                                                              "Date",
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          )
+                                                        : Text("     Date",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: InkWell(
+                                                onTap: () {},
+                                                child: Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 0.0),
+                                                      child: Text("Amount",
+                                                          style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14)),
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Column(
+                                        children: lateFees
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int index = entry.key;
+                                          Map<String, dynamic> lateFee =
+                                              entry.value;
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: index % 2 != 0
+                                                  ? const Color(0xFFF4F8FF)
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFDBE0E5)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 20.0),
+                                                        child: Text(
+                                                          lateFee['date'] ?? '',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        formatCurrency(
+                                                            lateFee['amount'] ??
+                                                                0.0),
+                                                        style: TextStyle(
+                                                          color: Colors.orange,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
 
                           //  Lease History Table
                           // FutureBuilder<List<Map<String, dynamic>>>(

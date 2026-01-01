@@ -295,24 +295,24 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                // Row(
-                                //   children: [
-                                //     const SizedBox(
-                                //       width: 10,
-                                //     ),
-                                //     Text(
-                                //       "Work Order : #${snapshot.data!.ticketNumber ?? 'N/A'}",
-                                //       style: TextStyle(
-                                //         fontSize: 14,
-                                //         fontWeight: FontWeight.bold,
-                                //         color: blueColor,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                // const SizedBox(
-                                //   height: 10,
-                                // ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      "Work Order : #${snapshot.data!.ticketNumber ?? 'N/A'}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
                                 Container(
                                   margin:
                                       const EdgeInsets.symmetric(horizontal: 5),
@@ -2086,7 +2086,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Updates History',
+                            'Update History',
                             style: TextStyle(
                               fontSize: 16,
                               color: blueColor,
@@ -2137,39 +2137,142 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             children: [
                               // Assignees & Due Date
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildLabelValue("Assignees",
-                                      update.staffmemberName ?? "N/A",
-                                      valueColor: blueColor),
-                                  _buildLabelValue(
-                                      "Due Date",
-                                      dateProvider.formatCurrentDate(
-                                          update.date ?? "N/A"),
-                                      valueColor: blueColor),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Assignees",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          update.staffmemberName ?? "N/A",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "Due Date",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          dateProvider.formatCurrentDate(
+                                              update.date ?? "N/A"),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.end,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               // Status & Updated By
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildLabelValue(
-                                    "Status",
-                                    update.status ?? "N/A",
-                                    valueColor: Colors.green,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Status",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          update.status ?? "N/A",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  _buildLabelValue("Updated By",
-                                      update.statusUpdatedBy ?? "N/A",
-                                      valueColor: blueColor),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "Updated By",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          update.statusUpdatedBy ?? "N/A",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.end,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
-                              _buildLabelValue("Message",
-                                  '${update.statusUpdatedBy ?? ""} updated this work order (${update.updatedAt != null ? update.updatedAt : update.createdAt ?? "N/A"})',
-                                  valueColor: blueColor),
+                              const SizedBox(height: 16),
+                              // Message
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Message",
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.updatedAt != null ? update.updatedAt : update.createdAt ?? "N/A"})',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               if (update.workOrderUpdateimages != null &&
                                   update.workOrderUpdateimages!.isNotEmpty) ...[
                                 const SizedBox(height: 12),
@@ -2315,20 +2418,23 @@ class _Workorder_summeryState extends State<Workorder_summery>
       {Color valueColor = Colors.black}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           label,
           style: const TextStyle(
             color: Colors.grey,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
         Text(
           value,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: valueColor,
+            fontSize: 14,
           ),
         ),
       ],
@@ -2893,202 +2999,143 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       ),
                       Row(
                         children: [
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Expanded(
-                            child: Container(
-                              //  height: 70,
-                              width: MediaQuery.of(context).size.width * .3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                // mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Assignees",
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                  summery.staffData != null
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                  '${summery.staffData?.firstname}',
-                                                  textAlign: TextAlign.start,
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13,
-                                                  )),
-                                            ),
-                                          ],
-                                        )
-                                      : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text('N/A',
-                                                textAlign: TextAlign.start,
-                                                style: TextStyle(
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                )),
-                                          ],
-                                        ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Expanded(
-                            child: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                // mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Due Date",
-                                    style: TextStyle(
-                                      color: blueColor,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                  Text(
-                                      '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date?.toString()}')}',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Text(
-                                  'Permission to enter',
-                                  style: TextStyle(color: blueColor),
-                                )),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Container(
-                                    child: Text(
-                                  '${summery.entryAllowed! ? "Yes" : "No"}',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
                                 Text(
-                                  "Status",
-                                  style: TextStyle(
-                                    color: blueColor,
+                                  "Assignees",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Text('${summery.status}',
-                                    style: const TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Text(
-                                  'Description',
+                                const SizedBox(height: 6),
+                                Text(
+                                  summery.staffData?.firstname ?? "N/A",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
-                                    fontWeight: FontWeight.w500,
                                     fontSize: 14,
                                   ),
-                                )),
-                                const SizedBox(
-                                  height: 8,
                                 ),
-                                Container(
-                                    width: 250,
-                                    child: Text(
-                                      '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold),
-                                    )),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Due Date",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  summery.workorderUpdates!.last.date!
+                                              .isEmpty ==
+                                          true
+                                      ? "N/A"
+                                      : dateProvider.formatCurrentDate(
+                                          '${summery.workorderUpdates?.last.date?.toString()}'),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.end,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Permission to enter",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  summery.entryAllowed! ? "Yes" : "No",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Status",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  summery.status ?? "N/A",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.end,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Description",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                summery.workPerformed!.isNotEmpty
+                                    ? summery.workPerformed!
+                                    : "N/A",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
