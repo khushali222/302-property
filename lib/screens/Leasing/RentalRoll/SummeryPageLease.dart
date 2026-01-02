@@ -73,6 +73,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<LeaseLedger?> _leaseLedgerFuture;
   late Future<LeaseCharges?> _leaseChargesFuture;
   late Future<List<Map<String, dynamic>>> _leaseHistoryFuture;
+  late Future<List<Map<String, dynamic>>> _lateFeesFuture;
   TabController? _tabController;
   ConnectivityResult? _connectivityResult;
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -93,6 +94,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _leaseChargesFuture = LeaseRepository().fetchLeaseCharges(widget.leaseId);
     _leaseHistoryFuture = fetchLeaseHistory();
+    _lateFeesFuture = fetchLateFees();
     _tabController = TabController(length: 3, vsync: this);
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     // moveOutDate = widget.enddate!;
@@ -3742,7 +3744,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           ),
                           // Late Fees Table
                           FutureBuilder<List<Map<String, dynamic>>>(
-                            future: fetchLateFees(),
+                            future: _lateFeesFuture,
                             builder: (context, lateFeeSnapshot) {
                               if (lateFeeSnapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -3948,491 +3950,488 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               }
                             },
                           ),
-
+                          SizedBox(
+                            height: 10,
+                          ),
                           //  Lease History Table
-                          // FutureBuilder<List<Map<String, dynamic>>>(
-                          //   future: _leaseHistoryFuture,
-                          //   builder: (context, leaseHistorySnapshot) {
-                          //     if (leaseHistorySnapshot.connectionState ==
-                          //         ConnectionState.waiting) {
-                          //       return const SizedBox(
-                          //         height: 50,
-                          //         child: Center(
-                          //           child: CircularProgressIndicator(),
-                          //         ),
-                          //       );
-                          //     } else if (leaseHistorySnapshot.hasError) {
-                          //       return Padding(
-                          //         padding: const EdgeInsets.all(8.0),
-                          //         child: Text(
-                          //           'Error loading lease history: ${leaseHistorySnapshot.error}',
-                          //           style: const TextStyle(color: Colors.red),
-                          //         ),
-                          //       );
-                          //     } else if (!leaseHistorySnapshot.hasData ||
-                          //         leaseHistorySnapshot.data!.isEmpty) {
-                          //       return const SizedBox.shrink();
-                          //     } else {
-                          //       final paginatedData =
-                          //           getPaginatedLeaseHistory();
-                          //       final totalPages = getTotalPages();
-                          //
-                          //       return Column(
-                          //         children: [
-                          //           Row(
-                          //             children: [
-                          //               const SizedBox(
-                          //                 width: 2,
-                          //               ),
-                          //               Text(
-                          //                 "Lease History",
-                          //                 style: TextStyle(
-                          //                     color: blueColor,
-                          //                     fontWeight: FontWeight.bold,
-                          //                     fontSize: 16),
-                          //               ),
-                          //               // const Spacer(),
-                          //               // Text(
-                          //               //   "Total: ${_allLeaseHistory.length}",
-                          //               //   style: TextStyle(
-                          //               //       color: blueColor,
-                          //               //       fontWeight: FontWeight.w500,
-                          //               //       fontSize: 14),
-                          //               // ),
-                          //             ],
-                          //           ),
-                          //           const SizedBox(
-                          //             height: 10,
-                          //           ),
-                          //           Container(
-                          //             decoration: BoxDecoration(
-                          //                 color: const Color(0xFFF4F8FF),
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(10),
-                          //                 border: Border.all(
-                          //                     color: const Color(0xFFDBE0E5))),
-                          //             child: ListTile(
-                          //               contentPadding: EdgeInsets.zero,
-                          //               title: Row(
-                          //                 mainAxisAlignment:
-                          //                     MainAxisAlignment.start,
-                          //                 children: <Widget>[
-                          //                   Expanded(
-                          //                     flex: 3,
-                          //                     child: InkWell(
-                          //                       onTap: () {},
-                          //                       child: Row(
-                          //                         children: [
-                          //                           width < 400
-                          //                               ? Padding(
-                          //                                   padding:
-                          //                                       EdgeInsets.only(
-                          //                                           left: 20.0),
-                          //                                   child: Text(
-                          //                                     "Date & Time",
-                          //                                     style: TextStyle(
-                          //                                         color:
-                          //                                             blueColor,
-                          //                                         fontWeight:
-                          //                                             FontWeight
-                          //                                                 .bold,
-                          //                                         fontSize: 14),
-                          //                                     textAlign:
-                          //                                         TextAlign
-                          //                                             .center,
-                          //                                   ),
-                          //                                 )
-                          //                               : Text(
-                          //                                   "     Date & Time",
-                          //                                   style: TextStyle(
-                          //                                       color:
-                          //                                           blueColor,
-                          //                                       fontWeight:
-                          //                                           FontWeight
-                          //                                               .bold,
-                          //                                       fontSize: 14),
-                          //                                   textAlign: TextAlign
-                          //                                       .center),
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                   ),
-                          //                   SizedBox(width: 10),
-                          //                   Expanded(
-                          //                       flex: 2,
-                          //                       child: InkWell(
-                          //                         onTap: () {},
-                          //                         child: Row(
-                          //                           children: [
-                          //                             Text("     Action",
-                          //                                 style: TextStyle(
-                          //                                     color: blueColor,
-                          //                                     fontWeight:
-                          //                                         FontWeight
-                          //                                             .bold,
-                          //                                     fontSize: 14)),
-                          //                           ],
-                          //                         ),
-                          //                       )),
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //           ),
-                          //           Container(
-                          //             child: Column(
-                          //               children: paginatedData
-                          //                   .asMap()
-                          //                   .entries
-                          //                   .map((entry) {
-                          //                 int index = entry.key;
-                          //                 Map<String, dynamic> historyItem =
-                          //                     entry.value;
-                          //                 bool isExpanded =
-                          //                     leaseHistoryExpandedIndex ==
-                          //                         index;
-                          //
-                          //                 // Format date with AM/PM
-                          //                 String formattedDate =
-                          //                     _formatDateTimeWithAMPM(
-                          //                         historyItem['date'] ?? '');
-                          //
-                          //                 return Container(
-                          //                   margin: const EdgeInsets.symmetric(
-                          //                       vertical: 6),
-                          //                   decoration: BoxDecoration(
-                          //                     color: index % 2 != 0
-                          //                         ? const Color(0xFFF4F8FF)
-                          //                         : Colors.white,
-                          //                     border: Border.all(
-                          //                         color:
-                          //                             const Color(0xFFDBE0E5)),
-                          //                     borderRadius:
-                          //                         BorderRadius.circular(10),
-                          //                   ),
-                          //                   child: Column(
-                          //                     children: <Widget>[
-                          //                       ListTile(
-                          //                         contentPadding:
-                          //                             EdgeInsets.zero,
-                          //                         title: Padding(
-                          //                           padding:
-                          //                               const EdgeInsets.all(
-                          //                                   2.0),
-                          //                           child: Row(
-                          //                             mainAxisAlignment:
-                          //                                 MainAxisAlignment
-                          //                                     .start,
-                          //                             crossAxisAlignment:
-                          //                                 CrossAxisAlignment
-                          //                                     .center,
-                          //                             children: <Widget>[
-                          //                               InkWell(
-                          //                                 onTap: () {
-                          //                                   setState(() {
-                          //                                     if (leaseHistoryExpandedIndex ==
-                          //                                         index) {
-                          //                                       leaseHistoryExpandedIndex =
-                          //                                           null;
-                          //                                     } else {
-                          //                                       leaseHistoryExpandedIndex =
-                          //                                           index;
-                          //                                     }
-                          //                                   });
-                          //                                 },
-                          //                                 child: Container(
-                          //                                   margin:
-                          //                                       const EdgeInsets
-                          //                                           .only(
-                          //                                           left: 5),
-                          //                                   padding: !isExpanded
-                          //                                       ? const EdgeInsets
-                          //                                           .only(
-                          //                                           bottom: 10)
-                          //                                       : const EdgeInsets
-                          //                                           .only(
-                          //                                           top: 10),
-                          //                                   child: FaIcon(
-                          //                                     isExpanded
-                          //                                         ? FontAwesomeIcons
-                          //                                             .sortUp
-                          //                                         : FontAwesomeIcons
-                          //                                             .sortDown,
-                          //                                     size: 20,
-                          //                                     color: blueColor,
-                          //                                   ),
-                          //                                 ),
-                          //                               ),
-                          //                               Expanded(
-                          //                                 flex: 3,
-                          //                                 child: InkWell(
-                          //                                   onTap: () {
-                          //                                     setState(() {
-                          //                                       if (leaseHistoryExpandedIndex ==
-                          //                                           index) {
-                          //                                         leaseHistoryExpandedIndex =
-                          //                                             null;
-                          //                                       } else {
-                          //                                         leaseHistoryExpandedIndex =
-                          //                                             index;
-                          //                                       }
-                          //                                     });
-                          //                                   },
-                          //                                   child: Padding(
-                          //                                     padding:
-                          //                                         const EdgeInsets
-                          //                                             .only(
-                          //                                             left:
-                          //                                                 5.0),
-                          //                                     child: Text(
-                          //                                       formattedDate,
-                          //                                       style:
-                          //                                           TextStyle(
-                          //                                         color:
-                          //                                             blueColor,
-                          //                                         fontWeight:
-                          //                                             FontWeight
-                          //                                                 .bold,
-                          //                                         fontSize: 13,
-                          //                                       ),
-                          //                                     ),
-                          //                                   ),
-                          //                                 ),
-                          //                               ),
-                          //                               SizedBox(
-                          //                                   width: MediaQuery.of(
-                          //                                               context)
-                          //                                           .size
-                          //                                           .width *
-                          //                                       .08),
-                          //                               Expanded(
-                          //                                 flex: 2,
-                          //                                 child: Text(
-                          //                                   historyItem[
-                          //                                           'action'] ??
-                          //                                       'N/A',
-                          //                                   style: TextStyle(
-                          //                                     color: blueColor,
-                          //                                     fontWeight:
-                          //                                         FontWeight
-                          //                                             .bold,
-                          //                                     fontSize: 13,
-                          //                                   ),
-                          //                                 ),
-                          //                               ),
-                          //                             ],
-                          //                           ),
-                          //                         ),
-                          //                       ),
-                          //                       if (isExpanded)
-                          //                         Container(
-                          //                           margin:
-                          //                               const EdgeInsets.only(
-                          //                                   bottom: 20),
-                          //                           child:
-                          //                               SingleChildScrollView(
-                          //                             child: Column(
-                          //                               children: [
-                          //                                 Row(
-                          //                                   mainAxisAlignment:
-                          //                                       MainAxisAlignment
-                          //                                           .start,
-                          //                                   children: [
-                          //                                     FaIcon(
-                          //                                       isExpanded
-                          //                                           ? FontAwesomeIcons
-                          //                                               .sortUp
-                          //                                           : FontAwesomeIcons
-                          //                                               .sortDown,
-                          //                                       size: 50,
-                          //                                       color: Colors
-                          //                                           .transparent,
-                          //                                     ),
-                          //                                     Expanded(
-                          //                                       child: Column(
-                          //                                         crossAxisAlignment:
-                          //                                             CrossAxisAlignment
-                          //                                                 .start,
-                          //                                         children: <Widget>[
-                          //                                           if (historyItem['type'] !=
-                          //                                                   null &&
-                          //                                               historyItem['type']
-                          //                                                   .toString()
-                          //                                                   .isNotEmpty)
-                          //                                             Text.rich(
-                          //                                               TextSpan(
-                          //                                                 children: [
-                          //                                                   TextSpan(
-                          //                                                     text: 'Type : ',
-                          //                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                          //                                                   ),
-                          //                                                   TextSpan(
-                          //                                                     text: '${historyItem['type']}',
-                          //                                                     style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
-                          //                                                   ),
-                          //                                                 ],
-                          //                                               ),
-                          //                                             ),
-                          //                                           if (historyItem['type'] != null &&
-                          //                                               historyItem['type']
-                          //                                                   .toString()
-                          //                                                   .isNotEmpty &&
-                          //                                               historyItem['description'] !=
-                          //                                                   null &&
-                          //                                               historyItem['description']
-                          //                                                   .toString()
-                          //                                                   .isNotEmpty)
-                          //                                             const SizedBox(
-                          //                                               height:
-                          //                                                   8,
-                          //                                             ),
-                          //                                           if (historyItem['description'] !=
-                          //                                                   null &&
-                          //                                               historyItem['description']
-                          //                                                   .toString()
-                          //                                                   .isNotEmpty)
-                          //                                             Column(
-                          //                                               crossAxisAlignment:
-                          //                                                   CrossAxisAlignment.start,
-                          //                                               children: [
-                          //                                                 Text(
-                          //                                                   'Description :',
-                          //                                                   style:
-                          //                                                       TextStyle(
-                          //                                                     fontWeight: FontWeight.bold,
-                          //                                                     color: blueColor,
-                          //                                                     fontSize: 14,
-                          //                                                   ),
-                          //                                                 ),
-                          //                                                 const SizedBox(
-                          //                                                     height: 4),
-                          //                                                 Padding(
-                          //                                                   padding: const EdgeInsets.only(right: 20),
-                          //                                                   child: Container(
-                          //                                                     width:
-                          //                                                         double.infinity,
-                          //                                                     padding: const EdgeInsets.fromLTRB(
-                          //                                                         12,
-                          //                                                         12,
-                          //                                                         12,
-                          //                                                         16),
-                          //                                                     decoration:
-                          //                                                         BoxDecoration(
-                          //                                                       color: Colors.grey[100],
-                          //                                                       borderRadius: BorderRadius.circular(8),
-                          //                                                       border: Border.all(color: Colors.grey[300]!),
-                          //                                                     ),
-                          //                                                     child:
-                          //                                                         Text(
-                          //                                                       '${historyItem['description']}',
-                          //                                                       style: const TextStyle(
-                          //                                                         fontWeight: FontWeight.w500,
-                          //                                                         color: Colors.black87,
-                          //                                                         fontSize: 14,
-                          //                                                       ),
-                          //                                                     ),
-                          //                                                   ),
-                          //                                                 ),
-                          //                                                 if (historyItem['performed_by'] != null &&
-                          //                                                     historyItem['performed_by'].toString().isNotEmpty) ...[
-                          //                                                   const SizedBox(height: 12),
-                          //                                                   Text.rich(
-                          //                                                     TextSpan(
-                          //                                                       children: [
-                          //                                                         TextSpan(
-                          //                                                           text: 'Updated by : ',
-                          //                                                           style: TextStyle(
-                          //                                                             fontWeight: FontWeight.bold,
-                          //                                                             color: blueColor,
-                          //                                                             fontSize: 14,
-                          //                                                           ),
-                          //                                                         ),
-                          //                                                         TextSpan(
-                          //                                                           text: '${historyItem['performed_by']}',
-                          //                                                           style: TextStyle(
-                          //                                                             fontWeight: FontWeight.w500,
-                          //                                                             color: blueColor,
-                          //                                                             fontSize: 14,
-                          //                                                           ),
-                          //                                                         ),
-                          //                                                       ],
-                          //                                                     ),
-                          //                                                   ),
-                          //                                                 ],
-                          //                                               ],
-                          //                                             ),
-                          //                                         ],
-                          //                                       ),
-                          //                                     ),
-                          //                                   ],
-                          //                                 ),
-                          //                               ],
-                          //                             ),
-                          //                           ),
-                          //                         ),
-                          //                     ],
-                          //                   ),
-                          //                 );
-                          //               }).toList(),
-                          //             ),
-                          //           ),
-                          //           // Pagination Controls
-                          //           if (totalPages > 1)
-                          //             Padding(
-                          //               padding: const EdgeInsets.symmetric(
-                          //                   vertical: 15.0),
-                          //               child: Row(
-                          //                 mainAxisAlignment:
-                          //                     MainAxisAlignment.end,
-                          //                 children: [
-                          //                   IconButton(
-                          //                     icon: FaIcon(
-                          //                       FontAwesomeIcons
-                          //                           .circleChevronLeft,
-                          //                       size: 30,
-                          //                       color: _currentPage <= 1
-                          //                           ? Colors.grey
-                          //                           : blueColor,
-                          //                     ),
-                          //                     onPressed: _currentPage <= 1
-                          //                         ? null
-                          //                         : () {
-                          //                             setState(() {
-                          //                               _currentPage--;
-                          //                             });
-                          //                           },
-                          //                   ),
-                          //                   Text(
-                          //                     'Page $_currentPage of $totalPages',
-                          //                     style:
-                          //                         const TextStyle(fontSize: 18),
-                          //                   ),
-                          //                   IconButton(
-                          //                     icon: FaIcon(
-                          //                       FontAwesomeIcons
-                          //                           .circleChevronRight,
-                          //                       size: 30,
-                          //                       color:
-                          //                           _currentPage >= totalPages
-                          //                               ? Colors.grey
-                          //                               : blueColor,
-                          //                     ),
-                          //                     onPressed:
-                          //                         _currentPage >= totalPages
-                          //                             ? null
-                          //                             : () {
-                          //                                 setState(() {
-                          //                                   _currentPage++;
-                          //                                 });
-                          //                               },
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //         ],
-                          //       );
-                          //     }
-                          //   },
-                          // ),
+                          FutureBuilder<List<Map<String, dynamic>>>(
+                            future: _leaseHistoryFuture,
+                            builder: (context, leaseHistorySnapshot) {
+                              if (leaseHistorySnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox(
+                                  height: 50,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              } else if (leaseHistorySnapshot.hasError) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Error loading lease history: ${leaseHistorySnapshot.error}',
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                );
+                              } else if (!leaseHistorySnapshot.hasData ||
+                                  leaseHistorySnapshot.data!.isEmpty) {
+                                return const SizedBox.shrink();
+                              } else {
+                                final paginatedData =
+                                    getPaginatedLeaseHistory();
+                                final totalPages = getTotalPages();
+
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          "Lease History",
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16),
+                                        ),
+                                        // const Spacer(),
+                                        // Text(
+                                        //   "Total: ${_allLeaseHistory.length}",
+                                        //   style: TextStyle(
+                                        //       color: blueColor,
+                                        //       fontWeight: FontWeight.w500,
+                                        //       fontSize: 14),
+                                        // ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFF4F8FF),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5))),
+                                      child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 3,
+                                              child: InkWell(
+                                                onTap: () {},
+                                                child: Row(
+                                                  children: [
+                                                    width < 400
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20.0),
+                                                            child: Text(
+                                                              "Date & Time",
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            "     Date & Time",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                                flex: 2,
+                                                child: InkWell(
+                                                  onTap: () {},
+                                                  child: Row(
+                                                    children: [
+                                                      Text("     Action",
+                                                          style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14)),
+                                                    ],
+                                                  ),
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Column(
+                                        children: paginatedData
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int index = entry.key;
+                                          Map<String, dynamic> historyItem =
+                                              entry.value;
+                                          bool isExpanded =
+                                              leaseHistoryExpandedIndex ==
+                                                  index;
+
+                                          // Format date with AM/PM
+                                          String formattedDate =
+                                              _formatDateTimeWithAMPM(
+                                                  historyItem['date'] ?? '');
+
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: index % 2 != 0
+                                                  ? const Color(0xFFF4F8FF)
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFDBE0E5)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Column(
+                                              children: <Widget>[
+                                                ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  title: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            2.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (leaseHistoryExpandedIndex ==
+                                                                  index) {
+                                                                leaseHistoryExpandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                leaseHistoryExpandedIndex =
+                                                                    index;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 5),
+                                                            padding: !isExpanded
+                                                                ? const EdgeInsets
+                                                                    .only(
+                                                                    bottom: 10)
+                                                                : const EdgeInsets
+                                                                    .only(
+                                                                    top: 10),
+                                                            child: FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 20,
+                                                              color: blueColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                if (leaseHistoryExpandedIndex ==
+                                                                    index) {
+                                                                  leaseHistoryExpandedIndex =
+                                                                      null;
+                                                                } else {
+                                                                  leaseHistoryExpandedIndex =
+                                                                      index;
+                                                                }
+                                                              });
+                                                            },
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          5.0),
+                                                              child: Text(
+                                                                formattedDate,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 13,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .08),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          child: Text(
+                                                            historyItem[
+                                                                    'action'] ??
+                                                                'N/A',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                if (isExpanded)
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 20),
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 50,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    if (historyItem['type'] !=
+                                                                            null &&
+                                                                        historyItem['type']
+                                                                            .toString()
+                                                                            .isNotEmpty)
+                                                                      Text.rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Type : ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: '${historyItem['type']}',
+                                                                              style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    if (historyItem['type'] != null &&
+                                                                        historyItem['type']
+                                                                            .toString()
+                                                                            .isNotEmpty &&
+                                                                        historyItem['description'] !=
+                                                                            null &&
+                                                                        historyItem['description']
+                                                                            .toString()
+                                                                            .isNotEmpty)
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            8,
+                                                                      ),
+                                                                    if (historyItem['description'] !=
+                                                                            null &&
+                                                                        historyItem['description']
+                                                                            .toString()
+                                                                            .isNotEmpty)
+                                                                      Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Description :',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor,
+                                                                              fontSize: 14,
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: 4),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(right: 20),
+                                                                            child:
+                                                                                Container(
+                                                                              width: double.infinity,
+                                                                              padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.grey[100],
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                                border: Border.all(color: Colors.grey[300]!),
+                                                                              ),
+                                                                              child: Text(
+                                                                                '${historyItem['description']}',
+                                                                                style: const TextStyle(
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                  color: Colors.black87,
+                                                                                  fontSize: 14,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          if (historyItem['performed_by'] != null &&
+                                                                              historyItem['performed_by'].toString().isNotEmpty) ...[
+                                                                            const SizedBox(height: 12),
+                                                                            Text.rich(
+                                                                              TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: 'Updated by : ',
+                                                                                    style: TextStyle(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color: blueColor,
+                                                                                      fontSize: 14,
+                                                                                    ),
+                                                                                  ),
+                                                                                  TextSpan(
+                                                                                    text: '${historyItem['performed_by']}',
+                                                                                    style: TextStyle(
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      color: blueColor,
+                                                                                      fontSize: 14,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ],
+                                                                      ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                    // Pagination Controls
+                                    if (totalPages > 1)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronLeft,
+                                                size: 30,
+                                                color: _currentPage <= 1
+                                                    ? Colors.grey
+                                                    : blueColor,
+                                              ),
+                                              onPressed: _currentPage <= 1
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        _currentPage--;
+                                                      });
+                                                    },
+                                            ),
+                                            Text(
+                                              'Page $_currentPage of $totalPages',
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            ),
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronRight,
+                                                size: 30,
+                                                color:
+                                                    _currentPage >= totalPages
+                                                        ? Colors.grey
+                                                        : blueColor,
+                                              ),
+                                              onPressed:
+                                                  _currentPage >= totalPages
+                                                      ? null
+                                                      : () {
+                                                          setState(() {
+                                                            _currentPage++;
+                                                          });
+                                                        },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
