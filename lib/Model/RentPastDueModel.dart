@@ -450,6 +450,7 @@ class RentPastDue {
   final DueRentCharges? dueRentCharges;
   final CurrentPayments? currentPayments;
   final LastPayments? lastPayments;
+  final Pagination? pagination;
 
   RentPastDue({
     this.currentMonthRentDue,
@@ -462,6 +463,7 @@ class RentPastDue {
     this.dueRentCharges,
     this.currentPayments,
     this.lastPayments,
+    this.pagination,
   });
 
   factory RentPastDue.fromJson(Map<String, dynamic>? json) {
@@ -486,6 +488,9 @@ class RentPastDue {
           : null,
       lastPayments: json['lastPayments'] != null
           ? LastPayments.fromJson(json['lastPayments'])
+          : null,
+      pagination: json['pagination'] != null
+          ? Pagination.fromJson(json['pagination'])
           : null,
     );
   }
@@ -738,5 +743,38 @@ class Transaction {
       tenantData: firstTenant,
       tenantDataList: tenants,
     );
+  }
+}
+
+class Pagination {
+  final int? currentPage;
+  final int? totalPages;
+  final int? totalItems;
+  final int? itemsPerPage;
+
+  Pagination({
+    this.currentPage,
+    this.totalPages,
+    this.totalItems,
+    this.itemsPerPage,
+  });
+
+  factory Pagination.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Pagination();
+    return Pagination(
+      currentPage: json['currentPage'] as int?,
+      totalPages: json['totalPages'] as int?,
+      totalItems: json['totalItems'] as int?,
+      itemsPerPage: json['itemsPerPage'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'currentPage': currentPage,
+      'totalPages': totalPages,
+      'totalItems': totalItems,
+      'itemsPerPage': itemsPerPage,
+    };
   }
 }

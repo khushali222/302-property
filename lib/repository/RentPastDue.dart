@@ -101,16 +101,52 @@ class AdminBalanceRepository {
   //     throw Exception('Error fetching Admin Balance');
   //   }
   // }
-  Future<RentPastDue> fetchAdminBalance({bool report = true}) async {
+  Future<RentPastDue> fetchAdminBalance({
+    bool report = true,
+    String? type,
+    String? month,
+    int page = 1,
+    int limit = 10,
+    String? sortKey,
+    String? sortOrder,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    String url = '$baseUrl/$id?report=${report.toString()}';
+    
+    // Build query parameters
+    Map<String, String> queryParams = {
+      'report': report.toString(),
+    };
+    
+    // Add pagination parameters if provided
+    if (type != null && type.isNotEmpty) {
+      queryParams['type'] = type;
+    }
+    if (month != null && month.isNotEmpty) {
+      queryParams['month'] = month;
+    }
+    if (page > 0) {
+      queryParams['page'] = page.toString();
+    }
+    if (limit > 0) {
+      queryParams['limit'] = limit.toString();
+    }
+    if (sortKey != null && sortKey.isNotEmpty) {
+      queryParams['sortKey'] = sortKey;
+    }
+    if (sortOrder != null && sortOrder.isNotEmpty) {
+      queryParams['sortOrder'] = sortOrder;
+    }
+    
+    // Build URL with query parameters
+    Uri uri = Uri.parse('$baseUrl/$id').replace(queryParameters: queryParams);
+    String url = uri.toString();
 
     print('Fetching Admin Balance from: $url');
     try {
       final response = await http.get(
-        Uri.parse(url),
+        uri,
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",

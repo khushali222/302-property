@@ -10,7 +10,6 @@ import '../../../model/summery_workorder.dart';
 import '../../../model/workordr.dart';
 
 class WorkOrderRepository {
-
   Future<List<Data>> fetchWorkOrders() async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,6 +37,69 @@ class WorkOrderRepository {
       print('Failed to fetch workorders: ${response.body}');
       return [];
       //throw Exception('Failed to load work orders');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchWorkOrdersPaginated({
+    int page = 1,
+    int limit = 10,
+    String sortBy = 'createdAt',
+    String sortOrder = 'desc',
+    List<String>? status,
+    String? search,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+
+    // Build query parameters
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'limit': limit.toString(),
+      'sortBy': sortBy,
+      'sortOrder': sortOrder,
+    };
+
+    // Add status filter if provided
+    if (status != null && status.isNotEmpty && !status.contains('All')) {
+      queryParams['status'] = status.join(',');
+    }
+
+    // Add search if provided
+    if (search != null && search.isNotEmpty) {
+      queryParams['search'] = search;
+    }
+
+    final uri = Uri.parse('$Api_url/api/work-order/work-orders/$adminid')
+        .replace(queryParameters: queryParams);
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      List jsonData = jsonResponse['data'];
+      return {
+        'data': jsonData.map((data) => Data.fromJson(data)).toList(),
+        'pagination': jsonResponse['pagination'],
+      };
+    } else {
+      print('Failed to fetch workorders: ${response.body}');
+      return {
+        'data': <Data>[],
+        'pagination': {
+          'currentPage': 1,
+          'totalPages': 1,
+          'totalItems': 0,
+          'itemsPerPage': limit,
+        },
+      };
     }
   }
 

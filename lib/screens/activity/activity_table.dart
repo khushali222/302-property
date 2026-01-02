@@ -42,7 +42,7 @@ class _ActivityTableState extends State<ActivityTable> {
     100,
   ]; // Options for items per page
 
- /* void sortData(List<Activity_model> data) {
+  /* void sortData(List<Activity_model> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
           ? a.propertyType!.compareTo(b.propertyType!)
@@ -70,13 +70,17 @@ class _ActivityTableState extends State<ActivityTable> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -119,13 +123,19 @@ class _ActivityTableState extends State<ActivityTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Activity By ",
-                        style: TextStyle(color: Colors.white))
-                        : Text("Activity By",
-                        style: TextStyle(color: Colors.white)),
+                        ? Text("  Activity By ",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("  Activity By",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-                   /* ascending1
+                    /* ascending1
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -170,9 +180,13 @@ class _ActivityTableState extends State<ActivityTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   ACTION", style: TextStyle(color: Colors.white)),
+                    Text("   ACTION",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
-                  /*  ascending2
+                    /*  ascending2
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -218,9 +232,12 @@ class _ActivityTableState extends State<ActivityTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Date & Time", style: TextStyle(color: Colors.white)),
+                    Text("   Date & Time",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
-
                   ],
                 ),
               ),
@@ -241,25 +258,22 @@ class _ActivityTableState extends State<ActivityTable> {
       setState(() {
         print(result);
         _connectivityResult = result;
-        if(_connectivityResult != ConnectivityResult.none)
-          futurePropertyTypes = ActivityRepository().fetchActivities(10,0);
+        if (_connectivityResult != ConnectivityResult.none)
+          futurePropertyTypes = ActivityRepository().fetchActivities(10, 0);
       });
     });
     checkInternet();
-
   }
 
-  void checkInternet()async{
-
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
 
-    if(_connectivityResult != ConnectivityResult.none)
-      futurePropertyTypes = ActivityRepository().fetchActivities(10,0);
-
+    if (_connectivityResult != ConnectivityResult.none)
+      futurePropertyTypes = ActivityRepository().fetchActivities(10, 0);
   }
 
   bool _errorText = false;
@@ -272,7 +286,9 @@ class _ActivityTableState extends State<ActivityTable> {
       desc: "Once deleted, you will not be able to recover this property!",
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -280,7 +296,7 @@ class _ActivityTableState extends State<ActivityTable> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for deletion',
-                contentPadding: EdgeInsets.only(top: 8,left: 15),
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
               ),
             ),
           ),
@@ -289,17 +305,17 @@ class _ActivityTableState extends State<ActivityTable> {
           //     "Please fill in all fields correctly.",
           //     style: TextStyle(color: Colors.redAccent),
           //   ),
-
         ],
       ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -320,25 +336,23 @@ class _ActivityTableState extends State<ActivityTable> {
               //  _errorText == true;
               // });
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            }else{
-              var data = await PropertyTypeRepository().DeletePropertyType(pro_id: id,reason: reason.text);
+            } else {
+              var data = await PropertyTypeRepository()
+                  .DeletePropertyType(pro_id: id, reason: reason.text);
               // Add your delete logic here
-              if(data != null)
+              if (data != null)
                 setState(() {
-                  futurePropertyTypes = ActivityRepository().fetchActivities(10,0);
+                  futurePropertyTypes =
+                      ActivityRepository().fetchActivities(10, 0);
                 });
               Navigator.pop(context);
             }
-
           },
           color: blueColor,
         )
       ],
     ).show();
   }
-
-
-
 
   List<Activity_model> _tableData = [];
   int _rowsPerPage = 10;
@@ -411,7 +425,7 @@ class _ActivityTableState extends State<ActivityTable> {
   //     ),
   //   );
   // }
- /* Widget _buildHeader<T>(String text, int columnIndex,
+  /* Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Activity_data d)? getField) {
     return TableCell(
       child: InkWell(
@@ -589,16 +603,15 @@ class _ActivityTableState extends State<ActivityTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-            _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -610,23 +623,21 @@ class _ActivityTableState extends State<ActivityTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : blueColor
-
-
-            , // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
   }
-  ConnectivityResult? _connectivityResult ;
+
+  ConnectivityResult? _connectivityResult;
   final _scrollController = ScrollController();
 
   @override
@@ -640,385 +651,400 @@ class _ActivityTableState extends State<ActivityTable> {
         currentpage: "Dashboard",
         dropdown: false,
       ),
-      body: _connectivityResult !=ConnectivityResult.none ?
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            //add Activity_model
+      body: _connectivityResult != ConnectivityResult.none
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  //add Activity_model
 
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0),
-              child: Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
-                child: titleBar(
-                  width: double.infinity,
-                  title: 'Activity',
-                ),
-              ),
-            ),
-            // SizedBox(height: 10),
-            // Row(
-            //   children: [
-            //     SizedBox(width: 15,),
-            //     Text("Welcome to property type",style: TextStyle(color:themeProvider.colorScheme.selectedColor,fontSize: 14),),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     SizedBox(width: 15,),
-            //     Text("Label color",style: TextStyle(color:themeProvider.colorScheme.selectedLabelColor,fontSize: 14),),
-            //   ],
-            // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Activity',
+                      ),
+                    ),
+                  ),
+                  // SizedBox(height: 10),
+                  // Row(
+                  //   children: [
+                  //     SizedBox(width: 15,),
+                  //     Text("Welcome to property type",style: TextStyle(color:themeProvider.colorScheme.selectedColor,fontSize: 14),),
+                  //   ],
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     SizedBox(width: 15,),
+                  //     Text("Label color",style: TextStyle(color:themeProvider.colorScheme.selectedLabelColor,fontSize: 14),),
+                  //   ],
+                  // ),
 
-            //search
+                  //search
 
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<Activity_model>(
-                  future: futurePropertyTypes,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      // if (selectedValue == null && searchvalue!.isEmpty) {
-                      //   data = snapshot.data!;
-                      // } else if (selectedValue == "All") {
-                      //   data = snapshot.data!;
-                      // } else if (searchvalue!.isNotEmpty) {
-                      //   data = snapshot.data!
-                      //       .where((property) =>
-                      //   property.propertyType!
-                      //       .toLowerCase()
-                      //       .contains(searchvalue!.toLowerCase()) ||
-                      //       property.propertysubType!
-                      //           .toLowerCase()
-                      //           .contains(searchvalue!.toLowerCase()))
-                      //       .toList();
-                      // } else {
-                      //   data = snapshot.data!
-                      //       .where((property) =>
-                      //   property.propertyType == selectedValue)
-                      //       .toList();
-                      // }
-                      // sortData(data);
-                      final totalPages = (data.totaldata! / itemsPerPage).ceil();
-                      final currentPageData = data;
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 10),
-                            _buildHeaders(),
-                            SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                      Color.fromRGBO(152, 162, 179, .5)
-
-
-                                  )),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
-                              child: Column(
-                                children: currentPageData.data
-                                    !.asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  Activity_data Propertytype = entry.value;
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: FutureBuilder<Activity_model>(
+                        future: futurePropertyTypes,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ColabShimmerLoadingWidget();
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.data!.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
                                     ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            var data = snapshot.data!;
+                            // if (selectedValue == null && searchvalue!.isEmpty) {
+                            //   data = snapshot.data!;
+                            // } else if (selectedValue == "All") {
+                            //   data = snapshot.data!;
+                            // } else if (searchvalue!.isNotEmpty) {
+                            //   data = snapshot.data!
+                            //       .where((property) =>
+                            //   property.propertyType!
+                            //       .toLowerCase()
+                            //       .contains(searchvalue!.toLowerCase()) ||
+                            //       property.propertysubType!
+                            //           .toLowerCase()
+                            //           .contains(searchvalue!.toLowerCase()))
+                            //       .toList();
+                            // } else {
+                            //   data = snapshot.data!
+                            //       .where((property) =>
+                            //   property.propertyType == selectedValue)
+                            //       .toList();
+                            // }
+                            // sortData(data);
+                            final totalPages =
+                                (data.totaldata! / itemsPerPage).ceil();
+                            final currentPageData = data;
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  // SizedBox(height: 10),
+                                  _buildHeaders(),
+                                  SizedBox(height: 20),
+                                  Container(
                                     // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5, right: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                        bottom: 10)
-                                                        : EdgeInsets.only(
-                                                        top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                          .sortUp
-                                                          : FontAwesomeIcons
-                                                          .sortDown,
-                                                      size: 20,
-                                                      color: blueColor
-                                                      ,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      ' ${Propertytype.activityByUsername} (${Propertytype.activityBy})',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${Propertytype.action}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .03),
-                                                Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    // formatDate(
-                                                    //     '${Propertytype.createdAt}'),
-                                                    Propertytype.createdAt?.isNotEmpty == true
-                                                        ? DateFormat("yyyy-MM-dd HH:mm").format(DateTime.parse(Propertytype.createdAt!).toLocal())
-                                                        : 'N/A',
-
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
-                                              ],
-                                            ),
+                                      children: currentPageData.data!
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded =
+                                            expandedIndex == index;
+                                        Activity_data Propertytype =
+                                            entry.value;
+                                        //return CustomExpansionTile(data: Propertytype, index: index);
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border:
+                                            Border.all(color: const Color(0xFFDBE0E5)),
+                                            borderRadius: BorderRadius.circular(10),
                                           ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                        Colors.transparent,
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      InkWell(
+                                                        onTap: () {
+                                                          // setState(() {
+                                                          //    isExpanded = !isExpanded;
+                                                          // //  expandedIndex = !expandedIndex;
+                                                          //
+                                                          // });
+                                                          // setState(() {
+                                                          //   if (isExpanded) {
+                                                          //     expandedIndex = null;
+                                                          //     isExpanded = !isExpanded;
+                                                          //   } else {
+                                                          //     expandedIndex = index;
+                                                          //   }
+                                                          // });
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          padding: !isExpanded
+                                                              ? EdgeInsets.only(
+                                                                  bottom: 10)
+                                                              : EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
                                                       ),
                                                       Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Details : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    // text: formatDate(
-                                                                    //     '${Propertytype.updatedAt}'),
-                                                                    text: '${Propertytype.activity!.description}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color:
-                                                                        grey), // Light and grey
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (expandedIndex ==
+                                                                  index) {
+                                                                expandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedIndex =
+                                                                    index;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            ' ${Propertytype.activityByUsername} (${Propertytype.activityBy})',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
+                                                      Expanded(
+                                                        child: Text(
+                                                          '${Propertytype.action}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
+                                                      Expanded(
+                                                        child: Text(
+                                                          // '${widget.data.createdAt}',
+                                                          // formatDate(
+                                                          //     '${Propertytype.createdAt}'),
+                                                          Propertytype.createdAt
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? DateFormat(
+                                                                      "yyyy-MM-dd HH:mm")
+                                                                  .format(DateTime.parse(
+                                                                          Propertytype
+                                                                              .createdAt!)
+                                                                      .toLocal())
+                                                              : 'N/A',
+
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              if (isExpanded)
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 2.0),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 2),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Details : ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor), // Bold and black
+                                                                        ),
+                                                                        TextSpan(
+                                                                          // text: formatDate(
+                                                                          //     '${Propertytype.updatedAt}'),
+                                                                          text:
+                                                                              '${Propertytype.activity!.description}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  if(Propertytype.reason != null)
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                        Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Reason : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    // text: formatDate(
-                                                                    //     '${Propertytype.updatedAt}'),
-                                                                    text: '${Propertytype.reason}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color:
-                                                                        grey), // Light and grey
-                                                                  ),
-                                                                ],
+                                                        if (Propertytype
+                                                                .reason !=
+                                                            null)
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 50,
+                                                                color: Colors
+                                                                    .transparent,
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                /*  Row(
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Reason : ',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                          ),
+                                                                          TextSpan(
+                                                                            // text: formatDate(
+                                                                            //     '${Propertytype.updatedAt}'),
+                                                                            text:
+                                                                                '${Propertytype.reason}',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        /*  Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Expanded(
@@ -1126,132 +1152,151 @@ class _ActivityTableState extends State<ActivityTable> {
                                                       ),
                                                     ],
                                                   ),*/
-                                                ],
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              //SizedBox(height: 13,),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Text('Rows per page:'),
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: data.totaldata! >
+                                                          itemsPerPageOptions
+                                                              .first // Condition to check if dropdown should be enabled
+                                                      ? (newValue) {
+                                                          setState(() {
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage = 0;
+                                                            futurePropertyTypes =
+                                                                ActivityRepository()
+                                                                    .fetchActivities(
+                                                                        itemsPerPage,
+                                                                        currentPage);
+                                                            // Reset to first page when items per page change
+                                                          });
+                                                        }
+                                                      : null,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                          Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged:data.totaldata! >
-                                                itemsPerPageOptions
-                                                    .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage =
-                                                0;
-                                                futurePropertyTypes = ActivityRepository().fetchActivities(itemsPerPage,currentPage);
-                                                // Reset to first page when items per page change
-                                              });
-                                            }
-                                                : null,
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                      futurePropertyTypes =
+                                                          ActivityRepository()
+                                                              .fetchActivities(
+                                                                  itemsPerPage,
+                                                                  currentPage);
+                                                    });
+                                                  },
                                           ),
-                                        ),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_back),
+                                          //   onPressed: currentPage > 0
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage--;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_forward),
+                                          //   onPressed: currentPage < totalPages - 1
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage++;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                          futurePropertyTypes =
+                                                              ActivityRepository()
+                                                                  .fetchActivities(
+                                                                      itemsPerPage,
+                                                                      currentPage);
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          currentPage--;
-                                          futurePropertyTypes = ActivityRepository().fetchActivities(itemsPerPage,currentPage);
-                                        });
-                                      },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                        setState(() {
-                                          currentPage++;
-                                          futurePropertyTypes = ActivityRepository().fetchActivities(itemsPerPage,currentPage);
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-          /*  if (MediaQuery.of(context).size.width > 500)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  /*  if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<Activity_model>>(
                 future: futurePropertyTypes,
                 builder: (context, snapshot) {
@@ -1288,7 +1333,7 @@ class _ActivityTableState extends State<ActivityTable> {
                     );
                   } else {
                     _tableData = snapshot.data!;
-                   *//* if (selectedValue == null && searchvalue.isEmpty) {
+                   */ /* if (selectedValue == null && searchvalue.isEmpty) {
                       _tableData = snapshot.data!;
                     } else if (selectedValue == "All") {
                       _tableData = snapshot.data!;
@@ -1307,7 +1352,7 @@ class _ActivityTableState extends State<ActivityTable> {
                           .where((property) =>
                       property.propertyType == selectedValue)
                           .toList();
-                    }*//*
+                    }*/ /*
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -1440,34 +1485,32 @@ class _ActivityTableState extends State<ActivityTable> {
                   }
                 },
               ),*/
-          ],
-        ),
-      ):
-      SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+                ],
+              ),
+            )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

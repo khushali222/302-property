@@ -166,7 +166,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Padding(
+                        ?
+                    Padding(
                             padding: const EdgeInsets.only(left: 20.0),
                             child: Text(
                               "Insurance \nCompany ",
@@ -177,12 +178,18 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                               textAlign: TextAlign.center,
                             ),
                           )
-                        : Text("     Insurance Company",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            textAlign: TextAlign.center),
+                        :
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "Insurance \nCompany ",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     /*ascending1
@@ -1280,7 +1287,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${Propertytype.liabilityCoverage}',
+                                                                              '\$${Propertytype.liabilityCoverage}',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
@@ -1338,46 +1345,61 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
                                                             // if (Propertytype
                                                             //         .status ==
                                                             //     'ACTIVE')
-                                                              InkWell(
-                                                                onTap:
-                                                                    () async {
-                                                                  var check = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => edit_insurance(
-                                                                                data: Propertytype,
-                                                                              )));
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futurePropertyTypes =
-                                                                          InsuranceRepository().fetchInsurancesProperties();
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Container(
-                                                                  height: 35,
-                                                                  width: 35,
-                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.green.shade50), // color:Colors.grey[100],
-                                                                  child: const Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons.edit,
-                                                                        size: 15,
-                                                                        color: Colors.green,
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                            InkWell(
+                                                              onTap: () async {
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => edit_insurance(
+                                                                              data: Propertytype,
+                                                                            )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    futurePropertyTypes =
+                                                                        InsuranceRepository()
+                                                                            .fetchInsurancesProperties();
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
+                                                            ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
@@ -1389,25 +1411,38 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         .tenantInsuranceId!);
                                                                 // _showAlert(context, rentals.rentalId!);
                                                               },
-                                                              child:
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
-                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
-                                                                child: const Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50),
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
-                                                                      FontAwesomeIcons.trashCan,
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
                                                                       size: 15,
-                                                                      color: Colors.red,
+                                                                      color: Colors
+                                                                          .red,
                                                                     ),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ),
-                                                             SizedBox(
+                                                            SizedBox(
                                                               width: 5,
                                                             ),
                                                             /*  SizedBox(width: 5,),

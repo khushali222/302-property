@@ -60,7 +60,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       'company': role['company_name'],
                       'admin_id': role['admin_id'],
                       'role': role['role'],
-              'user_id': role['user_id'],
+                      'user_id': role['user_id'],
                     })
                 .toList();
             _isEmailSubmitted = true;
@@ -103,7 +103,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     final response = await http.post(
       Uri.parse('${Api_url}/api/admin/sendOTP'),
-      body: {'email': email, 'admin_id': admin_id, 'role': selectedrole,'user_id':userId},
+      body: {
+        'email': email,
+        'admin_id': admin_id,
+        'role': selectedrole,
+        'user_id': userId
+      },
     );
     print(response.body);
     setState(() {
@@ -121,7 +126,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   admin_id: admin_id,
                   role: selectedrole,
                   userId: userId!,
-
                 )),
       );
       Fluttertoast.showToast(msg: "OTP sent successfully");
@@ -136,7 +140,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-  void selectCompany(String company, String role, String adminid,String user_id) {
+  void selectCompany(
+      String company, String role, String adminid, String user_id) {
     _selectedCompany = company;
     selectedrole = role; // Set role when selecting company
     admin_id = adminid;
@@ -153,7 +158,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       body: Form(
         key: formkey,
         child: ListView(
-
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
@@ -202,11 +206,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 Expanded(
                   child: Text(
-                    "Enter your email address below, and we'll send you the link to reset your password.",
+                    "Enter your email address below, and we'll send you the OTP For reset your password.",
                     style: TextStyle(
                         color: Colors.black38,
-                        fontSize:
-                            MediaQuery.of(context).size.width * 0.034),
+                        fontSize: MediaQuery.of(context).size.width * 0.034),
                   ),
                 ),
                 SizedBox(
@@ -246,8 +249,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             decoration: InputDecoration(
                               enabledBorder: emailerror
                                   ? OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(
                                           color: Colors
                                               .red), // Set border color here
@@ -302,16 +304,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       buttonOptions: companies,
                       onSelected: (index) {
                         selectCompany(
-                            companies[index]["company"]!,
-                            companies[index]["role"]!,
-                            companies[index]["admin_id"]!,
-                            companies[index]["user_id"]!,
-
-
-
+                          companies[index]["company"]!,
+                          companies[index]["role"]!,
+                          companies[index]["admin_id"]!,
+                          companies[index]["user_id"]!,
                         );
-
-
                       },
                     ),
                   ],
@@ -337,7 +334,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             emailerror = true;
                             emailmessage = "Email is required";
                           });
-                        } else if (!EmailValidator.validate(email.text.trim())) {
+                        } else if (!EmailValidator.validate(
+                            email.text.trim())) {
                           setState(() {
                             emailerror = true;
                             emailmessage = "Email is not valid";
@@ -351,9 +349,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       });
                       if (selectedrole == "") {
                         // If email is valid, send OTP
-                        Fluttertoast.showToast(msg: "Please select the company");
-                      }
-                      else if (!emailerror) {
+                        Fluttertoast.showToast(
+                            msg: "Please select the company");
+                      } else if (!emailerror) {
                         // If email is valid, send OTP
                         sendOTP(email.text.trim());
                       }
@@ -363,7 +361,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: MediaQuery.of(context).size.height * 0.06,
                         width: MediaQuery.of(context).size.width * 0.8,
                         decoration: BoxDecoration(
-                          color:  Color(0xFF152B51),
+                          color: Color(0xFF152B51),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
@@ -373,8 +371,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   size: 40.0,
                                 )
                               : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       "Submit",
@@ -430,7 +427,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: MediaQuery.of(context).size.height * 0.06,
                         width: MediaQuery.of(context).size.width * 0.8,
                         decoration: BoxDecoration(
-                          color:  Color(0xFF152B51),
+                          color: Color(0xFF152B51),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
@@ -440,8 +437,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   size: 40.0,
                                 )
                               : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       "Submit",

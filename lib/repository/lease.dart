@@ -638,7 +638,7 @@ class LeaseRepository {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });
-
+      print('response.body lease all  ${response.body}');
       if (response.statusCode == 200) {
         print('response.body ${response.body}');
         final parsedJson = jsonDecode(response.body);

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 //import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -15,8 +14,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/Model/WorkOrderSetting.dart';
-import 'package:three_zero_two_property/provider/color_theme.dart';
+import 'package:three_zero_two_property/Model/WorkOrderSetting.dart'
+    as WorkOrderModel;
 import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 
 import 'package:three_zero_two_property/repository/setting.dart';
@@ -31,15 +30,32 @@ import '../../constant/constant.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
 import '../../widgets/CustomTableShimmer.dart';
-import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 import '../Rental/Tenants/add_tenants.dart';
 import 'manage_template.dart';
 import 'package:three_zero_two_property/Model/All_categories_model.dart';
 import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
+import '../Maintenance/Vendor/edit_vendor.dart' hide CustomTextField;
+import '../Maintenance/Vendor/add_vendor.dart' hide CustomTextField;
+import '../../Model/vendor.dart';
+import '../../repository/vendor_repository.dart';
+import '../Rental/Rentalowner/Rentalowner_table.dart';
+import '../Property_Type/Property_type_table.dart';
+import '../Maintenance/Vendor/Vendor_table.dart';
+// Staff module table widgets
+import '../../StaffModule/screen/Rental/Rentalowner/Rentalowner_table.dart'
+    as StaffRentalOwner;
+import '../../StaffModule/screen/Property_Type/Property_type_table.dart'
+    as StaffPropertyType;
+import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart'
+    as StaffVendor;
 
 class TabBarExample extends StatefulWidget {
+  final String? initialTab; // Optional parameter to specify which tab to open
+
+  const TabBarExample({super.key, this.initialTab});
+
   @override
   State<TabBarExample> createState() => _TabBarExampleState();
 }
@@ -58,6 +74,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController replyToEmail = TextEditingController();
   TextEditingController categories = TextEditingController();
   late Future<List<categories_model>> futureCategories;
+  late Future<List<Vendor>> futureVendors;
   bool rentDueReminderEmail = false;
 
   String surge_id = "";
@@ -81,7 +98,20 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool iscategories = false;
   bool ismanagetemplate = false;
   bool ischargesetting = false;
+  bool isvendor = false;
+  bool ispropertyowner = false;
+  bool ispropertytype = false;
   bool _isStaffUser = false;
+  // Vendor table state variables
+  String vendorSearchValue = "";
+  int vendorCurrentPage = 0;
+  int vendorItemsPerPage = 10;
+  List<int> vendorItemsPerPageOptions = [10, 25, 50, 100];
+  int? vendorExpandedIndex;
+  bool vendorSorting1 = true;
+  bool vendorSorting2 = false;
+  bool vendorAscending1 = true;
+  bool vendorAscending2 = false;
   ConnectivityResult? _connectivityResult;
   String? selectedAccount;
   // 1. Add state variables
@@ -117,11 +147,60 @@ class _TabBarExampleState extends State<TabBarExample> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       dateProvider.loadDateFormat();
+
+      // Set initial tab if specified
+      if (widget.initialTab == 'Vendor') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          ispropertyowner = false;
+          ispropertytype = false;
+          isvendor = true;
+        });
+      } else if (widget.initialTab == 'Property Owners') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = false;
+          ispropertytype = false;
+          ispropertyowner = true;
+        });
+      } else if (widget.initialTab == 'Property Type') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = false;
+          ispropertyowner = false;
+          ispropertytype = true;
+        });
+      }
     });
     // _customDateController.text = customdate!;
     //  customdate = customdate ?? "2025-01-23"; // Example default date
     //  _customDateController.text = customdate!;
     futureCategories = accountRepository().fetchCategories();
+    futureVendors = VendorRepository(baseUrl: '').getVendors();
     _loadDropdownCategories();
   }
 
@@ -1534,7 +1613,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
     try {
-      Data workorder = await fetchWorkOrderSetting();
+      WorkOrderModel.Data workorder = await fetchWorkOrderSetting();
       String? entryAllowedString;
       if (workorder.workDefaults?.entryAllowed != null) {
         entryAllowedString =
@@ -1727,6 +1806,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1774,6 +1856,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismanagetemplate = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                     await fetchAccountsData();
                                     await fetchlatefeeData();
@@ -1830,6 +1915,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       isworkorder = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1874,6 +1962,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1927,6 +2018,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Container(
@@ -1972,8 +2066,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                       ischargesetting = false;
                                       iscategories = false;
+                                      isvendor = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -2044,7 +2141,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       islatefee = false;
                                       isworkorder = false;
                                       ismanagetemplate = true;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                       iscategories = false;
+                                      isvendor = false;
                                       //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
                                     });
                                   },
@@ -2090,6 +2190,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       ismanagetemplate = false;
                                       iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                     await _loadDropdownCategories(); // Always fetch latest categories from backend
                                     await fetchWorkData(); // Fetch work order settings after categories are loaded
@@ -2194,6 +2297,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isdateformate = false;
                                       ischargesetting = false;
                                       ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
                                     });
                                   },
                                   child: Visibility(
@@ -2220,6 +2326,159 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? 15
                                                   : 20),
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                      isvendor = true;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color:
+                                          !isvendor ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Vendor",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: isvendor
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertytype = false;
+                                      ispropertyowner = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertyowner
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Owners",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertyowner
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertytype
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Type",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertytype
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
                                       ),
                                     ),
                                   ),
@@ -4419,78 +4678,74 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 5),
-                                      Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
+                                      DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
                                           borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value:
-                                                selectedAccountName.isNotEmpty
-                                                    ? selectedAccountName
-                                                    : null,
-                                            hint: Text(
-                                              "Select Account",
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .037,
-                                                color: const Color(0xFF8A95A8),
-                                              ),
-                                            ),
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
                                             isExpanded: true,
-                                            items: [
-                                              // Static "Late Fee Income" option
-                                              DropdownMenuItem<String>(
-                                                value: "Late Fee Income",
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 13),
+                                            hint: Row(
+                                              children: [
+                                                const SizedBox(width: 4),
+                                                Expanded(
                                                   child: Text(
-                                                    "Late Fee Income",
+                                                    'Select Account',
                                                     style: TextStyle(
                                                       fontSize:
                                                           MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                      color: blueColor,
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                      color: const Color(
+                                                          0xFF8A95A8),
                                                     ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
-                                              ),
-                                              // Dynamic accounts from API
-                                              ...accounts
-                                                  .map((Setting4 account) {
+                                              ],
+                                            ),
+                                            items: [
+                                              // Combine "Late Fee Income" with accounts and sort alphabetically
+                                              ...([
+                                                "Late Fee Income",
+                                                ...accounts
+                                                    .map((a) => a.account ?? '')
+                                                    .where((a) => a.isNotEmpty)
+                                              ]..sort((a, b) => a
+                                                      .toLowerCase()
+                                                      .compareTo(
+                                                          b.toLowerCase())))
+                                                  .map((String accountName) {
                                                 return DropdownMenuItem<String>(
-                                                  value: account.account ?? '',
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 13),
-                                                    child: Text(
-                                                      account.account ?? '',
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                        color: blueColor,
-                                                      ),
+                                                  value: accountName,
+                                                  child: Text(
+                                                    accountName,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
                                                     ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
                                             ],
+                                            value:
+                                                selectedAccountName.isNotEmpty
+                                                    ? selectedAccountName
+                                                    : null,
                                             onChanged: (String? newValue) {
                                               setState(() {
                                                 selectedAccountName =
@@ -4515,6 +4770,62 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 }
                                               });
                                             },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .98, // Leave small margin
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .98, // Match button width
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Colors.white,
+                                              ),
+                                              offset: const Offset(-2, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                                thumbColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade400),
+                                                trackColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade100),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -4542,110 +4853,141 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 5),
-                                      Material(
-                                        elevation: 4,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          height: 50,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .6,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                              value:
-                                                  selectedAccountName.isNotEmpty
-                                                      ? selectedAccountName
-                                                      : null,
-                                              hint: Text(
-                                                "Select Account",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .037,
+                                      DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: Row(
+                                              children: [
+                                                const SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Select Account',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: const Color(
+                                                          0xFF8A95A8),
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            items: [
+                                              // Combine "Late Fee Income" with accounts and sort alphabetically
+                                              ...([
+                                                "Late Fee Income",
+                                                ...accounts
+                                                    .map((a) => a.account ?? '')
+                                                    .where((a) => a.isNotEmpty)
+                                              ]..sort((a, b) => a
+                                                      .toLowerCase()
+                                                      .compareTo(
+                                                          b.toLowerCase())))
+                                                  .map((String accountName) {
+                                                return DropdownMenuItem<String>(
+                                                  value: accountName,
+                                                  child: Text(
+                                                    accountName,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ],
+                                            value:
+                                                selectedAccountName.isNotEmpty
+                                                    ? selectedAccountName
+                                                    : null,
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                selectedAccountName =
+                                                    newValue ?? '';
+                                                // Handle static "Late Fee Income" option
+                                                if (newValue ==
+                                                    "Late Fee Income") {
+                                                  selectedAccountId = "";
+                                                } else {
+                                                  // Find the account ID for the selected account
+                                                  Setting4? selectedAccount =
+                                                      accounts.firstWhere(
+                                                    (account) =>
+                                                        account.account ==
+                                                        newValue,
+                                                    orElse: () => Setting4(),
+                                                  );
+                                                  selectedAccountId =
+                                                      selectedAccount
+                                                              .accountId ??
+                                                          '';
+                                                }
+                                              });
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
                                                   color:
                                                       const Color(0xFF8A95A8),
                                                 ),
+                                                color: Colors.white,
                                               ),
-                                              isExpanded: true,
-                                              items: [
-                                                // Static "Late Fee Income" option
-                                                DropdownMenuItem<String>(
-                                                  value: "Late Fee Income",
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 13),
-                                                    child: Text(
-                                                      "Late Fee Income",
-                                                      style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                        color: blueColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Dynamic accounts from API
-                                                ...accounts
-                                                    .map((Setting4 account) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value:
-                                                        account.account ?? '',
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 13),
-                                                      child: Text(
-                                                        account.account ?? '',
-                                                        style: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ],
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  selectedAccountName =
-                                                      newValue ?? '';
-                                                  // Handle static "Late Fee Income" option
-                                                  if (newValue ==
-                                                      "Late Fee Income") {
-                                                    selectedAccountId = "";
-                                                  } else {
-                                                    // Find the account ID for the selected account
-                                                    Setting4? selectedAccount =
-                                                        accounts.firstWhere(
-                                                      (account) =>
-                                                          account.account ==
-                                                          newValue,
-                                                      orElse: () => Setting4(),
-                                                    );
-                                                    selectedAccountId =
-                                                        selectedAccount
-                                                                .accountId ??
-                                                            '';
-                                                  }
-                                                });
-                                              },
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6, // Match button width
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                color: Colors.white,
+                                              ),
+                                              offset: const Offset(0, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                                thumbColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade400),
+                                                trackColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.grey.shade100),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
                                             ),
                                           ),
                                         ),
@@ -7217,6 +7559,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                               const SizedBox(height: 10),
                             ],
                           ),
+                        if (isvendor)
+                          _isStaff
+                              ? StaffVendor.Vendor_table(isEmbedded: true)
+                              : Vendor_table(isEmbedded: true),
+                        if (ispropertyowner)
+                          _isStaff
+                              ? StaffRentalOwner.Rentalowner_table(
+                                  isEmbedded: true)
+                              : Rentalowner_table(isEmbedded: true),
+                        if (ispropertytype)
+                          _isStaff
+                              ? StaffPropertyType.PropertyTable(
+                                  isEmbedded: true)
+                              : PropertyTable(isEmbedded: true),
                       ],
                     ),
                   ),
@@ -7742,6 +8098,190 @@ class _TabBarExampleState extends State<TabBarExample> {
                   .DeleteCategories(categories_id: id, reason: reason.text);
               setState(() {
                 futureCategories = accountRepository().fetchCategories();
+              });
+              Navigator.pop(context);
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
+
+  // Vendor table helper functions
+  void vendorSortData(List<Vendor> data) {
+    if (vendorSorting1) {
+      data.sort((a, b) => vendorAscending1
+          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
+          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
+    } else if (vendorSorting2) {
+      data.sort((a, b) => vendorAscending2
+          ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
+          : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
+    }
+  }
+
+  Widget _buildVendorHeaders() {
+    var width = MediaQuery.of(context).size.width;
+    return Container(
+      decoration: BoxDecoration(
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: const Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (vendorSorting1 == true) {
+                      vendorSorting2 = false;
+                      vendorAscending1 =
+                          vendorSorting1 ? !vendorAscending1 : true;
+                      vendorAscending2 = false;
+                    } else {
+                      vendorSorting1 = !vendorSorting1;
+                      vendorSorting2 = false;
+                      vendorAscending1 =
+                          vendorSorting1 ? !vendorAscending1 : true;
+                      vendorAscending2 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Name ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 3),
+                    vendorSorting1
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(FontAwesomeIcons.sortDown,
+                                size: 20, color: blueColor),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (vendorSorting2) {
+                      vendorSorting1 = false;
+                      vendorAscending2 =
+                          vendorSorting2 ? !vendorAscending2 : true;
+                      vendorAscending1 = false;
+                    } else {
+                      vendorSorting1 = false;
+                      vendorSorting2 = !vendorSorting2;
+                      vendorAscending2 =
+                          vendorSorting2 ? !vendorAscending2 : true;
+                      vendorAscending1 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Phone Number ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Phone Number",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 3),
+                    vendorSorting2
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(FontAwesomeIcons.sortDown,
+                                size: 20, color: blueColor),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Add this function to show a delete confirmation dialog for vendors
+  void _showDeleteVendorAlert(BuildContext context, String id) {
+    print("calling this delete vendor 1");
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this vendor!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for deletion',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            print("calling this delete vendor 2");
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await VendorRepository(baseUrl: '')
+                  .DeleteVender(vender_id: id, reason: reason.text);
+              setState(() {
+                futureVendors = VendorRepository(baseUrl: '').getVendors();
               });
               Navigator.pop(context);
             }

@@ -26,6 +26,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Property%20Tax/Property_tax_Table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/infrastracture.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/property_mortgage_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Utilities/Utilities_table.dart';
 
 import '../../../../Model/Properties_revenue_model.dart';
 import '../../../../Model/properties_Lease_model.dart';
@@ -2349,7 +2350,11 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 6 : 5
                           },
                           {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
-                          // {"title": "Property Tax", "index": isMultiUnit ? 8 : 7},
+                          // {
+                          //   "title": "Property Tax",
+                          //   "index": isMultiUnit ? 8 : 7
+                          // },
+                          // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
                         return Row(
@@ -2609,6 +2614,14 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
           return PropertyTax_page(data);
+        } else if (_selectedIndex == 8) {
+          if (isMultiUnit) {
+            return PropertyTax_page(data);
+          } else {
+            return Utilities_Page(data);
+          }
+        } else if (_selectedIndex == 9 && isMultiUnit) {
+          return Utilities_Page(data);
         }
 
         return Container();
@@ -2639,6 +2652,10 @@ class _Summery_pageState extends State<Summery_page>
       showDrawer: false,
       showAddButton: true,
     );
+  }
+
+  Utilities_Page(List<unit_properties> unit) {
+    return Utilities_table(rentalId: widget.properties.rentalId ?? "");
   }
 
   //work order
@@ -4577,7 +4594,7 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 10,
                 ),
-                // Insured Values Section
+                // Historical Insured Values Section
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
@@ -4589,7 +4606,7 @@ class _Summery_pageState extends State<Summery_page>
                         width: 5,
                       ),
                     Text(
-                      "Insured Values",
+                      "Historical Insured Values",
                       style: TextStyle(
                           color: blueColor,
                           fontSize:
@@ -4613,7 +4630,6 @@ class _Summery_pageState extends State<Summery_page>
                         columnWidths: const {
                           0: FlexColumnWidth(2),
                           1: FlexColumnWidth(2),
-
                         },
                         border: TableBorder(
                           horizontalInside:
@@ -4777,7 +4793,6 @@ class _Summery_pageState extends State<Summery_page>
                             columnWidths: const {
                               0: FlexColumnWidth(2),
                               1: FlexColumnWidth(2),
-
                             },
                             border: TableBorder(
                               horizontalInside: BorderSide(
@@ -6447,7 +6462,8 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutNoticeGivenDate}'),
+                dateProvider
+                    .formatCurrentDate('${tenant.moveoutNoticeGivenDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
@@ -6475,7 +6491,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                formatDate('${tenant.moveoutDate}'),
+                dateProvider.formatCurrentDate('${tenant.moveoutDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,

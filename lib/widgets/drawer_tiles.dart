@@ -13,24 +13,23 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
-import '../screens/Maintenance/Vendor/Vendor_table.dart';
+// import '../screens/Maintenance/Vendor/Vendor_table.dart'; // Vendor moved to Settings
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
-import '../screens/Rental/mortgage/mortgageTable.dart';
+// import '../screens/Rental/mortgage/mortgageTable.dart'; // Commented out - Mortgage feature preserved but not shown in sidebar
 import '../screens/Dashboard/dashboard_one.dart';
-import '../screens/Property_Type/Property_type_table.dart';
-
-import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
+// import '../screens/Property_Type/Property_type_table.dart'; // Moved to Settings
+// import '../screens/Rental/Rentalowner/Rentalowner_table.dart'; // Moved to Settings as Property Owners
 import '../screens/Staff_Member/Staffmemvertable.dart';
 import '../screens/Profile/Settings_screen.dart';
 
 Widget buildListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    bool active,
-    ) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  bool active,
+) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
@@ -39,29 +38,48 @@ Widget buildListTile(
     ),
     padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
+      dense: true,
       onTap: () {
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => Dashboard(),
+            (context) => Dashboard(),
             "Dashboard",
           );
         } else if (title == "Staff" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => StaffTable(),
+            (context) => StaffTable(),
             "Staff",
           );
         } else if (title == "Reports" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => ReportsMainScreen(),
+            (context) => ReportsMainScreen(),
             "Reports",
+          );
+        } else if (title == "Work Order" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Workorder_table(),
+            "Work Order",
+          );
+        } else if (title == "Properties" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => PropertiesTable(),
+            "Properties",
+          );
+        } else if (title == "Tenants" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Tenants_table(),
+            "Tenants",
           );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
-                (context) => TabBarExample(),
+            (context) => TabBarExample(),
             "Settings",
           );
         }
@@ -81,10 +99,10 @@ Widget buildListTile(
 void navigateToOption(BuildContext context, String option, bool isActive) {
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
-    "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
-    "Property Type": (context) => PropertyTable(),
-    "Vendor": (context) => Vendor_table(),
+    // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
+    // "Property Type": (context) => PropertyTable(), // Moved to Settings
+    // "Vendor": (context) => Vendor_table(), // Vendor moved to Settings
     "Work Order": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
@@ -94,11 +112,24 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
-    "Mortgage": (context) => MortgageTable()
+    // "Mortgage": (context) => MortgageTable() // Commented out - not deleted
     // "Work Order": (context) => Cardpayment(leaseId: '',),
   };
 
-  if (routes.containsKey(option)) {
+  // Handle Property Owners and Property Type navigation to Settings
+  if (option == "Property Owners" || option == "Rental Owner") {
+    NavigationHelper.navigateWithValidationBuilder(
+      context,
+      (context) => TabBarExample(initialTab: 'Property Owners'),
+      "Settings",
+    );
+  } else if (option == "Property Type") {
+    NavigationHelper.navigateWithValidationBuilder(
+      context,
+      (context) => TabBarExample(initialTab: 'Property Type'),
+      "Settings",
+    );
+  } else if (routes.containsKey(option)) {
     NavigationHelper.navigateWithValidationBuilder(
       context,
       routes[option]!,
@@ -108,14 +139,14 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
 }
 
 Widget buildDropdownListTile(
-    BuildContext context,
-    Widget leadingIcon,
-    String title,
-    List<String> subTopics,
-    List<Widget> subTopicIcons, {
-      String? selectedSubtopic,
-      bool? initvalue,
-    }) {
+  BuildContext context,
+  Widget leadingIcon,
+  String title,
+  List<String> subTopics,
+  List<Widget> subTopicIcons, {
+  String? selectedSubtopic,
+  bool? initvalue,
+}) {
   // Check if the selectedSubtopic is in the list of subTopics
   bool isExpanded =
       selectedSubtopic != null && subTopics.contains(selectedSubtopic);
@@ -143,6 +174,7 @@ Widget buildDropdownListTile(
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
+              dense: true,
               leading: subTopicIcons[index], // Add icon here
               title: Text(
                 subTopic,

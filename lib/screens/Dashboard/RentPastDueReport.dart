@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -74,9 +73,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     fetchRentalOwners();
     // fetchpdfrentalowner(); // this for pdf
     fetchReport();
-    futurePastRentDue =
-        AdminBalanceRepository().fetchAdminBalance(report: true);
     chargeType = widget.isRentdue == true ? "Payment" : "Charges";
+    // Initialize future with pagination parameters
+    futurePastRentDue = fetchRentPastDueData(report: true);
   }
 
   bool _hasSetInitialValues = false;
@@ -116,6 +115,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Reset to page 1 when fetching report
+    currentPage = 1;
     futurePastRentDue = fetchRentPastDueData(report: true);
   }
 
@@ -126,11 +127,35 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      RentPastDue data =
-          await AdminBalanceRepository().fetchAdminBalance(report: true);
+      // Map chargeType to API type parameter
+      String? apiType;
+      if (chargeType == 'Payment') {
+        apiType = 'Payments';
+      } else if (chargeType == 'Charges') {
+        apiType = 'Charges';
+      }
+
+      // Map monthType to API month parameter
+      String? apiMonth;
+      if (monthType == 'Current Month') {
+        apiMonth = 'Current Month';
+      } else if (monthType == 'Last Month') {
+        apiMonth = 'Last Month';
+      } else if (monthType == 'All') {
+        apiMonth = 'All';
+      }
+
+      RentPastDue data = await AdminBalanceRepository().fetchAdminBalance(
+        report: true,
+        type: apiType,
+        month: apiMonth,
+        page: currentPage,
+        limit: itemsPerPage,
+        sortKey: sortKey,
+        sortOrder: sortOrder,
+      );
 
       setState(() {
-        //DelinquentTenantsModel = data;
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
       });
@@ -139,21 +164,20 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       setState(() {
         isLoading = false;
         errorMessage =
-            'Failed to load renters insurance data. Please try again later.';
+            'Failed to load rent past due data. Please try again later.';
       });
       return RentPastDue();
     }
   }
 
-  // Method to refresh data when month type changes
+  // Method to refresh data when filters change
   void refreshData() {
     setState(() {
       isLoading = true;
-      // Just trigger a rebuild - the data is already fetched and available
-      // No need to make a new API call since we have all month data
+      currentPage = 1; // Reset to first page when filters change
     });
-    // Don't recreate the future, just rebuild the UI
-    // futurePastRentDue = fetchRentPastDueData(report: true);
+    // Fetch new data with current pagination parameters
+    futurePastRentDue = fetchRentPastDueData(report: true);
   }
 
   double grandtotal = 0.0;
@@ -169,9 +193,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
-  int currentPage = 0;
+  int currentPage = 1; // Changed to 1 for backend pagination (1-indexed)
   int itemsPerPage = 10;
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
+  String? sortKey = 'property'; // Default sort key
+  String? sortOrder = 'asc'; // Default sort order
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
@@ -326,12 +352,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -353,35 +376,56 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
+                    // Toggle sort order: if already sorting by property, toggle asc/desc
+                    if (sortKey == 'property') {
+                      sortOrder = sortOrder == 'asc' ? 'desc' : 'asc';
                     } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
+                      // Set sort key to property and default to asc
+                      sortKey = 'property';
+                      sortOrder = 'asc';
                     }
-
-                    // Sorting logic here
+                    // Reset to first page when sorting changes
+                    currentPage = 1;
+                    isLoading = true;
                   });
+                  // Fetch new data with updated sort parameters
+                  refreshData();
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Property",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Property",
-                              style: TextStyle(color: Colors.white)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       const SizedBox(width: 3),
+                      // Show sort indicator if sorting by property
+                      if (sortKey == 'property')
+                        sortOrder == 'asc'
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: blueColor,
+                                ),
+                              ),
                     ],
                   ),
                 ),
@@ -412,7 +456,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 28),
-                    Text("  Tenant", style: TextStyle(color: Colors.white)),
+                    Text("  Tenant",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -444,7 +492,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 30),
-                    Text("Amount", style: TextStyle(color: Colors.white)),
+                    Text("Amount",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     // SizedBox(width: 5),
                   ],
                 ),
@@ -497,6 +549,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
+    // Get DateProvider for date formatting
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
@@ -515,7 +570,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
     pdf.addPage(
       pw.MultiPage(
@@ -548,7 +602,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text}',
+                    'Date : - ${dateProvider.formatCurrentDate(fromDate.text)}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -762,6 +816,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
     // Save to file
     final DateTime now = DateTime.now();
+    // Format date using DateProvider - use format that's safe for filenames
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_past_due_report_$formattedDate.xlsx';
 
@@ -1171,43 +1226,29 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   const SizedBox(height: 15),
                                   if (chargeType == 'Charges' && monthType == 'All')
                                     chargeTable(
-                                        snapshot.data!.dueRentCharges?.charges ??
-                                            [],
-                                        snapshot.data!.dueRentCharges?.total
-                                                ?.toDouble() ??
-                                            0.0)
+                                        snapshot.data!.dueRentCharges?.charges ?? [], snapshot.data!.dueRentCharges?.total?.toDouble() ?? 0.0,
+                                        pagination: snapshot.data!.pagination)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
-                                    chargeTable(
-                                        snapshot.data!.currentDueRentCharges
-                                                ?.charges ??
-                                            [],
-                                        snapshot.data!.currentMonthRentDue ??
-                                            0.0)
+                                    chargeTable(snapshot.data!.currentDueRentCharges?.charges ?? [],
+                                        snapshot.data!.currentMonthRentDue ?? 0.0,
+                                        pagination: snapshot.data!.pagination)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Last Month')
                                     chargeTable(
-                                        snapshot.data!.lastDueRentCharges
-                                                ?.charges ??
-                                            [],
-                                        snapshot.data!.lastMonthRentDue ?? 0.0)
+                                        snapshot.data!.lastDueRentCharges?.charges ?? [], snapshot.data!.lastMonthRentDue ?? 0.0,
+                                        pagination: snapshot.data!.pagination)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Current Month")
-                                    chargeTable(
-                                        snapshot.data!.currentPayments
-                                                ?.payments ??
-                                            [],
-                                        snapshot.data!.currentPayments?.total
-                                                ?.toDouble() ??
-                                            0.0)
+                                    chargeTable(snapshot.data!.currentPayments?.payments ?? [],
+                                        snapshot.data!.currentPayments?.total?.toDouble() ?? 0.0,
+                                        pagination: snapshot.data!.pagination)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Last Month")
                                     chargeTable(
-                                        snapshot.data!.lastPayments?.payments ??
-                                            [],
-                                        snapshot.data!.lastPayments?.total
-                                                ?.toDouble() ??
-                                            0.0)
+                                        snapshot.data!.lastPayments?.payments ?? [],
+                                        snapshot.data!.lastPayments?.total?.toDouble() ?? 0.0,
+                                        pagination: snapshot.data!.pagination)
                                 ],
                               ),
                             ),
@@ -1244,14 +1285,13 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  chargeTable(List<Transaction> chargedata, double total) {
-    int totalPages = (chargedata.length / itemsPerPage).ceil();
+  chargeTable(List<Transaction> chargedata, double total,
+      {Pagination? pagination}) {
+    // Use backend pagination data
+    int totalPages = pagination?.totalPages ?? 1;
 
-    // Get the current page data
-    List<Transaction> currentPageData =
-        chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
-
-    //  currentPageData = currentPageData.reversed.toList();
+    // Backend already returns paginated data, so use chargedata directly
+    List<Transaction> currentPageData = chargedata;
 
     return SingleChildScrollView(
       child: Padding(
@@ -1296,16 +1336,23 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
             if (currentPageData.length > 0)
               Container(
-                decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                // decoration: BoxDecoration(
+                //     border:
+                //         Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                 child: Column(
                   children: currentPageData.asMap().entries.where((entry) {
                     // Filter the data based on the search input
                     Transaction item = entry.value;
                     String address =
                         item.rentalData?.address?.toLowerCase() ?? '';
-                    return address.contains(searchvalue);
+                    String tenantFirstName =
+                        item.tenantData?.tenantFirstName?.toLowerCase() ?? '';
+                    String tenantLastName =
+                        item.tenantData?.tenantLastName?.toLowerCase() ?? '';
+                    String searchLower = searchvalue.toLowerCase();
+                    return address.contains(searchLower) ||
+                        tenantFirstName.contains(searchLower) ||
+                        tenantLastName.contains(searchLower);
                   }).map((entry) {
                     int rowIndex = entry.key;
                     Transaction item = entry.value;
@@ -1317,15 +1364,13 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     //for the payment data
                     // Payment rental = entry.value;
                     return Container(
-                      // decoration: BoxDecoration(
-                      //   border: Border.all(color: blueColor),
-                      // ),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -1477,11 +1522,17 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               );
                             }).toList(),
                             onChanged: (newValue) {
-                              setState(() {
-                                itemsPerPage = newValue!;
-                                currentPage =
-                                    0; // Reset to first page when items per page change
-                              });
+                              if (newValue != null) {
+                                setState(() {
+                                  itemsPerPage = newValue;
+                                  currentPage =
+                                      1; // Reset to first page when items per page change (1-indexed)
+                                  isLoading = true;
+                                });
+                                // Fetch new data with updated limit
+                                futurePastRentDue =
+                                    fetchRentPastDueData(report: true);
+                              }
                             },
                           ),
                         ),
@@ -1494,31 +1545,38 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.circleChevronLeft,
-                        color: currentPage == 0 ? Colors.grey : blueColor,
+                        color: currentPage <= 1 ? Colors.grey : blueColor,
                       ),
-                      onPressed: currentPage == 0
+                      onPressed: currentPage <= 1
                           ? null
                           : () {
                               setState(() {
                                 currentPage--;
+                                isLoading = true;
                               });
+                              // Fetch previous page data from backend
+                              futurePastRentDue =
+                                  fetchRentPastDueData(report: true);
                             },
                     ),
-                    Text('Page ${currentPage + 1} of $totalPages'),
+                    Text('Page ${currentPage} of $totalPages'),
                     IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.circleChevronRight,
-                        color: currentPage < totalPages - 1
-                            ? blueColor
-                            : Colors.grey,
+                        color:
+                            currentPage >= totalPages ? Colors.grey : blueColor,
                       ),
-                      onPressed: currentPage < totalPages - 1
-                          ? () {
+                      onPressed: currentPage >= totalPages
+                          ? null
+                          : () {
                               setState(() {
                                 currentPage++;
+                                isLoading = true;
                               });
-                            }
-                          : null,
+                              // Fetch next page data from backend
+                              futurePastRentDue =
+                                  fetchRentPastDueData(report: true);
+                            },
                     ),
                   ],
                 ),

@@ -199,6 +199,7 @@ class RentalOwnerService {
     String? country,
     String? postalCode,
     List<ProcessorList>? processorList,
+    String? achProcessorId,
   }) async {
     final Map<String, dynamic> data = {
       "admin_id": adminId,
@@ -219,7 +220,8 @@ class RentalOwnerService {
       "state":state,
       "country": country,
       "postal_code": postalCode,
-      "processor_list": processorList?.map((e) => e.toJson()).toList()
+      "processor_list": processorList?.map((e) => e.toJson()).toList(),
+      "ach_processor_id": achProcessorId
     };
     print(data);
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";

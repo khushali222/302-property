@@ -404,53 +404,57 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      if (sorting1 == true) {
+                      if (sorting1) {
+                        sorting1 = true;
                         sorting2 = false;
                         sorting3 = false;
-                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending1 = !ascending1;
                         ascending2 = false;
                         ascending3 = false;
                       } else {
-                        sorting1 = !sorting1;
+                        sorting1 = true;
                         sorting2 = false;
                         sorting3 = false;
-                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending1 = true;
                         ascending2 = false;
                         ascending3 = false;
                       }
-
-                      // Sorting logic here
                     });
                   },
                   child: Row(
                     children: [
-                      width < 400
-                          ? Text("Date", style: TextStyle(color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15))
-                          : Text("Date", style: TextStyle(color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
-                      SizedBox(width: 3),
-                      ascending1
+                      Text("Date",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
+                      SizedBox(width: 5),
+                      sorting1 && ascending1
                           ? Padding(
-                              padding:  EdgeInsets.only(top: 7, left: 2),
+                              padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
                                 color: blueColor,
                               ),
                             )
-                          : Padding(
-                              padding:
-                                   EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: blueColor,
-                              ),
-                            ),
+                          : sorting1 && !ascending1
+                              ? Padding(
+                                  padding: EdgeInsets.only(bottom: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(bottom: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
+                                ),
                     ],
                   ),
                 ),
@@ -479,81 +483,60 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   },
                   child: Row(
                     children: [
-                      Text("Address", style: TextStyle(color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
+                      Text("Address",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
-                      ascending2
+                      sorting2 && ascending2
                           ? Padding(
-                              padding:  EdgeInsets.only(top: 7, left: 2),
+                              padding: EdgeInsets.only(top: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
                                 color: blueColor,
                               ),
                             )
-                          : Padding(
-                              padding:
-                                   EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: blueColor,
-                              ),
-                            ),
+                          : sorting2 && !ascending2
+                              ? Padding(
+                                  padding: EdgeInsets.only(bottom: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(bottom: 7, left: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
+                                ),
                     ],
                   ),
                 ),
               ),
               Expanded(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      if (sorting3) {
-                        sorting1 = false;
-                        sorting2 = false;
-                        sorting3 = sorting3;
-                        ascending3 = sorting3 ? !ascending3 : true;
-                        ascending2 = false;
-                        ascending1 = false;
-                      } else {
-                        sorting1 = false;
-                        sorting2 = false;
-                        sorting3 = !sorting3;
-                        ascending3 = sorting3 ? !ascending3 : true;
-                        ascending2 = false;
-                        ascending1 = false;
-                      }
-
-                      // Sorting logic here
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      Text("Work", style: TextStyle(color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                      SizedBox(width: 5),
-                      ascending3
-                          ? Padding(
-                              padding:  EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: blueColor,
-                              ),
-                            )
-                          : Padding(
-                              padding:
-                                   EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: blueColor,
-                              ),
-                            ),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    Text("Ticket   #",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
+                    // SizedBox(width: 5),
+                    // Padding(
+                    //   padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //   child: FaIcon(
+                    //     FontAwesomeIcons.sortDown,
+                    //     size: 20,
+                    //     color: blueColor,
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
             ],
@@ -606,17 +589,42 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   void sortData(List<CompletedWorkData> data) {
     if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? (a.workSubject ?? '').compareTo(b.workSubject ?? '')
-          : (b.workSubject ?? '').compareTo(a.workSubject ?? ''));
+      // Sort by Date
+      data.sort((a, b) {
+        try {
+          DateTime? dateA = a.date != null && a.date!.isNotEmpty
+              ? DateTime.parse(a.date!)
+              : null;
+          DateTime? dateB = b.date != null && b.date!.isNotEmpty
+              ? DateTime.parse(b.date!)
+              : null;
+
+          if (dateA == null && dateB == null) return 0;
+          if (dateA == null) return 1;
+          if (dateB == null) return -1;
+
+          return ascending1 ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
+        } catch (e) {
+          // If date parsing fails, compare as strings
+          return ascending1
+              ? (a.date ?? '').compareTo(b.date ?? '')
+              : (b.date ?? '').compareTo(a.date ?? '');
+        }
+      });
     } else if (sorting2) {
+      // Sort by Address
       data.sort((a, b) => ascending2
-          ? (a.priority ?? '').compareTo(b.priority ?? '')
-          : (b.priority ?? '').compareTo(a.priority ?? ''));
+          ? (a.rentalAddress ?? '').compareTo(b.rentalAddress ?? '')
+          : (b.rentalAddress ?? '').compareTo(a.rentalAddress ?? ''));
     } else if (sorting3) {
-      data.sort((a, b) => ascending3
-          ? (a.status ?? '').compareTo(b.status ?? '')
-          : (b.status ?? '').compareTo(a.status ?? ''));
+      // Sort by Ticket Number
+      data.sort((a, b) {
+        String ticketA = a.ticketNumber ?? a.workOrderId ?? '';
+        String ticketB = b.ticketNumber ?? b.workOrderId ?? '';
+        return ascending3
+            ? ticketA.compareTo(ticketB)
+            : ticketB.compareTo(ticketA);
+      });
     }
   }
 
@@ -730,7 +738,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             headers: [
               'Date',
               'Address',
-              'Work',
+              'Ticket #',
               'Performed',
             ],
             data: workOrderData.map((workOrder) {
@@ -739,7 +747,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                     ? dateProvider.formatCurrentDate(workOrder.date!)
                     : '',
                 workOrder.rentalAddress ?? '',
-                workOrder.workSubject ?? '',
+                workOrder.ticketNumber ?? workOrder.workOrderId ?? '',
                 workOrder.workPerformed ?? '',
               ];
             }).toList(),
@@ -762,7 +770,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             columnWidths: {
               0: pw.FlexColumnWidth(1.2), // Date
               1: pw.FlexColumnWidth(1.5), // Address
-              2: pw.FlexColumnWidth(1.5), // Work
+              2: pw.FlexColumnWidth(1.0), // Ticket #
               3: pw.FlexColumnWidth(1.5), // Performed
             },
           ),
@@ -786,7 +794,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final List<String> headers = [
       'Date',
       'Address',
-      'Work',
+      'Ticket #',
       'Performed',
     ];
 
@@ -817,7 +825,9 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
       sheet.getRangeByIndex(2 + i, 1).setText(formattedDate);
       sheet.getRangeByIndex(2 + i, 2).setText(workOrder.rentalAddress ?? '');
-      sheet.getRangeByIndex(2 + i, 3).setText(workOrder.workSubject ?? '');
+      sheet
+          .getRangeByIndex(2 + i, 3)
+          .setText(workOrder.ticketNumber ?? workOrder.workOrderId ?? '');
       sheet.getRangeByIndex(2 + i, 4).setText(workOrder.workPerformed ?? '');
     }
 
@@ -850,7 +860,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       List<CompletedWorkData> workOrderData) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     List<List<dynamic>> rows = [
-      ['Date', 'Address', 'Work', 'Performed']
+      ['Date', 'Address', 'Ticket #', 'Performed']
     ];
 
     for (var workOrder in workOrderData) {
@@ -859,7 +869,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             ? dateProvider.formatCurrentDate(workOrder.date!)
             : '',
         workOrder.rentalAddress ?? '',
-        workOrder.workSubject ?? '',
+        workOrder.workOrderId ?? '',
         workOrder.workPerformed ?? '',
       ]);
     }
@@ -939,53 +949,204 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      hint: const Row(
+                                      hint: Row(
                                         children: [
-                                          SizedBox(width: 4),
+                                          const SizedBox(width: 4),
                                           Expanded(
                                             child: Text(
-                                              'Date Range',
+                                              daterange ?? 'Date Range',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: Color(0xFF8A95A8),
+                                                color: daterange == null
+                                                    ? const Color(0xFF8A95A8)
+                                                    : Colors.black,
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      items: const [
+                                      items: [
                                         DropdownMenuItem<String>(
                                           value: 'Today',
-                                          child: Text('Today'),
+                                          child: Text(
+                                            'Today',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Yesterday',
+                                          child: Text(
+                                            'Yesterday',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 7 Days',
+                                          child: Text(
+                                            'Last 7 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 14 Days',
+                                          child: Text(
+                                            'Last 14 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 30 Days',
+                                          child: Text(
+                                            'Last 30 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         DropdownMenuItem<String>(
                                           value: 'This Week',
-                                          child: Text('This Week'),
+                                          child: Text(
+                                            'This Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Week',
+                                          child: Text(
+                                            'Last Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         DropdownMenuItem<String>(
                                           value: 'This Month',
-                                          child: Text('This Month'),
+                                          child: Text(
+                                            'This Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         DropdownMenuItem<String>(
-                                          value: 'This Year',
-                                          child: Text('This Year'),
+                                          value: 'Last Month',
+                                          child: Text(
+                                            'Last Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Quarter',
+                                          child: Text(
+                                            'This Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Quarter',
+                                          child: Text(
+                                            'Last Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Year to Date',
+                                          child: Text(
+                                            'Year to Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Year',
+                                          child: Text(
+                                            'Last Year',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         DropdownMenuItem<String>(
                                           value: 'Custom',
-                                          child: Text('Custom'),
+                                          child: Text(
+                                            'Custom Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       ],
                                       value: daterange,
                                       onChanged: (value) {
+                                        final dateProvider =
+                                            Provider.of<DateProvider>(context,
+                                                listen: false);
                                         setState(() {
                                           daterange = value;
+                                          DateTime now = DateTime.now();
+                                          customdate = false;
+
                                           if (value == "Today") {
-                                            customdate = false;
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
                                             String todayApiFormat =
                                                 DateFormat('yyyy-MM-dd')
                                                     .format(DateTime.now());
@@ -1001,24 +1162,135 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                             toDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     todayApiFormat);
+                                          } else if (value == "Yesterday") {
+                                            DateTime yesterday =
+                                                now.subtract(Duration(days: 1));
+                                            String yesterdayApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(yesterday);
+
+                                            // Store API format dates
+                                            _apiFromDate = yesterdayApiFormat;
+                                            _apiToDate = yesterdayApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterdayApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterdayApiFormat);
+                                          } else if (value == "Last 7 Days") {
+                                            // Last 7 Days including today: subtract 6 days (not 7)
+                                            DateTime startDate =
+                                                now.subtract(Duration(days: 6));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
+                                          } else if (value == "Last 14 Days") {
+                                            // Last 14 Days including today: subtract 13 days (not 14)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 13));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
+                                          } else if (value == "Last 30 Days") {
+                                            // Last 30 Days including today: subtract 29 days (not 30)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 29));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
                                           } else if (value == "This Week") {
-                                            DateTime now = DateTime.now();
-                                            customdate = false;
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
+                                            // Start of current week (Monday)
+                                            DateTime startOfWeek = now.subtract(
+                                                Duration(
+                                                    days: now.weekday - 1));
+                                            // End of current week (Sunday)
+                                            DateTime endOfWeek = startOfWeek
+                                                .add(Duration(days: 6));
                                             String weekStartApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    now.subtract(Duration(
-                                                        days:
-                                                            now.weekday - 1)));
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startOfWeek);
                                             String weekEndApiFormat =
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    now.add(Duration(
-                                                        days: DateTime
-                                                                .daysPerWeek -
-                                                            now.weekday)));
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(endOfWeek);
+
+                                            // Store API format dates
+                                            _apiFromDate = weekStartApiFormat;
+                                            _apiToDate = weekEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekEndApiFormat);
+                                          } else if (value == "Last Week") {
+                                            // Start of current week (Monday)
+                                            DateTime startOfCurrentWeek =
+                                                now.subtract(Duration(
+                                                    days: now.weekday - 1));
+                                            // Start of last week (Monday of last week) - subtract 7 days from current week start
+                                            DateTime startOfLastWeek =
+                                                startOfCurrentWeek.subtract(
+                                                    Duration(days: 7));
+                                            // End of last week (Sunday of last week)
+                                            DateTime endOfLastWeek =
+                                                startOfLastWeek
+                                                    .add(Duration(days: 6));
+                                            String weekStartApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startOfLastWeek);
+                                            String weekEndApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(endOfLastWeek);
 
                                             // Store API format dates
                                             _apiFromDate = weekStartApiFormat;
@@ -1032,12 +1304,6 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                 dateProvider.formatCurrentDate(
                                                     weekEndApiFormat);
                                           } else if (value == "This Month") {
-                                            customdate = false;
-                                            DateTime now = DateTime.now();
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
                                             String monthStartApiFormat =
                                                 DateFormat('yyyy-MM-dd').format(
                                                     DateTime(now.year,
@@ -1058,19 +1324,127 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                             toDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     monthEndApiFormat);
-                                          } else if (value == "This Year") {
-                                            customdate = false;
-                                            DateTime now = DateTime.now();
-                                            final dateProvider =
-                                                Provider.of<DateProvider>(
-                                                    context,
-                                                    listen: false);
+                                          } else if (value == "Last Month") {
+                                            DateTime lastMonth = DateTime(
+                                                now.year, now.month - 1, 1);
+                                            String monthStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(lastMonth.year,
+                                                        lastMonth.month, 1));
+                                            String monthEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        lastMonth.year,
+                                                        lastMonth.month + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate = monthStartApiFormat;
+                                            _apiToDate = monthEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthEndApiFormat);
+                                          } else if (value == "This Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int quarterStartMonth =
+                                                (currentQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                currentQuarter * 3;
+                                            String quarterStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        quarterStartMonth, 1));
+                                            String quarterEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        now.year,
+                                                        quarterEndMonth + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate =
+                                                quarterStartApiFormat;
+                                            _apiToDate = quarterEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterEndApiFormat);
+                                          } else if (value == "Last Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int lastQuarter =
+                                                currentQuarter == 1
+                                                    ? 4
+                                                    : currentQuarter - 1;
+                                            int lastQuarterYear =
+                                                currentQuarter == 1
+                                                    ? now.year - 1
+                                                    : now.year;
+                                            int quarterStartMonth =
+                                                (lastQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                lastQuarter * 3;
+                                            String quarterStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(lastQuarterYear,
+                                                        quarterStartMonth, 1));
+                                            String quarterEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        lastQuarterYear,
+                                                        quarterEndMonth + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate =
+                                                quarterStartApiFormat;
+                                            _apiToDate = quarterEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterEndApiFormat);
+                                          } else if (value == "Year to Date") {
                                             String yearStartApiFormat =
                                                 DateFormat('yyyy-MM-dd').format(
                                                     DateTime(now.year, 1, 1));
                                             String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = yearStartApiFormat;
+                                            _apiToDate = yearEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearEndApiFormat);
+                                          } else if (value == "Last Year") {
+                                            String yearStartApiFormat =
                                                 DateFormat('yyyy-MM-dd').format(
-                                                    DateTime(now.year, 12, 31));
+                                                    DateTime(
+                                                        now.year - 1, 1, 1));
+                                            String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        now.year - 1, 12, 31));
 
                                             // Store API format dates
                                             _apiFromDate = yearStartApiFormat;
@@ -1086,6 +1460,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                           } else if (value == "Custom") {
                                             customdate = true;
                                           }
+
                                           if (value != "Custom" &&
                                               customdate == true) {
                                             customdate = false;
@@ -1595,7 +1970,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -1678,7 +2053,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                             .04),
                                                     Expanded(
                                                       child: Text(
-                                                        '${workOrder.workSubject}',
+                                                        '${workOrder.ticketNumber ?? workOrder.workOrderId ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1749,15 +2124,55 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
+                                                                            'Work : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.workSubject !=
+                                                                              null &&
+                                                                          workOrder.workSubject !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.workSubject ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.workSubject ==
+                                                                              null ||
+                                                                          workOrder.workSubject ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
                                                                             'Description : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
-                                                                      if (workOrder
-                                                                              .workPerformed !=
-                                                                          "")
+                                                                      if (workOrder.workPerformed !=
+                                                                              null &&
+                                                                          workOrder.workPerformed !=
+                                                                              "")
                                                                         TextSpan(
                                                                           text:
                                                                               '${workOrder.workPerformed ?? "N/A"}',
@@ -1765,9 +2180,10 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
                                                                         ),
-                                                                      if (workOrder
-                                                                              .workPerformed ==
-                                                                          "")
+                                                                      if (workOrder.workPerformed ==
+                                                                              null ||
+                                                                          workOrder.workPerformed ==
+                                                                              "")
                                                                         TextSpan(
                                                                           text:
                                                                               'N/A',
@@ -1792,9 +2208,21 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                                 FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
-                                                                      if (workOrder
-                                                                              .vendorNotes ==
-                                                                          "")
+                                                                      if (workOrder.vendorNotes !=
+                                                                              null &&
+                                                                          workOrder.vendorNotes !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.vendorNotes ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.vendorNotes ==
+                                                                              null ||
+                                                                          workOrder.vendorNotes ==
+                                                                              "")
                                                                         TextSpan(
                                                                           text:
                                                                               'N/A',
@@ -1802,12 +2230,41 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey
                                                                         ),
-                                                                      if (workOrder
-                                                                              .vendorNotes !=
-                                                                          "")
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Status : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.status !=
+                                                                              null &&
+                                                                          workOrder.status !=
+                                                                              "")
                                                                         TextSpan(
                                                                           text:
-                                                                              '${workOrder.vendorNotes ?? "N/A"}',
+                                                                              '${workOrder.status ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.status ==
+                                                                              null ||
+                                                                          workOrder.status ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey

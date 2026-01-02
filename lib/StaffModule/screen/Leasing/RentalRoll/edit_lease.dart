@@ -271,6 +271,11 @@ class _Edit_leaseState extends State<Edit_lease>
           };
         }).toList();
 
+        // Sort properties alphabetically by address (A-Z)
+        addresses.sort((a, b) => (a['rental_adress'] ?? '')
+            .toLowerCase()
+            .compareTo((b['rental_adress'] ?? '').toLowerCase()));
+
         setState(() {
           properties = addresses;
           _isLoading = false;
@@ -1082,6 +1087,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ),
                                               dropdownStyleData:
                                                   DropdownStyleData(
+                                                maxHeight: 300,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -3715,7 +3721,6 @@ class _Edit_leaseState extends State<Edit_lease>
                       const SizedBox(
                         height: 10,
                       ),
-
 
                       Padding(
                         padding: const EdgeInsets.only(

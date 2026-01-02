@@ -5,14 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_summery.dart';
 
 import '../../Model/RentalOwnersData.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import '../../../constant/constant.dart';
 import '../../../model/rentalOwner.dart';
 import '../../model/rentalowners_summery.dart';
 
 class RentalOwnerService {
- // final String baseUrl = 'http://192.168.1.26:4000/api/rentals';
+  // final String baseUrl = 'http://192.168.1.26:4000/api/rentals';
 
   Future<List<RentalOwnerData>> fetchRentalOwners(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -20,21 +20,29 @@ class RentalOwnerService {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     print('$Api_url/api/rentals/rental-owners/$adminId');
     print(adminId);
     print(response.body);
-  //  print('$baseUrl/rental-owners/$adminId');
+    //  print('$baseUrl/rental-owners/$adminId');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
+      return jsonResponse
+          .map((data) => RentalOwnerData.fromJson(data))
+          .toList();
     } else {
       print('Failed to fetch rentalowners: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
   }
+
   Future<String?> addRentalOwner(RentalOwnerData rentalOwner) async {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -61,11 +69,13 @@ class RentalOwnerService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          String rentalOwnerId = responseData['data']['rentalowner_id']; // Extracting rentalOwnerId
+          String rentalOwnerId = responseData['data']
+              ['rentalowner_id']; // Extracting rentalOwnerId
           print('Rental Owner ID: $rentalOwnerId');
 
           Fluttertoast.showToast(
-              msg: responseData['message'] ?? 'Successfully added rental owner');
+              msg:
+                  responseData['message'] ?? 'Successfully added rental owner');
           return rentalOwnerId;
         } else {
           print('Failed to add rental owner: $responseData');
@@ -85,7 +95,6 @@ class RentalOwnerService {
       return null;
     }
   }
-
 
   // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
   //   final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
@@ -203,6 +212,7 @@ class RentalOwnerService {
     String? country,
     String? postalCode,
     List<ProcessorList>? processorList,
+    String? achProcessorId,
   }) async {
     final Map<String, dynamic> data = {
       "admin_id": adminId,
@@ -220,10 +230,11 @@ class RentalOwnerService {
       "texpayer_id": texpayerId,
       "text_identityType": textIdentityType,
       "city": city,
-      "state":state,
+      "state": state,
       "country": country,
       "postal_code": postalCode,
-      "processor_list": processorList?.map((e) => e.toJson()).toList()
+      "processor_list": processorList?.map((e) => e.toJson()).toList(),
+      "ach_processor_id": achProcessorId
     };
     print(data);
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";
@@ -233,12 +244,11 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final http.Response response = await
-    http.put(
-       Uri.parse(apiUrl),
+    final http.Response response = await http.put(
+      Uri.parse(apiUrl),
       headers: <String, String>{
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -255,57 +265,58 @@ class RentalOwnerService {
     }
   }
 
-  Future<Map<String, dynamic>> DeleteRentalOwners({
-    required String? rentalownerId,
-    String? reason
-  }) async {
+  Future<Map<String, dynamic>> DeleteRentalOwners(
+      {required String? rentalownerId, String? reason}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     final http.Response response = await http.delete(
-      Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
-      headers: <String, String>{
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-        body: jsonEncode({
-          "reason":reason
-        })
-    );
+        Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason": reason}));
     var responseData = json.decode(response.body);
     print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
     }
   }
 
-  Future<List<RentalOwnerData>> fetchRentalOwnerssummery(String rentalOwnerId) async {
+  Future<List<RentalOwnerData>> fetchRentalOwnerssummery(
+      String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-   // adminId = prefs.getString("adminId");
-   //  rentalOwnerId = "1718715476950"
+    // adminId = prefs.getString("adminId");
+    //  rentalOwnerId = "1718715476950"
     print(rentalOwnerId);
     print(rentalOwnerId);
-    final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
-
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    final response = await http.get(
+      Uri.parse(
+          '$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
     );
-   // print(adminId);
+    // print(adminId);
     //print(response.body);
     //  print('$baseUrl/rental-owners/$adminId');
-   // print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)["data"];
-      return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
+      return jsonResponse
+          .map((data) => RentalOwnerData.fromJson(data))
+          .toList();
     } else {
       throw Exception('Failed to load rental owners');
     }
@@ -335,5 +346,4 @@ class RentalOwnerService {
   //     throw Exception('Failed to load rental owner');
   //   }
   // }
-
 }

@@ -156,7 +156,24 @@ class _Edit_propertiesState extends State<Edit_properties> {
       }
       groupedProperties[property.propertyType!]!.add(property);
     }
-    return groupedProperties;
+
+    // Sort the values (property lists) for each property type and subtype
+    groupedProperties.forEach((key, value) {
+      value.sort((a, b) => (a.propertysubType ?? '')
+          .toLowerCase()
+          .compareTo((b.propertysubType ?? '').toLowerCase()));
+    });
+
+    // Sort property types alphabetically (A-Z)
+    var sortedKeys = groupedProperties.keys.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+    Map<String, List<propertytype>> sortedGroupedProperties = {};
+    for (var key in sortedKeys) {
+      sortedGroupedProperties[key] = groupedProperties[key]!;
+    }
+
+    return sortedGroupedProperties;
   }
 
   List<Owner> owners = [];
@@ -805,10 +822,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF8A95A8), width: 2),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                 ),
               ),
             ),
@@ -1118,7 +1136,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               height: 50,
                               width: 50,
                               color: Colors.grey[300],
-                              child: const Icon(Icons.error, color: Colors.grey),
+                              child:
+                                  const Icon(Icons.error, color: Colors.grey),
                             );
                           },
                         ),
@@ -1513,7 +1532,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   BorderRadius.circular(10),
                                             ),
                                             child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<String>(
+                                              child: DropdownButton2<String>(
                                                 value: groupedProperties
                                                         .isNotEmpty
                                                     ? (groupedProperties.entries
@@ -1536,7 +1555,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                 ),
                                                 onChanged: isEditable
@@ -1935,16 +1955,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                         enabled: false,
                                                         child: Text(
                                                           entry.key,
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1)),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1)),
                                                         ),
                                                       ),
                                                       ...entry.value
@@ -1961,7 +1982,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                             child: Text(
                                                               item.propertysubType ??
                                                                   '',
-                                                              style: const TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                                 fontWeight:
@@ -1974,7 +1996,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       }).toList(),
                                                     ];
                                                   }).toList(),
-                                                  const DropdownMenuItem<String>(
+                                                  const DropdownMenuItem<
+                                                      String>(
                                                     value: 'Edit_properties',
                                                     child: Row(
                                                       children: [
@@ -1993,6 +2016,49 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   ),
                                                 ],
                                                 isExpanded: true,
+                                                buttonStyleData:
+                                                    ButtonStyleData(
+                                                  height: 50,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Colors.transparent,
+                                                  ),
+                                                ),
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
+                                                  maxHeight: 300,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            40),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -2131,7 +2197,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   )
                                                 : InputBorder.none,
                                             border: InputBorder.none,
-                                            contentPadding: const EdgeInsets.all(14),
+                                            contentPadding:
+                                                const EdgeInsets.all(14),
                                             // prefixIcon: Container(
                                             //   height: 20,
                                             //   width: 20,
@@ -2250,9 +2317,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: const BorderSide(
-                                                              color: Colors
-                                                                  .red), // Error border color
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
@@ -2260,7 +2328,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       const EdgeInsets.all(14),
                                                   hintText: "Enter city",
                                                   hintStyle: TextStyle(
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -2362,9 +2431,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: const BorderSide(
-                                                              color: Colors
-                                                                  .red), // Error border color
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
@@ -2372,7 +2442,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       const EdgeInsets.all(14),
                                                   hintText: "Enter state",
                                                   hintStyle: TextStyle(
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -2485,9 +2556,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: const BorderSide(
-                                                              color: Colors
-                                                                  .red), // Error border color
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
@@ -2495,7 +2567,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       const EdgeInsets.all(14),
                                                   hintText: "Enter country",
                                                   hintStyle: TextStyle(
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -2606,9 +2679,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: const BorderSide(
-                                                              color: Colors
-                                                                  .red), // Error border color
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
@@ -2616,7 +2690,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       const EdgeInsets.all(14),
                                                   hintText: "Enter zip code",
                                                   hintStyle: TextStyle(
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -2795,8 +2870,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         .OwnerDetails ==
                                     null)
                               const Padding(
-                                padding:
-                                    EdgeInsets.only(top: 8.0, bottom: 3),
+                                padding: EdgeInsets.only(top: 8.0, bottom: 3),
                                 child: Text(
                                   'required',
                                   style: TextStyle(
@@ -3129,10 +3203,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
-                                      return const Text('No staff members found');
+                                      return const Text(
+                                          'No staff members found');
                                     } else {
                                       List<Staffmembers> staffMembers =
                                           snapshot.data!;
+
+                                      // Sort staff members alphabetically by name (A-Z)
+                                      staffMembers.sort((a, b) =>
+                                          (a.staffmemberName ?? '')
+                                              .toLowerCase()
+                                              .compareTo(
+                                                  (b.staffmemberName ?? '')
+                                                      .toLowerCase()));
+
                                       List<DropdownMenuItem<String>>
                                           dropdownItems = staffMembers
                                               .map<DropdownMenuItem<String>>(
@@ -3146,7 +3230,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           },
                                           child: Text(
                                             staffMember.staffmemberName ?? '',
-                                            style: const TextStyle(fontSize: 14),
+                                            style:
+                                                const TextStyle(fontSize: 14),
                                           ),
                                         );
                                       }).toList();
@@ -4300,7 +4385,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 BorderRadius.circular(10),
                                           ),
                                           child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
+                                            child: DropdownButton2<String>(
                                               value: _selectedStaffId,
                                               hint: Text(
                                                 'Select',
@@ -4312,7 +4397,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               500
                                                           ? 15
                                                           : 18,
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                 ),
                                               ),
                                               onChanged: (String? newValue) {
@@ -4372,6 +4458,50 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               },
                                               items: dropdownItems,
                                               isExpanded: true,
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 50,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.transparent,
+                                                ),
+                                              ),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                maxHeight: 300,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .5,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.white,
+                                                ),
+                                                offset: const Offset(0, -5),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(40),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 8),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -4478,7 +4608,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     onTap: () =>
                                                         removePropertyGroup(
                                                             index),
-                                                    child: const Icon(Icons.close,
+                                                    child: const Icon(
+                                                        Icons.close,
                                                         color: Colors.black),
                                                   ),
                                                 ),
@@ -4636,7 +4767,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       onTap: () =>
                                                           removePropertyGroup(
                                                               index),
-                                                      child: const Icon(Icons.close,
+                                                      child: const Icon(
+                                                          Icons.close,
                                                           color: Colors.black),
                                                     ),
                                                   ),
@@ -6038,8 +6170,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     color: Colors.white,
-                                    border:
-                                        Border.all(color: const Color(0xFF8A95A8)),
+                                    border: Border.all(
+                                        color: const Color(0xFF8A95A8)),
                                   ),
                                   child: Stack(
                                     children: [

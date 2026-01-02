@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -773,13 +774,17 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
           right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
       child: Container(
+        // decoration: BoxDecoration(
+        //   color: blueColor,
+        //   borderRadius: const BorderRadius.only(
+        //     topLeft: Radius.circular(13),
+        //     topRight: Radius.circular(13),
+        //   ),
+        // ),
         decoration: BoxDecoration(
-          color: blueColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(13),
-            topRight: Radius.circular(13),
-          ),
-        ),
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5))),
         child: ListTile(
           contentPadding: EdgeInsets.zero,
           // leading: Container(
@@ -824,10 +829,16 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     child: Row(
                       children: [
                         width < 400
-                            ? const Text("   Date",
-                                style: TextStyle(color: Colors.white))
-                            : const Text("   Date",
-                                style: TextStyle(color: Colors.white)),
+                            ? Text("   Date",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15))
+                            : Text("   Date",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
                         // const SizedBox(width: 3),
                         // ascending1
@@ -877,7 +888,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: Row(
                     children: [
                       Text("   Subtotal",
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                     ],
                   ),
                 ),
@@ -908,7 +922,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: Row(
                     children: [
                       Text("     Record",
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                     ],
                   ),
                 ),
@@ -1873,10 +1890,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           ? 12
                                           : 0),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1890,16 +1907,16 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             entry.value;
 
                                         return Container(
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: rowIndex % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? const Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: const Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -2159,7 +2176,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                 'Type:',
                                                                                 _getDisplayValue(tenant.paymentType),
                                                                                 'Txn Date:',
-                                                                                _getDisplayValue(dateProvider.formatCurrentDate('${tenant.entry?.first.date}'))),
+                                                                                _getDisplayValue(tenant.entry != null && tenant.entry!.isNotEmpty ? dateProvider.formatCurrentDate('${tenant.entry!.first.date}') : 'N/A')),
                                                                             _buildTableRow(
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
@@ -3302,274 +3319,22 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           SizedBox(
             height: 10,
           ),
+          // Charge dropdown and Date Range dropdown side by side
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Expanded(
-                //   child: Container(
-                //     height: 42,
-                //     //width: 160,
-                //     decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(5),
-                //         border: Border.all(color: Colors.grey)),
-                //     child: DropdownButtonHideUnderline(
-                //       child: DropdownButton<String>(
-                //         value: selectedrenatalownerid,
-                //         padding: EdgeInsets.symmetric(horizontal: 5),
-                //         hint: Text(
-                //           "Rental Owner",
-                //           style: TextStyle(fontSize: 14, color: Colors.black),
-                //         ),
-                //         items: rentalowners.map((property) {
-                //           return DropdownMenuItem<String>(
-                //             value: property['rentalowner_id'],
-                //             child: Container(
-                //               width: MediaQuery.of(context).size.width * .34,
-                //               child: Text(
-                //                 property['rentalOwner_name']!,
-                //                 style: const TextStyle(
-                //                   fontSize: 14,
-                //                   fontWeight: FontWeight.w400,
-                //                   color: Colors.black87,
-                //                 ),
-                //                 overflow: TextOverflow.ellipsis,
-                //               ),
-                //             ),
-                //           );
-                //         }).toList(),
-                //         onChanged: (value) {
-                //           setState(() {
-                //             selectedrenatalownerid = value;
-                //             // _futureDailytrnsaction = fetchDelinquentTenantsData(
-                //             //     fromDate.text, toDate.text,
-                //             //     rentalownerid: value);
-                //           });
-                //           // Handle the selected charge type
-                //           print(value);
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(width: 4),
-                Expanded(
-                  child: Container(
-                    height: 42,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.grey)),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: daterange,
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        hint: Text(
-                          "Date Range",
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                        ),
-                        items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Today',
-                            child: Text('Today'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'This Week',
-                            child: Text('This Week'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'This Month',
-                            child: Text('This Month'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'This Year',
-                            child: Text('This Year'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Custom',
-                            child: Text('Custom'),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            daterange = value;
-                            if (value == "Today") {
-                              customdate = false;
-                              final dateProvider = Provider.of<DateProvider>(
-                                  context,
-                                  listen: false);
-                              String todayApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(DateTime.now());
-                              fromDate.text = dateProvider
-                                  .formatCurrentDate(todayApiFormat);
-                              toDate.text = dateProvider
-                                  .formatCurrentDate(todayApiFormat);
-                            } else if (value == "This Week") {
-                              DateTime now = DateTime.now();
-                              customdate = false;
-                              final dateProvider = Provider.of<DateProvider>(
-                                  context,
-                                  listen: false);
-                              String weekStartApiFormat =
-                                  DateFormat('yyyy-MM-dd').format(now.subtract(
-                                      Duration(days: now.weekday - 1)));
-                              String weekEndApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(now.add(Duration(
-                                      days:
-                                          DateTime.daysPerWeek - now.weekday)));
-                              fromDate.text = dateProvider
-                                  .formatCurrentDate(weekStartApiFormat);
-                              toDate.text = dateProvider
-                                  .formatCurrentDate(weekEndApiFormat);
-                            } else if (value == "This Month") {
-                              customdate = false;
-                              DateTime now = DateTime.now();
-                              final dateProvider = Provider.of<DateProvider>(
-                                  context,
-                                  listen: false);
-                              String monthStartApiFormat =
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(DateTime(now.year, now.month, 1));
-                              String monthEndApiFormat =
-                                  DateFormat('yyyy-MM-dd').format(
-                                      DateTime(now.year, now.month + 1, 0));
-                              fromDate.text = dateProvider
-                                  .formatCurrentDate(monthStartApiFormat);
-                              toDate.text = dateProvider
-                                  .formatCurrentDate(monthEndApiFormat);
-                            } else if (value == "This Year") {
-                              customdate = false;
-                              DateTime now = DateTime.now();
-                              final dateProvider = Provider.of<DateProvider>(
-                                  context,
-                                  listen: false);
-                              String yearStartApiFormat =
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(DateTime(now.year, 1, 1));
-                              String yearEndApiFormat = DateFormat('yyyy-MM-dd')
-                                  .format(DateTime(now.year, 12, 31));
-                              fromDate.text = dateProvider
-                                  .formatCurrentDate(yearStartApiFormat);
-                              toDate.text = dateProvider
-                                  .formatCurrentDate(yearEndApiFormat);
-                            } else if (value == "Custom") {
-                              customdate = true;
-                            }
-                            if (value != "Custom" && customdate == true) {
-                              customdate = false;
-                              fromDate.text = "";
-                              toDate.text = "";
-                            }
-                            // Auto-fetch data only for "Today" selection
-                            if (value == "Today") {
-                              _futureDailytrnsaction =
-                                  fetchDelinquentTenantsData(
-                                      formatDate(fromDate.text),
-                                      formatDate(toDate.text));
-                            }
-                            // For other date ranges, user must click "Run" button
-                          });
-                          // Handle the selected charge type
-                          print(value);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: Row(
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    // width: 110,
-                    child: TextFormField(
-                      controller: fromDate,
-                      // enabled: customdate,
-                      onTap: customdate
-                          ? () {
-                              _pickDate(context);
-                            }
-                          : null,
-                      readOnly: true,
-                      style: TextStyle(fontSize: 14, color: Colors.black),
-                      textInputAction: TextInputAction.next,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 10), //Imp Line
-                        isDense: true,
-
-                        hintText: "From",
-
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide(
-                              width: 1,
-                            )),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Container(
-                    // width: 110,
-                    child: TextFormField(
-                      controller: toDate,
-                      // enabled: customdate,
-                      style: TextStyle(fontSize: 14, color: Colors.black),
-                      onTap: customdate
-                          ? () {
-                              _endDate(context);
-                            }
-                          : null,
-                      readOnly: true,
-                      textInputAction: TextInputAction.next,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 10), //Imp Line
-                        isDense: true,
-                        hintText: "To",
-
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide(
-                              width: 0.5,
-                            )),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Container(
                     height: 42,
-                    // width: 170,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(color: Colors.grey)),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: chargeType,
-                        padding: EdgeInsets.symmetric(horizontal: 3),
-                        hint: Text(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        hint: const Text(
                           "Charge type",
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
@@ -3610,22 +3375,510 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                         onChanged: (value) {
                           setState(() {
                             chargeType = value;
-                            // _futureDailytrnsaction = fetchDelinquentTenantsData(
-                            //     fromDate.text, toDate.text,
-                            //     charge: value);
                           });
-                          // Handle the selected charge type
                           print(value);
                         },
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                daterange ?? "Date Range",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: daterange == null
+                                      ? const Color(0xFF8A95A8)
+                                      : Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        items: [
+                          DropdownMenuItem<String>(
+                            value: 'Today',
+                            child: Text(
+                              'Today',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Yesterday',
+                            child: Text(
+                              'Yesterday',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 7 Days',
+                            child: Text(
+                              'Last 7 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 14 Days',
+                            child: Text(
+                              'Last 14 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 30 Days',
+                            child: Text(
+                              'Last 30 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Week',
+                            child: Text(
+                              'This Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Week',
+                            child: Text(
+                              'Last Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Month',
+                            child: Text(
+                              'This Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Month',
+                            child: Text(
+                              'Last Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Quarter',
+                            child: Text(
+                              'This Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Quarter',
+                            child: Text(
+                              'Last Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Year to Date',
+                            child: Text(
+                              'Year to Date',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Year',
+                            child: Text(
+                              'Last Year',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Custom',
+                            child: Text(
+                              'Custom Date',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                        value: daterange,
+                        onChanged: (value) {
+                          final dateProvider =
+                              Provider.of<DateProvider>(context, listen: false);
+                          setState(() {
+                            daterange = value;
+                            DateTime now = DateTime.now();
+                            customdate = false;
+
+                            if (value == "Today") {
+                              String todayApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime.now());
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                            } else if (value == "Yesterday") {
+                              DateTime yesterday =
+                                  now.subtract(Duration(days: 1));
+                              String yesterdayApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(yesterday);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(yesterdayApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(yesterdayApiFormat);
+                            } else if (value == "Last 7 Days") {
+                              // Last 7 Days including today: subtract 6 days (not 7)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 6));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "Last 14 Days") {
+                              // Last 14 Days including today: subtract 13 days (not 14)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 13));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "Last 30 Days") {
+                              // Last 30 Days including today: subtract 29 days (not 30)
+                              DateTime startDate =
+                                  now.subtract(Duration(days: 29));
+                              String startApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startDate);
+                              String endApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startApiFormat);
+                              toDate.text =
+                                  dateProvider.formatCurrentDate(endApiFormat);
+                            } else if (value == "This Week") {
+                              // Start of current week (Monday)
+                              DateTime startOfWeek =
+                                  now.subtract(Duration(days: now.weekday - 1));
+                              // End of current week (Sunday)
+                              DateTime endOfWeek =
+                                  startOfWeek.add(Duration(days: 6));
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(startOfWeek);
+                              String weekEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(endOfWeek);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(weekStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(weekEndApiFormat);
+                            } else if (value == "Last Week") {
+                              // Start of current week (Monday)
+                              DateTime startOfCurrentWeek =
+                                  now.subtract(Duration(days: now.weekday - 1));
+                              // Start of last week (Monday of last week) - subtract 7 days from current week start
+                              DateTime startOfLastWeek = startOfCurrentWeek
+                                  .subtract(Duration(days: 7));
+                              // End of last week (Sunday of last week)
+                              DateTime endOfLastWeek =
+                                  startOfLastWeek.add(Duration(days: 6));
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(startOfLastWeek);
+                              String weekEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(endOfLastWeek);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(weekStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(weekEndApiFormat);
+                            } else if (value == "This Month") {
+                              String monthStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, now.month, 1));
+                              String monthEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, now.month + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(monthStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(monthEndApiFormat);
+                            } else if (value == "Last Month") {
+                              DateTime lastMonth =
+                                  DateTime(now.year, now.month - 1, 1);
+                              String monthStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastMonth.year, lastMonth.month, 1));
+                              String monthEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastMonth.year, lastMonth.month + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(monthStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(monthEndApiFormat);
+                            } else if (value == "This Quarter") {
+                              int currentQuarter = ((now.month - 1) ~/ 3) + 1;
+                              int quarterStartMonth =
+                                  (currentQuarter - 1) * 3 + 1;
+                              int quarterEndMonth = currentQuarter * 3;
+                              String quarterStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, quarterStartMonth, 1));
+                              String quarterEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      now.year, quarterEndMonth + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(quarterStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(quarterEndApiFormat);
+                            } else if (value == "Last Quarter") {
+                              int currentQuarter = ((now.month - 1) ~/ 3) + 1;
+                              int lastQuarter =
+                                  currentQuarter == 1 ? 4 : currentQuarter - 1;
+                              int lastQuarterYear =
+                                  currentQuarter == 1 ? now.year - 1 : now.year;
+                              int quarterStartMonth = (lastQuarter - 1) * 3 + 1;
+                              int quarterEndMonth = lastQuarter * 3;
+                              String quarterStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastQuarterYear, quarterStartMonth, 1));
+                              String quarterEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(DateTime(
+                                      lastQuarterYear, quarterEndMonth + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(quarterStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(quarterEndApiFormat);
+                            } else if (value == "Year to Date") {
+                              String yearStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, 1, 1));
+                              String yearEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(yearStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(yearEndApiFormat);
+                            } else if (value == "Last Year") {
+                              String yearStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year - 1, 1, 1));
+                              String yearEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime(now.year - 1, 12, 31));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(yearStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(yearEndApiFormat);
+                            } else if (value == "Custom") {
+                              customdate = true;
+                            }
+
+                            if (value != "Custom" && customdate == true) {
+                              customdate = false;
+                              fromDate.text = "";
+                              toDate.text = "";
+                            }
+                            // Auto-fetch data only for "Today" selection
+                            if (value == "Today") {
+                              _futureDailytrnsaction =
+                                  fetchDelinquentTenantsData(
+                                      formatDate(fromDate.text),
+                                      formatDate(toDate.text));
+                            }
+                            // For other date ranges, user must click "Run" button
+                          });
+                          // Handle the selected charge type
+                          print(value);
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 42,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF8A95A8),
+                            ),
+                            color: Colors.white,
+                          ),
+                          elevation: 0,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          offset: const Offset(-20, 0),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // From Date and To Date fields
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: TextFormField(
+                      controller: fromDate,
+                      onTap: customdate
+                          ? () {
+                              _pickDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        isDense: true,
+                        hintText: "From",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 1,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    child: TextFormField(
+                      controller: toDate,
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                      onTap: customdate
+                          ? () {
+                              _endDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        isDense: true,
+                        hintText: "To",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Export and Run Report buttons side by side
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              children: [
                 if (showTableData)
                   Expanded(
                     child: SizedBox(
-                      //  width: 100,
                       height: 42,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -3641,11 +3894,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                             } else if (value == 'XLSX' && data != null) {
                               print('XLSX');
                               generateRentalOwnerReportExcel(data);
-                              //generateDelinquentTenantsExcel(data);
                             } else if (value == 'CSV' && data != null) {
                               print('CSV');
                               generateRentalOwnerReportCsv(data);
-                              //  generateDelinquentTenantsCsv(data);
                             }
                           },
                           itemBuilder: (BuildContext context) =>
@@ -3657,8 +3908,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                             const PopupMenuItem<String>(
                                 value: 'CSV', child: Text('CSV')),
                           ],
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text('Export'),
                               Icon(Icons.arrow_drop_down),
@@ -3667,20 +3919,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                         ),
                       ),
                     ),
-                  )
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Spacer(),
+                  ),
+                if (showTableData) const SizedBox(width: 10),
                 Expanded(
                   child: SizedBox(
-                    //  width: 100,
                     height: 42,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -3692,13 +3934,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                               true; // Set to true when the button is pressed
                         });
                         _futureDailytrnsaction = fetchDelinquentTenantsData(
-                            formatDate(fromDate.text),
-                            formatDate(toDate.text)); // Call the API
+                            formatDate(fromDate.text), formatDate(toDate.text),
+                            charge: chargeType);
                       },
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Run'),
+                          Text('Run Report'),
                         ],
                       ),
                     ),

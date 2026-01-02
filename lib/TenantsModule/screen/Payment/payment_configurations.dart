@@ -10,7 +10,7 @@
 // TEST: Use for development and testing (works without Google Pay Console registration)
 // PRODUCTION: Use for live payments (requires Google Pay Console merchant registration)
 const String PAYMENT_ENVIRONMENT =
-    'TEST'; // Change to 'PRODUCTION' for live payments
+    'TEST'; // Set to 'PRODUCTION' for live payments
 
 /// Generate Google Pay configuration dynamically with merchant ID and amount
 String generateGooglePayConfig({
@@ -70,7 +70,11 @@ String generateGooglePayConfig({
 /// - App Store vs TestFlight vs development builds
 ///
 /// Important: merchantIdentifier must match the one in iOS entitlements file
-/// This is the Apple Merchant ID, NOT the NMI merchant ID
+/// This is the Apple Merchant ID, NOT the NMI merchant
+///
+///
+///
+///
 String generateApplePayConfig({
   required String amount,
   String merchantName = 'Cloud Rental Manager',

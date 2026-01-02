@@ -79,6 +79,13 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
           color: Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
@@ -102,8 +109,67 @@ class _FinancialTableState extends State<FinancialTable> {
             ),*/
 
             Expanded(
-              flex: 2,
-              child: GestureDetector(
+              flex: 4,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      sorting3 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                      ascending3 = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("       Date ",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("       Date",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 3),
+                    /*ascending1
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),*/
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: InkWell(
                 onTap: () {
                   setState(() {
                     if (sorting2) {
@@ -126,7 +192,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("       Type",
+                    Text(" Type",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -155,59 +221,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ),
             Expanded(
               flex: 2,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("    Balance",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    SizedBox(width: 5),
-                    /* ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
+              child: InkWell(
                 onTap: () {
                   setState(() {
                     if (sorting3) {
@@ -231,12 +245,13 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("      Date",
+                    Text("Balance",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
-                    SizedBox(width: 5),
+                            
+                    // SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
@@ -1022,52 +1037,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ),
                                                         ),
                                                         Expanded(
-                                                          flex: 2,
+                                                          flex: 3,
                                                           child: Text(
-                                                            '${Tenant_financial.type}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .03),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Text(
-                                                            Tenant_financial
-                                                                        .balance! <
-                                                                    0
-                                                                ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
-                                                                : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .08),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Text(
-                                                            // '${widget.data.createdAt}',
-                                                            //'${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
                                                             Tenant_financial
                                                                         .entry
                                                                         ?.first
@@ -1093,6 +1064,56 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     .size
                                                                     .width *
                                                                 .02),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          child: Text(
+                                                            '${Tenant_financial.type}',
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .03),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          // right align the text
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              Tenant_financial
+                                                                          .balance! <
+                                                                      0
+                                                                  ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
+                                                                  : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .04),
                                                       ],
                                                     ),
                                                   ),
@@ -1752,14 +1773,19 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   horizontal:
                                                                       16,
                                                                   vertical: 20),
-                                                          child: Text(
-                                                            'Balance',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 15,
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              'Balance',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 15,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -1954,25 +1980,28 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             16,
                                                                         vertical:
                                                                             20),
-                                                                child: Text(
-                                                                  _pagedData[i]
-                                                                              .balance !=
-                                                                          null
-                                                                      ? _pagedData[
-                                                                              i]
-                                                                          .balance!
-                                                                          .abs()
-                                                                          .toString()
-                                                                      : 'N/A',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        13,
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerRight,
+                                                                  child: Text(
+                                                                    _pagedData[i].balance !=
+                                                                            null
+                                                                        ? _pagedData[i]
+                                                                            .balance!
+                                                                            .abs()
+                                                                            .toString()
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          13,
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),

@@ -463,12 +463,9 @@ class _FinancialTableState extends State<FinancialTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -511,10 +508,14 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Type",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Type",
-                            style: TextStyle(color: Colors.white)),
+                        ?  Text("Type",
+                            style: TextStyle( color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        :  Text("Type",
+                            style: TextStyle( color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                   ],
@@ -543,10 +544,12 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child:  Row(
                   children: [
                     Text("Balance      ",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -575,10 +578,11 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child:  Row(
                   children: [
-                    Text("      Date",
-                        style: TextStyle(color: Colors.white)),
+                    Text("      Date", style: TextStyle( color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -855,7 +859,8 @@ class _FinancialTableState extends State<FinancialTable> {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
@@ -1005,7 +1010,9 @@ class _FinancialTableState extends State<FinancialTable> {
               pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                    '\$${ledgerdata.first.balance?.toStringAsFixed(2)}',
+                    ledgerdata.isNotEmpty
+                        ? '\$${ledgerdata.first.balance?.toStringAsFixed(2)}'
+                        : '\$0.00',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
             ],
@@ -1340,6 +1347,9 @@ class _FinancialTableState extends State<FinancialTable> {
 
       // Filter the data based on the selected date range
       filteredData = allData.where((data) {
+        if (data.entry == null || data.entry!.isEmpty) {
+          return false; // Skip entries with no date information
+        }
         DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(
             data.entry!.first.date!); // Adjust according to your data structure
         return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
@@ -1444,6 +1454,9 @@ class _FinancialTableState extends State<FinancialTable> {
                           if (fromDate.isAtSameMomentAs(toDate)) {
                             // If both dates are the same, only include leases with the same date
                             data = data.where((lease) {
+                              if (lease.entry == null || lease.entry!.isEmpty) {
+                                return false; // Skip entries with no date information
+                              }
                               DateTime leaseDate = DateFormat('yyyy-MM-dd')
                                   .parse(lease.entry!.first.date!);
                               print("Lease Date: $leaseDate");
@@ -1452,6 +1465,9 @@ class _FinancialTableState extends State<FinancialTable> {
                           } else {
                             // If dates are different, use the original condition
                             data = data.where((lease) {
+                              if (lease.entry == null || lease.entry!.isEmpty) {
+                                return false; // Skip entries with no date information
+                              }
                               DateTime leaseDate = DateFormat('yyyy-MM-dd')
                                   .parse(lease.entry!.first.date!);
                               print("Lease Date: $leaseDate");
@@ -1597,7 +1613,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     onTap: () => _selectendDate(
                                                         context,
                                                         _toDateController),
-                                                    decoration: const InputDecoration(
+                                                    decoration:
+                                                        const InputDecoration(
                                                       hintText: 'dd-mm-yyyy',
                                                       suffixIcon: Icon(
                                                           Icons.calendar_today),
@@ -1638,8 +1655,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       8.0),
                                                           child: Container(
                                                             height: 50,
-                                                            padding: const EdgeInsets
-                                                                .symmetric(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10.0,
                                                                     vertical:
@@ -1694,11 +1712,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     IconButton(
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
-                                                                          vertical:
-                                                                              1),
+                                                                      vertical:
+                                                                          1),
                                                                   iconSize: 20,
-                                                                  icon: const Icon(Icons
-                                                                      .calendar_today),
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .calendar_today),
                                                                   onPressed:
                                                                       () {},
                                                                 ),
@@ -1735,8 +1754,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       8.0),
                                                           child: Container(
                                                             height: 50,
-                                                            padding: const EdgeInsets
-                                                                .symmetric(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10.0,
                                                                     vertical:
@@ -1791,11 +1811,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     IconButton(
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
-                                                                          vertical:
-                                                                              1),
+                                                                      vertical:
+                                                                          1),
                                                                   iconSize: 20,
-                                                                  icon: const Icon(Icons
-                                                                      .calendar_today),
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .calendar_today),
                                                                   onPressed:
                                                                       () {},
                                                                 ),
@@ -1820,15 +1841,8 @@ class _FinancialTableState extends State<FinancialTable> {
                             // SizedBox(height: 5),
                             if (data.isNotEmpty)
                               if (currentPageData.length > 0) _buildHeaders(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: blueColor),
-                              // ),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1854,17 +1868,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                   final uniqueEntries =
                                       data.entry?.toSet().toList() ?? [];
                                   return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
+                                          ? const Color(0xFFF4F8FF)
+                                          : Colors.white,
                                       border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          color: const Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -1962,8 +1976,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    dateProvider.formatCurrentDate(
-                                                        '${data.entry!.first.date}'),
+                                                    (data.entry != null &&
+                                                            data.entry!
+                                                                .isNotEmpty)
+                                                        ? dateProvider
+                                                            .formatCurrentDate(
+                                                                '${data.entry!.first.date}')
+                                                        : 'N/A',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

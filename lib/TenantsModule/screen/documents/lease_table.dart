@@ -751,7 +751,7 @@ class _Lease_TableState extends State<Lease_Table> {
                           SizedBox(width: 22),
                         Material(
                           elevation: 3,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(10),
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             // height: 40,
@@ -763,7 +763,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                 : MediaQuery.of(context).size.width * .49,
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(2),
+                                borderRadius: BorderRadius.circular(10),
                                 // border: Border.all(color: Colors.grey),
                                 border: Border.all(color: Color(0xFF8A95A8))),
                             child: Stack(
@@ -1216,7 +1216,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.leaseAmount}',
+                                                                                '\$${Propertytype.leaseAmount}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),
@@ -1234,7 +1234,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.deposite ?? 0}',
+                                                                                '\$${Propertytype.deposite ?? 0}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),
@@ -1252,7 +1252,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                           ),
                                                                           TextSpan(
                                                                             text:
-                                                                                '${Propertytype.recurringCharge ?? 0}',
+                                                                                '\$${Propertytype.recurringCharge ?? 0}',
                                                                             style:
                                                                                 TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                           ),
