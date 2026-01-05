@@ -29,6 +29,8 @@ import '../../../model/rentalOwner.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/custom_history_table.dart';
+import '../../../enums/history_type.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Leasing/RentalRoll/Commnunication/communication.dart';
 import 'Commnunication/communication.dart';
@@ -2760,6 +2762,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
+                                // SizedBox(height: 10),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //       horizontal: 10, vertical: 20),
+                                //   child: CustomHistoryTable(
+                                //     historyType: HistoryType.tenant,
+                                //     entityId: widget.tenantId,
+                                //     title: 'History',
+                                //     blueColor: blueColor,
+                                //     itemsPerPage: 10,
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -2773,7 +2787,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   if (_selectedIndex == 2)
                     FinancialTable(
                       leaseId: widget.tenantId,
-                    )
+                    ),
                 ],
               ),
             )

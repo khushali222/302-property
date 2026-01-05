@@ -50,6 +50,8 @@ import '../../Leasing/RentalRoll/NewAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_admin_lease_table.dart';
+import '../../../widgets/custom_history_table.dart';
+import '../../../enums/history_type.dart';
 
 class Summery_page extends StatefulWidget {
   Rentals properties;
@@ -2260,7 +2262,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ),
                   );
-                } else { 
+                } else {
                   var data = snapshot.data!;
 
                   // Search Filter
@@ -4630,8 +4632,22 @@ class _Summery_pageState extends State<Summery_page>
                 ),
 
                 const SizedBox(
-                  height: 50,
+                  height: 20,
                 ),
+                // // Property History Table
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 6),
+                //   child: CustomHistoryTable(
+                //     historyType: HistoryType.property,
+                //     entityId: widget.properties.rentalId ?? "",
+                //     title: 'History',
+                //     blueColor: blueColor,
+                //     itemsPerPage: 10,
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 50,
+                // ),
               ],
             ),
           ),
