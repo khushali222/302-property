@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../Model/history_item_model.dart';
 import '../enums/history_type.dart';
 import '../services/history_service.dart';
@@ -818,6 +819,67 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       }
     }
 
+    // Pattern 1.6: Check for "Additional Stat" patterns BEFORE other patterns
+    // Format: "Additional Stat Added (Year X): Value: Y" or "Additional Stat Updated (Year X): ..."
+    final lowerDescForStat = descriptionWithoutBodyPreview.toLowerCase().trim();
+    if (lowerDescForStat.contains('additional stat')) {
+      // Check if it matches the pattern: "Additional Stat Added/Updated (Year X): Value: Y"
+      final additionalStatPattern = RegExp(
+          r'Additional Stat\s+(Added|Updated)\s*\(Year\s+([^)]+)\):\s*(.+?)$',
+          caseSensitive: false,
+          dotAll: true);
+      final additionalStatMatch =
+          additionalStatPattern.firstMatch(descriptionWithoutBodyPreview);
+
+      if (additionalStatMatch != null) {
+        final action =
+            additionalStatMatch.group(1)?.trim() ?? ''; // Added or Updated
+        final year = additionalStatMatch.group(2)?.trim() ?? '';
+        final detailsText = additionalStatMatch.group(3)?.trim() ?? '';
+
+        // Build header
+        final header = 'Additional Stat $action (Year $year):';
+        details.add(header);
+
+        // Parse the details part (e.g., "Value: 10" or "No changes detected")
+        if (detailsText.isNotEmpty) {
+          // Check if it's "No changes detected"
+          if (detailsText.toLowerCase().contains('no changes detected')) {
+            details.add('No changes detected');
+          } else {
+            // Parse key-value pairs from details
+            final detailParts = _smartSplit(detailsText, [',']);
+            for (var part in detailParts) {
+              part = part.trim();
+              if (part.isNotEmpty) {
+                final colonIdx = part.indexOf(':');
+                if (colonIdx > 0 && colonIdx < part.length - 1) {
+                  final key = part.substring(0, colonIdx).trim();
+                  final value = part.substring(colonIdx + 1).trim();
+                  if (key.isNotEmpty && value.isNotEmpty) {
+                    details.add('$key: $value');
+                  }
+                } else {
+                  details.add(part);
+                }
+              }
+            }
+          }
+        }
+
+        // Add body preview at the end if it exists
+        if (bodyPreviewValue.isNotEmpty) {
+          bodyPreviewValue =
+              bodyPreviewValue.replaceAll(RegExp(r'<[^>]+>'), '');
+          bodyPreviewValue = bodyPreviewValue.replaceAll('**', '');
+          bodyPreviewValue = bodyPreviewValue.replaceAll('&nbsp;', ' ');
+          details.add('Body preview: $bodyPreviewValue');
+        }
+
+        return details;
+      }
+    }
+
     // Pattern 2: Check for arrow format FIRST (old → new) - like "Utility Gas Updated: Provider Name: HPdsef → HP"
     // This needs to be checked before key-value parsing to avoid incorrect splitting
     if (descriptionWithoutBodyPreview.contains('→') ||
@@ -1377,11 +1439,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
     if (parsedDetails.length > 1) {
       final firstItem = parsedDetails[0];
-      // Check if first item looks like a header (STARTS with "Utility Added" or "Utility Deleted")
-      // Only apply header format for actual utility entries to avoid breaking other sections
+      // Check if first item looks like a header
       final firstItemLower = firstItem.toLowerCase().trim();
       if (firstItemLower.startsWith('utility added') ||
-          firstItemLower.startsWith('utility deleted')) {
+          firstItemLower.startsWith('utility deleted') ||
+          firstItemLower.startsWith('additional stat added') ||
+          firstItemLower.startsWith('additional stat updated')) {
         hasHeader = true;
         headerText = firstItem;
         detailItems = parsedDetails.sublist(1);
@@ -1659,10 +1722,96 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('⏳ History loading...');
-          return const SizedBox(
-            height: 50,
-            child: Center(
-              child: CircularProgressIndicator(),
+          // Show title and header structure while loading
+          return RepaintBoundary(
+            child: Column(
+              children: [
+                // Title
+                Row(
+                  children: [
+                    const SizedBox(width: 2),
+                    Text(
+                      widget.title,
+                      style: TextStyle(
+                        color: widget.blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Table Header
+                Container(
+                  decoration: BoxDecoration(
+                    color: widget.blueColor.withOpacity(0.1),
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Text(
+                                    width < 400
+                                        ? "Date & Time"
+                                        : "     Date & Time",
+                                    style: TextStyle(
+                                      color: widget.blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 2,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Text(
+                                  widget.historyType == HistoryType.lease
+                                      ? "     Action"
+                                      : "     User",
+                                  style: TextStyle(
+                                    color: widget.blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Loading indicator
+                const Center(
+                  child: SpinKitFadingCircle(
+                    color: Color(0xFF152B51),
+                    size: 40.0,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           );
         } else if (snapshot.hasError) {
@@ -1690,22 +1839,104 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
           print(
               '⚠️ History - No data or empty data. Data count: ${snapshot.hasData ? snapshot.data!.data.length : 0}');
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
+          // Show title and header even when no data
+          return RepaintBoundary(
             child: Column(
               children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: widget.blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                // Title
+                Row(
+                  children: [
+                    const SizedBox(width: 2),
+                    Text(
+                      widget.title,
+                      style: TextStyle(
+                        color: widget.blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Table Header
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4F8FF),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Text(
+                                    width < 400
+                                        ? "Date & Time"
+                                        : "     Date & Time",
+                                    style: TextStyle(
+                                      color: widget.blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 2,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                Text(
+                                  widget.historyType == HistoryType.lease
+                                      ? "     Action"
+                                      : "     User",
+                                  style: TextStyle(
+                                    color: widget.blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'No history data available',
-                  style: TextStyle(color: Colors.grey),
+                // No data message
+                Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'No history data available',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
