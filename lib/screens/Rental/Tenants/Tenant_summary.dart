@@ -2762,18 +2762,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
-                                // SizedBox(height: 10),
-                                // Padding(
-                                //   padding: const EdgeInsets.symmetric(
-                                //       horizontal: 10, vertical: 20),
-                                //   child: CustomHistoryTable(
-                                //     historyType: HistoryType.tenant,
-                                //     entityId: widget.tenantId,
-                                //     title: 'History',
-                                //     blueColor: blueColor,
-                                //     itemsPerPage: 10,
-                                //   ),
-                                // ),
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 20),
+                                  child: CustomHistoryTable(
+                                    historyType: HistoryType.tenant,
+                                    entityId: widget.tenantId,
+                                    title: 'History',
+                                    blueColor: blueColor,
+                                    itemsPerPage: 10,
+                                  ),
+                                ),
                               ],
                             ),
                           ),

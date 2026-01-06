@@ -4,6 +4,7 @@ class HistoryItem {
   final String description;
   final String username;
   final String category;
+  final String action; // For lease history
   final String date;
   final int timestamp;
   final Map<String, dynamic>? metadata;
@@ -14,6 +15,7 @@ class HistoryItem {
     required this.description,
     required this.username,
     required this.category,
+    this.action = '',
     required this.date,
     required this.timestamp,
     this.metadata,
@@ -49,6 +51,7 @@ class HistoryItem {
       description: json['description'] ?? '',
       username: username,
       category: json['category'] ?? '',
+      action: json['action'] ?? '',
       date: json['date'] ?? '',
       timestamp: timestamp,
       metadata: metadata,
@@ -62,6 +65,7 @@ class HistoryItem {
       'description': description,
       'username': username,
       'category': category,
+      'action': action,
       'date': date,
       'timestamp': timestamp,
       'metadata': metadata,

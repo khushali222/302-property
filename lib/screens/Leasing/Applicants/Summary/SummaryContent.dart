@@ -959,17 +959,17 @@ class _SummaryContentState extends State<SummaryContent> {
             const SizedBox(
               height: 10,
             ),
-            // Applicant History Table
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            //   child: CustomHistoryTable(
-            //     historyType: HistoryType.applicant,
-            //     entityId: widget.applicant_id,
-            //     title: 'History',
-            //     blueColor: blueColor,
-            //     itemsPerPage: 10,
-            //   ),
-            // ),
+            //Applicant History Table
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              child: CustomHistoryTable(
+                historyType: HistoryType.applicant,
+                entityId: widget.applicant_id,
+                title: 'History',
+                blueColor: blueColor,
+                itemsPerPage: 10,
+              ),
+            ),
           ],
         ),
       ),

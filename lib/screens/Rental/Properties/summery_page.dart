@@ -4634,20 +4634,20 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 20,
                 ),
-                // // Property History Table
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 6),
-                //   child: CustomHistoryTable(
-                //     historyType: HistoryType.property,
-                //     entityId: widget.properties.rentalId ?? "",
-                //     title: 'History',
-                //     blueColor: blueColor,
-                //     itemsPerPage: 10,
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 50,
-                // ),
+                // Property History Table
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: CustomHistoryTable(
+                    historyType: HistoryType.property,
+                    entityId: widget.properties.rentalId ?? "",
+                    title: 'History',
+                    blueColor: blueColor,
+                    itemsPerPage: 10,
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
               ],
             ),
           ),
