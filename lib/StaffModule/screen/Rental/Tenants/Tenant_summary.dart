@@ -35,6 +35,8 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'edit_tenants.dart';
+import '../../../../widgets/custom_history_table.dart';
+import '../../../../enums/history_type.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
@@ -2754,6 +2756,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             ),
                           ),
                         ),
+                      ),
+                    ),
+                  // Tenant History Table - Using CustomHistoryTable
+                  if (_selectedIndex == 0)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 20),
+                      child: CustomHistoryTable(
+                        historyType: HistoryType.tenant,
+                        entityId: widget.tenantId,
+                        title: 'History',
+                        blueColor: blueColor,
+                        itemsPerPage: 10,
                       ),
                     ),
                   if (_selectedIndex == 1)

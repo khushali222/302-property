@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import '../Model/history_item_model.dart';
 import '../enums/history_type.dart';
 import '../services/history_service.dart';
+import '../provider/dateProvider.dart';
 
 class CustomHistoryTable extends StatefulWidget {
   final HistoryType historyType;
@@ -109,59 +111,247 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     });
   }
 
-  String _formatDateTimeWithAMPM(String dateTimeString) {
+  String _formatDateTimeWithAMPM(String dateTimeString, BuildContext context) {
     if (dateTimeString.isEmpty) return '';
 
     try {
-      List<String> dateFormats = [
-        'yyyy-MM-dd HH:mm:ss',
-        'yyyy-MM-dd HH:mm',
-        'yyyy-MM-dd h:mm:ss a',
-        'yyyy-MM-dd h:mm a',
-        'yyyy-MM-dd',
-        'yyyy-M-d HH:mm:ss',
-        'yyyy-M-d HH:mm',
-        'MM/dd/yyyy HH:mm:ss',
-        'MM/dd/yyyy HH:mm',
-        'MM/dd/yyyy h:mm:ss a',
-        'MM/dd/yyyy h:mm a',
-        'MM/dd/yyyy',
-        'dd-MM-yyyy HH:mm:ss',
-        'dd-MM-yyyy HH:mm',
-        'dd-MM-yyyy h:mm:ss a',
-        'dd-MM-yyyy h:mm a',
-        'dd-MM-yyyy',
-        'M/d/yyyy, h:mm:ss a',
-        'M/d/yyyy, h:mm a',
-        'yyyy-MM-ddTHH:mm:ss',
-        'yyyy-MM-ddTHH:mm:ssZ',
-        'yyyy-MM-ddTHH:mm:ss.SSSZ',
-      ];
+      print('🔵 [LEASE HISTORY] Formatting date: "$dateTimeString"');
+      print('🔵 [LEASE HISTORY] History Type: ${widget.historyType}');
 
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
       DateTime? parsedDate;
 
-      for (String format in dateFormats) {
+      // Step 1: Handle verbose JavaScript date format FIRST
+      // Format: "Mon Dec 08 2025 08:00:03 GMT+0000 (Coordinated Universal Time)"
+      if (dateTimeString.contains('GMT') && dateTimeString.contains('(')) {
+        print('🔵 [LEASE HISTORY] Detected verbose GMT format');
         try {
-          parsedDate = DateFormat(format).parse(dateTimeString);
-          break;
+          // Extract the date part before the parentheses: "Mon Dec 08 2025 08:00:03 GMT+0000"
+          String datePart = dateTimeString.split('(')[0].trim();
+          // Try parsing with DateFormat for this specific format
+          try {
+            final verboseFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
+            parsedDate = verboseFormat.parse(datePart);
+            print('🔵 [LEASE HISTORY] Parsed verbose format: $parsedDate');
+          } catch (e) {
+            print(
+                '🔵 [LEASE HISTORY] Verbose format parse failed, trying alternative: $e');
+            // Alternative: Extract components manually
+            final altPattern = RegExp(
+                r'(\w{3})\s+(\w{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}:\d{2}:\d{2})');
+            final match = altPattern.firstMatch(dateTimeString);
+            if (match != null) {
+              final month = match.group(2)!;
+              final day = match.group(3)!;
+              final year = match.group(4)!;
+              final time = match.group(5)!;
+              final altFormat = DateFormat("MMM dd yyyy HH:mm:ss");
+              parsedDate = altFormat.parse("$month $day $year $time");
+              print(
+                  '🔵 [LEASE HISTORY] Parsed with alternative method: $parsedDate');
+            }
+          }
         } catch (e) {
-          continue;
+          print('🔴 [LEASE HISTORY] Failed to parse verbose date format: $e');
         }
       }
 
+      // Step 2: If not verbose format, parse using common formats
       if (parsedDate == null) {
-        return dateTimeString;
+        print('🔵 [LEASE HISTORY] Trying common format parsing');
+
+        // Check if it's ISO format with Z (UTC) - e.g., "2026-01-07T04:51:59.000Z"
+        // For lease history, if date has Z, convert UTC to local time (like web does)
+        bool isISOWithZ = dateTimeString.contains('T') &&
+            dateTimeString.toUpperCase().endsWith('Z');
+
+        if (isISOWithZ && widget.historyType == HistoryType.lease) {
+          print(
+              '🔵 [LEASE HISTORY] Detected ISO format with Z (UTC): "$dateTimeString"');
+          try {
+            // Parse as UTC and convert to local time (matching web behavior)
+            parsedDate = DateTime.parse(dateTimeString).toLocal();
+            print(
+                '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
+          } catch (e) {
+            print('🔵 [LEASE HISTORY] Failed to parse ISO with Z: $e');
+          }
+        }
+
+        // If not ISO with Z, try other formats
+        if (parsedDate == null) {
+          try {
+            // Handle "yyyy-MM-dd HH:mm:ss" format explicitly
+            // This format is already in local time (no conversion needed)
+            if (RegExp(r'^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$')
+                .hasMatch(dateTimeString)) {
+              parsedDate =
+                  DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+              print(
+                  '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
+            } else if (RegExp(r'^\d{4}-\d{2}-\d{2}$')
+                .hasMatch(dateTimeString)) {
+              // Date only format "yyyy-MM-dd" - parse and set to midnight
+              parsedDate = DateFormat('yyyy-MM-dd').parse(dateTimeString);
+              print(
+                  '🔵 [LEASE HISTORY] Parsed as date-only (yyyy-MM-dd): $parsedDate');
+            } else if (!isISOWithZ) {
+              // Try DateTime.parse for ISO formats (but not if we already handled Z format)
+              parsedDate = DateTime.parse(dateTimeString);
+              print(
+                  '🔵 [LEASE HISTORY] Parsed with DateTime.parse: $parsedDate');
+            }
+          } catch (e) {
+            print(
+                '🔵 [LEASE HISTORY] Common format parse failed, trying format list: $e');
+            // Try other common formats
+            List<String> dateTimeFormats = [
+              'yyyy-MM-dd HH:mm:ss', // "2026-01-01 08:00:04"
+              'yyyy-MM-dd HH:mm', // "2026-01-01 08:00"
+              'MM/dd/yyyy h:mm:ss a', // "01/01/2026 8:00:03 AM"
+              'M/d/yyyy h:mm:ss a', // "1/1/2026 8:00:03 AM"
+              'MM/dd/yyyy HH:mm:ss', // "01/01/2026 08:00:03"
+              'M/d/yyyy HH:mm:ss', // "1/1/2026 08:00:03"
+              'yyyy-MM-dd', // "2025-12-08" (date only)
+              'MM/dd/yyyy', // "12/08/2025"
+              'M/d/yyyy', // "12/8/2025"
+            ];
+
+            for (String format in dateTimeFormats) {
+              try {
+                parsedDate = DateFormat(format).parse(dateTimeString);
+                print(
+                    '🔵 [LEASE HISTORY] Parsed with format "$format": $parsedDate');
+                break;
+              } catch (e2) {
+                continue;
+              }
+            }
+          }
+        }
       }
 
-      // Format to match web format: MM/dd/yyyy HH:mm:ss
-      // Example: "12/22/2025 10:24:58"
-      String formattedDate = DateFormat('MM/dd/yyyy').format(parsedDate);
-      String formattedTime = DateFormat('HH:mm:ss').format(parsedDate);
+      // Step 3: If still not parsed, use DateProvider as fallback
+      if (parsedDate == null) {
+        print('🔵 [LEASE HISTORY] Using DateProvider fallback');
+        // Try DateProvider first
+        String formatted = dateProvider.formatCurrentDateTime(dateTimeString);
+        print('🔵 [LEASE HISTORY] DateProvider formatted: "$formatted"');
 
-      return '$formattedDate $formattedTime';
+        // ALWAYS ensure seconds are included - check and fix if missing
+        // Check for patterns like "8:00 AM" or "08:00 AM" (without seconds)
+        // Pattern: matches HH:MM or H:MM followed by optional space and AM/PM
+        final timePattern12h =
+            RegExp(r'(\d{1,2}:\d{2})\s*(AM|PM)', caseSensitive: false);
+        // Pattern: matches HH:MM (24-hour) that is NOT followed by :ss
+        final timePattern24h = RegExp(r'(\d{1,2}:\d{2})(?!:\d{2})');
+
+        // Check if seconds are missing (no pattern like :00, :03, :59, etc.)
+        bool hasSeconds = RegExp(r':\d{2}\s*(AM|PM)?$', caseSensitive: false)
+                .hasMatch(formatted) ||
+            formatted
+                .contains(RegExp(r':\d{2}\s+(AM|PM)', caseSensitive: false));
+
+        print('🔵 [LEASE HISTORY] Has seconds? $hasSeconds');
+
+        if (!hasSeconds) {
+          print('🔵 [LEASE HISTORY] Adding seconds...');
+          // Seconds are missing - add them
+          if (timePattern12h.hasMatch(formatted)) {
+            // 12-hour format without seconds - add :00 before AM/PM
+            formatted = formatted.replaceAllMapped(timePattern12h, (match) {
+              final result = '${match.group(1)}:00 ${match.group(2)}';
+              print(
+                  '🔵 [LEASE HISTORY] Replaced 12h: "${match.group(0)}" -> "$result"');
+              return result;
+            });
+          } else if (timePattern24h.hasMatch(formatted)) {
+            // 24-hour format without seconds - add :00
+            formatted = formatted.replaceAllMapped(timePattern24h, (match) {
+              final result = '${match.group(1)}:00';
+              print(
+                  '🔵 [LEASE HISTORY] Replaced 24h: "${match.group(0)}" -> "$result"');
+              return result;
+            });
+          }
+        }
+
+        print(
+            '🔵 [LEASE HISTORY] Final formatted result (Step 3): "$formatted"');
+        return formatted;
+      }
+
+      // Step 4: Format parsed date
+      print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
+
+      // For lease history, ALWAYS use web format: yyyy-MM-dd HH:mm:ss (24-hour format)
+      // If date came as ISO with Z (UTC), it's already converted to local time above
+      // If date came as "yyyy-MM-dd HH:mm:ss", it's already in local time
+      // Format: yyyy-MM-dd HH:mm:ss (e.g., "2026-01-06 08:00:03")
+      if (widget.historyType == HistoryType.lease) {
+        // Use parsed date (already in local time if it was UTC)
+        // Format: yyyy-MM-dd HH:mm:ss (24-hour format to match web)
+        String formattedResult =
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
+        print(
+            '🔵 [LEASE HISTORY] Formatted as web format (yyyy-MM-dd HH:mm:ss): "$formattedResult"');
+        return formattedResult;
+      }
+
+      // For other history types, apply timezone offset (matching DateProvider's behavior)
+      DateTime dateToFormat = parsedDate.add(Duration(hours: 5, minutes: 30));
+      print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
+
+      // For other history types, use user's preferences
+      // Get user's date format preference
+      String dateFormat = dateProvider.dateFormat;
+      // Get user's time format preference and ALWAYS include seconds
+      String timeFormatPattern =
+          dateProvider.timeFormat == '24' ? 'HH:mm:ss' : 'h:mm:ss a';
+      String dateTimeFormat = '$dateFormat $timeFormatPattern';
+
+      print('🔵 [LEASE HISTORY] Date format: "$dateFormat"');
+      print(
+          '🔵 [LEASE HISTORY] Time format: "${dateProvider.timeFormat}" -> "$timeFormatPattern"');
+      print('🔵 [LEASE HISTORY] Combined format: "$dateTimeFormat"');
+
+      // Format the date with seconds ALWAYS included
+      String formattedResult = DateFormat(dateTimeFormat).format(dateToFormat);
+
+      // Double-check: ensure seconds are present (safety check)
+      // Check if seconds pattern exists (like :00, :03, :59 followed by optional AM/PM)
+      bool hasSeconds = RegExp(r':\d{2}\s*(AM|PM)?$', caseSensitive: false)
+              .hasMatch(formattedResult) ||
+          formattedResult
+              .contains(RegExp(r':\d{2}\s+(AM|PM)', caseSensitive: false));
+
+      if (!hasSeconds) {
+        // If somehow seconds are missing, add them manually
+        final timeMatch12h =
+            RegExp(r'(\d{1,2}:\d{2})\s*(AM|PM)', caseSensitive: false)
+                .firstMatch(formattedResult);
+        final timeMatch24h =
+            RegExp(r'(\d{1,2}:\d{2})(?!:\d{2})').firstMatch(formattedResult);
+
+        if (timeMatch12h != null) {
+          formattedResult = formattedResult.replaceAll(timeMatch12h.group(0)!,
+              '${timeMatch12h.group(1)}:00 ${timeMatch12h.group(2)}');
+        } else if (timeMatch24h != null) {
+          formattedResult = formattedResult.replaceAll(
+              timeMatch24h.group(0)!, '${timeMatch24h.group(1)}:00');
+        }
+      }
+
+      return formattedResult;
     } catch (e) {
       print('Error formatting date: $e');
-      return dateTimeString;
+      // Fallback: try DateProvider one more time
+      try {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        return dateProvider.formatCurrentDateTime(dateTimeString);
+      } catch (e2) {
+        return dateTimeString;
+      }
     }
   }
 
@@ -605,6 +795,15 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       return details;
     }
 
+    // Pattern 0.7: Check for "Payment created" format (for tenant/property history)
+    // Format: "Payment created" followed by details like Amount, Payment Method, Status, etc.
+    if (descriptionWithoutBodyPreview
+        .toLowerCase()
+        .contains('payment created')) {
+      return _parsePaymentCreatedDescription(
+          descriptionWithoutBodyPreview, bodyPreviewValue);
+    }
+
     // Pattern 1: Check for "Changes:" which indicates field changes
     final changesIndex = descriptionWithoutBodyPreview.indexOf('Changes:');
     if (changesIndex != -1) {
@@ -916,7 +1115,29 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       }
     }
 
-    // Pattern 3: Enhanced Key-Value pair detection
+    // Pattern 3: Check for action-based descriptions FIRST (before generic key-value)
+    // These need to be checked before Pattern 4 to ensure they're parsed correctly
+    // Examples: "Tenant moved out", "Tenant updated", "Lease created", etc.
+
+    // Check for "Tenant moved out" pattern
+    if (cleanDescription.toLowerCase().contains('tenant moved out') ||
+        cleanDescription.toLowerCase().contains('moved out')) {
+      return _parseTenantMovedOutDescription(cleanDescription);
+    }
+
+    // Check for "Tenant updated" pattern
+    if (cleanDescription.toLowerCase().contains('tenant updated')) {
+      return _parseTenantUpdatedDescription(cleanDescription);
+    }
+
+    // Check for lease/property patterns
+    if (cleanDescription.toLowerCase().contains('lease created') ||
+        cleanDescription.toLowerCase().contains('property:') ||
+        cleanDescription.toLowerCase().contains('lease type:')) {
+      return _parseLeaseDescription(cleanDescription);
+    }
+
+    // Pattern 4: Enhanced Key-Value pair detection
     // Look for patterns like "Key: Value" but handle nested content better
     // Parse description WITHOUT body preview first
     final keyValuePattern = RegExp(
@@ -951,13 +1172,6 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (details.isNotEmpty) {
         return details;
       }
-    }
-
-    // Pattern 5: Check for lease/property patterns
-    if (cleanDescription.toLowerCase().contains('lease created') ||
-        cleanDescription.toLowerCase().contains('property:') ||
-        cleanDescription.toLowerCase().contains('lease type:')) {
-      return _parseLeaseDescription(cleanDescription);
     }
 
     // Pattern 6: Very long description - split intelligently
@@ -1296,32 +1510,416 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   List<String> _parseLeaseDescription(String description) {
     List<String> details = [];
 
-    // Extract main action
+    // Extract main action (e.g., "Lease created")
     final actionMatch = RegExp(r'^([^:]+?):').firstMatch(description);
+    String headerText = '';
     if (actionMatch != null) {
-      details.add('${actionMatch.group(1)?.trim() ?? ''}:');
-    }
-
-    // Extract all key-value pairs
-    final keyValuePattern = RegExp(
-        r'([A-Za-z][A-Za-z\s]+?):\s*([^,;]+?)(?=\s+[A-Za-z][A-Za-z\s]+?:|$)');
-    final matches = keyValuePattern.allMatches(description);
-
-    for (var match in matches) {
-      final key = match.group(1)?.trim() ?? '';
-      final value = match.group(2)?.trim() ?? '';
-      if (key.isNotEmpty &&
-          value.isNotEmpty &&
-          !key.toLowerCase().contains('lease created')) {
-        details.add('$key: $value');
+      headerText = actionMatch.group(1)?.trim() ?? '';
+      if (headerText.isNotEmpty) {
+        details.add(headerText); // Add header without colon
+        print('🔵 [LEASE DESC] Added header: "$headerText"');
       }
     }
 
-    if (details.isEmpty) {
+    // Extract all key-value pairs after the header
+    // Remove the header part from description before parsing key-value pairs
+    String remainingDescription = description;
+    if (headerText.isNotEmpty) {
+      // Remove "Lease created: " from the start
+      final headerPattern = RegExp(r'^' + RegExp.escape(headerText) + r':\s*',
+          caseSensitive: false);
+      remainingDescription =
+          remainingDescription.replaceFirst(headerPattern, '');
+    }
+
+    // Pattern: "Key: Value" separated by commas
+    final keyValuePattern = RegExp(
+        r'([A-Za-z][A-Za-z\s]+?):\s*([^,;]+?)(?=\s+[A-Za-z][A-Za-z\s]+?:|,|$)',
+        dotAll: true);
+    final matches = keyValuePattern.allMatches(remainingDescription);
+
+    print(
+        '🔵 [LEASE DESC] Found ${matches.length} key-value matches in remaining: "$remainingDescription"');
+
+    for (var match in matches) {
+      final key = match.group(1)?.trim() ?? '';
+      var value = match.group(2)?.trim() ?? '';
+
+      // Clean up value - remove trailing commas, periods, dashes, and extra spaces
+      value = value.replaceAll(RegExp(r'^[,;.\s\-]+'), '');
+      value = value.replaceAll(RegExp(r'[,;.\s\-]+$'), '');
+      value = value.trim();
+
+      // Skip if key matches the header (shouldn't happen after removing header, but just in case)
+      if (key.toLowerCase() == headerText.toLowerCase() &&
+          headerText.isNotEmpty) {
+        print('🔵 [LEASE DESC] Skipping header key: "$key"');
+        continue;
+      }
+
+      if (key.isNotEmpty && value.isNotEmpty) {
+        details.add('$key: $value');
+        print('🔵 [LEASE DESC] Added detail: "$key: $value"');
+      }
+    }
+
+    print(
+        '🔵 [LEASE DESC] Final details count: ${details.length}, details: $details');
+
+    if (details.length <= 1) {
+      // Only header or empty - try general parsing
+      print('🔵 [LEASE DESC] Falling back to general parsing');
       return _parseGeneralDescription(description);
     }
 
     return details;
+  }
+
+  /// Parse "Tenant moved out" description format
+  /// Format: "Tenant moved out: Leo Brown, Property: X, Move-out Date: Y, Notice Given: Z, Lease ID: W"
+  List<String> _parseTenantMovedOutDescription(String description) {
+    List<String> details = [];
+
+    // Extract header "Tenant moved out"
+    details.add('Tenant moved out');
+    print('🔵 [TENANT MOVED OUT] Added header: "Tenant moved out"');
+
+    // Remove "Tenant moved out:" from the start
+    String remainingDescription = description;
+    final headerPattern =
+        RegExp(r'^Tenant moved out:\s*', caseSensitive: false);
+    remainingDescription =
+        remainingDescription.replaceFirst(headerPattern, '').trim();
+
+    print(
+        '🔵 [TENANT MOVED OUT] Remaining after header: "$remainingDescription"');
+
+    // Extract tenant name (comes first, before first key-value pair)
+    // Pattern: "Name, Key: Value" or "Name, Key: Value, Key: Value"
+    final firstCommaIndex = remainingDescription.indexOf(',');
+    if (firstCommaIndex > 0) {
+      final tenantName =
+          remainingDescription.substring(0, firstCommaIndex).trim();
+
+      // Check if it's a valid name (not a key-value pair)
+      if (tenantName.isNotEmpty &&
+          !tenantName.contains(':') &&
+          tenantName.length > 1) {
+        // Add tenant name as bullet point
+        details.add('• $tenantName');
+        print('🔵 [TENANT MOVED OUT] Added tenant name: "$tenantName"');
+
+        // Remove tenant name from remaining description
+        remainingDescription =
+            remainingDescription.substring(firstCommaIndex + 1).trim();
+      }
+    }
+
+    // Extract key-value pairs from remaining description
+    final keyValuePattern = RegExp(
+        r'([A-Za-z][A-Za-z\s\-]+?):\s*([^,;]+?)(?=\s+[A-Za-z][A-Za-z\s\-]+?:|,|$)',
+        dotAll: true);
+    final matches = keyValuePattern.allMatches(remainingDescription);
+
+    print('🔵 [TENANT MOVED OUT] Found ${matches.length} key-value matches');
+
+    for (var match in matches) {
+      final key = match.group(1)?.trim() ?? '';
+      var value = match.group(2)?.trim() ?? '';
+
+      // Clean up value - remove trailing commas, periods, dashes, and extra spaces
+      value = value.replaceAll(RegExp(r'^[,;.\s\-]+'), '');
+      value = value.replaceAll(RegExp(r'[,;.\s\-]+$'), '');
+      value = value.trim();
+
+      if (key.isNotEmpty && value.isNotEmpty) {
+        details.add('$key: $value');
+        print('🔵 [TENANT MOVED OUT] Added detail: "$key: $value"');
+      }
+    }
+
+    print(
+        '🔵 [TENANT MOVED OUT] Final details count: ${details.length}, details: $details');
+
+    if (details.length <= 1) {
+      // Only header or empty - try general parsing
+      print('🔵 [TENANT MOVED OUT] Falling back to general parsing');
+      return _parseGeneralDescription(description);
+    }
+
+    return details;
+  }
+
+  /// Parse "Tenant updated" description format
+  /// Format: "Tenant updated by User: Name (email) (no field changes detected)" or similar
+  List<String> _parseTenantUpdatedDescription(String description) {
+    List<String> details = [];
+
+    // Extract header "Tenant updated"
+    details.add('Tenant updated');
+
+    // Remove "Tenant updated" from the start
+    String remainingDescription = description;
+    final headerPattern =
+        RegExp(r'^Tenant updated\s*(?:by\s+[^:]+)?:\s*', caseSensitive: false);
+    remainingDescription =
+        remainingDescription.replaceFirst(headerPattern, '').trim();
+
+    // Extract key-value pairs or simple text
+    final keyValuePattern = RegExp(
+        r'([A-Za-z][A-Za-z\s\-]+?):\s*([^,;]+?)(?=\s+[A-Za-z][A-Za-z\s\-]+?:|,|$)',
+        dotAll: true);
+    final matches = keyValuePattern.allMatches(remainingDescription);
+
+    if (matches.length > 0) {
+      for (var match in matches) {
+        final key = match.group(1)?.trim() ?? '';
+        var value = match.group(2)?.trim() ?? '';
+
+        // Clean up value
+        value = value.replaceAll(RegExp(r'^[,;.\s\-]+'), '');
+        value = value.replaceAll(RegExp(r'[,;.\s\-]+$'), '');
+        value = value.trim();
+
+        if (key.isNotEmpty && value.isNotEmpty) {
+          details.add('$key: $value');
+        }
+      }
+    } else if (remainingDescription.isNotEmpty) {
+      // No key-value pairs, add as simple text
+      details.add(remainingDescription);
+    }
+
+    if (details.length <= 1) {
+      return _parseGeneralDescription(description);
+    }
+
+    return details;
+  }
+
+  /// Parse "Payment created" description format
+  /// Format: "Payment created" followed by key-value pairs like:
+  /// Amount: $X, Payment Method: Y, Status: Z, Transaction ID: ABC, Payment Date: MM/DD/YYYY,
+  /// Surcharge: $X, Entry: Account Name: $Amount, etc.
+  List<String> _parsePaymentCreatedDescription(
+      String description, String bodyPreviewValue) {
+    List<String> details = [];
+
+    // Add header "Payment created"
+    details.add('Payment created');
+
+    // Extract key-value pairs from the description
+    // Pattern: "Key: Value" or "Key: Value."
+    // Improved pattern to better handle Entry data
+    final keyValuePattern = RegExp(
+        r'([A-Za-z][A-Za-z\s]+?):\s*([^:]+?)(?=\s+[A-Za-z][A-Za-z\s]+?:|\.\s*$|$|\n)',
+        dotAll: true);
+    final matches = keyValuePattern.allMatches(description);
+
+    print('🔵 [PAYMENT CREATED] Parsing description: "$description"');
+    print('🔵 [PAYMENT CREATED] Found ${matches.length} key-value matches');
+
+    // Separate payment fields from entry fields
+    List<String> paymentFieldDetails = [];
+    List<String> entryFieldDetails = [];
+
+    for (var match in matches) {
+      final key = match.group(1)?.trim() ?? '';
+      var value = match.group(2)?.trim() ?? '';
+
+      // Clean up value - remove trailing periods, commas, and extra spaces
+      value = value.replaceAll(RegExp(r'^[,;.\s]+'), '');
+      value = value.replaceAll(RegExp(r'[,;.\s]+$'), '');
+      value = value.trim();
+
+      print('🔵 [PAYMENT CREATED] Key: "$key", Value: "$value"');
+
+      // Skip "Payment created" itself as we already added it as header
+      if (key.toLowerCase().contains('payment created')) {
+        continue;
+      }
+
+      if (key.isNotEmpty && value.isNotEmpty) {
+        final keyLower = key.toLowerCase();
+
+        // Check if it's an entry-related field
+        bool isEntryField = keyLower.contains('entry') ||
+            keyLower.contains('fee income') ||
+            keyLower.contains('late fee income') ||
+            keyLower.contains('rent income') ||
+            keyLower.contains('conviniance fee') ||
+            keyLower.contains('convenience fee');
+
+        // Handle "Entry:" specially - extract account:amount pairs, skip labels
+        if (keyLower.contains('entry')) {
+          // Entry can contain account:amount pairs: "Entry: Rent Income: $15.00, conviniance fee: $1.05"
+          // We skip "Entry: Late" type labels and only extract account:amount pairs
+
+          if (value.contains(':')) {
+            // Value contains account:amount pairs
+            // Split by comma to get individual entries
+            if (value.contains(',')) {
+              final entries = value
+                  .split(',')
+                  .map((e) => e.trim())
+                  .where((e) => e.isNotEmpty)
+                  .toList();
+              for (var entry in entries) {
+                // Check if entry has format "Account: Amount"
+                final entryMatch = RegExp(r'([^:]+):\s*(.+)').firstMatch(entry);
+                if (entryMatch != null) {
+                  final account = entryMatch.group(1)?.trim() ?? '';
+                  final amount = entryMatch.group(2)?.trim() ?? '';
+                  // Add as separate line: "Account: Amount" (not "Entry: Account: Amount")
+                  entryFieldDetails.add('$account: $amount');
+                }
+                // Skip labels like "Entry: Late" - don't add them
+              }
+            } else {
+              // Single entry with account:amount format
+              final entryMatch = RegExp(r'([^:]+):\s*(.+)').firstMatch(value);
+              if (entryMatch != null) {
+                final account = entryMatch.group(1)?.trim() ?? '';
+                final amount = entryMatch.group(2)?.trim() ?? '';
+                // Add as separate line: "Account: Amount"
+                entryFieldDetails.add('$account: $amount');
+              }
+              // Skip labels like "Entry: Late" - don't add them
+            }
+          }
+          // Skip "Entry: Late" type labels - don't add them to entryFieldDetails
+        } else if (isEntryField) {
+          // Entry-related field (Fee Income, Late Fee Income, Rent Income, etc.)
+          entryFieldDetails.add('$key: $value');
+        } else {
+          // Regular payment field
+          paymentFieldDetails.add('$key: $value');
+        }
+      }
+    }
+
+    // Add payment fields first
+    details.addAll(paymentFieldDetails);
+
+    // Add "Entry Details:" header if there are entry fields
+    if (entryFieldDetails.isNotEmpty) {
+      details.add('Entry Details:');
+      details.addAll(entryFieldDetails);
+    }
+
+    // If no matches found, try to extract common payment fields manually
+    if (details.length == 1) {
+      // Only "Payment created" header
+      // Try to extract Amount
+      final amountMatch =
+          RegExp(r'Amount:\s*\$?([\d,]+\.?\d*)', caseSensitive: false)
+              .firstMatch(description);
+      if (amountMatch != null) {
+        details.add('Amount: \$${amountMatch.group(1)}');
+      }
+
+      // Try to extract Payment Method
+      final methodMatch =
+          RegExp(r'Payment Method:\s*([^,\.]+)', caseSensitive: false)
+              .firstMatch(description);
+      if (methodMatch != null) {
+        details.add('Payment Method: ${methodMatch.group(1)?.trim()}');
+      }
+
+      // Try to extract Status
+      final statusMatch = RegExp(r'Status:\s*([^,\.]+)', caseSensitive: false)
+          .firstMatch(description);
+      if (statusMatch != null) {
+        details.add('Status: ${statusMatch.group(1)?.trim()}');
+      }
+
+      // Try to extract Transaction ID
+      final txIdMatch =
+          RegExp(r'Transaction ID:\s*([^,\.\s]+)', caseSensitive: false)
+              .firstMatch(description);
+      if (txIdMatch != null) {
+        details.add('Transaction ID: ${txIdMatch.group(1)?.trim()}');
+      }
+
+      // Try to extract Payment Date
+      final dateMatch =
+          RegExp(r'Payment Date:\s*([^,\.]+)', caseSensitive: false)
+              .firstMatch(description);
+      if (dateMatch != null) {
+        details.add('Payment Date: ${dateMatch.group(1)?.trim()}');
+      }
+
+      // Try to extract Surcharge
+      final surchargeMatch =
+          RegExp(r'Surcharge:\s*\$?([\d,]+\.?\d*)', caseSensitive: false)
+              .firstMatch(description);
+      if (surchargeMatch != null) {
+        details.add('Surcharge: \$${surchargeMatch.group(1)}');
+      }
+
+      // Extract individual account:amount pairs
+      // Skip "Entry:" labels - we only want account:amount pairs under "Entry Details:"
+      // Look for patterns like "Fee Income: $0.10", "Rent Income: $8.90", "conviniance fee: $0.70"
+      // These might come after "Entry:" or be separate
+      final accountAmountPattern = RegExp(
+          r'([A-Za-z][A-Za-z\s]+?):\s*\$?([\d,]+\.?\d*)',
+          caseSensitive: false);
+      final accountMatches = accountAmountPattern.allMatches(description);
+
+      // Filter out common payment fields we've already extracted
+      final excludedKeys = [
+        'amount',
+        'payment method',
+        'status',
+        'transaction id',
+        'payment date',
+        'surcharge',
+        'entry'
+      ];
+      final entryAccounts = <String, String>{};
+
+      for (var match in accountMatches) {
+        final account = match.group(1)?.trim() ?? '';
+        final amount = match.group(2)?.trim() ?? '';
+        final accountLower = account.toLowerCase();
+
+        // Skip if it's a payment field we've already extracted
+        bool isExcluded =
+            excludedKeys.any((excluded) => accountLower.contains(excluded));
+
+        // Only include if it looks like an income/account entry (not a payment field)
+        if (!isExcluded && account.isNotEmpty && amount.isNotEmpty) {
+          // Check if it's likely an entry account (contains "income", "fee", etc.)
+          if (accountLower.contains('income') ||
+              accountLower.contains('fee') ||
+              accountLower.contains('rent') ||
+              accountLower.contains('deposit') ||
+              accountLower.contains('charge') ||
+              accountLower.contains('conviniance')) {
+            entryAccounts[account] = amount;
+          }
+        }
+      }
+
+      // Add "Entry Details:" header if we have entry accounts
+      if (entryAccounts.isNotEmpty) {
+        details.add('Entry Details:');
+        // Add entry accounts as separate lines under "Entry Details:"
+        for (var entry in entryAccounts.entries) {
+          details.add('${entry.key}: \$${entry.value}');
+        }
+      }
+    }
+
+    // Add body preview at the end if it exists
+    if (bodyPreviewValue.isNotEmpty) {
+      bodyPreviewValue = bodyPreviewValue.replaceAll(RegExp(r'<[^>]+>'), '');
+      bodyPreviewValue = bodyPreviewValue.replaceAll('**', '');
+      bodyPreviewValue = bodyPreviewValue.replaceAll('&nbsp;', ' ');
+      details.add('Body preview: $bodyPreviewValue');
+    }
+
+    return details.isNotEmpty ? details : [description];
   }
 
   /// General description parser as fallback
@@ -1367,8 +1965,84 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   }
 
   /// Build description widget with parsed details
-  Widget _buildDescriptionWidget(String description) {
+  Widget _buildDescriptionWidget(String description,
+      {HistoryItem? historyItem}) {
     final parsedDetails = _parseDescription(description);
+
+    // For "Payment created" entries, also check metadata for Entry data
+    if (historyItem != null &&
+        historyItem.metadata != null &&
+        description.toLowerCase().contains('payment created')) {
+      // Check if metadata has entry array
+      if (historyItem.metadata!['entry'] != null) {
+        final entryList = historyItem.metadata!['entry'];
+        if (entryList is List && entryList.isNotEmpty) {
+          // Add Entry data from metadata to parsed details
+          // Find where to insert (after payment fields, before body preview)
+          int insertIndex = parsedDetails.length;
+
+          // Check if body preview exists, insert before it
+          for (int i = 0; i < parsedDetails.length; i++) {
+            if (parsedDetails[i].toLowerCase().startsWith('body preview')) {
+              insertIndex = i;
+              break;
+            }
+          }
+
+          // Check if "Entry Details:" header already exists in parsed details
+          bool hasEntryDetailsHeader = parsedDetails.any((detail) =>
+              detail.toLowerCase().trim().startsWith('entry details:'));
+
+          // Add "Entry Details:" header if not present
+          if (!hasEntryDetailsHeader) {
+            parsedDetails.insert(insertIndex, 'Entry Details:');
+            insertIndex++;
+          } else {
+            // Find the index of "Entry Details:" header
+            for (int i = 0; i < parsedDetails.length; i++) {
+              if (parsedDetails[i]
+                  .toLowerCase()
+                  .trim()
+                  .startsWith('entry details:')) {
+                insertIndex = i + 1;
+                break;
+              }
+            }
+          }
+
+          // Add each entry's account and amount under "Entry Details:"
+          for (var entry in entryList) {
+            if (entry is Map) {
+              final account = entry['account']?.toString() ?? '';
+              final amount = entry['amount'];
+
+              if (account.isNotEmpty && amount != null) {
+                // Format amount
+                String amountStr = '';
+                if (amount is num) {
+                  amountStr = amount.toStringAsFixed(2);
+                  // Add commas for thousands
+                  final parts = amountStr.split('.');
+                  final integerPart = parts[0];
+                  final decimalPart = parts.length > 1 ? parts[1] : '00';
+                  final regex = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+                  final formattedInteger = integerPart.replaceAllMapped(
+                    regex,
+                    (Match m) => '${m[1]},',
+                  );
+                  amountStr = '\$$formattedInteger.$decimalPart';
+                } else {
+                  amountStr = '\$$amount';
+                }
+
+                parsedDetails.insert(insertIndex, '$account: $amountStr');
+                insertIndex++;
+              }
+            }
+          }
+        }
+      }
+    }
 
     if (parsedDetails.isEmpty) {
       return const SizedBox.shrink();
@@ -1431,7 +2105,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     }
 
     // Multiple items - show as list
-    // Check if first item is a header (like "Utility Added (Unit X): utilityname")
+    // Check if first item is a header (like "Utility Added (Unit X): utilityname", "Payment created", "Entry Details:")
     // and rest are details (like "Provider: X", "Account: Y")
     bool hasHeader = false;
     String? headerText;
@@ -1444,10 +2118,33 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (firstItemLower.startsWith('utility added') ||
           firstItemLower.startsWith('utility deleted') ||
           firstItemLower.startsWith('additional stat added') ||
-          firstItemLower.startsWith('additional stat updated')) {
+          firstItemLower.startsWith('additional stat updated') ||
+          firstItemLower.startsWith('payment created') ||
+          firstItemLower.startsWith('lease created') ||
+          firstItemLower.startsWith('tenant moved out') ||
+          firstItemLower.startsWith('tenant updated')) {
         hasHeader = true;
         headerText = firstItem;
         detailItems = parsedDetails.sublist(1);
+      }
+
+      // Check for "Entry Details:" header in the details
+      int entryDetailsIndex = -1;
+      for (int i = 0; i < parsedDetails.length; i++) {
+        if (parsedDetails[i]
+            .toLowerCase()
+            .trim()
+            .startsWith('entry details:')) {
+          entryDetailsIndex = i;
+          break;
+        }
+      }
+
+      // If "Entry Details:" found, treat it as a sub-header
+      // Items after it should be indented more
+      if (entryDetailsIndex != -1 &&
+          entryDetailsIndex < parsedDetails.length - 1) {
+        // This will be handled in the widget builder
       }
     }
 
@@ -1475,6 +2172,40 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                   final index = entry.key;
                   final detail = entry.value;
 
+                  // Check if it's "Entry Details:" header - make it bold
+                  final isEntryDetailsHeader =
+                      detail.toLowerCase().trim().startsWith('entry details:');
+
+                  // Check if it's an entry item (comes after "Entry Details:")
+                  // Find if there's an "Entry Details:" before this item
+                  bool isEntryItem = false;
+                  for (int i = 0; i <= index; i++) {
+                    if (i < detailItems.length &&
+                        detailItems[i]
+                            .toLowerCase()
+                            .trim()
+                            .startsWith('entry details:')) {
+                      isEntryItem = true;
+                      break;
+                    }
+                  }
+
+                  // Check if it's a bullet point (starts with "•")
+                  if (detail.trim().startsWith('•')) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          bottom: index < detailItems.length - 1 ? 4 : 0),
+                      child: Text(
+                        detail,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    );
+                  }
+
                   // Check if it's a key-value pair
                   final colonIndex = detail.indexOf(':');
                   if (colonIndex > 0 && colonIndex < detail.length - 1) {
@@ -1483,24 +2214,33 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
                     return Padding(
                       padding: EdgeInsets.only(
-                          bottom: index < detailItems.length - 1 ? 4 : 0),
+                          bottom: index < detailItems.length - 1 ? 4 : 0,
+                          left: isEntryItem && !isEntryDetailsHeader
+                              ? 16.0
+                              : 0.0), // Extra indent for Entry items
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             '$key: ',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: isEntryDetailsHeader
+                                  ? FontWeight.bold
+                                  : (isEntryItem
+                                      ? FontWeight.w500
+                                      : FontWeight.bold),
                               color: Colors.black87,
                             ),
                           ),
                           Expanded(
                             child: Text(
                               value,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: isEntryDetailsHeader
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
                                 color: Colors.black87,
                               ),
                             ),
@@ -1512,12 +2252,17 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
                   return Padding(
                     padding: EdgeInsets.only(
-                        bottom: index < detailItems.length - 1 ? 4 : 0),
+                        bottom: index < detailItems.length - 1 ? 4 : 0,
+                        left: isEntryItem && !isEntryDetailsHeader
+                            ? 16.0
+                            : 0.0), // Extra indent for Entry items
                     child: Text(
                       detail,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: isEntryDetailsHeader
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
@@ -2089,7 +2834,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                       HistoryItem historyItem = entry.value;
                       bool isExpandedLocal = _expandedIndex == index;
                       String formattedDate =
-                          _formatDateTimeWithAMPM(historyItem.date);
+                          _formatDateTimeWithAMPM(historyItem.date, context);
 
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 6),
@@ -2248,7 +2993,9 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                                         child:
                                                             _buildDescriptionWidget(
                                                                 historyItem
-                                                                    .description),
+                                                                    .description,
+                                                                historyItem:
+                                                                    historyItem),
                                                       ),
                                                     ),
                                                   ],

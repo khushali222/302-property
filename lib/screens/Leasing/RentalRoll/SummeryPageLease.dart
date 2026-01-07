@@ -339,13 +339,78 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         return dateTimeString;
       }
 
-      // Format with date and time in AM/PM format
-      final dateProvider = Provider.of<DateProvider>(context, listen: false);
-      String formattedDate = dateProvider
-          .formatCurrentDate(DateFormat('yyyy-MM-dd').format(parsedDate));
-      String formattedTime = DateFormat('h:mm a').format(parsedDate);
+      // Format with date and time to match web format exactly
+      // Web format: YYYY-MM-DD HH:mm:ss (24-hour format, zero-padded, with seconds)
+      // Example: "2026-01-06 08:00:03"
 
-      return '$formattedDate $formattedTime';
+      // Handle verbose JavaScript date format FIRST
+      // Format: "Mon Dec 08 2025 08:00:03 GMT+0000 (Coordinated Universal Time)"
+      if (dateTimeString.contains('GMT') && dateTimeString.contains('(')) {
+        try {
+          String datePart = dateTimeString.split('(')[0].trim();
+          try {
+            final verboseFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
+            parsedDate = verboseFormat.parse(datePart);
+          } catch (e) {
+            // Alternative: Extract components manually
+            final altPattern = RegExp(
+                r'(\w{3})\s+(\w{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}:\d{2}:\d{2})');
+            final match = altPattern.firstMatch(dateTimeString);
+            if (match != null) {
+              final month = match.group(2)!;
+              final day = match.group(3)!;
+              final year = match.group(4)!;
+              final time = match.group(5)!;
+              final altFormat = DateFormat("MMM dd yyyy HH:mm:ss");
+              parsedDate = altFormat.parse("$month $day $year $time");
+            }
+          }
+        } catch (e) {
+          print('Failed to parse verbose date format: $e');
+        }
+      }
+
+      // If parsedDate is still null, try to parse common formats
+      if (parsedDate == null) {
+        // If already in YYYY-MM-DD HH:mm:ss format, return as-is (matches web format)
+        if (RegExp(r'^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$')
+            .hasMatch(dateTimeString)) {
+          return dateTimeString;
+        }
+        // Try to parse with common formats
+        try {
+          parsedDate = DateTime.parse(dateTimeString);
+        } catch (e) {
+          // Try DateFormat parsing
+          List<String> dateFormats = [
+            'yyyy-MM-dd HH:mm:ss',
+            'yyyy-MM-dd HH:mm',
+            'yyyy-MM-dd',
+            'MM/dd/yyyy HH:mm:ss',
+            'MM/dd/yyyy HH:mm',
+            'MM/dd/yyyy',
+          ];
+          for (String format in dateFormats) {
+            try {
+              parsedDate = DateFormat(format).parse(dateTimeString);
+              break;
+            } catch (e) {
+              continue;
+            }
+          }
+        }
+      }
+
+      // If still null, return original string
+      if (parsedDate == null) {
+        return dateTimeString;
+      }
+
+      // Format to match web: YYYY-MM-DD HH:mm:ss (always 24-hour format, zero-padded, with seconds)
+      String formattedDateTime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
+
+      return formattedDateTime;
     } catch (e) {
       print('Error formatting date: $e');
       return dateTimeString;
@@ -4004,496 +4069,21 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           ),
                           // Lease History Table - OLD CODE
                           // CustomHistoryTable commented out - using old implementation
-                          // Builder(
-                          //   builder: (context) {
-                          //     print(
-                          //         '🔵 Lease Summary - Rendering CustomHistoryTable');
-                          //     print('🔵 Lease ID: ${widget.leaseId}');
-                          //     return CustomHistoryTable(
-                          //       historyType: HistoryType.lease,
-                          //       entityId: widget.leaseId,
-                          //       title: 'Lease History',
-                          //       blueColor: blueColor,
-                          //       itemsPerPage: 10,
-                          //     );
-                          //   },
-                          // ),
-                          FutureBuilder<List<Map<String, dynamic>>>(
-                            future: _leaseHistoryFuture,
-                            builder: (context, leaseHistorySnapshot) {
-                              if (leaseHistorySnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox(
-                                  height: 50,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              } else if (leaseHistorySnapshot.hasError) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Error loading lease history: ${leaseHistorySnapshot.error}',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                );
-                              } else if (!leaseHistorySnapshot.hasData ||
-                                  leaseHistorySnapshot.data!.isEmpty) {
-                                return const SizedBox.shrink();
-                              } else {
-                                final paginatedData =
-                                    getPaginatedLeaseHistory();
-                                final totalPages = getTotalPages();
-                                final width = MediaQuery.of(context).size.width;
-
-                                return RepaintBoundary(
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 2,
-                                          ),
-                                          Text(
-                                            "Lease History",
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF4F8FF),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color:
-                                                    const Color(0xFFDBE0E5))),
-                                        child: ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              Expanded(
-                                                flex: 3,
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      width < 400
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left:
-                                                                          20.0),
-                                                              child: Text(
-                                                                "Date & Time",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        14),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            )
-                                                          : Text(
-                                                              "     Date & Time",
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      blueColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 14),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                  flex: 2,
-                                                  child: InkWell(
-                                                    onTap: () {},
-                                                    child: Row(
-                                                      children: [
-                                                        Text("     Action",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14)),
-                                                      ],
-                                                    ),
-                                                  )),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Column(
-                                          children: paginatedData
-                                              .asMap()
-                                              .entries
-                                              .map((entry) {
-                                            int index = entry.key;
-                                            Map<String, dynamic> historyItem =
-                                                entry.value;
-
-                                            // Format date with AM/PM
-                                            String formattedDate =
-                                                _formatDateTimeWithAMPM(
-                                                    historyItem['date'] ?? '');
-
-                                            return StatefulBuilder(
-                                              builder: (context, setRowState) {
-                                                bool isExpandedLocal =
-                                                    leaseHistoryExpandedIndex ==
-                                                        index;
-                                                return Container(
-                                                  margin: const EdgeInsets
-                                                      .symmetric(vertical: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: index % 2 != 0
-                                                        ? const Color(
-                                                            0xFFF4F8FF)
-                                                        : Colors.white,
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0xFFDBE0E5)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        title: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (leaseHistoryExpandedIndex ==
-                                                                        index) {
-                                                                      leaseHistoryExpandedIndex =
-                                                                          null;
-                                                                    } else {
-                                                                      leaseHistoryExpandedIndex =
-                                                                          index;
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              5),
-                                                                  padding: !isExpandedLocal
-                                                                      ? const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              10)
-                                                                      : const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              10),
-                                                                  child: FaIcon(
-                                                                    isExpandedLocal
-                                                                        ? FontAwesomeIcons
-                                                                            .sortUp
-                                                                        : FontAwesomeIcons
-                                                                            .sortDown,
-                                                                    size: 20,
-                                                                    color:
-                                                                        blueColor,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                flex: 3,
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      if (leaseHistoryExpandedIndex ==
-                                                                          index) {
-                                                                        leaseHistoryExpandedIndex =
-                                                                            null;
-                                                                      } else {
-                                                                        leaseHistoryExpandedIndex =
-                                                                            index;
-                                                                      }
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            5.0),
-                                                                    child: Text(
-                                                                      formattedDate,
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color:
-                                                                            blueColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            13,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      .08),
-                                                              Expanded(
-                                                                flex: 2,
-                                                                child: Text(
-                                                                  historyItem[
-                                                                          'action'] ??
-                                                                      'N/A',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        13,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      if (isExpandedLocal)
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 20),
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            child: Column(
-                                                              children: [
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      isExpandedLocal
-                                                                          ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                          : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                      size: 50,
-                                                                      color: Colors
-                                                                          .transparent,
-                                                                    ),
-                                                                    Expanded(
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: <Widget>[
-                                                                          if (historyItem['type'] != null &&
-                                                                              historyItem['type'].toString().isNotEmpty)
-                                                                            Text.rich(
-                                                                              TextSpan(
-                                                                                children: [
-                                                                                  TextSpan(
-                                                                                    text: 'Type : ',
-                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                                                                                  ),
-                                                                                  TextSpan(
-                                                                                    text: '${historyItem['type']}',
-                                                                                    style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          if (historyItem['type'] != null &&
-                                                                              historyItem['type'].toString().isNotEmpty &&
-                                                                              historyItem['description'] != null &&
-                                                                              historyItem['description'].toString().isNotEmpty)
-                                                                            const SizedBox(
-                                                                              height: 8,
-                                                                            ),
-                                                                          if (historyItem['description'] != null &&
-                                                                              historyItem['description'].toString().isNotEmpty)
-                                                                            Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Description :',
-                                                                                  style: TextStyle(
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    color: blueColor,
-                                                                                    fontSize: 14,
-                                                                                  ),
-                                                                                ),
-                                                                                const SizedBox(height: 4),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.only(right: 20),
-                                                                                  child: Container(
-                                                                                    width: double.infinity,
-                                                                                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
-                                                                                    decoration: BoxDecoration(
-                                                                                      color: Colors.grey[100],
-                                                                                      borderRadius: BorderRadius.circular(8),
-                                                                                      border: Border.all(color: Colors.grey[300]!),
-                                                                                    ),
-                                                                                    child: Text(
-                                                                                      '${historyItem['description']}',
-                                                                                      style: const TextStyle(
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                        color: Colors.black87,
-                                                                                        fontSize: 14,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                if (historyItem['performed_by'] != null && historyItem['performed_by'].toString().isNotEmpty) ...[
-                                                                                  const SizedBox(height: 12),
-                                                                                  Text.rich(
-                                                                                    TextSpan(
-                                                                                      children: [
-                                                                                        TextSpan(
-                                                                                          text: 'Updated by : ',
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: blueColor,
-                                                                                            fontSize: 14,
-                                                                                          ),
-                                                                                        ),
-                                                                                        TextSpan(
-                                                                                          text: '${historyItem['performed_by']}',
-                                                                                          style: TextStyle(
-                                                                                            fontWeight: FontWeight.w500,
-                                                                                            color: Colors.black87,
-                                                                                            fontSize: 14,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ],
-                                                                            ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                      // Pagination Controls
-                                      if (totalPages > 1)
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              IconButton(
-                                                icon: FaIcon(
-                                                  FontAwesomeIcons
-                                                      .circleChevronLeft,
-                                                  size: 30,
-                                                  color: _currentPage <= 1
-                                                      ? Colors.grey
-                                                      : blueColor,
-                                                ),
-                                                onPressed: _currentPage <= 1
-                                                    ? null
-                                                    : () {
-                                                        setState(() {
-                                                          _currentPage--;
-                                                        });
-                                                      },
-                                              ),
-                                              Text(
-                                                'Page $_currentPage of $totalPages',
-                                                style: const TextStyle(
-                                                    fontSize: 18),
-                                              ),
-                                              IconButton(
-                                                icon: FaIcon(
-                                                  FontAwesomeIcons
-                                                      .circleChevronRight,
-                                                  size: 30,
-                                                  color:
-                                                      _currentPage >= totalPages
-                                                          ? Colors.grey
-                                                          : blueColor,
-                                                ),
-                                                onPressed:
-                                                    _currentPage >= totalPages
-                                                        ? null
-                                                        : () {
-                                                            setState(() {
-                                                              _currentPage++;
-                                                            });
-                                                          },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              }
+                          Builder(
+                            builder: (context) {
+                              print(
+                                  '🔵 Lease Summary - Rendering CustomHistoryTable');
+                              print('🔵 Lease ID: ${widget.leaseId}');
+                              return CustomHistoryTable(
+                                historyType: HistoryType.lease,
+                                entityId: widget.leaseId,
+                                title: 'Lease History',
+                                blueColor: blueColor,
+                                itemsPerPage: 10,
+                              );
                             },
                           ),
+
                         ],
                       ),
                     ),

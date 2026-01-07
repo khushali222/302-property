@@ -16,6 +16,16 @@ class HistoryService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? adminId = prefs.getString("adminId");
+      String? staffId = prefs.getString("staff_id");
+
+      // Check if user is staff or admin and use appropriate ID in header
+      // If staff_id exists and is not empty, use staff_id, otherwise use adminId
+      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+
+      print('🔵 HistoryService - Fetching history');
+      print(
+          '🔵 User Type: ${staffId != null && staffId.isNotEmpty ? "Staff" : "Admin"}');
+      print('🔵 ID used in header: $id');
 
       // Lease history uses a different endpoint
       String url;
@@ -26,7 +36,6 @@ class HistoryService {
             '$Api_url/api/history/${historyType.apiPath}/$entityId?page=$page&limit=$limit&_t=${DateTime.now().millisecondsSinceEpoch}';
       }
 
-      print('🔵 HistoryService - Fetching history');
       print('🔵 URL: $url');
       print('🔵 HistoryType: $historyType, API Path: ${historyType.apiPath}');
       print('🔵 EntityId: $entityId');
@@ -36,7 +45,7 @@ class HistoryService {
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $id",
         },
       );
 
