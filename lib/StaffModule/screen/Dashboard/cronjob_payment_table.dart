@@ -34,6 +34,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   bool sortAscending = true;
   int currentPage = 1;
   int itemsPerPage = 5;
+  int failedCurrentPage = 1;
+  int failedItemsPerPage = 5;
   List<int> itemsPerPageOptions = [
     5,
     10,
@@ -41,8 +43,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   ]; // Options for items per page
 
   int? expandedIndex;
+  int? expandedFailedIndex; // For failed payments expansion
   Set<int> expandedIndices = {};
   late bool isExpanded;
+  // Checkbox selection for failed payments
+  Set<String> selectedFailedPayments = {}; // Store payment IDs
   bool sorting1 = false;
   bool sorting2 = false;
   bool sorting3 = false;
@@ -87,7 +92,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 left: Radius.circular(0),
                 right: Radius.circular(0),
               ),
-              border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+              border:
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: ListTile(
               contentPadding: EdgeInsets.zero,
@@ -292,6 +298,34 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     VoidCallback onExpandTap,
     LeaseDatacronjob data,
   ) {
+    return _buildPaymentCard(
+        name, address, amount, isExpanded, onExpandTap, data, null, null);
+  }
+
+  Widget failedPaymentCard(
+    String name,
+    String address,
+    String amount,
+    bool isExpanded,
+    VoidCallback onExpandTap,
+    LeaseDatacronjob data,
+    bool? isSelected,
+    VoidCallback? onCheckboxTap,
+  ) {
+    return _buildPaymentCard(name, address, amount, isExpanded, onExpandTap,
+        data, isSelected, onCheckboxTap);
+  }
+
+  Widget _buildPaymentCard(
+    String name,
+    String address,
+    String amount,
+    bool isExpanded,
+    VoidCallback onExpandTap,
+    LeaseDatacronjob data,
+    bool? isSelected,
+    VoidCallback? onCheckboxTap,
+  ) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -312,17 +346,47 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: onExpandTap,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  child: Icon(
-                    isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: blueColor,
+              // Checkbox for failed payments or expand icon for successful payments
+              if (isSelected != null && onCheckboxTap != null)
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: Checkbox(
+                    value: isSelected,
+                    onChanged: (bool? value) {
+                      onCheckboxTap();
+                    },
+                    activeColor: blueColor,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                )
+              else
+                GestureDetector(
+                  onTap: onExpandTap,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    child: Icon(
+                      isExpanded ? Icons.expand_less : Icons.expand_more,
+                      color: blueColor,
+                    ),
                   ),
                 ),
-              ),
+              // Expand icon for failed payments (if checkbox is present)
+              if (isSelected != null && onCheckboxTap != null)
+                GestureDetector(
+                  onTap: onExpandTap,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    margin: const EdgeInsets.only(left: 8),
+                    child: Icon(
+                      isExpanded ? Icons.expand_less : Icons.expand_more,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
               const SizedBox(width: 5),
               Expanded(
                 child: Column(
@@ -462,7 +526,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     Expanded(
                       flex: 4,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
@@ -471,13 +535,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               color: blueColor,
                               fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.right,
                           ),
                           Text(
                             data.responseText?.isNotEmpty == true
-                                ? ' ${data.responseText}'
+                                ? data.responseText!
                                 : 'N/A',
                             style: subTextStyle,
-                            // overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -990,7 +1057,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   if (pickedDate != null) {
                     setState(() {
                       retrydate.text =
-                      pickedDate.toLocal().toString().split(' ')[0];
+                          pickedDate.toLocal().toString().split(' ')[0];
                     });
                   }
                 },
@@ -1516,6 +1583,608 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     );
   }
 
+  void _handleBulkIgnore() async {
+    if (selectedFailedPayments.isEmpty) return;
+
+    final selectedCount = selectedFailedPayments.length;
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Ignore Selected Payments",
+      desc:
+          "Are you sure you want to acknowledge $selectedCount failed payment(s) as ignored?",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Confirm",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            Navigator.pop(context);
+            final selectedIds = List<String>.from(selectedFailedPayments);
+
+            try {
+              final response = await PaymentCronjobRepository().bulkAcknowledge(
+                context: context,
+                paymentIds: selectedIds,
+              );
+
+              if (response != null && response['statusCode'] == 200) {
+                final results = response['results'] ?? {};
+                final successful =
+                    (results['successful'] as List?)?.length ?? 0;
+                final failed = (results['failed'] as List?)?.length ?? 0;
+                final message = response['message'] ?? '';
+
+                setState(() {
+                  selectedFailedPayments.clear();
+                  futurecronjobpayment = cronjob_payment_tableService()
+                      .fetchCronjob_payment(limit: itemsPerPage);
+                });
+
+                // Show success/error dialog
+                _showBulkResultDialog(
+                  title: "Success",
+                  message: message,
+                  successful: successful,
+                  failed: failed,
+                );
+              } else {
+                _showBulkResultDialog(
+                  title: "Error",
+                  message:
+                      response?['message'] ?? 'Failed to acknowledge payments',
+                  successful: 0,
+                  failed: selectedIds.length,
+                );
+              }
+            } catch (e) {
+              _showBulkResultDialog(
+                title: "Error",
+                message: 'An error occurred: ${e.toString()}',
+                successful: 0,
+                failed: selectedIds.length,
+              );
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+      ],
+    ).show();
+  }
+
+  void _handleBulkReprocess() async {
+    if (selectedFailedPayments.isEmpty) return;
+
+    final selectedCount = selectedFailedPayments.length;
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: EdgeInsets.all(isMobile ? 16 : 24),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Warning Icon
+              Container(
+                width: isMobile ? 56 : 64,
+                height: isMobile ? 56 : 64,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.orange, width: 2),
+                  color: Colors.orange.shade50,
+                ),
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.orange,
+                  size: isMobile ? 32 : 36,
+                ),
+              ),
+              SizedBox(height: isMobile ? 16 : 20),
+              // Title
+              Text(
+                "Reprocess $selectedCount Failed Payment${selectedCount > 1 ? 's' : ''}?",
+                style: TextStyle(
+                  fontSize: isMobile ? 18 : 20,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF101828),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: isMobile ? 10 : 12),
+              // Subtitle
+              Text(
+                "Choose how to reprocess these payments:",
+                style: TextStyle(
+                  fontSize: isMobile ? 13 : 14,
+                  color: Colors.grey.shade600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: isMobile ? 20 : 24),
+              // Buttons - Side by side, compact
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          vertical: isMobile ? 10 : 10,
+                          horizontal: isMobile ? 8 : 12,
+                        ),
+                        side: BorderSide(color: Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: isMobile ? 13 : 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Schedule Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _handleBulkSchedule();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        padding: EdgeInsets.symmetric(
+                          vertical: isMobile ? 10 : 10,
+                          horizontal: isMobile ? 8 : 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "Schedule",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isMobile ? 13 : 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Process Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _handleBulkProcessNow();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        padding: EdgeInsets.symmetric(
+                          vertical: isMobile ? 10 : 10,
+                          horizontal: isMobile ? 8 : 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "Process",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isMobile ? 13 : 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleBulkProcessNow() async {
+    if (selectedFailedPayments.isEmpty) return;
+
+    final selectedIds = List<String>.from(selectedFailedPayments);
+
+    try {
+      final response = await PaymentCronjobRepository().bulkRetry(
+        context: context,
+        paymentIds: selectedIds,
+      );
+
+      if (response != null && response['statusCode'] == 200) {
+        final results = response['results'] ?? {};
+        final successful = (results['successful'] as List?)?.length ?? 0;
+        final failed = (results['failed'] as List?)?.length ?? 0;
+        final message = response['message'] ?? '';
+
+        setState(() {
+          selectedFailedPayments.clear();
+          futurecronjobpayment = cronjob_payment_tableService()
+              .fetchCronjob_payment(limit: itemsPerPage);
+        });
+
+        // Show success/error dialog
+        _showBulkResultDialog(
+          title: "Success",
+          message: message,
+          successful: successful,
+          failed: failed,
+        );
+      } else {
+        _showBulkResultDialog(
+          title: "Error",
+          message: response?['message'] ?? 'Failed to process payments',
+          successful: 0,
+          failed: selectedIds.length,
+        );
+      }
+    } catch (e) {
+      _showBulkResultDialog(
+        title: "Error",
+        message: 'An error occurred: ${e.toString()}',
+        successful: 0,
+        failed: selectedIds.length,
+      );
+    }
+  }
+
+  void _handleBulkSchedule() async {
+    if (selectedFailedPayments.isEmpty) return;
+
+    final selectedCount = selectedFailedPayments.length;
+    final dateController = TextEditingController();
+    DateTime? selectedDate;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final isMobile = MediaQuery.of(context).size.width < 600;
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              contentPadding: EdgeInsets.all(isMobile ? 16 : 24),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Warning Icon
+                  Container(
+                    width: isMobile ? 56 : 64,
+                    height: isMobile ? 56 : 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.orange, width: 2),
+                      color: Colors.orange.shade50,
+                    ),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange,
+                      size: isMobile ? 32 : 36,
+                    ),
+                  ),
+                  SizedBox(height: isMobile ? 16 : 20),
+                  // Title
+                  Text(
+                    "Schedule $selectedCount Failed Payment${selectedCount > 1 ? 's' : ''}?",
+                    style: TextStyle(
+                      fontSize: isMobile ? 18 : 20,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF101828),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: isMobile ? 10 : 12),
+                  // Subtitle
+                  Text(
+                    "Select a date to reschedule these payments:",
+                    style: TextStyle(
+                      fontSize: isMobile ? 13 : 14,
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: isMobile ? 20 : 24),
+                  // Date Text Field
+                  Material(
+                    elevation: 2,
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Container(
+                      height: isMobile ? 50 : 55,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 12.0 : 16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            offset: const Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        controller: dateController,
+                        readOnly: true,
+                        style: TextStyle(fontSize: isMobile ? 14 : 15),
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate ?? DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 365)),
+                            locale: const Locale('en', 'US'),
+                            builder: (BuildContext context, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  colorScheme: ColorScheme.light(
+                                    primary: blueColor,
+                                    onPrimary: Colors.white,
+                                    onSurface: blueColor,
+                                  ),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: blueColor,
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setDialogState(() {
+                              selectedDate = picked;
+                              dateController.text =
+                                  "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                            });
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Select Date",
+                          hintStyle: TextStyle(
+                            fontSize: isMobile ? 13 : 14,
+                            color: Colors.grey.shade400,
+                          ),
+                          border: InputBorder.none,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              Icons.calendar_today,
+                              color: blueColor,
+                              size: isMobile ? 18 : 20,
+                            ),
+                            onPressed: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate ?? DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 365)),
+                                locale: const Locale('en', 'US'),
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                        onPrimary: Colors.white,
+                                        onSurface: blueColor,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: blueColor,
+                                        ),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null) {
+                                setDialogState(() {
+                                  selectedDate = picked;
+                                  dateController.text =
+                                      "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: isMobile ? 20 : 24),
+                  // Buttons - Side by side, compact
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Cancel Button
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              vertical: isMobile ? 10 : 10,
+                              horizontal: isMobile ? 8 : 12,
+                            ),
+                            side: BorderSide(color: Colors.grey.shade300),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: isMobile ? 13 : 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Schedule Button
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: selectedDate == null
+                              ? null
+                              : () {
+                                  Navigator.pop(context);
+                                  _processBulkSchedule(selectedDate!);
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selectedDate == null
+                                ? Colors.grey.shade300
+                                : blueColor,
+                            disabledBackgroundColor: Colors.grey.shade300,
+                            padding: EdgeInsets.symmetric(
+                              vertical: isMobile ? 10 : 10,
+                              horizontal: isMobile ? 8 : 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Schedule",
+                            style: TextStyle(
+                              color: selectedDate == null
+                                  ? Colors.grey.shade600
+                                  : Colors.white,
+                              fontSize: isMobile ? 13 : 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _processBulkSchedule(DateTime selectedDate) async {
+    final retryDate =
+        "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+    final selectedIds = List<String>.from(selectedFailedPayments);
+
+    try {
+      final response = await PaymentCronjobRepository().bulkReschedule(
+        context: context,
+        paymentIds: selectedIds,
+        retryDate: retryDate,
+      );
+
+      if (response != null && response['statusCode'] == 200) {
+        final results = response['results'] ?? {};
+        final successful = (results['successful'] as List?)?.length ?? 0;
+        final failed = (results['failed'] as List?)?.length ?? 0;
+        final message = response['message'] ?? '';
+
+        setState(() {
+          selectedFailedPayments.clear();
+          futurecronjobpayment = cronjob_payment_tableService()
+              .fetchCronjob_payment(limit: itemsPerPage);
+        });
+
+        // Show success dialog
+        _showBulkResultDialog(
+          title: "Success",
+          message: message,
+          successful: successful,
+          failed: failed,
+        );
+      } else {
+        _showBulkResultDialog(
+          title: "Error",
+          message: response?['message'] ?? 'Failed to schedule payments',
+          successful: 0,
+          failed: selectedIds.length,
+        );
+      }
+    } catch (e) {
+      _showBulkResultDialog(
+        title: "Error",
+        message: 'An error occurred: ${e.toString()}',
+        successful: 0,
+        failed: selectedIds.length,
+      );
+    }
+  }
+
+  void _showBulkResultDialog({
+    required String title,
+    required String message,
+    required int successful,
+    required int failed,
+  }) {
+    final isSuccess = successful > 0 && failed == 0;
+
+    Alert(
+      context: context,
+      type: isSuccess ? AlertType.success : AlertType.info,
+      title: title,
+      desc: message,
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: blueColor,
+        ),
+      ],
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1526,120 +2195,121 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //SizedBox(height: 20),
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
           //if (MediaQuery.of(context).size.width < 500)
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: FutureBuilder<LeaseResponse>(
-                future: futurecronjobpayment,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ColabShimmerLoadingWidget();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData ||
-                      snapshot.data?.data?.isEmpty != false) {
-                    return Container(
-                      child: Center(
-                        child: Column(
-                          children: [
-                            _buildHeaders([]),
-                            // Container(
-                            //   padding: EdgeInsets.all(10),
-                            //   decoration: BoxDecoration(
-                            //     color: Colors.grey.shade300, // Background color
-                            //     borderRadius: BorderRadius.only(
-                            //       bottomLeft: Radius.circular(13),
-                            //       bottomRight: Radius.circular(13),
-                            //     ),
-                            //   ),
-                            //   child: Center(
-                            //     child: Text(
-                            //       "No policies are expiring within 90 days.",
-                            //       textAlign: TextAlign.center,
-                            //       style: TextStyle(
-                            //         fontWeight: FontWeight.bold,
-                            //         color: blueColor,
-                            //         fontSize: 14,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    var data = snapshot.data?.data ?? [];
-                    print("data ${data.length}");
-                    // if (selectedValue == null && searchvalue!.isEmpty) {
-                    //   data = snapshot.data!;
-                    // } else if (selectedValue == "All") {
-                    //   data = snapshot.data!;
-                    // } else if (searchvalue!.isNotEmpty) {
-                    //   data = snapshot.data!
-                    //       .where((property) => property.rentalAddress!
-                    //           .toLowerCase()
-                    //           .contains(searchvalue!.toLowerCase()))
-                    //       .toList();
-                    // } else {
-                    //   data = snapshot.data!
-                    //       .where((property) =>
-                    //           property.rentalAddress == selectedValue)
-                    //       .toList();
-                    // }
-                    // if (data.isEmpty) {
-                    //   return Center(
-                    //     child: Column(
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       children: [
-                    //         Image.asset(
-                    //           "assets/images/no_data.jpg",
-                    //           height: 200,
-                    //           width: 200,
-                    //         ),
-                    //         SizedBox(
-                    //           height: 10,
-                    //         ),
-                    //         Text(
-                    //           "No Data Available",
-                    //           style: TextStyle(
-                    //               fontWeight: FontWeight.bold,
-                    //               color: blueColor,
-                    //               fontSize: 16),
-                    //         )
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
-                    //sortData(data);
-                    final totalPages =
-                        ((snapshot.data?.metadata?.total ?? 0) / itemsPerPage)
-                            .ceil();
-
-                    // final currentPageData = data
-                    //     .skip(currentPage * itemsPerPage)
-                    //     .take(itemsPerPage)
-                    //     .toList();
-                    final currentPageData = data;
-                    return SingleChildScrollView(
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: FutureBuilder<LeaseResponse>(
+              future: futurecronjobpayment,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return ColabShimmerLoadingWidget();
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData ||
+                    ((snapshot.data?.data?.isEmpty ?? true) &&
+                        (snapshot.data?.failedPayments?.isEmpty ?? true))) {
+                  return Container(
+                    child: Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 10),
-                          Text("Payments Last 7 Days",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor)),
-                          // _buildHeaders(data),
-                          const SizedBox(height: 1),
+                          _buildHeaders([]),
+                          // Container(
+                          //   padding: EdgeInsets.all(10),
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.grey.shade300, // Background color
+                          //     borderRadius: BorderRadius.only(
+                          //       bottomLeft: Radius.circular(13),
+                          //       bottomRight: Radius.circular(13),
+                          //     ),
+                          //   ),
+                          //   child: Center(
+                          //     child: Text(
+                          //       "No policies are expiring within 90 days.",
+                          //       textAlign: TextAlign.center,
+                          //       style: TextStyle(
+                          //         fontWeight: FontWeight.bold,
+                          //         color: blueColor,
+                          //         fontSize: 14,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  var data = snapshot.data?.data ?? [];
+                  var failedData = snapshot.data?.failedPayments ?? [];
+                  print("data ${data.length}");
+                  print("failedData ${failedData.length}");
+
+                  final totalPages =
+                      ((snapshot.data?.metadata?.total ?? 0) / itemsPerPage)
+                          .ceil();
+                  final currentPageData = data;
+
+                  // Pagination for failed payments
+                  final failedTotalPages = failedData.isEmpty
+                      ? 1
+                      : ((failedData.length / failedItemsPerPage).ceil());
+                  final failedStartIndex =
+                      (failedCurrentPage - 1) * failedItemsPerPage;
+                  final failedEndIndex =
+                      (failedStartIndex + failedItemsPerPage) >
+                              failedData.length
+                          ? failedData.length
+                          : (failedStartIndex + failedItemsPerPage);
+                  final failedPageData = failedData.isEmpty
+                      ? []
+                      : failedData.sublist(failedStartIndex, failedEndIndex);
+
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Successful Payments Section
+                        const SizedBox(height: 10),
+                        Text("Payments Last 7 Days",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: blueColor)),
+                        const SizedBox(height: 1),
+                        if (currentPageData.isEmpty)
                           Container(
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(
-                            //         color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
+                            height: 100,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border:
+                                    Border.all(color: const Color(0xFFDBE0E5))),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/icons/Nodata.png',
+                                  height: 20,
+                                  width: 20,
+                                  color: const Color(0xFF101828),
+                                ),
+                                const SizedBox(width: 10),
+                                const Center(
+                                  child: Text(
+                                    "No data Available",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF101828),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          Container(
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1669,116 +2339,559 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               }).toList(),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          if (data.length > 5)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                        const SizedBox(height: 20),
+                        if (data.length > 5)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPage,
+                                          items: itemsPerPageOptions
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: (snapshot.data?.metadata
+                                                          ?.total ??
+                                                      0) >
+                                                  itemsPerPageOptions.first
+                                              ? (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue ??
+                                                        itemsPerPage;
+                                                    currentPage = 1;
+                                                    futurecronjobpayment =
+                                                        cronjob_payment_tableService()
+                                                            .fetchCronjob_payment(
+                                                                limit:
+                                                                    itemsPerPage,
+                                                                page:
+                                                                    currentPage);
+                                                  });
+                                                }
+                                              : null,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPage == 1
+                                          ? Colors.grey
+                                          : blueColor,
+                                    ),
+                                    onPressed: currentPage == 1
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              currentPage--;
+                                              futurecronjobpayment =
+                                                  cronjob_payment_tableService()
+                                                      .fetchCronjob_payment(
+                                                          limit: itemsPerPage,
+                                                          page: currentPage);
+                                            });
+                                          },
+                                  ),
+                                  Text('Page ${currentPage} of $totalPages'),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPage < totalPages
+                                          ? blueColor
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: currentPage < totalPages
+                                        ? () {
+                                            setState(() {
+                                              currentPage++;
+                                              futurecronjobpayment =
+                                                  cronjob_payment_tableService()
+                                                      .fetchCronjob_payment(
+                                                          limit: itemsPerPage,
+                                                          page: currentPage);
+                                            });
+                                          }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                        // Failed Payments Section
+                        const SizedBox(height: 30),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isMobile = constraints.maxWidth < 600;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Header with Select All - No container
                                 Row(
                                   children: [
-                                    // Text('Rows per page:'),
-                                    const SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
+                                    // Only show checkbox if more than 1 payment
+                                    if (failedPageData.length > 1)
+                                      SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: Checkbox(
+                                          value: failedPageData.isNotEmpty &&
+                                              selectedFailedPayments.length ==
+                                                  failedPageData.length,
+                                          onChanged: failedPageData.isEmpty
+                                              ? null
+                                              : (bool? value) {
+                                                  setState(() {
+                                                    if (value == true) {
+                                                      selectedFailedPayments =
+                                                          failedPageData
+                                                              .where((p) =>
+                                                                  p.id != null)
+                                                              .map((p) => p.id!)
+                                                              .toSet()
+                                                              .cast<String>();
+                                                    } else {
+                                                      selectedFailedPayments
+                                                          .clear();
+                                                    }
+                                                  });
+                                                },
+                                          activeColor: blueColor,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          visualDensity: VisualDensity.compact,
                                         ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (snapshot.data?.metadata
-                                                            ?.total ??
-                                                        0) >
-                                                    itemsPerPageOptions
-                                                        .first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue ??
-                                                          itemsPerPage;
-                                                      currentPage =
-                                                          1; // Reset to first page when items per page change
-                                                      futurecronjobpayment =
-                                                          cronjob_payment_tableService()
-                                                              .fetchCronjob_payment(
-                                                                  limit:
-                                                                      itemsPerPage,
-                                                                  page:
-                                                                      currentPage);
-                                                    });
-                                                  }
-                                                : null,
+                                      ),
+                                    if (failedPageData.length > 1)
+                                      const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text("Failed Payments Last 7 Days",
+                                          style: TextStyle(
+                                              fontSize: isMobile ? 15 : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor)),
+                                    ),
+                                  ],
+                                ),
+                                // Selection controls below title
+                                if (selectedFailedPayments.isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: isMobile ? 6 : 8,
+                                    runSpacing: 8,
+                                    alignment: WrapAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: isMobile ? 10 : 12,
+                                            vertical: isMobile ? 6 : 7),
+                                        decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
+                                              size: 16,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              "${selectedFailedPayments.length} selected",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: isMobile ? 13 : 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedFailedPayments.clear();
+                                          });
+                                        },
+                                        borderRadius: BorderRadius.circular(6),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: isMobile ? 10 : 12,
+                                              vertical: isMobile ? 6 : 7),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade100,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            border: Border.all(
+                                                color: Colors.grey.shade300,
+                                                width: 1),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.close,
+                                                color: Colors.grey.shade700,
+                                                size: 16,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "CLEAR",
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade700,
+                                                  fontSize: isMobile ? 12 : 13,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      PopupMenuButton<String>(
+                                        offset: const Offset(0,
+                                            15), // Open downward with more space to show under button
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: isMobile ? 10 : 12,
+                                              vertical: isMobile ? 6 : 7),
+                                          decoration: BoxDecoration(
+                                            color: blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.more_vert,
+                                                color: Colors.white,
+                                                size: isMobile ? 16 : 18,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "Bulk Actions",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: isMobile ? 13 : 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.white,
+                                                size: isMobile ? 18 : 20,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        itemBuilder: (BuildContext context) => [
+                                          PopupMenuItem<String>(
+                                            value: 'ignore',
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red.shade50,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.red,
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                const Text(
+                                                  'Ignore Selected',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          PopupMenuItem<String>(
+                                            value: 'reprocess',
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    color: blueColor
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.recycling_outlined,
+                                                    color: blueColor,
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                const Text(
+                                                  'Reprocess Selected',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                        onSelected: (String value) {
+                                          if (value == 'ignore') {
+                                            _handleBulkIgnore();
+                                          } else if (value == 'reprocess') {
+                                            _handleBulkReprocess();
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        if (failedPageData.isEmpty)
+                          Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border:
+                                    Border.all(color: const Color(0xFFDBE0E5))),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/icons/Nodata.png',
+                                  height: 20,
+                                  width: 20,
+                                  color: const Color(0xFF101828),
                                 ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 1
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: currentPage == 1
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                                futurecronjobpayment =
-                                                    cronjob_payment_tableService()
-                                                        .fetchCronjob_payment(
-                                                            limit: itemsPerPage,
-                                                            page: currentPage);
-                                              });
-                                            },
+                                const SizedBox(width: 10),
+                                const Center(
+                                  child: Text(
+                                    "No failed payments",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF101828),
+                                      fontSize: 15,
                                     ),
-                                    Text('Page ${currentPage} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                                futurecronjobpayment =
-                                                    cronjob_payment_tableService()
-                                                        .fetchCronjob_payment(
-                                                            limit: itemsPerPage,
-                                                            page: currentPage);
-                                              });
-                                            }
-                                          : null,
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
+                          )
+                        else
+                          Column(
+                            children:
+                                failedPageData.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              bool isExpanded = expandedFailedIndex == index;
+                              LeaseDatacronjob Propertytype = entry.value;
+                              // Only show checkbox if more than 1 payment
+                              bool isSelected = failedPageData.length > 1 &&
+                                  Propertytype.id != null &&
+                                  selectedFailedPayments
+                                      .contains(Propertytype.id);
+
+                              return failedPaymentCard(
+                                  Propertytype.tenant?.tenantName ??
+                                      "Unknown Tenant",
+                                  Propertytype.rentalAddress ??
+                                      "Unknown Address",
+                                  Propertytype.totalAmount
+                                          ?.toStringAsFixed(2) ??
+                                      "0.00",
+                                  isExpanded, () {
+                                setState(() {
+                                  expandedFailedIndex =
+                                      isExpanded ? null : index;
+                                });
+                              },
+                                  Propertytype,
+                                  // Only pass checkbox params if more than 1 payment
+                                  failedPageData.length > 1 ? isSelected : null,
+                                  failedPageData.length > 1
+                                      ? () {
+                                          setState(() {
+                                            if (Propertytype.id != null) {
+                                              if (isSelected) {
+                                                selectedFailedPayments
+                                                    .remove(Propertytype.id!);
+                                              } else {
+                                                selectedFailedPayments
+                                                    .add(Propertytype.id!);
+                                              }
+                                            }
+                                          });
+                                        }
+                                      : null);
+                            }).toList(),
+                          ),
+                        // Pagination for Failed Payments
+                        if (failedData.isNotEmpty &&
+                            failedData.length >= 5) ...[
+                          const SizedBox(height: 20),
+                          // Pagination - Side by side layout
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Left side: Rows per page dropdown
+                              Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.white,
+                                child: Container(
+                                  height: 40,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<int>(
+                                      value: failedItemsPerPage,
+                                      isExpanded: false,
+                                      items:
+                                          itemsPerPageOptions.map((int value) {
+                                        return DropdownMenuItem<int>(
+                                          value: value,
+                                          child: Text(
+                                            value.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: failedData.length >= 5
+                                          ? (newValue) {
+                                              setState(() {
+                                                failedItemsPerPage = newValue ??
+                                                    failedItemsPerPage;
+                                                failedCurrentPage = 1;
+                                              });
+                                            }
+                                          : null,
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: blueColor,
+                                        size: 24,
+                                      ),
+                                      style: const TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      dropdownColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Page navigation
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: failedCurrentPage == 1
+                                          ? Colors.grey
+                                          : blueColor,
+                                    ),
+                                    onPressed: failedCurrentPage == 1
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              failedCurrentPage--;
+                                            });
+                                          },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: Text(
+                                      'Page ${failedCurrentPage} of $failedTotalPages',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color:
+                                          failedCurrentPage < failedTotalPages
+                                              ? blueColor
+                                              : Colors.grey,
+                                    ),
+                                    onPressed:
+                                        failedCurrentPage < failedTotalPages
+                                            ? () {
+                                                setState(() {
+                                                  failedCurrentPage++;
+                                                });
+                                              }
+                                            : null,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
-                      ),
-                    );
-                  }
-                },
-              ),
+                      ],
+                    ),
+                  );
+                }
+              },
             ),
+          ),
           // if (MediaQuery.of(context).size.width > 500)
           //   FutureBuilder<LeaseResponse>(
           //     future: futurecronjobpayment,

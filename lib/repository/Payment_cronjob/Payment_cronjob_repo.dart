@@ -108,7 +108,7 @@ class PaymentCronjobRepository {
         type: AlertType.success,
         title: "Success",
         desc:
-        responseData["message"] ?? "Payment retry scheduled successfully!",
+            responseData["message"] ?? "Payment retry scheduled successfully!",
         style: AlertStyle(
           backgroundColor: Colors.white,
         ),
@@ -355,6 +355,102 @@ class PaymentCronjobRepository {
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  // Bulk Retry API
+  Future<Map<String, dynamic>?> bulkRetry({
+    required BuildContext context,
+    required List<String> paymentIds,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/payment/payment_bulk_retry'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'payment_ids': paymentIds,
+      }),
+    );
+
+    var responseData = json.decode(response.body);
+    print('Bulk retry response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return responseData;
+    } else {
+      return null;
+    }
+  }
+
+  // Bulk Reschedule API
+  Future<Map<String, dynamic>?> bulkReschedule({
+    required BuildContext context,
+    required List<String> paymentIds,
+    required String retryDate,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/payment/payment_bulk_reschedule'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'payment_ids': paymentIds,
+        'retryDate': retryDate,
+      }),
+    );
+
+    var responseData = json.decode(response.body);
+    print('Bulk reschedule response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return responseData;
+    } else {
+      return null;
+    }
+  }
+
+  // Bulk Acknowledge API
+  Future<Map<String, dynamic>?> bulkAcknowledge({
+    required BuildContext context,
+    required List<String> paymentIds,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/payment/payment_bulk_acknowledge'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'payment_ids': paymentIds,
+        'failure_acknowledged': true,
+      }),
+    );
+
+    var responseData = json.decode(response.body);
+    print('Bulk acknowledge response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return responseData;
     } else {
       return null;
     }
