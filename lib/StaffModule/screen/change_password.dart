@@ -1398,10 +1398,12 @@ class _Change_passwordState extends State<Change_password> {
 
   addinsurance() async {
     try {
+      setState(() {
+        loading = true;
+        isLoading = true;
+      });
       print("Calling");
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString("tenant_id");
-      String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
       String? email = prefs.getString('staffemail');
       String? staffid = prefs.getString("staff_id");
@@ -1422,16 +1424,59 @@ class _Change_passwordState extends State<Change_password> {
       log(response.body);
       var responseData = json.decode(response.body);
 
-      if (responseData["statusCode"] == 200) {
+      // Check HTTP status code and response message
+      if (response.statusCode == 200 &&
+          (responseData["message"] != null &&
+              responseData["message"]
+                  .toString()
+                  .toLowerCase()
+                  .contains("success"))) {
         await _savePassword(password.text.trim());
-        Fluttertoast.showToast(msg: responseData["message"]);
+
+        // Save new token if provided
+        if (responseData["newToken"] != null) {
+          await prefs.setString('token', responseData["newToken"]);
+        }
+
+        setState(() {
+          loading = false;
+          isLoading = false;
+        });
+
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Password updated successfully");
+
+        // Clear form and navigate back after a short delay
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
+
         return responseData;
       } else {
-        Fluttertoast.showToast(msg: responseData["message"]);
-        throw Exception('Failed to Insurance');
+        setState(() {
+          loading = false;
+          isLoading = false;
+        });
+
+        String errorMessage =
+            responseData["message"] ?? "Failed to change password";
+        Fluttertoast.showToast(msg: errorMessage);
+        throw Exception(errorMessage);
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'An error occurred: $e');
+      setState(() {
+        loading = false;
+        isLoading = false;
+      });
+
+      String errorMsg = 'An error occurred: $e';
+      // Remove the exception prefix if it's already in the message
+      if (e.toString().contains('Exception:')) {
+        errorMsg = e.toString().replaceFirst('Exception: ', '');
+      }
+      Fluttertoast.showToast(msg: errorMsg);
       print('Error: $e');
     }
   }

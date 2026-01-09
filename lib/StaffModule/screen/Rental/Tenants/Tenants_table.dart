@@ -36,7 +36,7 @@ class Tenants_table extends StatefulWidget {
 
 class _Tenants_tableState extends State<Tenants_table> {
   int totalrecords = 0;
-  late Future<List<Tenant>> futureTenants;
+  late Future<Map<String, List<Tenant>>> futureTenants;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -48,6 +48,27 @@ class _Tenants_tableState extends State<Tenants_table> {
     50,
     100,
   ]; // Options for items per page
+
+  // Filter checkbox
+  bool includeFormerTenants = false;
+
+  // Method to get filtered data based on checkbox selection
+  List<Tenant> getFilteredData(Map<String, List<Tenant>> categorizedData) {
+    List<Tenant> filteredData = [];
+
+    // Always include current tenants
+    filteredData.addAll(categorizedData['currentTenants'] ?? []);
+
+    // Include former tenants if checkbox is checked
+    if (includeFormerTenants) {
+      filteredData.addAll(categorizedData['formerTenants'] ?? []);
+    }
+
+    // Always include applicants
+    filteredData.addAll(categorizedData['currentApplicants'] ?? []);
+
+    return filteredData;
+  }
 
   void sortData(List<Tenant> data) {
     // Always apply default sort by createdAt in descending order (newest first)
@@ -261,7 +282,7 @@ class _Tenants_tableState extends State<Tenants_table> {
       });
     });
     checkInternet();
-    futureTenants = TenantsRepository().fetchTenants();
+    futureTenants = TenantsRepository().fetchTenantsV2();
     fetchtenantsadded();
     fetchCompany();
   }
@@ -347,7 +368,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   tenantEmail: '',
                   reason: reason.text);
               setState(() {
-                futureTenants = TenantsRepository().fetchTenants();
+                futureTenants = TenantsRepository().fetchTenantsV2();
               });
               Navigator.pop(context);
             }
@@ -700,7 +721,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -723,7 +746,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 if (result == true) {
                                   setState(() {
                                     futureTenants =
-                                        TenantsRepository().fetchTenants();
+                                        TenantsRepository().fetchTenantsV2();
                                   });
                                 }
                               },
@@ -881,6 +904,102 @@ class _Tenants_tableState extends State<Tenants_table> {
                       ],
                     ),
                   ),
+                  // Count display and filter section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            
+                            children: [
+                              // Count display
+                              FutureBuilder<Map<String, List<Tenant>>>(
+                                future: futureTenants,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    int currentCount = snapshot
+                                            .data!['currentTenants']?.length ??
+                                        0;
+                                    int formerCount = snapshot
+                                            .data!['formerTenants']?.length ??
+                                        0;
+                                    int totalCount = currentCount + formerCount;
+
+                                    return Row(
+                                      children: [
+                                        Text(
+                                          'Current: $currentCount | ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                        Text(
+                                          'Former: $formerCount | ',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                        Text(
+                                          'Total: $totalCount',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return Text(
+                                    'Loading...',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  );
+                                },
+                              ),
+                              //SizedBox(height: 12),
+                              // Include Former Tenants checkbox
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: includeFormerTenants,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        includeFormerTenants = value!;
+                                        currentPage = 0; // Reset to first page
+                                      });
+                                    },
+                                    activeColor: blueColor,
+                                  ),
+                                  Text(
+                                    'Include Former Tenants',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
@@ -888,7 +1007,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   Padding(
                     padding: EdgeInsets.all(
                         MediaQuery.of(context).size.width < 500 ? 10 : 28),
-                    child: FutureBuilder<List<Tenant>>(
+                    child: FutureBuilder<Map<String, List<Tenant>>>(
                       future: futureTenants,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -897,8 +1016,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
+                        } else if (!snapshot.hasData) {
                           return Container(
                             height: MediaQuery.of(context).size.height * .5,
                             child: Center(
@@ -911,7 +1029,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -926,41 +1044,64 @@ class _Tenants_tableState extends State<Tenants_table> {
                             ),
                           );
                         } else {
-                          var data = snapshot.data!;
-                          if (searchvalue == null || searchvalue!.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (searchvalue == "All") {
-                            data = snapshot.data!;
-                          } else if (searchvalue!.isNotEmpty) {
-                            data = snapshot.data!.where((rentals) {
+                          // Get filtered data based on checkbox selections
+                          var data = getFilteredData(snapshot.data!);
+
+                          if (data.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available for Selected Filters",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          // Apply search filter to the already filtered data
+                          if (searchvalue.isNotEmpty && searchvalue != "All") {
+                            data = data.where((rentals) {
                               // Combine first and last name for full name search
                               String fullName =
                                   '${rentals.tenantFirstName} ${rentals.tenantLastName}'
                                       .toLowerCase();
-                              String searchTerm = searchvalue!.toLowerCase();
+                              String searchTerm = searchvalue.toLowerCase();
 
                               return fullName.contains(searchTerm) ||
-                                  rentals.tenantPhoneNumber!
+                                  (rentals.tenantPhoneNumber ?? '')
                                       .toLowerCase()
                                       .contains(searchTerm) ||
-                                  rentals.tenantEmail!
+                                  (rentals.tenantEmail ?? '')
                                       .toLowerCase()
                                       .contains(searchTerm) ||
-                                  rentals.rentalAddress!
+                                  (rentals.rentalAddress ?? '')
                                       .toLowerCase()
                                       .contains(searchTerm);
                             }).toList();
-                          } else {
-                            data = snapshot.data!.where((rentals) {
-                              String fullName =
-                                  '${rentals.tenantFirstName} ${rentals.tenantLastName}'
-                                      .toLowerCase();
-                              return fullName == searchvalue!.toLowerCase();
-                            }).toList();
                           }
                           sortData(data);
-                          print(
-                              'table password ${snapshot.data?.first.tenantPassword}');
+                          if (data.isNotEmpty) {
+                            print(
+                                'table password ${data.first.tenantPassword}');
+                          }
                           // data = data.reversed.toList();
                           final totalPages =
                               (data.length / itemsPerPage).ceil();
@@ -1297,7 +1438,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 setState(() {
                                                                   futureTenants =
                                                                       TenantsRepository()
-                                                                          .fetchTenants();
+                                                                          .fetchTenantsV2();
                                                                 });
                                                               }
                                                             },

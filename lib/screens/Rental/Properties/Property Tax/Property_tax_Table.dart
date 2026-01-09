@@ -513,633 +513,611 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         .take(itemsPerPage)
         .toList();
 
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        // Header Section with Title and Add Button
-        if (widget.showAddButton)
-          Padding(
-            padding: const EdgeInsets.all(0),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  "Tax Information",
-                  style: TextStyle(
-                      color: blueColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: _openAddMortgageForm,
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 50
-                        : MediaQuery.of(context).size.width * 0.063,
-                    width: (MediaQuery.of(context).size.width < 500)
-                        ? MediaQuery.of(context).size.width * 0.23
-                        : MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "+ Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 22,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          // Header Section with Title and Add Button
+          if (widget.showAddButton)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Tax Information",
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: _openAddMortgageForm,
+                    child: Container(
+                      height: (MediaQuery.of(context).size.width < 500)
+                          ? 50
+                          : MediaQuery.of(context).size.width * 0.063,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.23
+                          : MediaQuery.of(context).size.width * 0.2,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "+ Add",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 16
+                                : 22,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 20),
-              ],
+                ],
+              ),
             ),
-          ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-        // Search and Filter Section
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 11),
-        //   child: Row(
-        //     children: [
-        //       const SizedBox(width: 10),
-        //       Material(
-        //         elevation: 0,
-        //         borderRadius: BorderRadius.circular(8),
-        //         child: Container(
-        //           height: 50,
-        //           width: MediaQuery.of(context).size.width * 0.49,
-        //           decoration: BoxDecoration(
-        //             color: Colors.white,
-        //             borderRadius: BorderRadius.circular(8),
-        //             border: Border.all(color: const Color(0xFF8A95A8)),
-        //           ),
-        //           child: TextField(
-        //             controller: _searchController,
-        //             onChanged: (value) {
-        //               setState(() {
-        //                 searchValue = value;
-        //                 _filterMortgages();
-        //               });
-        //             },
-        //             cursorColor: Colors.blue,
-        //             decoration: const InputDecoration(
-        //               border: InputBorder.none,
-        //               hintText: "Search here...",
-        //               hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-        //               contentPadding: EdgeInsets.all(11),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       const SizedBox(width: 10),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 25),
-
-        // Content Section
-        _isLoading
-            ? const Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.black,
-                  size: 45,
-                ),
-              )
-            : _filteredtax.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No tax found for this property',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Try adjusting your search or add a new tax',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
+          // Content Section
+          _isLoading
+              ? SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 45,
                     ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
+                  ),
+                )
+              : _filteredtax.isEmpty
+                  ? SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.inbox_outlined,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No tax found for this property',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Try adjusting your search or add a new tax',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Column(
                       children: [
-                        _buildHeaders(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: _buildHeaders(),
+                        ),
                         const SizedBox(height: 10),
-                        Container(
-                          child: Column(
-                            children:
-                                currentPageData.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              bool isExpanded = expandedIndex == index;
-                              Map<String, dynamic> tax = entry.value;
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            child: Column(
+                              children:
+                                  currentPageData.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                bool isExpanded = expandedIndex == index;
+                                Map<String, dynamic> tax = entry.value;
 
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: index % 2 != 0
-                                      ? const Color(0xFFF4F8FF)
-                                      : Colors.white,
-                                  border: Border.all(
-                                      color: const Color(0xFFDBE0E5)),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  if (expandedIndex == index) {
-                                                    expandedIndex = null;
-                                                  } else {
-                                                    expandedIndex = index;
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 5, right: 5),
-                                                padding: !isExpanded
-                                                    ? const EdgeInsets.only(
-                                                        bottom: 10)
-                                                    : const EdgeInsets.only(
-                                                        top: 10),
-                                                child: FaIcon(
-                                                  isExpanded
-                                                      ? FontAwesomeIcons.sortUp
-                                                      : FontAwesomeIcons
-                                                          .sortDown,
-                                                  size: 20,
-                                                  color:
-                                                      const Color(0xFF1E3A8A),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text.rich(
-                                                    TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              '${tax['tax_year'] ?? 'N/A'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 50, right: 5),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 6),
-                                                decoration: BoxDecoration(
-                                                  color: _getStatusColor(
-                                                          tax['status'])
-                                                      .withOpacity(0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                    color: _getStatusColor(
-                                                        tax['status']),
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    (tax['status'] ?? 'unknown')
-                                                        .toString()
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                      color: _getStatusColor(
-                                                          tax['status']),
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 10,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // ListTile(
-                                    //   contentPadding: EdgeInsets.zero,
-                                    //   title: Padding(
-                                    //     padding: const EdgeInsets.all(2.0),
-                                    //     child: Row(
-                                    //       mainAxisAlignment:
-                                    //           MainAxisAlignment.start,
-                                    //       crossAxisAlignment:
-                                    //           CrossAxisAlignment.center,
-                                    //       children: <Widget>[
-                                    //         InkWell(
-                                    //           onTap: () {
-                                    //             setState(() {
-                                    //               if (expandedIndex == index) {
-                                    //                 expandedIndex = null;
-                                    //               } else {
-                                    //                 expandedIndex = index;
-                                    //               }
-                                    //             });
-                                    //           },
-                                    //           child: Container(
-                                    //             margin: const EdgeInsets.only(
-                                    //                 left: 5, right: 5),
-                                    //             padding: !isExpanded
-                                    //                 ? const EdgeInsets.only(
-                                    //                     bottom: 10)
-                                    //                 : const EdgeInsets.only(
-                                    //                     top: 10),
-                                    //             child: FaIcon(
-                                    //               isExpanded
-                                    //                   ? FontAwesomeIcons.sortUp
-                                    //                   : FontAwesomeIcons
-                                    //                       .sortDown,
-                                    //               size: 20,
-                                    //               color:
-                                    //                   const Color(0xFF1E3A8A),
-                                    //             ),
-                                    //           ),
-                                    //         ),
-                                    //         Flexible(
-                                    //           flex: 3,
-                                    //           child: Padding(
-                                    //             padding: const EdgeInsets.only(
-                                    //                 left: 8.0),
-                                    //             child: InkWell(
-                                    //               onTap: () {
-                                    //                 setState(() {
-                                    //                   if (expandedIndex ==
-                                    //                       index) {
-                                    //                     expandedIndex = null;
-                                    //                   } else {
-                                    //                     expandedIndex = index;
-                                    //                   }
-                                    //                 });
-                                    //               },
-                                    //               child: Text.rich(
-                                    //                 TextSpan(
-                                    //                   children: [
-                                    //                     TextSpan(
-                                    //                       text:
-                                    //                           '${mortgage['bank_name'] ?? 'N/A'}',
-                                    //                       style: TextStyle(
-                                    //                         color: blueColor,
-                                    //                         fontWeight:
-                                    //                             FontWeight.bold,
-                                    //                         fontSize: 13,
-                                    //                       ),
-                                    //                     ),
-                                    //                   ],
-                                    //                 ),
-                                    //               ),
-                                    //             ),
-                                    //           ),
-                                    //         ),
-                                    //         Flexible(
-                                    //           flex: 2,
-                                    //           child: Container(
-                                    //             margin: EdgeInsets.only(
-                                    //                 left: 50, right: 5),
-                                    //             padding:
-                                    //                 const EdgeInsets.symmetric(
-                                    //                     horizontal: 8,
-                                    //                     vertical: 6),
-                                    //             decoration: BoxDecoration(
-                                    //               color: _getStatusColor(
-                                    //                       mortgage['status'])
-                                    //                   .withOpacity(0.1),
-                                    //               borderRadius:
-                                    //                   BorderRadius.circular(12),
-                                    //               border: Border.all(
-                                    //                 color: _getStatusColor(
-                                    //                     mortgage['status']),
-                                    //                 width: 1,
-                                    //               ),
-                                    //             ),
-                                    //             child: Center(
-                                    //               child: Text(
-                                    //                 (mortgage['status'] ??
-                                    //                         'unknown')
-                                    //                     .toString()
-                                    //                     .toUpperCase(),
-                                    //                 style: TextStyle(
-                                    //                   color: _getStatusColor(
-                                    //                       mortgage['status']),
-                                    //                   fontWeight:
-                                    //                       FontWeight.w600,
-                                    //                   fontSize: 10,
-                                    //                 ),
-                                    //               ),
-                                    //             ),
-                                    //           ),
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    if (isExpanded)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 2.0),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 2),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  FaIcon(
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: index % 2 != 0
+                                        ? const Color(0xFFF4F8FF)
+                                        : Colors.white,
+                                    border: Border.all(
+                                        color: const Color(0xFFDBE0E5)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (expandedIndex ==
+                                                        index) {
+                                                      expandedIndex = null;
+                                                    } else {
+                                                      expandedIndex = index;
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 5, right: 5),
+                                                  padding: !isExpanded
+                                                      ? const EdgeInsets.only(
+                                                          bottom: 10)
+                                                      : const EdgeInsets.only(
+                                                          top: 10),
+                                                  child: FaIcon(
                                                     isExpanded
                                                         ? FontAwesomeIcons
                                                             .sortUp
                                                         : FontAwesomeIcons
                                                             .sortDown,
-                                                    size: 40,
-                                                    color: Colors.transparent,
+                                                    size: 20,
+                                                    color:
+                                                        const Color(0xFF1E3A8A),
                                                   ),
-                                                  Flexible(
-                                                    child: Table(
-                                                      columnWidths: const {
-                                                        0: FlexColumnWidth(),
-                                                        1: FlexColumnWidth(),
-                                                      },
-                                                      children: [
-                                                        _buildTableRow(
-                                                          'AMOUNT:',
-                                                          _getDisplayValue(
-                                                              _formatCurrency(tax[
-                                                                  'tax_amount'])),
-                                                          'DUE DATE',
-                                                          _formatDateSafely(
-                                                              tax['due_date']),
-                                                        ),
-                                                        _buildTableRow(
-                                                          'PAID DATE',
-                                                          _formatDateSafely(
-                                                              tax['paid_date']),
-                                                          'RECEIPT',
-                                                          tax['receipt'] !=
-                                                                      null &&
-                                                                  tax['receipt']
-                                                                      .toString()
-                                                                      .trim()
-                                                                      .isNotEmpty
-                                                              ? 'Tap to view'
-                                                              : 'No receipt',
-                                                          onRightTap: tax['receipt'] !=
-                                                                      null &&
-                                                                  tax['receipt']
-                                                                      .toString()
-                                                                      .trim()
-                                                                      .isNotEmpty
-                                                              ? () =>
-                                                                  _viewReceipt(
-                                                                      tax)
-                                                              : null,
-                                                          isRightClickable:
-                                                              tax['receipt'] !=
-                                                                      null &&
-                                                                  tax['receipt']
-                                                                      .toString()
-                                                                      .trim()
-                                                                      .isNotEmpty,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                ],
+                                                ),
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _deleteMortgage(
-                                                            tax['_id']),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        color:
-                                                            Colors.red.shade50,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                              Expanded(
+                                                flex: 3,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Text.rich(
+                                                      TextSpan(
                                                         children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
-                                                            size: 15,
-                                                            color: Colors.red,
+                                                          TextSpan(
+                                                            text:
+                                                                '${tax['tax_year'] ?? 'N/A'}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 5),
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _editMortgage(tax),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        color: Colors
-                                                            .green.shade50,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .edit,
-                                                            size: 15,
-                                                            color: Colors.green,
-                                                          ),
-                                                        ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 50, right: 5),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 6),
+                                                  decoration: BoxDecoration(
+                                                    color: _getStatusColor(
+                                                            tax['status'])
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    border: Border.all(
+                                                      color: _getStatusColor(
+                                                          tax['status']),
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      (tax['status'] ??
+                                                              'unknown')
+                                                          .toString()
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                        color: _getStatusColor(
+                                                            tax['status']),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 10,
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 15),
-                                                ],
+                                                ),
                                               ),
-                                              const SizedBox(height: 15),
                                             ],
                                           ),
                                         ),
                                       ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                                      // ListTile(
+                                      //   contentPadding: EdgeInsets.zero,
+                                      //   title: Padding(
+                                      //     padding: const EdgeInsets.all(2.0),
+                                      //     child: Row(
+                                      //       mainAxisAlignment:
+                                      //           MainAxisAlignment.start,
+                                      //       crossAxisAlignment:
+                                      //           CrossAxisAlignment.center,
+                                      //       children: <Widget>[
+                                      //         InkWell(
+                                      //           onTap: () {
+                                      //             setState(() {
+                                      //               if (expandedIndex == index) {
+                                      //                 expandedIndex = null;
+                                      //               } else {
+                                      //                 expandedIndex = index;
+                                      //               }
+                                      //             });
+                                      //           },
+                                      //           child: Container(
+                                      //             margin: const EdgeInsets.only(
+                                      //                 left: 5, right: 5),
+                                      //             padding: !isExpanded
+                                      //                 ? const EdgeInsets.only(
+                                      //                     bottom: 10)
+                                      //                 : const EdgeInsets.only(
+                                      //                     top: 10),
+                                      //             child: FaIcon(
+                                      //               isExpanded
+                                      //                   ? FontAwesomeIcons.sortUp
+                                      //                   : FontAwesomeIcons
+                                      //                       .sortDown,
+                                      //               size: 20,
+                                      //               color:
+                                      //                   const Color(0xFF1E3A8A),
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //         Flexible(
+                                      //           flex: 3,
+                                      //           child: Padding(
+                                      //             padding: const EdgeInsets.only(
+                                      //                 left: 8.0),
+                                      //             child: InkWell(
+                                      //               onTap: () {
+                                      //                 setState(() {
+                                      //                   if (expandedIndex ==
+                                      //                       index) {
+                                      //                     expandedIndex = null;
+                                      //                   } else {
+                                      //                     expandedIndex = index;
+                                      //                   }
+                                      //                 });
+                                      //               },
+                                      //               child: Text.rich(
+                                      //                 TextSpan(
+                                      //                   children: [
+                                      //                     TextSpan(
+                                      //                       text:
+                                      //                           '${mortgage['bank_name'] ?? 'N/A'}',
+                                      //                       style: TextStyle(
+                                      //                         color: blueColor,
+                                      //                         fontWeight:
+                                      //                             FontWeight.bold,
+                                      //                         fontSize: 13,
+                                      //                       ),
+                                      //                     ),
+                                      //                   ],
+                                      //                 ),
+                                      //               ),
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //         Flexible(
+                                      //           flex: 2,
+                                      //           child: Container(
+                                      //             margin: EdgeInsets.only(
+                                      //                 left: 50, right: 5),
+                                      //             padding:
+                                      //                 const EdgeInsets.symmetric(
+                                      //                     horizontal: 8,
+                                      //                     vertical: 6),
+                                      //             decoration: BoxDecoration(
+                                      //               color: _getStatusColor(
+                                      //                       mortgage['status'])
+                                      //                   .withOpacity(0.1),
+                                      //               borderRadius:
+                                      //                   BorderRadius.circular(12),
+                                      //               border: Border.all(
+                                      //                 color: _getStatusColor(
+                                      //                     mortgage['status']),
+                                      //                 width: 1,
+                                      //               ),
+                                      //             ),
+                                      //             child: Center(
+                                      //               child: Text(
+                                      //                 (mortgage['status'] ??
+                                      //                         'unknown')
+                                      //                     .toString()
+                                      //                     .toUpperCase(),
+                                      //                 style: TextStyle(
+                                      //                   color: _getStatusColor(
+                                      //                       mortgage['status']),
+                                      //                   fontWeight:
+                                      //                       FontWeight.w600,
+                                      //                   fontSize: 10,
+                                      //                 ),
+                                      //               ),
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      if (isExpanded)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 2.0),
+                                          margin:
+                                              const EdgeInsets.only(bottom: 2),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
+                                                      size: 40,
+                                                      color: Colors.transparent,
+                                                    ),
+                                                    Flexible(
+                                                      child: Table(
+                                                        columnWidths: const {
+                                                          0: FlexColumnWidth(),
+                                                          1: FlexColumnWidth(),
+                                                        },
+                                                        children: [
+                                                          _buildTableRow(
+                                                            'AMOUNT:',
+                                                            _getDisplayValue(
+                                                                _formatCurrency(
+                                                                    tax['tax_amount'])),
+                                                            'DUE DATE',
+                                                            _formatDateSafely(
+                                                                tax['due_date']),
+                                                          ),
+                                                          _buildTableRow(
+                                                            'PAID DATE',
+                                                            _formatDateSafely(
+                                                                tax['paid_date']),
+                                                            'RECEIPT',
+                                                            tax['receipt'] !=
+                                                                        null &&
+                                                                    tax['receipt']
+                                                                        .toString()
+                                                                        .trim()
+                                                                        .isNotEmpty
+                                                                ? 'Tap to view'
+                                                                : 'No receipt',
+                                                            onRightTap: tax['receipt'] !=
+                                                                        null &&
+                                                                    tax['receipt']
+                                                                        .toString()
+                                                                        .trim()
+                                                                        .isNotEmpty
+                                                                ? () =>
+                                                                    _viewReceipt(
+                                                                        tax)
+                                                                : null,
+                                                            isRightClickable: tax[
+                                                                        'receipt'] !=
+                                                                    null &&
+                                                                tax['receipt']
+                                                                    .toString()
+                                                                    .trim()
+                                                                    .isNotEmpty,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () =>
+                                                          _deleteMortgage(
+                                                              tax['_id']),
+                                                      child: Container(
+                                                        height: 35,
+                                                        width: 35,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .red.shade50,
+                                                        ),
+                                                        child: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
+                                                              size: 15,
+                                                              color: Colors.red,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    GestureDetector(
+                                                      onTap: () =>
+                                                          _editMortgage(tax),
+                                                      child: Container(
+                                                        height: 35,
+                                                        width: 35,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .green.shade50,
+                                                        ),
+                                                        child: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .edit,
+                                                              size: 15,
+                                                              color:
+                                                                  Colors.green,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 15),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
-
                         // Pagination Controls
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(width: 10),
-                                Material(
-                                  elevation: 3,
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value: itemsPerPage,
-                                        items: itemsPerPageOptions
-                                            .map((int value) {
-                                          return DropdownMenuItem<int>(
-                                            value: value,
-                                            child: Text(value.toString()),
-                                          );
-                                        }).toList(),
-                                        onChanged: _filteredtax.length >
-                                                itemsPerPageOptions.first
-                                            ? (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage = 0;
-                                                });
-                                              }
-                                            : null,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  Material(
+                                    elevation: 3,
+                                    child: Container(
+                                      height: 40,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<int>(
+                                          value: itemsPerPage,
+                                          items: itemsPerPageOptions
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(value.toString()),
+                                            );
+                                          }).toList(),
+                                          onChanged: _filteredtax.length >
+                                                  itemsPerPageOptions.first
+                                              ? (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage = 0;
+                                                  });
+                                                }
+                                              : null,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.circleChevronLeft,
-                                    color: currentPage == 0
-                                        ? Colors.grey
-                                        : const Color(0xFF1E3A8A),
+                                  const SizedBox(width: 10),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronLeft,
+                                      color: currentPage == 0
+                                          ? Colors.grey
+                                          : const Color(0xFF1E3A8A),
+                                    ),
+                                    onPressed: currentPage == 0
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          },
                                   ),
-                                  onPressed: currentPage == 0
-                                      ? null
-                                      : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
-                                ),
-                                Text('Page ${currentPage + 1} of $totalPages'),
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.circleChevronRight,
-                                    color: currentPage < totalPages - 1
-                                        ? const Color(0xFF1E3A8A)
-                                        : Colors.grey,
+                                  Text(
+                                      'Page ${currentPage + 1} of $totalPages'),
+                                  IconButton(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.circleChevronRight,
+                                      color: currentPage < totalPages - 1
+                                          ? const Color(0xFF1E3A8A)
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: currentPage < totalPages - 1
+                                        ? () {
+                                            setState(() {
+                                              currentPage++;
+                                            });
+                                          }
+                                        : null,
                                   ),
-                                  onPressed: currentPage < totalPages - 1
-                                      ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
-                                      : null,
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 20),
                       ],
                     ),
-                  ),
-      ],
+        ],
+      ),
     );
   }
 

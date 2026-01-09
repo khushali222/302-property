@@ -42,6 +42,7 @@ import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import '../mortgage/property_mortgage_table.dart';
 import 'Property Tax/Property_tax_Table.dart';
+import 'Insurance Premium/Insurance_premium_Table.dart';
 import 'applience/Applience_parts.dart';
 import 'infrastracture.dart';
 import 'moveout/Moveout_properties.dart';
@@ -65,7 +66,7 @@ class Summery_page extends StatefulWidget {
 }
 
 class _Summery_pageState extends State<Summery_page>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   // Arrays for bed and bath dropdowns
   static const List<String> roomsArray = [
     "1 Bed",
@@ -93,6 +94,7 @@ class _Summery_pageState extends State<Summery_page>
     "5+ Bath",
   ];
   TabController? _tabController;
+  TabController? _taxInsuranceTabController;
   ScrollController _scrollController = ScrollController();
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
@@ -102,6 +104,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Rentals>> futurerentalowners;
   late Future<List<Map<String, dynamic>>> futurePropertyTaxes;
   int _selectedIndex = 0;
+  int _taxInsuranceSelectedIndex = 0;
 
   //late Future<List<RentalSummary>> futuresummery;
 
@@ -228,6 +231,7 @@ class _Summery_pageState extends State<Summery_page>
         Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
     _tabController = TabController(length: 5, vsync: this);
+    _taxInsuranceTabController = TabController(length: 2, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     futureRentalDetails = Properies_summery_Repo()
         .fetchrentalDetails(widget.properties.rentalId!);
@@ -536,7 +540,8 @@ class _Summery_pageState extends State<Summery_page>
   bool showdetails = false;
   @override
   void dispose() {
-    _tabController!.dispose();
+    _tabController?.dispose();
+    _taxInsuranceTabController?.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -2714,13 +2719,13 @@ class _Summery_pageState extends State<Summery_page>
           if (isMultiUnit) {
             return Mortgage_page(data);
           } else {
-            return PropertyTax_page(data);
+            return TaxAndInsurance_page(data);
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
-          return PropertyTax_page(data);
+          return TaxAndInsurance_page(data);
         } else if (_selectedIndex == 8) {
           if (isMultiUnit) {
-            return PropertyTax_page(data);
+            return TaxAndInsurance_page(data);
           } else {
             return Utilities_Page(data);
           }
@@ -13003,6 +13008,88 @@ class _Summery_pageState extends State<Summery_page>
 
   PropertyTax_page(List<unit_properties> unit) {
     return Property_tax_Table(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
+    );
+  }
+
+  TaxAndInsurance_page(List<unit_properties> unit) {
+    // Old code - just return Property Tax table directly
+    return Property_tax_Table(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
+    );
+
+    // New code with Tax and Insurance tabs - commented out for now
+    // return ConstrainedBox(
+    //   constraints: BoxConstraints(
+    //     maxHeight: MediaQuery.of(context).size.height * 0.75,
+    //   ),
+    //   child: DefaultTabController(
+    //     length: 2,
+    //     child: Column(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: [
+    //         Container(
+    //           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    //           decoration: BoxDecoration(
+    //             color: Colors.grey.shade200,
+    //             borderRadius: BorderRadius.circular(8),
+    //           ),
+    //           child: TabBar(
+    //             controller: _taxInsuranceTabController,
+    //             indicator: BoxDecoration(
+    //               color: blueColor,
+    //               borderRadius: BorderRadius.circular(8),
+    //             ),
+    //             indicatorColor: blueColor,
+    //             labelColor: Colors.white,
+    //             unselectedLabelColor: blueColor,
+    //             labelStyle: TextStyle(
+    //               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 16,
+    //               fontWeight: FontWeight.bold,
+    //             ),
+    //             unselectedLabelStyle: TextStyle(
+    //               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 16,
+    //               fontWeight: FontWeight.w500,
+    //             ),
+    //             onTap: (index) {
+    //               setState(() {
+    //                 _taxInsuranceSelectedIndex = index;
+    //               });
+    //             },
+    //             tabs: const [
+    //               Tab(text: 'Tax'),
+    //               Tab(text: 'Insurance'),
+    //             ],
+    //           ),
+    //         ),
+    //         Flexible(
+    //           child: TabBarView(
+    //             controller: _taxInsuranceTabController,
+    //             children: [
+    //               Property_tax_Table(
+    //                 propertyId: widget.properties.rentalId ?? "",
+    //                 showAppBar: false,
+    //                 showDrawer: false,
+    //                 showAddButton: true,
+    //               ),
+    //               PropertyInsurance_page(unit),
+    //             ],
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+  }
+
+  PropertyInsurance_page(List<unit_properties> unit) {
+    return Insurance_premium_Table(
       propertyId: widget.properties.rentalId ?? "",
       showAppBar: false,
       showDrawer: false,

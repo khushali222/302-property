@@ -1018,7 +1018,11 @@ class CustomTextFieldState extends State<CustomTextField> {
               : (value) {
                   if (widget.controller!.text.trim().isEmpty) {
                     setState(() {
-                      _errorMessage = 'Please ${widget.hintText}';
+                      String hintTextLower = widget.hintText.isEmpty
+                          ? widget.hintText
+                          : widget.hintText[0].toLowerCase() +
+                              widget.hintText.substring(1);
+                      _errorMessage = 'Please $hintTextLower';
                     });
                     return '';
                   } else if (widget.phone != null) {
