@@ -318,12 +318,14 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("   Unit",
-                              style: TextStyle( color: blueColor,
+                          ? Text("   Unit",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("   Unit",
-                              style: TextStyle( color: blueColor,
+                          : Text("   Unit",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -372,11 +374,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("Lease Start", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Lease Start",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -422,11 +426,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("Lease End", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Lease End",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -2737,16 +2743,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   bool isRowExpanded = expandedRowIndex == rowIndex;
 
                   return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 6),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
                       color: rowIndex % 2 != 0
                           ? const Color(0xFFF4F8FF)
                           : Colors.white,
-                      border: Border.all(
-                          color: const Color(0xFFDBE0E5)),
-                      borderRadius:
-                      BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFDBE0E5)),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       children: <Widget>[

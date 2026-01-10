@@ -120,12 +120,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Property",
-                              style: TextStyle( color: blueColor,
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("Property",
-                              style: TextStyle( color: blueColor,
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -142,12 +144,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Lease End Date",
-                              style: TextStyle( color: blueColor,
+                          ? Text("Lease End Date",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("Lease End Date",
-                              style: TextStyle( color: blueColor,
+                          : Text("Lease End Date",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -414,8 +418,7 @@ class _Recurring_Payments_Configuration_ReportState
                                             : Colors.white,
                                         border: Border.all(
                                             color: const Color(0xFFDBE0E5)),
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         children: [

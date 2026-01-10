@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -529,12 +530,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("    Unit\n    Details",
-                              style: TextStyle( color: blueColor,
+                          ? Text("    Unit\n    Details",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("    Unit\n    Details",
-                              style: TextStyle( color: blueColor,
+                          : Text("    Unit\n    Details",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       const SizedBox(width: 3),
@@ -567,7 +570,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 child: Row(
                   children: [
                     Text("       Appliance\n       Status",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -1811,102 +1815,113 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Home System Report',
-                    width: MediaQuery.of(context).size.width * .91,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildActionButtons(), // Add action buttons
-                      _buildTabBar(),
-                      FutureBuilder<Home_system_report>(
-                        future: _futureRentersInsurance,
-                        builder: (context, snapshot) {
-                          if (_futureRentersInsurance == null) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "Please select a property",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 16,
+          ? Column(
+              children: [
+                ReportHeader(title: "Home System Report"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildActionButtons(), // Add action buttons
+                            _buildTabBar(),
+                            FutureBuilder<Home_system_report>(
+                              future: _futureRentersInsurance,
+                              builder: (context, snapshot) {
+                                if (_futureRentersInsurance == null) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          "Please select a property",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                                  );
+                                }
 
-                          if (isLoading) {
-                            return Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                child: SpinKitFadingCircle(
-                                    color: Colors.black, size: 45),
-                              ),
-                            );
-                          }
-
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Text(
-                                errorMessage ?? 'An error occurred',
-                                style: const TextStyle(color: Colors.red),
-                              ),
-                            );
-                          }
-
-                          if (!snapshot.hasData ||
-                              snapshot.data?.units?.isEmpty == true) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 16,
+                                if (isLoading) {
+                                  return Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: SpinKitFadingCircle(
+                                          color: Colors.black, size: 45),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                                  );
+                                }
 
-                          return _selectedTabIndex == 0
-                              ? _buildDataTable(snapshot.data!)
-                              : _buildSummaryView(snapshot.data!);
-                        },
-                      ),
-                    ],
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text(
+                                      errorMessage ?? 'An error occurred',
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  );
+                                }
+
+                                if (!snapshot.hasData ||
+                                    snapshot.data?.units?.isEmpty == true) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+
+                                return _selectedTabIndex == 0
+                                    ? _buildDataTable(snapshot.data!)
+                                    : _buildSummaryView(snapshot.data!);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             )
-          : const Center(
-              child: Text("No Internet Connection"),
+          : Column(
+              children: [
+                ReportHeader(title: "Home System Report"),
+                Expanded(
+                  child: Center(
+                    child: Text("No Internet Connection"),
+                  ),
+                ),
+              ],
             ),
     );
   }
@@ -2339,16 +2354,13 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       bool isRowExpanded = expandedRowIndex == rowIndex;
 
                       return Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 6),
+                        margin: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
                               ? const Color(0xFFF4F8FF)
                               : Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFDBE0E5)),
-                          borderRadius:
-                          BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [

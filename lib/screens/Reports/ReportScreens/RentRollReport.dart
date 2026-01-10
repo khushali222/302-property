@@ -25,6 +25,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -2224,25 +2225,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Rent Roll Report",
-                      ),
-                    ),
-                  ),
+          ? Column(
+              children: [
+                ReportHeader(title: "Rent Roll Report"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width < 500)
@@ -2684,31 +2673,41 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   //       );
                   //     },
                   //   )
-                ],
-              ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
+          : Column(
+              children: [
+                ReportHeader(title: "Rent Roll Report"),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/no_internet.json',
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.fill,
+                        ),
+                        const Text(
+                          'No Internet',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          'Check your internet connection',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }

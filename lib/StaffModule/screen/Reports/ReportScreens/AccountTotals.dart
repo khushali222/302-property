@@ -31,6 +31,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -1173,463 +1174,491 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Account Totals Reports",
-                      ),
-                    ),
-                  ),
-                  // if (MediaQuery.of(context).size.width > 500)
-                  //   const SizedBox(height: 16),
-                  // if (MediaQuery.of(context).size.width < 500)
-                  FutureBuilder<List<AccountTotalsReport>>(
-                    future: _futureAccountTotals,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            children: [
-                              filters(),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              ColabShimmerLoadingWidget(),
-                            ],
-                          ),
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            children: [
-                              filters(),
-                              Container(
-                                height: MediaQuery.of(context).size.height * .5,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/no_data.jpg",
-                                        height: 200,
-                                        width: 200,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "No Data Available",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 16),
-                                      )
-                                    ],
-                                  ),
+          ? Column(
+              children: [
+                ReportHeader(title: "Account Totals Reports"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        FutureBuilder<List<AccountTotalsReport>>(
+                          future: _futureAccountTotals,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
+                                  children: [
+                                    filters(),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    ColabShimmerLoadingWidget(),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      var data = snapshot.data!;
-                      print(data.first.rentalOwnerName);
-                      // Pagination logic
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-
-                      return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 5),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 5,
-                              ),
-                              filters(data: data),
-                              const SizedBox(height: 10),
-                              _buildHeaders(),
-                              const SizedBox(height: 10),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width > 500
-                                            ? 12
-                                            : 0,
-                                    right:
-                                        MediaQuery.of(context).size.width > 500
-                                            ? 12
-                                            : 0),
-                                child: Container(
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(
-                                  //         color: Color.fromRGBO(
-                                  //             152, 162, 179, .5))),
-                                  child: Column(
-                                    children: currentPageData
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      int rowIndex = entry.key;
-                                      var item = entry.value;
-                                      bool isRowExpanded =
-                                          expandedRowIndex == rowIndex;
-                                      AccountTotalsReport rental = entry.value;
-
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 6),
-                                        decoration: BoxDecoration(
-                                          color: rowIndex % 2 != 0
-                                              ? const Color(0xFFF4F8FF)
-                                              : Colors.white,
-                                          border: Border.all(
-                                              color: const Color(0xFFDBE0E5)),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
+                                  children: [
+                                    filters(),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .5,
+                                      child: Center(
                                         child: Column(
-                                          children: <Widget>[
-                                            ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              title: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(2.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (expandedRowIndex ==
-                                                              rowIndex) {
-                                                            expandedRowIndex =
-                                                                null;
-                                                          } else {
-                                                            expandedRowIndex =
-                                                                rowIndex;
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .only(
-                                                            left: 5, right: 5),
-                                                        padding: !isRowExpanded
-                                                            ? const EdgeInsets
-                                                                .only(
-                                                                bottom: 10)
-                                                            : const EdgeInsets
-                                                                .only(top: 10),
-                                                        child: FaIcon(
-                                                          isRowExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 20,
-                                                          color: isRowExpanded
-                                                              ? blueColor
-                                                              : blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedRowIndex ==
-                                                                rowIndex) {
-                                                              expandedRowIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedRowIndex =
-                                                                  rowIndex;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Text(
-                                                          '${item.rentalOwnerName ?? '-'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    // SizedBox(
-                                                    //     width:
-                                                    //     MediaQuery.of(context)
-                                                    //         .size
-                                                    //         .width *
-                                                    //         .3),
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Text(
-                                                        ' Record : ${item.payments.length ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/no_data.jpg",
+                                              height: 200,
+                                              width: 200,
                                             ),
-                                            if (isRowExpanded)
-                                              Column(
-                                                children: [
-                                                  Column(
-                                                    children: item.payments!
-                                                        .asMap()
-                                                        .entries
-                                                        .map((tenantEntry) {
-                                                      int tenantIndex =
-                                                          tenantEntry.key;
-                                                      var tenant =
-                                                          tenantEntry.value;
-                                                      bool isTenantExpanded =
-                                                          expandedTenantIndex[
-                                                                  rowIndex] ==
-                                                              tenantIndex;
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "No Data Available",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor,
+                                                  fontSize: 16),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
 
-                                                      return Column(
-                                                        children: [
+                            var data = snapshot.data!;
+                            print(data.first.rentalOwnerName);
+                            // Pagination logic
+                            final totalPages =
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
+
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 5),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    filters(data: data),
+                                    const SizedBox(height: 10),
+                                    _buildHeaders(),
+                                    const SizedBox(height: 10),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                      .size
+                                                      .width >
+                                                  500
+                                              ? 12
+                                              : 0,
+                                          right: MediaQuery.of(context)
+                                                      .size
+                                                      .width >
+                                                  500
+                                              ? 12
+                                              : 0),
+                                      child: Container(
+                                        // decoration: BoxDecoration(
+                                        //     border: Border.all(
+                                        //         color: Color.fromRGBO(
+                                        //             152, 162, 179, .5))),
+                                        child: Column(
+                                          children: currentPageData
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            int rowIndex = entry.key;
+                                            var item = entry.value;
+                                            bool isRowExpanded =
+                                                expandedRowIndex == rowIndex;
+                                            AccountTotalsReport rental =
+                                                entry.value;
+
+                                            return Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: rowIndex % 2 != 0
+                                                    ? const Color(0xFFF4F8FF)
+                                                    : Colors.white,
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFDBE0E5)),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    title: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              2.0),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                if (expandedRowIndex ==
+                                                                    rowIndex) {
+                                                                  expandedRowIndex =
+                                                                      null;
+                                                                } else {
+                                                                  expandedRowIndex =
+                                                                      rowIndex;
+                                                                }
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left: 5,
+                                                                      right: 5),
+                                                              padding: !isRowExpanded
+                                                                  ? const EdgeInsets
+                                                                      .only(
+                                                                      bottom:
+                                                                          10)
+                                                                  : const EdgeInsets
+                                                                      .only(
+                                                                      top: 10),
+                                                              child: FaIcon(
+                                                                isRowExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 20,
+                                                                color: isRowExpanded
+                                                                    ? blueColor
+                                                                    : blueColor,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 4,
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (expandedRowIndex ==
+                                                                      rowIndex) {
+                                                                    expandedRowIndex =
+                                                                        null;
+                                                                  } else {
+                                                                    expandedRowIndex =
+                                                                        rowIndex;
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Text(
+                                                                '${item.rentalOwnerName ?? '-'}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          // SizedBox(
+                                                          //     width:
+                                                          //     MediaQuery.of(context)
+                                                          //         .size
+                                                          //         .width *
+                                                          //         .3),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(
+                                                              ' Record : ${item.payments.length ?? '-'}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (isRowExpanded)
+                                                    Column(
+                                                      children: [
+                                                        Column(
+                                                          children: item
+                                                              .payments!
+                                                              .asMap()
+                                                              .entries
+                                                              .map(
+                                                                  (tenantEntry) {
+                                                            int tenantIndex =
+                                                                tenantEntry.key;
+                                                            var tenant =
+                                                                tenantEntry
+                                                                    .value;
+                                                            bool
+                                                                isTenantExpanded =
+                                                                expandedTenantIndex[
+                                                                        rowIndex] ==
+                                                                    tenantIndex;
+
+                                                            return Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 25,
+                                                                    ),
+                                                                    Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          if (expandedTenantIndex[rowIndex] ==
+                                                                              tenantIndex) {
+                                                                            expandedTenantIndex[rowIndex] =
+                                                                                null;
+                                                                          } else {
+                                                                            expandedTenantIndex[rowIndex] =
+                                                                                tenantIndex;
+                                                                          }
+                                                                        });
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        "${tenant.account}",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                    )),
+                                                                    Expanded(
+                                                                        child:
+                                                                            GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          if (expandedTenantIndex[rowIndex] ==
+                                                                              tenantIndex) {
+                                                                            expandedTenantIndex[rowIndex] =
+                                                                                null;
+                                                                          } else {
+                                                                            expandedTenantIndex[rowIndex] =
+                                                                                tenantIndex;
+                                                                          }
+                                                                        });
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        formatCurrency(
+                                                                            tenant.amount),
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                    )),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                              ],
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                        if (item.rentalOwnerName !=
+                                                            'Grand Totals')
                                                           Row(
                                                             children: [
                                                               SizedBox(
                                                                 width: 25,
                                                               ),
                                                               Expanded(
-                                                                  child:
-                                                                      GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (expandedTenantIndex[
-                                                                            rowIndex] ==
-                                                                        tenantIndex) {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          null;
-                                                                    } else {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          tenantIndex;
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child: Text(
-                                                                  "${tenant.account}",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor),
+                                                                  child: Text(
+                                                                "Sub Total",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontSize: 15,
                                                                 ),
                                                               )),
                                                               Expanded(
-                                                                  child:
-                                                                      GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    if (expandedTenantIndex[
-                                                                            rowIndex] ==
-                                                                        tenantIndex) {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          null;
-                                                                    } else {
-                                                                      expandedTenantIndex[
-                                                                              rowIndex] =
-                                                                          tenantIndex;
-                                                                    }
-                                                                  });
-                                                                },
-                                                                child: Text(
-                                                                  formatCurrency(
-                                                                      tenant
-                                                                          .amount),
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor),
+                                                                  child: Text(
+                                                                formatCurrency(
+                                                                    item.subTotal),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontSize: 15,
                                                                 ),
                                                               )),
                                                             ],
                                                           ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                  if (item.rentalOwnerName !=
-                                                      'Grand Totals')
-                                                    Row(
-                                                      children: [
                                                         SizedBox(
-                                                          width: 25,
+                                                          height: 10,
                                                         ),
-                                                        Expanded(
-                                                            child: Text(
-                                                          "Sub Total",
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor,
-                                                            fontSize: 15,
-                                                          ),
-                                                        )),
-                                                        Expanded(
-                                                            child: Text(
-                                                          formatCurrency(
-                                                              item.subTotal),
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor,
-                                                            fontSize: 15,
-                                                          ),
-                                                        )),
                                                       ],
                                                     ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
                                                 ],
                                               ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 10),
+                                            Material(
+                                              elevation: 3,
+                                              child: Container(
+                                                height: 40,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12.0),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                ),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<int>(
+                                                    value: itemsPerPage,
+                                                    items: itemsPerPageOptions
+                                                        .map((int value) {
+                                                      return DropdownMenuItem<
+                                                          int>(
+                                                        value: value,
+                                                        child: Text(
+                                                            value.toString()),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: (newValue) {
+                                                      setState(() {
+                                                        itemsPerPage =
+                                                            newValue!;
+                                                        currentPage =
+                                                            0; // Reset to first page when items per page change
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronLeft,
+                                                color: currentPage == 0
+                                                    ? Colors.grey
+                                                    : blueColor,
+                                              ),
+                                              onPressed: currentPage == 0
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        currentPage--;
+                                                      });
+                                                    },
+                                            ),
+                                            Text(
+                                                'Page ${currentPage + 1} of $totalPages'),
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronRight,
+                                                color:
+                                                    currentPage < totalPages - 1
+                                                        ? blueColor
+                                                        : Colors.grey,
+                                              ),
+                                              onPressed:
+                                                  currentPage < totalPages - 1
+                                                      ? () {
+                                                          setState(() {
+                                                            currentPage++;
+                                                          });
+                                                        }
+                                                      : null,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const SizedBox(width: 10),
-                                      Material(
-                                        elevation: 3,
-                                        child: Container(
-                                          height: 40,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.grey),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: itemsPerPage,
-                                              items: itemsPerPageOptions
-                                                  .map((int value) {
-                                                return DropdownMenuItem<int>(
-                                                  value: value,
-                                                  child: Text(value.toString()),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage =
-                                                      0; // Reset to first page when items per page change
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronLeft,
-                                          color: currentPage == 0
-                                              ? Colors.grey
-                                              : blueColor,
-                                        ),
-                                        onPressed: currentPage == 0
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  currentPage--;
-                                                });
-                                              },
-                                      ),
-                                      Text(
-                                          'Page ${currentPage + 1} of $totalPages'),
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronRight,
-                                          color: currentPage < totalPages - 1
-                                              ? blueColor
-                                              : Colors.grey,
-                                        ),
-                                        onPressed: currentPage < totalPages - 1
-                                            ? () {
-                                                setState(() {
-                                                  currentPage++;
-                                                });
-                                              }
-                                            : null,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                  /* if (MediaQuery.of(context).size.width > 500)
+                        /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<DelinquentTenantsData>>(
                 future: _futureRentersInsurance,
                 builder: (context, snapshot) {
@@ -2287,31 +2316,43 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                   );
                 },
               ),*/
-                ],
-              ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
+          : Column(
+              children: [
+                ReportHeader(title: "Account Totals Reports"),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/no_internet.json',
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.fill,
+                        ),
+                        Text(
+                          'No Internet',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Check your internet connection',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }
@@ -3208,7 +3249,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

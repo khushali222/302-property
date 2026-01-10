@@ -376,33 +376,35 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))
-                          :  Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ?  Padding(
-                        padding: EdgeInsets.only(top: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      )
-                          :  Padding(
-                        padding: EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      ),
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -434,33 +436,34 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   children: [
                     SizedBox(width: 22),
                     width < 400
-                        ?  Text("Lease\nEndDate",
-                        style: TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15))
-                        :  Text("Lease\nEndDate",
-                        style:
-                        TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
+                        ? Text("Lease\nEndDate",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("Lease\nEndDate",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding:  EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding:  EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    ),
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -491,27 +494,29 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 25),
-                    Text("Tenant", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Tenant",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding:  EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding:  EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color:blueColor,
-                      ),
-                    ),
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1279,7 +1284,6 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                 const SizedBox(height: 10),
                                 // if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1302,7 +1306,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[

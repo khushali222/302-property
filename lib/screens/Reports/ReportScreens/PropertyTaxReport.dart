@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:intl/intl.dart';
 
 class PropertyTaxReport extends StatefulWidget {
@@ -1132,10 +1133,7 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
       appBar: widget_302.App_Bar(context: context),
       body: Column(
         children: [
-          titleBar(
-            title: 'Property Tax Report',
-            width: MediaQuery.of(context).size.width * .95,
-          ),
+          ReportHeader(title: "Property Tax Report"),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(16),

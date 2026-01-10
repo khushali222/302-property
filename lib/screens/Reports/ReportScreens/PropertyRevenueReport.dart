@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/PropertyRevenueReportService.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -330,22 +331,30 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       ),
       appBar: widget_302.App_Bar(context: context),
       body: _connectivityResult == ConnectivityResult.none
-          ? _buildNoInternetWidget()
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  titleBar(
-                    title: 'Property Revenue Report',
-                    width: MediaQuery.of(context).size.width * .98,
+          ? Column(
+              children: [
+                ReportHeader(title: "Property Revenue Report"),
+                Expanded(child: _buildNoInternetWidget()),
+              ],
+            )
+          : Column(
+              children: [
+                ReportHeader(title: "Property Revenue Report"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Filters Section
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: _buildFiltersSection(),
+                        ),
+                        _buildReportContent(),
+                      ],
+                    ),
                   ),
-                  // Filters Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: _buildFiltersSection(),
-                  ),
-                  _buildReportContent(),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }

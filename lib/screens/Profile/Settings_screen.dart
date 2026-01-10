@@ -85,6 +85,17 @@ class _TabBarExampleState extends State<TabBarExample> {
   String selectedAccountId = "";
   String selectedAccountName = "";
   List<Setting4> accounts = [];
+  // Original values for Late Fee Charge change tracking
+  String _originalDuration = "";
+  String _originalLateFee = "";
+  String _originalGraceBalance = "";
+  String _originalCalculationType = "fixed";
+  String _originalDescription = "";
+  String _originalSelectedAccountName = "";
+  // Original values for Mail Service change tracking
+  String _originalReplyToEmail = "";
+  String _originalDurationMail = "";
+  bool _originalRentDueReminderEmail = false;
   bool isLoadingAccounts = false;
   bool mailupdate = false;
   bool issurge = false;
@@ -375,11 +386,56 @@ class _TabBarExampleState extends State<TabBarExample> {
           selectedAccountName = latefee.chargeAccount.isNotEmpty
               ? latefee.chargeAccount
               : "Late Fee Income";
+
+          // Store original values for change tracking
+          _originalDuration = latefee.duration.toString();
+          _originalLateFee = latefee.late_fee;
+          _originalGraceBalance = latefee.graceBalance.toString();
+          _originalCalculationType = latefee.calculationType;
+          _originalDescription = latefee.description ?? "";
+          _originalSelectedAccountName = latefee.chargeAccount.isNotEmpty
+              ? latefee.chargeAccount
+              : "Late Fee Income";
         });
       }
     } catch (e) {
       print('Failed to load surcharge data: $e');
     }
+  }
+
+  // Check if Late Fee Charge fields have been modified
+  bool _hasLateFeeChanges() {
+    if (!islatefeeupdate) {
+      // For new entries, check if any field has a value
+      return duration.text.trim().isNotEmpty ||
+          late_fee.text.trim().isNotEmpty ||
+          grace_balance.text.trim().isNotEmpty ||
+          description.text.trim().isNotEmpty ||
+          selectedAccountName.isNotEmpty;
+    }
+
+    // For updates, compare current values with original values
+    return duration.text.trim() != _originalDuration ||
+        late_fee.text.trim() != _originalLateFee ||
+        grace_balance.text.trim() != _originalGraceBalance ||
+        calculationType != _originalCalculationType ||
+        description.text.trim() != _originalDescription ||
+        selectedAccountName != _originalSelectedAccountName;
+  }
+
+  // Check if Mail Service fields have been modified
+  bool _hasMailServiceChanges() {
+    if (!mailupdate) {
+      // For new entries, check if any field has a value
+      return replyToEmail.text.trim().isNotEmpty ||
+          durationmail.text.trim().isNotEmpty ||
+          rentDueReminderEmail;
+    }
+
+    // For updates, compare current values with original values
+    return replyToEmail.text.trim() != _originalReplyToEmail ||
+        durationmail.text.trim() != _originalDurationMail ||
+        rentDueReminderEmail != _originalRentDueReminderEmail;
   }
 
   Future<void> updateSurcharge() async {
@@ -471,6 +527,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateLatefee() async {
+    // Check if there are any changes before proceeding
+    if (!_hasLateFeeChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -498,6 +559,15 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.updateLatefeesData('$latefee_id', data);
 
       if (success) {
+        // Update original values after successful save
+        setState(() {
+          _originalDuration = duration.text.trim();
+          _originalLateFee = late_fee.text.trim();
+          _originalGraceBalance = grace_balance.text.trim();
+          _originalCalculationType = calculationType;
+          _originalDescription = description.text.trim();
+          _originalSelectedAccountName = selectedAccountName;
+        });
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('Latefee Updated Successfully')));
         Fluttertoast.showToast(msg: 'Late Fee Updated Successfully');
@@ -544,6 +614,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   }
   // }
   Future<void> AddLatefeedata() async {
+    // Check if there are any changes before proceeding
+    if (!_hasLateFeeChanges()) {
+      return; // No changes made, don't proceed with add
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -571,6 +646,8 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.AddLatefeesData('1714649182536', data);
 
       if (success) {
+        // After successful add, fetch the data to get the ID and update original values
+        await fetchlatefeeData();
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('late_fee Updated Successfully')));
         Fluttertoast.showToast(msg: 'Late Fee updated successfully');
@@ -606,6 +683,12 @@ class _TabBarExampleState extends State<TabBarExample> {
             rentDueReminderEmail = latefee.remindermail!;
           }
           print(rentDueReminderEmail);
+
+          // Store original values for change tracking
+          _originalDurationMail = latefee.duration?.toString() ?? "";
+          _originalRentDueReminderEmail = latefee.remindermail ?? false;
+          // Note: replyToEmail is not in Setting3 API response, track from current value
+          _originalReplyToEmail = replyToEmail.text.trim();
         });
       }
     } catch (e) {
@@ -662,6 +745,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateMail() async {
+    // Check if there are any changes before proceeding
+    if (!_hasMailServiceChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -678,6 +766,12 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.updateMailData(data);
 
       if (success) {
+        // Update original values after successful save
+        setState(() {
+          _originalReplyToEmail = replyToEmail.text.trim();
+          _originalDurationMail = durationmail.text.trim();
+          _originalRentDueReminderEmail = rentDueReminderEmail;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('mail Updated Successfully')));
       } else {
@@ -734,6 +828,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> Addmail() async {
+    // Check if there are any changes before proceeding
+    if (!_hasMailServiceChanges()) {
+      return; // No changes made, don't proceed with add
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -750,6 +849,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.AddMailData(id, data);
 
       if (success) {
+        // After successful add, fetch the data to get the updated values and update original values
+        await fetchMailData();
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('mail Updated Successfully')));
       } else {
@@ -3941,49 +4042,60 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   if (MediaQuery.of(context).size.width > 500)
                                     const SizedBox(width: 2),
                                   GestureDetector(
-                                    onTap: () async {
-                                      if (mailupdate)
-                                        await updateMail();
-                                      else
-                                        await Addmail();
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: blueColor,
-                                          boxShadow: [
-                                            const BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
+                                    onTap: _hasMailServiceChanges()
+                                        ? () async {
+                                            if (mailupdate)
+                                              await updateMail();
+                                            else
+                                              await Addmail();
+                                          }
+                                        : null,
+                                    child: Opacity(
+                                      opacity:
+                                          _hasMailServiceChanges() ? 1.0 : 0.5,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 35
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 100
+                                              : 150,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            color: blueColor,
+                                            boxShadow: [
+                                              const BoxShadow(
+                                                color: Colors.grey,
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
+                                                blurRadius: 6.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 16
+                                                          : 20),
                                             ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Save",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 16
-                                                    : 20),
                                           ),
                                         ),
                                       ),
@@ -4300,7 +4412,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         });
                                                       },
                                                       //  controller: password,
+                                                      textAlign:
+                                                          calculationType ==
+                                                                  "fixed"
+                                                              ? TextAlign.right
+                                                              : TextAlign.left,
                                                       cursorColor: blueColor,
+                                                      keyboardType: TextInputType
+                                                          .numberWithOptions(
+                                                              decimal: true),
                                                       decoration:
                                                           InputDecoration(
                                                         // hintText: "Enter password",
@@ -4325,8 +4445,55 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets
-                                                                .all(13),
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? const EdgeInsets
+                                                                    .only(
+                                                                    left: 8,
+                                                                    top: 13,
+                                                                    bottom: 13,
+                                                                    right: 13)
+                                                                : const EdgeInsets
+                                                                    .all(13),
+                                                        prefixIcon:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            12,
+                                                                        right:
+                                                                            8),
+                                                                    child:
+                                                                        Center(
+                                                                      widthFactor:
+                                                                          1.0,
+                                                                      child:
+                                                                          Text(
+                                                                        '\$',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : null,
+                                                        prefixIconConstraints:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? const BoxConstraints(
+                                                                    minWidth:
+                                                                        28,
+                                                                    maxWidth:
+                                                                        32)
+                                                                : null,
                                                         suffixIcon:
                                                             calculationType ==
                                                                     "percent"
@@ -4337,13 +4504,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                         blueColor,
                                                                     size: 18,
                                                                   )
-                                                                : Icon(
-                                                                    Icons
-                                                                        .attach_money,
-                                                                    color:
-                                                                        blueColor,
-                                                                    size: 18,
-                                                                  ),
+                                                                : null,
                                                       ),
                                                     ),
                                                   ),
@@ -4361,7 +4522,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Grace Balance (\$)",
+                                              "Grace Balance",
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -4397,6 +4558,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         });
                                                       },
                                                       //  controller: password,
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      keyboardType: TextInputType
+                                                          .numberWithOptions(
+                                                              decimal: true),
                                                       cursorColor: blueColor,
                                                       decoration:
                                                           InputDecoration(
@@ -4423,12 +4589,36 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             InputBorder.none,
                                                         contentPadding:
                                                             const EdgeInsets
-                                                                .all(13),
-                                                        // suffixIcon: Icon(
-                                                        //   Icons.percent,
-                                                        //   color: blueColor,
-                                                        //   size: 18,
-                                                        // ),
+                                                                .only(
+                                                                left: 8,
+                                                                top: 13,
+                                                                bottom: 13,
+                                                                right: 13),
+                                                        prefixIcon: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 12,
+                                                                  right: 8),
+                                                          child: Center(
+                                                            widthFactor: 1.0,
+                                                            child: Text(
+                                                              '\$',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        prefixIconConstraints:
+                                                            const BoxConstraints(
+                                                                minWidth: 28,
+                                                                maxWidth: 32),
                                                       ),
                                                     ),
                                                   ),
@@ -4691,7 +4881,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           });
                                                         },
                                                         //  controller: password,
+                                                        textAlign:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? TextAlign
+                                                                    .right
+                                                                : TextAlign
+                                                                    .left,
                                                         cursorColor: blueColor,
+                                                        keyboardType: TextInputType
+                                                            .numberWithOptions(
+                                                                decimal: true),
                                                         decoration:
                                                             InputDecoration(
                                                           // hintText: "Enter password",
@@ -4716,8 +4916,56 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(13),
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? const EdgeInsets
+                                                                      .only(
+                                                                      left: 8,
+                                                                      top: 13,
+                                                                      bottom:
+                                                                          13,
+                                                                      right: 13)
+                                                                  : const EdgeInsets
+                                                                      .all(13),
+                                                          prefixIcon:
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              12,
+                                                                          right:
+                                                                              8),
+                                                                      child:
+                                                                          Center(
+                                                                        widthFactor:
+                                                                            1.0,
+                                                                        child:
+                                                                            Text(
+                                                                          '\$',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : null,
+                                                          prefixIconConstraints:
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? const BoxConstraints(
+                                                                      minWidth:
+                                                                          28,
+                                                                      maxWidth:
+                                                                          32)
+                                                                  : null,
                                                           suffixIcon:
                                                               calculationType ==
                                                                       "percent"
@@ -4728,13 +4976,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                           blueColor,
                                                                       size: 18,
                                                                     )
-                                                                  : Icon(
-                                                                      Icons
-                                                                          .attach_money,
-                                                                      color:
-                                                                          blueColor,
-                                                                      size: 18,
-                                                                    ),
+                                                                  : null,
                                                         ),
                                                       ),
                                                     ),
@@ -5322,49 +5564,59 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   if (MediaQuery.of(context).size.width > 500)
                                     const SizedBox(width: 2),
                                   GestureDetector(
-                                    onTap: () async {
-                                      if (islatefeeupdate)
-                                        await updateLatefee();
-                                      else
-                                        await AddLatefeedata();
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: blueColor,
-                                          boxShadow: [
-                                            const BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
+                                    onTap: _hasLateFeeChanges()
+                                        ? () async {
+                                            if (islatefeeupdate)
+                                              await updateLatefee();
+                                            else
+                                              await AddLatefeedata();
+                                          }
+                                        : null,
+                                    child: Opacity(
+                                      opacity: _hasLateFeeChanges() ? 1.0 : 0.5,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 35
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 100
+                                              : 150,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            color: blueColor,
+                                            boxShadow: [
+                                              const BoxShadow(
+                                                color: Colors.grey,
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
+                                                blurRadius: 6.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 16
+                                                          : 20),
                                             ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Save",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 16
-                                                    : 20),
                                           ),
                                         ),
                                       ),

@@ -521,33 +521,34 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                     children: [
                       width < 400
                           ? Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
                           : Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       SizedBox(width: 3),
                       ascending1
                           ? Padding(
-                        padding:  EdgeInsets.only(top: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      )
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
                           : Padding(
-                        padding:
-                        EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      ),
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -576,28 +577,29 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   },
                   child: Row(
                     children: [
-                      Text("Tenant", style: TextStyle( color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
+                      Text("Tenant",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       SizedBox(width: 5),
                       ascending2
                           ? Padding(
-                        padding:  EdgeInsets.only(top: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color:blueColor,
-                        ),
-                      )
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
                           : Padding(
-                        padding:
-                        EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color:blueColor,
-                        ),
-                      ),
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -1266,7 +1268,6 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                             ? 10
                                             : 0),
                                 child: Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1287,7 +1288,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
