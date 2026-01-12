@@ -13,6 +13,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -1807,10 +1808,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  titleBar(
+                  StaffReportHeader(
                     title: 'Home System Report',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -2624,10 +2623,11 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       height: 45,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey),
                         color: Colors.white,
                       ),
-                      elevation: 2,
+                      elevation: 0,
                     ),
                     iconStyleData: const IconStyleData(
                       icon: Icon(Icons.arrow_drop_down),
@@ -2669,8 +2669,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 width: 45,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey),
                 ),
                 child: IconButton(
                   padding: EdgeInsets.zero,

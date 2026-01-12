@@ -18,7 +18,6 @@ import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -292,7 +291,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(4.0),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
@@ -911,1564 +910,1461 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? Column(
-              children: [
-                ReportHeader(title: "Completed Work Orders"),
-                Expanded(
-                  child: SingleChildScrollView(
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  ReportHeader(
+                    title: "Completed Work Orders",
+                  ),
+                  // Filter Section
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                    ),
                     child: Column(
                       children: [
-                        // Filter Section
+                        // Date Range and Status Dropdowns Side by Side
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10.0,
-                            right: 10.0,
-                          ),
-                          child: Column(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
                             children: [
-                              // Date Range and Status Dropdowns Side by Side
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Row(
-                                              children: [
-                                                const SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    daterange ?? 'Date Range',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: daterange == null
-                                                          ? const Color(
-                                                              0xFF8A95A8)
-                                                          : Colors.black,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: [
-                                              DropdownMenuItem<String>(
-                                                value: 'Today',
-                                                child: Text(
-                                                  'Today',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Yesterday',
-                                                child: Text(
-                                                  'Yesterday',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last 7 Days',
-                                                child: Text(
-                                                  'Last 7 Days',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last 14 Days',
-                                                child: Text(
-                                                  'Last 14 Days',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last 30 Days',
-                                                child: Text(
-                                                  'Last 30 Days',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'This Week',
-                                                child: Text(
-                                                  'This Week',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last Week',
-                                                child: Text(
-                                                  'Last Week',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'This Month',
-                                                child: Text(
-                                                  'This Month',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last Month',
-                                                child: Text(
-                                                  'Last Month',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'This Quarter',
-                                                child: Text(
-                                                  'This Quarter',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last Quarter',
-                                                child: Text(
-                                                  'Last Quarter',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Year to Date',
-                                                child: Text(
-                                                  'Year to Date',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Last Year',
-                                                child: Text(
-                                                  'Last Year',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Custom',
-                                                child: Text(
-                                                  'Custom Date',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                            value: daterange,
-                                            onChanged: (value) {
-                                              final dateProvider =
-                                                  Provider.of<DateProvider>(
-                                                      context,
-                                                      listen: false);
-                                              setState(() {
-                                                daterange = value;
-                                                DateTime now = DateTime.now();
-                                                customdate = false;
-
-                                                if (value == "Today") {
-                                                  String todayApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(
-                                                              DateTime.now());
-
-                                                  // Store API format dates
-                                                  _apiFromDate = todayApiFormat;
-                                                  _apiToDate = todayApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          todayApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          todayApiFormat);
-                                                } else if (value ==
-                                                    "Yesterday") {
-                                                  DateTime yesterday =
-                                                      now.subtract(
-                                                          Duration(days: 1));
-                                                  String yesterdayApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(yesterday);
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      yesterdayApiFormat;
-                                                  _apiToDate =
-                                                      yesterdayApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yesterdayApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yesterdayApiFormat);
-                                                } else if (value ==
-                                                    "Last 7 Days") {
-                                                  // Last 7 Days including today: subtract 6 days (not 7)
-                                                  DateTime startDate =
-                                                      now.subtract(
-                                                          Duration(days: 6));
-                                                  String startApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(startDate);
-                                                  String endApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(now);
-
-                                                  // Store API format dates
-                                                  _apiFromDate = startApiFormat;
-                                                  _apiToDate = endApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          startApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          endApiFormat);
-                                                } else if (value ==
-                                                    "Last 14 Days") {
-                                                  // Last 14 Days including today: subtract 13 days (not 14)
-                                                  DateTime startDate =
-                                                      now.subtract(
-                                                          Duration(days: 13));
-                                                  String startApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(startDate);
-                                                  String endApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(now);
-
-                                                  // Store API format dates
-                                                  _apiFromDate = startApiFormat;
-                                                  _apiToDate = endApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          startApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          endApiFormat);
-                                                } else if (value ==
-                                                    "Last 30 Days") {
-                                                  // Last 30 Days including today: subtract 29 days (not 30)
-                                                  DateTime startDate =
-                                                      now.subtract(
-                                                          Duration(days: 29));
-                                                  String startApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(startDate);
-                                                  String endApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(now);
-
-                                                  // Store API format dates
-                                                  _apiFromDate = startApiFormat;
-                                                  _apiToDate = endApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          startApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          endApiFormat);
-                                                } else if (value ==
-                                                    "This Week") {
-                                                  // Start of current week (Monday)
-                                                  DateTime startOfWeek =
-                                                      now.subtract(Duration(
-                                                          days:
-                                                              now.weekday - 1));
-                                                  // End of current week (Sunday)
-                                                  DateTime endOfWeek =
-                                                      startOfWeek.add(
-                                                          Duration(days: 6));
-                                                  String weekStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(startOfWeek);
-                                                  String weekEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(endOfWeek);
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      weekStartApiFormat;
-                                                  _apiToDate = weekEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          weekStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          weekEndApiFormat);
-                                                } else if (value ==
-                                                    "Last Week") {
-                                                  // Start of current week (Monday)
-                                                  DateTime startOfCurrentWeek =
-                                                      now.subtract(Duration(
-                                                          days:
-                                                              now.weekday - 1));
-                                                  // Start of last week (Monday of last week) - subtract 7 days from current week start
-                                                  DateTime startOfLastWeek =
-                                                      startOfCurrentWeek
-                                                          .subtract(Duration(
-                                                              days: 7));
-                                                  // End of last week (Sunday of last week)
-                                                  DateTime endOfLastWeek =
-                                                      startOfLastWeek.add(
-                                                          Duration(days: 6));
-                                                  String weekStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(
-                                                              startOfLastWeek);
-                                                  String weekEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(
-                                                              endOfLastWeek);
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      weekStartApiFormat;
-                                                  _apiToDate = weekEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          weekStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          weekEndApiFormat);
-                                                } else if (value ==
-                                                    "This Month") {
-                                                  String monthStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year,
-                                                              now.month,
-                                                              1));
-                                                  String monthEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year,
-                                                              now.month + 1,
-                                                              0));
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      monthStartApiFormat;
-                                                  _apiToDate =
-                                                      monthEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          monthStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          monthEndApiFormat);
-                                                } else if (value ==
-                                                    "Last Month") {
-                                                  DateTime lastMonth = DateTime(
-                                                      now.year,
-                                                      now.month - 1,
-                                                      1);
-                                                  String monthStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              lastMonth.year,
-                                                              lastMonth.month,
-                                                              1));
-                                                  String monthEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              lastMonth.year,
-                                                              lastMonth.month +
-                                                                  1,
-                                                              0));
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      monthStartApiFormat;
-                                                  _apiToDate =
-                                                      monthEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          monthStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          monthEndApiFormat);
-                                                } else if (value ==
-                                                    "This Quarter") {
-                                                  int currentQuarter =
-                                                      ((now.month - 1) ~/ 3) +
-                                                          1;
-                                                  int quarterStartMonth =
-                                                      (currentQuarter - 1) * 3 +
-                                                          1;
-                                                  int quarterEndMonth =
-                                                      currentQuarter * 3;
-                                                  String quarterStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year,
-                                                              quarterStartMonth,
-                                                              1));
-                                                  String quarterEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year,
-                                                              quarterEndMonth +
-                                                                  1,
-                                                              0));
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      quarterStartApiFormat;
-                                                  _apiToDate =
-                                                      quarterEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          quarterStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          quarterEndApiFormat);
-                                                } else if (value ==
-                                                    "Last Quarter") {
-                                                  int currentQuarter =
-                                                      ((now.month - 1) ~/ 3) +
-                                                          1;
-                                                  int lastQuarter =
-                                                      currentQuarter == 1
-                                                          ? 4
-                                                          : currentQuarter - 1;
-                                                  int lastQuarterYear =
-                                                      currentQuarter == 1
-                                                          ? now.year - 1
-                                                          : now.year;
-                                                  int quarterStartMonth =
-                                                      (lastQuarter - 1) * 3 + 1;
-                                                  int quarterEndMonth =
-                                                      lastQuarter * 3;
-                                                  String quarterStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              lastQuarterYear,
-                                                              quarterStartMonth,
-                                                              1));
-                                                  String quarterEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              lastQuarterYear,
-                                                              quarterEndMonth +
-                                                                  1,
-                                                              0));
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      quarterStartApiFormat;
-                                                  _apiToDate =
-                                                      quarterEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          quarterStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          quarterEndApiFormat);
-                                                } else if (value ==
-                                                    "Year to Date") {
-                                                  String yearStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year, 1, 1));
-                                                  String yearEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(now);
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      yearStartApiFormat;
-                                                  _apiToDate = yearEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yearStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yearEndApiFormat);
-                                                } else if (value ==
-                                                    "Last Year") {
-                                                  String yearStartApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year - 1,
-                                                              1,
-                                                              1));
-                                                  String yearEndApiFormat =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(DateTime(
-                                                              now.year - 1,
-                                                              12,
-                                                              31));
-
-                                                  // Store API format dates
-                                                  _apiFromDate =
-                                                      yearStartApiFormat;
-                                                  _apiToDate = yearEndApiFormat;
-
-                                                  // Set display format dates
-                                                  fromDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yearStartApiFormat);
-                                                  toDate.text = dateProvider
-                                                      .formatCurrentDate(
-                                                          yearEndApiFormat);
-                                                } else if (value == "Custom") {
-                                                  customdate = true;
-                                                }
-
-                                                if (value != "Custom" &&
-                                                    customdate == true) {
-                                                  customdate = false;
-                                                  fromDate.text = "";
-                                                  toDate.text = "";
-                                                }
-
-                                                // Auto-fetch data only for "Today" selection
-                                                if (value == "Today") {
-                                                  _fetchCompletedWorkOrders(
-                                                    fromDate: _apiFromDate!,
-                                                    toDate: _apiToDate!,
-                                                    status: statusType ==
-                                                            'All Statuses'
-                                                        ? null
-                                                        : statusType,
-                                                  );
-                                                }
-                                                // For other date ranges, user must click "Run Report" button
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: 200,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                              ),
-                                              offset: const Offset(-20, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              // From Date and To Date fields with theme
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: Color(0xFF8A95A8),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Theme(
-                                          data: ThemeData.light().copyWith(
-                                            primaryColor: Color(0xFF8A95A8),
-                                            colorScheme: ColorScheme.light(
-                                              primary: Color(0xFF8A95A8),
-                                            ),
-                                            buttonTheme: ButtonThemeData(
-                                              textTheme:
-                                                  ButtonTextTheme.primary,
-                                            ),
-                                          ),
-                                          child: TextFormField(
-                                            controller: fromDate,
-                                            onTap: customdate
-                                                ? () {
-                                                    _pickDate(context);
-                                                  }
-                                                : null,
-                                            readOnly: true,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            textAlignVertical:
-                                                TextAlignVertical.center,
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 11,
-                                                      horizontal: 11),
-                                              isDense: true,
-                                              hintText: "From",
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: Color(0xFF8A95A8),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Theme(
-                                          data: ThemeData.light().copyWith(
-                                            primaryColor: blueColor,
-                                            colorScheme: ColorScheme.light(
-                                              primary: blueColor,
-                                            ),
-                                            buttonTheme: ButtonThemeData(
-                                              textTheme:
-                                                  ButtonTextTheme.primary,
-                                            ),
-                                          ),
-                                          child: TextFormField(
-                                            controller: toDate,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                            onTap: customdate
-                                                ? () {
-                                                    _endDate(context);
-                                                  }
-                                                : null,
-                                            readOnly: true,
-                                            textInputAction:
-                                                TextInputAction.next,
-                                            textAlignVertical:
-                                                TextAlignVertical.center,
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 11,
-                                                      horizontal: 11),
-                                              isDense: true,
-                                              hintText: "To",
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              // Run Report Button
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Status',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Color(0xFF8A95A8),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: const [
-                                              DropdownMenuItem<String>(
-                                                value: 'All Statuses',
-                                                child: Text('All Statuses'),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Closed',
-                                                child: Text('Closed'),
-                                              ),
-                                              DropdownMenuItem<String>(
-                                                value: 'Completed',
-                                                child: Text('Completed'),
-                                              ),
-                                            ],
-                                            value: statusType,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                statusType = value;
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: 200,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                              ),
-                                              offset: const Offset(-20, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8),
-                                        ),
-                                        onPressed: () {
-                                          _runReport();
-                                        },
-                                        child: const Text(
-                                          'Run Report',
+                              Expanded(
+                                child: Container(
+                                  height: 42,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Colors.grey)),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4),
+                                        child: Text(
+                                          daterange ?? 'Date Range',
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: daterange == null
+                                                ? const Color(0xFF8A95A8)
+                                                : Colors.black,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
+                                      items: [
+                                        DropdownMenuItem<String>(
+                                          value: 'Today',
+                                          child: Text(
+                                            'Today',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Yesterday',
+                                          child: Text(
+                                            'Yesterday',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 7 Days',
+                                          child: Text(
+                                            'Last 7 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 14 Days',
+                                          child: Text(
+                                            'Last 14 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last 30 Days',
+                                          child: Text(
+                                            'Last 30 Days',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Week',
+                                          child: Text(
+                                            'This Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Week',
+                                          child: Text(
+                                            'Last Week',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Month',
+                                          child: Text(
+                                            'This Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Month',
+                                          child: Text(
+                                            'Last Month',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'This Quarter',
+                                          child: Text(
+                                            'This Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Quarter',
+                                          child: Text(
+                                            'Last Quarter',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Year to Date',
+                                          child: Text(
+                                            'Year to Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Last Year',
+                                          child: Text(
+                                            'Last Year',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Custom',
+                                          child: Text(
+                                            'Custom Date',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                      value: daterange,
+                                      onChanged: (value) {
+                                        final dateProvider =
+                                            Provider.of<DateProvider>(context,
+                                                listen: false);
+                                        setState(() {
+                                          daterange = value;
+                                          DateTime now = DateTime.now();
+                                          customdate = false;
+
+                                          if (value == "Today") {
+                                            String todayApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(DateTime.now());
+
+                                            // Store API format dates
+                                            _apiFromDate = todayApiFormat;
+                                            _apiToDate = todayApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    todayApiFormat);
+                                          } else if (value == "Yesterday") {
+                                            DateTime yesterday =
+                                                now.subtract(Duration(days: 1));
+                                            String yesterdayApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(yesterday);
+
+                                            // Store API format dates
+                                            _apiFromDate = yesterdayApiFormat;
+                                            _apiToDate = yesterdayApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterdayApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yesterdayApiFormat);
+                                          } else if (value == "Last 7 Days") {
+                                            // Last 7 Days including today: subtract 6 days (not 7)
+                                            DateTime startDate =
+                                                now.subtract(Duration(days: 6));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
+                                          } else if (value == "Last 14 Days") {
+                                            // Last 14 Days including today: subtract 13 days (not 14)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 13));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
+                                          } else if (value == "Last 30 Days") {
+                                            // Last 30 Days including today: subtract 29 days (not 30)
+                                            DateTime startDate = now
+                                                .subtract(Duration(days: 29));
+                                            String startApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startDate);
+                                            String endApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = startApiFormat;
+                                            _apiToDate = endApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    startApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    endApiFormat);
+                                          } else if (value == "This Week") {
+                                            // Start of current week (Monday)
+                                            DateTime startOfWeek = now.subtract(
+                                                Duration(
+                                                    days: now.weekday - 1));
+                                            // End of current week (Sunday)
+                                            DateTime endOfWeek = startOfWeek
+                                                .add(Duration(days: 6));
+                                            String weekStartApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startOfWeek);
+                                            String weekEndApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(endOfWeek);
+
+                                            // Store API format dates
+                                            _apiFromDate = weekStartApiFormat;
+                                            _apiToDate = weekEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekEndApiFormat);
+                                          } else if (value == "Last Week") {
+                                            // Start of current week (Monday)
+                                            DateTime startOfCurrentWeek =
+                                                now.subtract(Duration(
+                                                    days: now.weekday - 1));
+                                            // Start of last week (Monday of last week) - subtract 7 days from current week start
+                                            DateTime startOfLastWeek =
+                                                startOfCurrentWeek.subtract(
+                                                    Duration(days: 7));
+                                            // End of last week (Sunday of last week)
+                                            DateTime endOfLastWeek =
+                                                startOfLastWeek
+                                                    .add(Duration(days: 6));
+                                            String weekStartApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(startOfLastWeek);
+                                            String weekEndApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(endOfLastWeek);
+
+                                            // Store API format dates
+                                            _apiFromDate = weekStartApiFormat;
+                                            _apiToDate = weekEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    weekEndApiFormat);
+                                          } else if (value == "This Month") {
+                                            String monthStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month, 1));
+                                            String monthEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        now.month + 1, 0));
+
+                                            // Store API format dates
+                                            _apiFromDate = monthStartApiFormat;
+                                            _apiToDate = monthEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthEndApiFormat);
+                                          } else if (value == "Last Month") {
+                                            DateTime lastMonth = DateTime(
+                                                now.year, now.month - 1, 1);
+                                            String monthStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(lastMonth.year,
+                                                        lastMonth.month, 1));
+                                            String monthEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        lastMonth.year,
+                                                        lastMonth.month + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate = monthStartApiFormat;
+                                            _apiToDate = monthEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    monthEndApiFormat);
+                                          } else if (value == "This Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int quarterStartMonth =
+                                                (currentQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                currentQuarter * 3;
+                                            String quarterStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year,
+                                                        quarterStartMonth, 1));
+                                            String quarterEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        now.year,
+                                                        quarterEndMonth + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate =
+                                                quarterStartApiFormat;
+                                            _apiToDate = quarterEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterEndApiFormat);
+                                          } else if (value == "Last Quarter") {
+                                            int currentQuarter =
+                                                ((now.month - 1) ~/ 3) + 1;
+                                            int lastQuarter =
+                                                currentQuarter == 1
+                                                    ? 4
+                                                    : currentQuarter - 1;
+                                            int lastQuarterYear =
+                                                currentQuarter == 1
+                                                    ? now.year - 1
+                                                    : now.year;
+                                            int quarterStartMonth =
+                                                (lastQuarter - 1) * 3 + 1;
+                                            int quarterEndMonth =
+                                                lastQuarter * 3;
+                                            String quarterStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(lastQuarterYear,
+                                                        quarterStartMonth, 1));
+                                            String quarterEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        lastQuarterYear,
+                                                        quarterEndMonth + 1,
+                                                        0));
+
+                                            // Store API format dates
+                                            _apiFromDate =
+                                                quarterStartApiFormat;
+                                            _apiToDate = quarterEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    quarterEndApiFormat);
+                                          } else if (value == "Year to Date") {
+                                            String yearStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(now.year, 1, 1));
+                                            String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(now);
+
+                                            // Store API format dates
+                                            _apiFromDate = yearStartApiFormat;
+                                            _apiToDate = yearEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearEndApiFormat);
+                                          } else if (value == "Last Year") {
+                                            String yearStartApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        now.year - 1, 1, 1));
+                                            String yearEndApiFormat =
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    DateTime(
+                                                        now.year - 1, 12, 31));
+
+                                            // Store API format dates
+                                            _apiFromDate = yearStartApiFormat;
+                                            _apiToDate = yearEndApiFormat;
+
+                                            // Set display format dates
+                                            fromDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearStartApiFormat);
+                                            toDate.text =
+                                                dateProvider.formatCurrentDate(
+                                                    yearEndApiFormat);
+                                          } else if (value == "Custom") {
+                                            customdate = true;
+                                          }
+
+                                          if (value != "Custom" &&
+                                              customdate == true) {
+                                            customdate = false;
+                                            fromDate.text = "";
+                                            toDate.text = "";
+                                          }
+
+                                          // Auto-fetch data only for "Today" selection
+                                          if (value == "Today") {
+                                            _fetchCompletedWorkOrders(
+                                              fromDate: _apiFromDate!,
+                                              toDate: _apiToDate!,
+                                              status:
+                                                  statusType == 'All Statuses'
+                                                      ? null
+                                                      : statusType,
+                                            );
+                                          }
+                                          // For other date ranges, user must click "Run Report" button
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 42,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                              // const SizedBox(height: 15),
                             ],
                           ),
                         ),
-                        // if (MediaQuery.of(context).size.width < 500)
+                        const SizedBox(height: 10),
+                        // From Date and To Date fields with theme
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10.0,
-                            right: 10.0,
-                          ),
-                          child: FutureBuilder<List<CompletedWorkData>>(
-                            future: _futureReport,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ColabShimmerLoadingWidget(),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .5,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/no_data.jpg",
-                                          height: 200,
-                                          width: 200,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
-                                        )
-                                      ],
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1,
                                     ),
                                   ),
-                                );
-                              }
-
-                              var data = snapshot.data!;
-
-                              // Apply filtering based on selectedValue and searchvalue
-                              if (selectedValue == null &&
-                                  searchvalue.isEmpty) {
-                                data = snapshot.data!;
-                              } else if (selectedValue == "All") {
-                                data = snapshot.data!;
-                              } else if (searchvalue.isNotEmpty) {
-                                data = snapshot.data!
-                                    .where((workOrder) =>
-                                        (workOrder.workSubject?.toLowerCase() ??
-                                                '')
-                                            .contains(
-                                                searchvalue.toLowerCase()) ||
-                                        (workOrder.rentalAddress
-                                                    ?.toLowerCase() ??
-                                                '')
-                                            .contains(
-                                                searchvalue.toLowerCase()))
-                                    .toList();
-                              } else {
-                                data = snapshot.data!
-                                    .where((workOrder) =>
-                                        workOrder.workSubject == selectedValue)
-                                    .toList();
-                              }
-
-                              // Sort data if necessary
-                              sortData(data);
-
-                              // Pagination logic
-                              final totalPages =
-                                  (data.length / itemsPerPage).ceil();
-                              final currentPageData = data
-                                  .skip(currentPage * itemsPerPage)
-                                  .take(itemsPerPage)
-                                  .toList();
-
-                              return SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 10
-                                                : 0,
-                                        right:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 10
-                                                : 0,
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF8A95A8),
+                                      colorScheme: ColorScheme.light(
+                                        primary: Color(0xFF8A95A8),
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: fromDate,
+                                      onTap: customdate
+                                          ? () {
+                                              _pickDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "From",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: blueColor,
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                      ),
+                                      buttonTheme: ButtonThemeData(
+                                        textTheme: ButtonTextTheme.primary,
+                                      ),
+                                    ),
+                                    child: TextFormField(
+                                      controller: toDate,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                      onTap: customdate
+                                          ? () {
+                                              _endDate(context);
+                                            }
+                                          : null,
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 11, horizontal: 11),
+                                        isDense: true,
+                                        hintText: "To",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Run Report Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
                                         children: [
-                                          // // Search Box expands to available space
-                                          // Expanded(
-                                          //   child: Padding(
-                                          //     padding: const EdgeInsets.symmetric(
-                                          //         horizontal: 5.0, vertical: 5),
-                                          //     child: Material(
-                                          //       elevation: 3,
-                                          //       borderRadius:
-                                          //           BorderRadius.circular(8),
-                                          //       child: Container(
-                                          //         padding: const EdgeInsets.symmetric(
-                                          //             horizontal: 10),
-                                          //         height: MediaQuery.of(context)
-                                          //                     .size
-                                          //                     .width <
-                                          //                 500
-                                          //             ? 48
-                                          //             : 50,
-                                          //         decoration: BoxDecoration(
-                                          //           color: Colors.white,
-                                          //           borderRadius:
-                                          //               BorderRadius.circular(8),
-                                          //           border: Border.all(
-                                          //               color:
-                                          //                   const Color(0xFF8A95A8)),
-                                          //         ),
-                                          //         child: TextField(
-                                          //           onChanged: (value) {
-                                          //             setState(() {
-                                          //               searchvalue = value;
-                                          //             });
-                                          //           },
-                                          //           decoration: const InputDecoration(
-                                          //             border: InputBorder.none,
-                                          //             hintText: "Search here...",
-                                          //             hintStyle: TextStyle(
-                                          //                 color: Color(0xFF8A95A8)),
-                                          //           ),
-                                          //         ),
-                                          //       ),
-                                          //     ),
-                                          //   ),
-                                          // ),
-
-                                          // Button takes only the space it needs
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: blueColor,
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              'Status',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Color(0xFF8A95A8),
                                               ),
-                                              onPressed: () {},
-                                              child: PopupMenuButton<String>(
-                                                onSelected: (value) async {
-                                                  if (value == 'PDF') {
-                                                    generateWorkOrderPdf(data);
-                                                  } else if (value == 'XLSX') {
-                                                    generateWorkOrderExcel(
-                                                        data);
-                                                  } else if (value == 'CSV') {
-                                                    generateWorkOrderCsv(data);
-                                                  }
-                                                },
-                                                itemBuilder: (BuildContext
-                                                        context) =>
-                                                    <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem<String>(
-                                                      value: 'PDF',
-                                                      child: Text('PDF')),
-                                                  const PopupMenuItem<String>(
-                                                      value: 'XLSX',
-                                                      child: Text('XLSX')),
-                                                  const PopupMenuItem<String>(
-                                                      value: 'CSV',
-                                                      child: Text('CSV')),
-                                                ],
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text('Export'),
-                                                    Icon(Icons.arrow_drop_down),
-                                                  ],
-                                                ),
-                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ],
                                       ),
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'All Statuses',
+                                          child: Text('All Statuses'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Closed',
+                                          child: Text('Closed'),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'Completed',
+                                          child: Text('Completed'),
+                                        ),
+                                      ],
+                                      value: statusType,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          statusType = value;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
                                     ),
-                                    SizedBox(height: 8),
-                                    _buildHeaders(),
-                                    SizedBox(height: 20),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                  ),
+                                  onPressed: () {
+                                    _runReport();
+                                  },
+                                  child: const Text(
+                                    'Run Report',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const SizedBox(height: 15),
+                      ],
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                    ),
+                    child: FutureBuilder<List<CompletedWorkData>>(
+                      future: _futureReport,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ColabShimmerLoadingWidget(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        var data = snapshot.data!;
+
+                        // Apply filtering based on selectedValue and searchvalue
+                        if (selectedValue == null && searchvalue.isEmpty) {
+                          data = snapshot.data!;
+                        } else if (selectedValue == "All") {
+                          data = snapshot.data!;
+                        } else if (searchvalue.isNotEmpty) {
+                          data = snapshot.data!
+                              .where((workOrder) =>
+                                  (workOrder.workSubject?.toLowerCase() ?? '')
+                                      .contains(searchvalue.toLowerCase()) ||
+                                  (workOrder.rentalAddress?.toLowerCase() ?? '')
+                                      .contains(searchvalue.toLowerCase()))
+                              .toList();
+                        } else {
+                          data = snapshot.data!
+                              .where((workOrder) =>
+                                  workOrder.workSubject == selectedValue)
+                              .toList();
+                        }
+
+                        // Sort data if necessary
+                        sortData(data);
+
+                        // Pagination logic
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 10
+                                      : 0,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 10
+                                      : 0,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // // Search Box expands to available space
+                                    // Expanded(
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 5.0, vertical: 5),
+                                    //     child: Material(
+                                    //       elevation: 3,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(8),
+                                    //       child: Container(
+                                    //         padding: const EdgeInsets.symmetric(
+                                    //             horizontal: 10),
+                                    //         height: MediaQuery.of(context)
+                                    //                     .size
+                                    //                     .width <
+                                    //                 500
+                                    //             ? 48
+                                    //             : 50,
+                                    //         decoration: BoxDecoration(
+                                    //           color: Colors.white,
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(8),
+                                    //           border: Border.all(
+                                    //               color:
+                                    //                   const Color(0xFF8A95A8)),
+                                    //         ),
+                                    //         child: TextField(
+                                    //           onChanged: (value) {
+                                    //             setState(() {
+                                    //               searchvalue = value;
+                                    //             });
+                                    //           },
+                                    //           decoration: const InputDecoration(
+                                    //             border: InputBorder.none,
+                                    //             hintText: "Search here...",
+                                    //             hintStyle: TextStyle(
+                                    //                 color: Color(0xFF8A95A8)),
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    // Button takes only the space it needs
                                     Padding(
-                                      padding: EdgeInsets.only(
-                                          left: MediaQuery.of(context)
-                                                      .size
-                                                      .width >
-                                                  500
-                                              ? 10
-                                              : 0,
-                                          right: MediaQuery.of(context)
-                                                      .size
-                                                      .width >
-                                                  500
-                                              ? 10
-                                              : 0),
-                                      child: Container(
-                                        // decoration: BoxDecoration(
-                                        //     border: Border.all(
-                                        //         color: Color.fromRGBO(
-                                        //             152, 162, 179, .5))),
-                                        // decoration: BoxDecoration(
-                                        //     border: Border.all(color: blueColor)),
-                                        child: Column(
-                                          children: currentPageData
-                                              .asMap()
-                                              .entries
-                                              .map((entry) {
-                                            int index = entry.key;
-                                            bool isExpanded =
-                                                expandedIndex == index;
-                                            CompletedWorkData workOrder =
-                                                entry.value;
-
-                                            return Container(
-                                              // decoration: BoxDecoration(
-                                              //   color: index % 2 != 0
-                                              //       ? Colors.white
-                                              //       : blueColor.withOpacity(0.09),
-                                              //   border: Border.all(
-                                              //       color: Color.fromRGBO(
-                                              //           152, 162, 179, .5)),
-                                              // ),
-                                              // decoration: BoxDecoration(
-                                              //   border: Border.all(color: blueColor),
-                                              // ),
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6),
-                                              decoration: BoxDecoration(
-                                                color: index % 2 != 0
-                                                    ? const Color(0xFFF4F8FF)
-                                                    : Colors.white,
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFFDBE0E5)),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.zero,
-                                                    title: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              2.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: <Widget>[
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedIndex ==
-                                                                    index) {
-                                                                  expandedIndex =
-                                                                      null;
-                                                                } else {
-                                                                  expandedIndex =
-                                                                      index;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              margin: EdgeInsets
-                                                                  .only(
-                                                                      left: 5),
-                                                              padding: !isExpanded
-                                                                  ? EdgeInsets
-                                                                      .only(
-                                                                          bottom:
-                                                                              10)
-                                                                  : EdgeInsets
-                                                                      .only(
-                                                                          top:
-                                                                              10),
-                                                              child: FaIcon(
-                                                                isExpanded
-                                                                    ? FontAwesomeIcons
-                                                                        .sortUp
-                                                                    : FontAwesomeIcons
-                                                                        .sortDown,
-                                                                size: 20,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Text(
-                                                              '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .04),
-                                                          Expanded(
-                                                            child: Text(
-                                                              '${workOrder.rentalAddress ?? '-'}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .04),
-                                                          Expanded(
-                                                            child: Text(
-                                                              '${workOrder.ticketNumber ?? workOrder.workOrderId ?? '-'}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-
-                                                          // SizedBox(
-                                                          //     width: MediaQuery.of(context)
-                                                          //             .size
-                                                          //             .width *
-                                                          //         .08),
-                                                          // Expanded(
-                                                          //   child: Text(
-                                                          //     // '${widget.data.createdAt}',
-                                                          //     '${lease.status}',
-                                                          //     style: TextStyle(
-                                                          //       color: blueColor,
-                                                          //       fontWeight: FontWeight.bold,
-                                                          //       fontSize: 13,
-                                                          //     ),
-                                                          //   ),
-                                                          // ),
-                                                          SizedBox(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .02),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (isExpanded)
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8.0),
-                                                      margin: EdgeInsets.only(
-                                                          bottom: 20),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                FaIcon(
-                                                                  isExpanded
-                                                                      ? FontAwesomeIcons
-                                                                          .sortUp
-                                                                      : FontAwesomeIcons
-                                                                          .sortDown,
-                                                                  size: 50,
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Work : ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                            if (workOrder.workSubject != null &&
-                                                                                workOrder.workSubject != "")
-                                                                              TextSpan(
-                                                                                text: '${workOrder.workSubject ?? "N/A"}',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                            if (workOrder.workSubject == null ||
-                                                                                workOrder.workSubject == "")
-                                                                              TextSpan(
-                                                                                text: 'N/A',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Description : ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                            if (workOrder.workPerformed != null &&
-                                                                                workOrder.workPerformed != "")
-                                                                              TextSpan(
-                                                                                text: '${workOrder.workPerformed ?? "N/A"}',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                            if (workOrder.workPerformed == null ||
-                                                                                workOrder.workPerformed == "")
-                                                                              TextSpan(
-                                                                                text: 'N/A',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Note : ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                            if (workOrder.vendorNotes != null &&
-                                                                                workOrder.vendorNotes != "")
-                                                                              TextSpan(
-                                                                                text: '${workOrder.vendorNotes ?? "N/A"}',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                            if (workOrder.vendorNotes == null ||
-                                                                                workOrder.vendorNotes == "")
-                                                                              TextSpan(
-                                                                                text: 'N/A',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Status : ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                            if (workOrder.status != null &&
-                                                                                workOrder.status != "")
-                                                                              TextSpan(
-                                                                                text: '${workOrder.status ?? "N/A"}',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                            if (workOrder.status == null ||
-                                                                                workOrder.status == "")
-                                                                              TextSpan(
-                                                                                text: 'N/A',
-                                                                                style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                              ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  width: 40,
-                                                                  child: Column(
-                                                                    children: [],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            );
-                                          }).toList(),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            if (value == 'PDF') {
+                                              generateWorkOrderPdf(data);
+                                            } else if (value == 'XLSX') {
+                                              generateWorkOrderExcel(data);
+                                            } else if (value == 'CSV') {
+                                              generateWorkOrderCsv(data);
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF')),
+                                            const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX')),
+                                            const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV')),
+                                          ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 10),
-                                            Material(
-                                              elevation: 3,
-                                              child: Container(
-                                                height: 40,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12.0),
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.grey),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              _buildHeaders(),
+                              SizedBox(height: 20),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0),
+                                child: Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(color: blueColor)),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      CompletedWorkData workOrder = entry.value;
+
+                                      return Container(
+                                        // decoration: BoxDecoration(
+                                        //   color: index % 2 != 0
+                                        //       ? Colors.white
+                                        //       : blueColor.withOpacity(0.09),
+                                        //   border: Border.all(
+                                        //       color: Color.fromRGBO(
+                                        //           152, 162, 179, .5)),
+                                        // ),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: blueColor),
+                                        // ),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 5),
+                                                        padding: !isExpanded
+                                                            ? EdgeInsets.only(
+                                                                bottom: 10)
+                                                            : EdgeInsets.only(
+                                                                top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${workOrder.rentalAddress ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${workOrder.ticketNumber ?? workOrder.workOrderId ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    // SizedBox(
+                                                    //     width: MediaQuery.of(context)
+                                                    //             .size
+                                                    //             .width *
+                                                    //         .08),
+                                                    // Expanded(
+                                                    //   child: Text(
+                                                    //     // '${widget.data.createdAt}',
+                                                    //     '${lease.status}',
+                                                    //     style: TextStyle(
+                                                    //       color: blueColor,
+                                                    //       fontWeight: FontWeight.bold,
+                                                    //       fontSize: 13,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                  ],
                                                 ),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child: DropdownButton<int>(
-                                                    value: itemsPerPage,
-                                                    items: itemsPerPageOptions
-                                                        .map((int value) {
-                                                      return DropdownMenuItem<
-                                                          int>(
-                                                        value: value,
-                                                        child: Text(
-                                                            value.toString()),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (newValue) {
-                                                      setState(() {
-                                                        itemsPerPage =
-                                                            newValue!;
-                                                        currentPage =
-                                                            0; // Reset to first page when items per page change
-                                                      });
-                                                    },
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Work : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.workSubject !=
+                                                                              null &&
+                                                                          workOrder.workSubject !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.workSubject ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.workSubject ==
+                                                                              null ||
+                                                                          workOrder.workSubject ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Description : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.workPerformed !=
+                                                                              null &&
+                                                                          workOrder.workPerformed !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.workPerformed ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.workPerformed ==
+                                                                              null ||
+                                                                          workOrder.workPerformed ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Note : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.vendorNotes !=
+                                                                              null &&
+                                                                          workOrder.vendorNotes !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.vendorNotes ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.vendorNotes ==
+                                                                              null ||
+                                                                          workOrder.vendorNotes ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Status : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (workOrder.status !=
+                                                                              null &&
+                                                                          workOrder.status !=
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.status ?? "N/A"}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (workOrder.status ==
+                                                                              null ||
+                                                                          workOrder.status ==
+                                                                              "")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            width: 40,
+                                                            child: Column(
+                                                              children: [],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
-                                            ),
                                           ],
                                         ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: FaIcon(
-                                                FontAwesomeIcons
-                                                    .circleChevronLeft,
-                                                color: currentPage == 0
-                                                    ? Colors.grey
-                                                    : blueColor,
-                                              ),
-                                              onPressed: currentPage == 0
-                                                  ? null
-                                                  : () {
-                                                      setState(() {
-                                                        currentPage--;
-                                                      });
-                                                    },
-                                            ),
-                                            Text(
-                                                'Page ${currentPage + 1} of $totalPages'),
-                                            IconButton(
-                                              icon: FaIcon(
-                                                FontAwesomeIcons
-                                                    .circleChevronRight,
-                                                color:
-                                                    currentPage < totalPages - 1
-                                                        ? blueColor
-                                                        : Colors.grey,
-                                              ),
-                                              onPressed:
-                                                  currentPage < totalPages - 1
-                                                      ? () {
-                                                          setState(() {
-                                                            currentPage++;
-                                                          });
-                                                        }
-                                                      : null,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
-                              );
-                            },
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
+                        );
+                      },
+                    ),
+                  ),
 //             if (MediaQuery.of(context).size.width > 500)
 //               const SizedBox(height: 16),
 //             if (MediaQuery.of(context).size.width > 500)
@@ -2734,43 +2630,31 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 //                   );
 //                 },
 //               ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             )
-          : Column(
-              children: [
-                ReportHeader(title: "Completed Work Orders"),
-                Expanded(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Lottie.asset(
-                          'assets/no_internet.json',
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.fill,
-                        ),
-                        Text(
-                          'No Internet',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Check your internet connection',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
                   ),
-                ),
-              ],
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
     );
   }

@@ -1938,35 +1938,31 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 48
-                                          : 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Search here...",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8)),
-                                        ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    height:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 48
+                                        : 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: Colors.grey),
+                                    ),
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF8A95A8)),
                                       ),
                                     ),
                                   ),
@@ -2740,28 +2736,26 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         isExpanded: true,
-                        hint: Row(
-                          children: [
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                daterange ?? "Date Range",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: daterange == null
-                                      ? const Color(0xFF8A95A8)
-                                      : Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        hint: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            daterange ?? "Date Range",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: daterange == null
+                                  ? const Color(0xFF8A95A8)
+                                  : Colors.black,
                             ),
-                          ],
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         items: [
                           DropdownMenuItem<String>(
@@ -3071,10 +3065,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           height: 42,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF8A95A8),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                             color: Colors.white,
                           ),
                           elevation: 0,
@@ -3204,34 +3195,29 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                 Expanded(
                   child: Row(
                     children: [
-                      Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          // height: 40,
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .44
-                              : MediaQuery.of(context).size.width * .4,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFF8A95A8)),
-                          ),
-                          child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                searchvalue = value;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search here...",
-                              hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                              contentPadding: EdgeInsets.all(11),
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        height:
+                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                        width: MediaQuery.of(context).size.width < 500
+                            ? MediaQuery.of(context).size.width * .44
+                            : MediaQuery.of(context).size.width * .4,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              searchvalue = value;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Search here...",
+                            hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                            contentPadding: EdgeInsets.all(11),
                           ),
                         ),
                       ),

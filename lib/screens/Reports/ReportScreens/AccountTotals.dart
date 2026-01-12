@@ -2705,28 +2705,26 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                 // ),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         isExpanded: true,
-                        hint: Row(
-                          children: [
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                daterange ?? "Date Range",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: daterange == null
-                                      ? const Color(0xFF8A95A8)
-                                      : Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        hint: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            daterange ?? "Date Range",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: daterange == null
+                                  ? const Color(0xFF8A95A8)
+                                  : Colors.black,
                             ),
-                          ],
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         items: [
                           DropdownMenuItem<String>(
@@ -3049,10 +3047,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                           height: 42,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF8A95A8),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                             color: Colors.white,
                           ),
                           elevation: 0,

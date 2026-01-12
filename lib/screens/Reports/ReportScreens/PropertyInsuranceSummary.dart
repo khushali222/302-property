@@ -5,7 +5,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:three_zero_two_property/Model/PropertyInsuranceModel.dart';
 import 'package:three_zero_two_property/repository/PropertyInsuranceRepo.dart';
 import 'package:pdf/pdf.dart';
@@ -872,7 +871,10 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
       appBar: widget_302.App_Bar(context: context),
       body: Column(
         children: [
-          ReportHeader(title: "Property Insurance Summary Report"),
+          titleBar(
+            title: 'Property Insurance Summary Report',
+            width: MediaQuery.of(context).size.width * .95,
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(16),

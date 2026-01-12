@@ -10,7 +10,6 @@ import 'package:three_zero_two_property/Model/ReopenWorkOrderModel.dart';
 import 'package:three_zero_two_property/repository/ReopenWorkOrderRepo.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -843,106 +842,94 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? Column(
-              children: [
-                ReportHeader(title: "Reopen Work Orders Report"),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        if (isLoading)
-                          Center(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 50),
-                                SpinKitFadingCircle(color: Colors.blue),
-                                SizedBox(height: 16),
-                                Text('Loading reopen work orders...'),
-                              ],
-                            ),
-                          )
-                        else if (errorMessage != null)
-                          Center(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 50),
-                                Icon(Icons.error, size: 64, color: Colors.red),
-                                SizedBox(height: 16),
-                                Text(errorMessage!,
-                                    style: TextStyle(color: Colors.red)),
-                                SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: fetchReport,
-                                  child: Text('Retry'),
-                                ),
-                              ],
-                            ),
-                          )
-                        else if (reopenWorkOrders.isEmpty)
-                          Center(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 50),
-                                Icon(Icons.inbox, size: 64, color: Colors.grey),
-                                SizedBox(height: 16),
-                                Text('No reopen work orders found'),
-                              ],
-                            ),
-                          )
-                        else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SizedBox(height: 5),
-                                filters(data: filteredData),
-                                const SizedBox(height: 10),
-                                _buildHeaders(),
-                                const SizedBox(height: 10),
-                                Column(
-                                  children: currentPageData
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    int rowIndex = entry.key;
-                                    var order = entry.value;
-                                    return _buildDataRow(order, rowIndex);
-                                  }).toList(),
-                                ),
-                                _buildPagination(),
-                              ],
-                            ),
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  titleBar(
+                    title: 'Reopen Work Orders Report',
+                    width: MediaQuery.of(context).size.width * .91,
+                  ),
+                  const SizedBox(height: 16),
+                  if (isLoading)
+                    Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 50),
+                          SpinKitFadingCircle(color: Colors.blue),
+                          SizedBox(height: 16),
+                          Text('Loading reopen work orders...'),
+                        ],
+                      ),
+                    )
+                  else if (errorMessage != null)
+                    Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 50),
+                          Icon(Icons.error, size: 64, color: Colors.red),
+                          SizedBox(height: 16),
+                          Text(errorMessage!,
+                              style: TextStyle(color: Colors.red)),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: fetchReport,
+                            child: Text('Retry'),
                           ),
-                      ],
+                        ],
+                      ),
+                    )
+                  else if (reopenWorkOrders.isEmpty)
+                    Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 50),
+                          Icon(Icons.inbox, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text('No reopen work orders found'),
+                        ],
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 5),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 5),
+                          filters(data: filteredData),
+                          const SizedBox(height: 10),
+                          _buildHeaders(),
+                          const SizedBox(height: 10),
+                          Column(
+                            children:
+                                currentPageData.asMap().entries.map((entry) {
+                              int rowIndex = entry.key;
+                              var order = entry.value;
+                              return _buildDataRow(order, rowIndex);
+                            }).toList(),
+                          ),
+                          _buildPagination(),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             )
-          : Column(
-              children: [
-                ReportHeader(title: "Reopen Work Orders Report"),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.asset('assets/no_internet.json',
-                            width: 200, height: 200),
-                        SizedBox(height: 20),
-                        Text('No Internet Connection',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 10),
-                        Text(
-                            'Please check your internet connection and try again'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset('assets/no_internet.json',
+                      width: 200, height: 200),
+                  SizedBox(height: 20),
+                  Text('No Internet Connection',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text('Please check your internet connection and try again'),
+                ],
+              ),
             ),
     );
   }

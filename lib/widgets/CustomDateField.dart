@@ -100,23 +100,14 @@ class CustomDateFieldState extends State<CustomDateField> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.circular(8.0),
-              child: Container(
-                height: 55,
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      offset: Offset(4, 4),
-                      blurRadius: 3,
-                    ),
-                  ],
-                ),
+            Container(
+              height: 55,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey),
+              ),
                 child: TextFormField(
                   readOnly: widget.readOnly,
                   controller: widget.controller,
@@ -149,7 +140,6 @@ class CustomDateFieldState extends State<CustomDateField> {
                   ),
                 ),
               ),
-            ),
             if (state.hasError || _errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(left: 8.0, top: 8.0),

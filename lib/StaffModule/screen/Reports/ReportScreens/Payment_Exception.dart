@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/Model/payment_exception.dart';
 import 'package:three_zero_two_property/Model/payment_exception.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/payment_Exception.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -35,6 +36,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -1234,21 +1236,8 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Payment Exception Report",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Payment Exception Report",
                   ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
@@ -1915,35 +1904,31 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 48
-                                          : 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Search here...",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8)),
-                                        ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    height:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 48
+                                        : 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: Colors.grey),
+                                    ),
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF8A95A8)),
                                       ),
                                     ),
                                   ),
@@ -2705,28 +2690,26 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
                         isExpanded: true,
-                        hint: Row(
-                          children: [
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                daterange ?? "Date Range",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: daterange == null
-                                      ? const Color(0xFF8A95A8)
-                                      : Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        hint: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            daterange ?? "Date Range",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: daterange == null
+                                  ? const Color(0xFF8A95A8)
+                                  : Colors.black,
                             ),
-                          ],
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         items: [
                           DropdownMenuItem<String>(
@@ -3036,10 +3019,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           height: 42,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF8A95A8),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                             color: Colors.white,
                           ),
                           elevation: 0,

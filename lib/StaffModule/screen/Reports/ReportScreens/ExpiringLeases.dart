@@ -23,6 +23,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -33,6 +34,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import '../../../widgets/custom_drawer.dart';
 
 class ExpiringLeases extends StatefulWidget {
@@ -701,7 +703,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(4.0),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
@@ -780,23 +782,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Expiring Lease",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Expiring Lease",
                   ),
                   const SizedBox(
                     height: 10,
@@ -1152,41 +1139,35 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 5.0),
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 40
-                                                : 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                                contentPadding:
-                                                    EdgeInsets.all(10),
-                                              ),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 40
+                                              : 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                searchvalue = value;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
+                                              contentPadding:
+                                                  EdgeInsets.all(10),
                                             ),
                                           ),
                                         ),

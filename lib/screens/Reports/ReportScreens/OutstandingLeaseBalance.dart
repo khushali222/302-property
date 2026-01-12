@@ -9,7 +9,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/OutstandingLeaseBalanceService.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:convert';
@@ -420,30 +419,22 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       ),
       appBar: widget_302.App_Bar(context: context),
       body: _connectivityResult == ConnectivityResult.none
-          ? Column(
-              children: [
-                ReportHeader(title: "Outstanding Lease Balance Report"),
-                Expanded(child: _buildNoInternetWidget()),
-              ],
-            )
-          : Column(
-              children: [
-                ReportHeader(title: "Outstanding Lease Balance Report"),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Filters Section - Always visible
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: _buildFiltersSection(),
-                        ),
-                        _buildReportContent(),
-                      ],
-                    ),
+          ? _buildNoInternetWidget()
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  titleBar(
+                    title: 'Outstanding Lease Balance Report',
+                    width: MediaQuery.of(context).size.width * .98,
                   ),
-                ),
-              ],
+                  // Filters Section - Always visible
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: _buildFiltersSection(),
+                  ),
+                  _buildReportContent(),
+                ],
+              ),
             ),
     );
   }

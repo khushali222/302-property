@@ -26,6 +26,7 @@ import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/Expiring_insurance.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -35,6 +36,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import '../../../widgets/custom_drawer.dart';
 
 class ExpiringInsurance extends StatefulWidget {
@@ -982,12 +984,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  titleBar(
+                  StaffReportHeader(
                     title: 'Expiring Insurance',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   const SizedBox(
                     height: 10,
@@ -1003,28 +1001,29 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                           Row(
                             children: [
                               Expanded(
-                                child: DropdownButtonHideUnderline(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: Container(
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      hint: Row(
-                                        children: [
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              daterange ?? "Date Range",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: daterange == null
-                                                    ? const Color(0xFF8A95A8)
-                                                    : Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
+                                      hint: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4),
+                                        child: Text(
+                                          daterange ?? "Date Range",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: daterange == null
+                                                ? const Color(0xFF8A95A8)
+                                                : Colors.black,
                                           ),
-                                        ],
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                       items: [
                                         DropdownMenuItem<String>(
@@ -1402,10 +1401,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: const Color(0xFF8A95A8),
-                                          ),
+                                              BorderRadius.circular(5),
                                           color: Colors.white,
                                         ),
                                         elevation: 0,
@@ -1434,6 +1430,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       ),
                                     ),
                                   ),
+                                    ),
                                 ),
                               ),
                             ],

@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -25,6 +26,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -909,21 +911,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Delinquent Tenants",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Delinquent Tenants",
                   ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),

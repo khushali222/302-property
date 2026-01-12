@@ -5,7 +5,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:three_zero_two_property/Model/LivePropertyModel.dart';
 import 'package:three_zero_two_property/repository/LivePropertyRepo.dart';
 import 'package:pdf/pdf.dart';
@@ -1486,7 +1485,10 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
       appBar: widget_302.App_Bar(context: context),
       body: Column(
         children: [
-          ReportHeader(title: "Live Property Report"),
+          titleBar(
+            title: 'Live Property Report',
+            width: MediaQuery.of(context).size.width * .95,
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(16),

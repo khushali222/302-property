@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/ConvenienceFeeRepo.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -31,6 +32,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -1168,10 +1170,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  titleBar(
+                  StaffReportHeader(
                     title: 'Convenience Fee Override',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
@@ -1679,35 +1679,31 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 48
-                                          : 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Search here...",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8)),
-                                        ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    height:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 48
+                                        : 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: Colors.grey),
+                                    ),
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF8A95A8)),
                                       ),
                                     ),
                                   ),
@@ -2440,34 +2436,30 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
               Expanded(
                 child: Row(
                   children: [
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        // height: 40,
-                        height:
-                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                        width: MediaQuery.of(context).size.width < 500
-                            ? MediaQuery.of(context).size.width * .44
-                            : MediaQuery.of(context).size.width * .4,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF8A95A8)),
-                        ),
-                        child: TextField(
-                          onChanged: (value) {
-                            setState(() {
-                              searchvalue = value;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Search here...",
-                            hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                            contentPadding: EdgeInsets.all(11),
-                          ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      // height: 40,
+                      height:
+                          MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .44
+                          : MediaQuery.of(context).size.width * .4,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchvalue = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                          contentPadding: EdgeInsets.all(11),
                         ),
                       ),
                     ),

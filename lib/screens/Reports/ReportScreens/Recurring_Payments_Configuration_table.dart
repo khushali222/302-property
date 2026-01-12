@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Recurring_Payments_Configuration_model.dart';
 import 'package:three_zero_two_property/repository/Recurring_Payments_Configuration_repo.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
 
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -179,570 +178,538 @@ class _Recurring_Payments_Configuration_ReportState
           currentpage: "Reports",
           dropdown: false,
         ),
-        body: Column(
-          children: [
-            ReportHeader(title: "Recurring Payments Configuration"),
-            Expanded(
-              child: isLoading
-                  ? Center(
-                      child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ))
-                  : errorMessage != null
-                      ? Center(
-                          child: Text(errorMessage!,
-                              style: const TextStyle(color: Colors.red)))
-                      : recurringPaymentsConfiguration == null ||
-                              recurringPaymentsConfiguration!.data!.isEmpty
-                          ? const Center(child: Text("No Data Available"))
-                          : SingleChildScrollView(
-                              child: Column(
+        body: isLoading
+            ? Center(
+                child: SpinKitFadingCircle(
+                color: Colors.black,
+                size: 40.0,
+              ))
+            : errorMessage != null
+                ? Center(
+                    child: Text(errorMessage!,
+                        style: const TextStyle(color: Colors.red)))
+                : recurringPaymentsConfiguration == null ||
+                        recurringPaymentsConfiguration!.data!.isEmpty
+                    ? const Center(child: Text("No Data Available"))
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            ReportHeader(
+                              title: "Recurring Payments Configuration",
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16,
-                                        right:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16),
+                                  Expanded(
+                                    flex: 4,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Expanded(
-                                          flex: 4,
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 45
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .5
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .4,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                // searchvalue = value;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
+                                              contentPadding:
+                                                  EdgeInsets.all(11),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: SizedBox(
+                                      //  width: 100,
+                                      height: 42,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Export logic
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              generateAccountTotalReportPdf();
+                                            } else if (value == 'XLSX') {
+                                              print('pdf');
+                                              generateRecurringPaymentExcel(
+                                                  recurringPaymentsConfiguration!
+                                                      .data!);
+                                            } else if (value == 'CSV') {
+                                              generateRecurringPaymentCsv(
+                                                  recurringPaymentsConfiguration!
+                                                      .data!);
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF')),
+                                            const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX')),
+                                            const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV')),
+                                          ],
                                           child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Material(
-                                                elevation: 3,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10),
-                                                  // height: 40,
-                                                  height: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                          500
-                                                      ? 45
-                                                      : 50,
-                                                  width: MediaQuery.of(context)
-                                                              .size
-                                                              .width <
-                                                          500
-                                                      ? MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .5
-                                                      : MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .4,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0xFF8A95A8)),
-                                                  ),
-                                                  child: TextField(
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        // searchvalue = value;
-                                                      });
-                                                    },
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      border: InputBorder.none,
-                                                      hintText:
-                                                          "Search here...",
-                                                      hintStyle: TextStyle(
-                                                          color: Color(
-                                                              0xFF8A95A8)),
-                                                      contentPadding:
-                                                          EdgeInsets.all(11),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: SizedBox(
-                                            //  width: 100,
-                                            height: 42,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: blueColor,
-                                              ),
-                                              onPressed: () {},
-                                              child: PopupMenuButton<String>(
-                                                onSelected: (value) async {
-                                                  // Export logic
-                                                  if (value == 'PDF') {
-                                                    print('pdf');
-                                                    generateAccountTotalReportPdf();
-                                                  } else if (value == 'XLSX') {
-                                                    print('pdf');
-                                                    generateRecurringPaymentExcel(
-                                                        recurringPaymentsConfiguration!
-                                                            .data!);
-                                                  } else if (value == 'CSV') {
-                                                    generateRecurringPaymentCsv(
-                                                        recurringPaymentsConfiguration!
-                                                            .data!);
-                                                  }
-                                                },
-                                                itemBuilder: (BuildContext
-                                                        context) =>
-                                                    <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem<String>(
-                                                      value: 'PDF',
-                                                      child: Text('PDF')),
-                                                  const PopupMenuItem<String>(
-                                                      value: 'XLSX',
-                                                      child: Text('XLSX')),
-                                                  const PopupMenuItem<String>(
-                                                      value: 'CSV',
-                                                      child: Text('CSV')),
-                                                ],
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text('Export'),
-                                                    Icon(Icons.arrow_drop_down),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 23,
-                                        right:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 23),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Grand Total",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: greyColor),
-                                        ),
-                                        Text(
-                                          "\$${recurringPaymentsConfiguration!.grandTotal}",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: greyColor),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16,
-                                        right:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16),
-                                    child: _buildHeaders(),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16,
-                                        right:
-                                            MediaQuery.of(context).size.width >
-                                                    500
-                                                ? 25
-                                                : 16),
-                                    child: Column(
-                                      children: recurringPaymentsConfiguration!
-                                          .data!
-                                          .asMap()
-                                          .entries
-                                          .map((leaseData) {
-                                        int rowIndex = leaseData.key;
-                                        var leasesData = leaseData.value;
-
-                                        return Column(
-                                            children: leasesData!.leases!
-                                                .asMap()
-                                                .entries
-                                                .map((lease) {
-                                          int LeaserowIndex = lease.key;
-                                          var payment = lease.value;
-
-                                          bool isRowExpanded =
-                                              expandedRowIndex ==
-                                                  "${rowIndex}${LeaserowIndex}";
-                                          totalDisplayData++;
-                                          return Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 6),
-                                            decoration: BoxDecoration(
-                                              color: totalDisplayData % 2 != 0
-                                                  ? const Color(0xFFF4F8FF)
-                                                  : Colors.white,
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFFDBE0E5)),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  title: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            2.0),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (expandedRowIndex ==
-                                                                  "${rowIndex}${LeaserowIndex}") {
-                                                                expandedRowIndex =
-                                                                    null;
-                                                              } else {
-                                                                expandedRowIndex =
-                                                                    "${rowIndex}${LeaserowIndex}";
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 5,
-                                                                    right: 5),
-                                                            padding: !isRowExpanded
-                                                                ? const EdgeInsets
-                                                                    .only(
-                                                                    bottom: 10)
-                                                                : const EdgeInsets
-                                                                    .only(
-                                                                    top: 10),
-                                                            child: FaIcon(
-                                                              isRowExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color: isRowExpanded
-                                                                  ? blueColor
-                                                                  : blueColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedRowIndex ==
-                                                                    "${rowIndex}${LeaserowIndex}") {
-                                                                  expandedRowIndex =
-                                                                      null;
-                                                                } else {
-                                                                  expandedRowIndex =
-                                                                      "${rowIndex}${LeaserowIndex}";
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              '${payment.rentalAdress ?? '-'}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: Text(
-                                                            '  ${payment.endDate != null ? dateProvider.formatCurrentDate(payment.endDate!) : '-'}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                if (isRowExpanded)
-                                                  Column(
-                                                    children: payment.tenants!
-                                                        .where((recurruing) =>
-                                                            recurruing
-                                                                .recurrings!
-                                                                .length >
-                                                            0)
-                                                        .toList()!
-                                                        .asMap()
-                                                        .entries
-                                                        .map((tenantEntry) {
-                                                      int tenantIndex =
-                                                          tenantEntry.key;
-                                                      var tenant =
-                                                          tenantEntry.value;
-                                                      bool isTenantExpanded =
-                                                          expandedTenantIndex[
-                                                                  "${rowIndex}${LeaserowIndex}"] ==
-                                                              tenantIndex
-                                                                  .toString();
-                                                      return Column(
-                                                        children: [
-                                                          Divider(
-                                                            color: blueColor,
-                                                            thickness: 1,
-                                                          ),
-                                                          ListTile(
-                                                            contentPadding:
-                                                                EdgeInsets.zero,
-                                                            title: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(2.0),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: <Widget>[
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        if (expandedTenantIndex["${rowIndex}${LeaserowIndex}"] ==
-                                                                            tenantIndex.toString()) {
-                                                                          expandedTenantIndex["${rowIndex}${LeaserowIndex}"] =
-                                                                              null;
-                                                                        } else {
-                                                                          expandedTenantIndex["${rowIndex}${LeaserowIndex}"] =
-                                                                              tenantIndex.toString();
-                                                                        }
-                                                                      });
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      margin: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              5),
-                                                                      padding: !isTenantExpanded
-                                                                          ? const EdgeInsets
-                                                                              .only(
-                                                                              bottom:
-                                                                                  10)
-                                                                          : const EdgeInsets
-                                                                              .only(
-                                                                              top: 10),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                24),
-                                                                        child:
-                                                                            FaIcon(
-                                                                          isTenantExpanded
-                                                                              ? FontAwesomeIcons.sortUp
-                                                                              : FontAwesomeIcons.sortDown,
-                                                                          size:
-                                                                              20,
-                                                                          color:
-                                                                              blueColor,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          .02),
-                                                                  Expanded(
-                                                                    child: RichText(
-                                                                        text: TextSpan(children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Tenant ${tenantIndex + 1} ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              grey,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            ': ${tenant.tenantName ?? '-'}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                    ])),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          if (isTenantExpanded)
-                                                            Column(
-                                                              children: tenant
-                                                                  .recurrings!
-                                                                  .asMap()
-                                                                  .entries
-                                                                  .map((entry) {
-                                                                var recurring =
-                                                                    entry.value;
-                                                                return Column(
-                                                                  children: [
-                                                                    Divider(
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    ListTile(
-                                                                      contentPadding:
-                                                                          EdgeInsets
-                                                                              .zero,
-                                                                      title:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            2.0),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.center,
-                                                                          children: <Widget>[
-                                                                            Expanded(
-                                                                                flex: 1,
-                                                                                child: Text("")),
-                                                                            Expanded(
-                                                                                flex: 2,
-                                                                                child: Text(
-                                                                                  "Date: ${recurring.date != null ? dateProvider.formatCurrentDate(DateTime.fromMillisecondsSinceEpoch(recurring.date! * 1000).toString()) : ""}",
-                                                                                  style: TextStyle(fontSize: 14, color: blueColor),
-                                                                                )),
-                                                                            Expanded(
-                                                                                flex: 5,
-                                                                                child: Text(
-                                                                                  "    ${recurring.account}",
-                                                                                  style: TextStyle(fontSize: 14, color: blueColor),
-                                                                                )),
-                                                                            Expanded(
-                                                                                flex: 3,
-                                                                                child: Text(
-                                                                                  "\$${recurring.amount}",
-                                                                                  style: TextStyle(fontSize: 14, color: blueColor),
-                                                                                )),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              }).toList(),
-                                                            ),
-                                                        ],
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                              ],
-                                            ),
-                                          );
-                                        }).toList());
-                                      }).toList(),
-                                    ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
-            ),
-          ],
-        ));
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Grand Total",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: greyColor),
+                                  ),
+                                  Text(
+                                    "\$${recurringPaymentsConfiguration!.grandTotal}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: greyColor),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
+                              child: _buildHeaders(),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
+                              child: Column(
+                                children: recurringPaymentsConfiguration!.data!
+                                    .asMap()
+                                    .entries
+                                    .map((leaseData) {
+                                  int rowIndex = leaseData.key;
+                                  var leasesData = leaseData.value;
+
+                                  return Column(
+                                      children: leasesData!.leases!
+                                          .asMap()
+                                          .entries
+                                          .map((lease) {
+                                    int LeaserowIndex = lease.key;
+                                    var payment = lease.value;
+
+                                    bool isRowExpanded = expandedRowIndex ==
+                                        "${rowIndex}${LeaserowIndex}";
+                                    totalDisplayData++;
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: totalDisplayData % 2 != 0
+                                            ? const Color(0xFFF4F8FF)
+                                            : Colors.white,
+                                        border: Border.all(
+                                            color: const Color(0xFFDBE0E5)),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedRowIndex ==
+                                                            "${rowIndex}${LeaserowIndex}") {
+                                                          expandedRowIndex =
+                                                              null;
+                                                        } else {
+                                                          expandedRowIndex =
+                                                              "${rowIndex}${LeaserowIndex}";
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5,
+                                                              right: 5),
+                                                      padding: !isRowExpanded
+                                                          ? const EdgeInsets
+                                                              .only(bottom: 10)
+                                                          : const EdgeInsets
+                                                              .only(top: 10),
+                                                      child: FaIcon(
+                                                        isRowExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 20,
+                                                        color: isRowExpanded
+                                                            ? blueColor
+                                                            : blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedRowIndex ==
+                                                              "${rowIndex}${LeaserowIndex}") {
+                                                            expandedRowIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedRowIndex =
+                                                                "${rowIndex}${LeaserowIndex}";
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        '${payment.rentalAdress ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      '  ${payment.endDate != null ? dateProvider.formatCurrentDate(payment.endDate!) : '-'}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if (isRowExpanded)
+                                            Column(
+                                              children: payment.tenants!
+                                                  .where((recurruing) =>
+                                                      recurruing
+                                                          .recurrings!.length >
+                                                      0)
+                                                  .toList()!
+                                                  .asMap()
+                                                  .entries
+                                                  .map((tenantEntry) {
+                                                int tenantIndex =
+                                                    tenantEntry.key;
+                                                var tenant = tenantEntry.value;
+                                                bool isTenantExpanded =
+                                                    expandedTenantIndex[
+                                                            "${rowIndex}${LeaserowIndex}"] ==
+                                                        tenantIndex.toString();
+                                                return Column(
+                                                  children: [
+                                                    Divider(
+                                                      color: blueColor,
+                                                      thickness: 1,
+                                                    ),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      title: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(2.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (expandedTenantIndex[
+                                                                          "${rowIndex}${LeaserowIndex}"] ==
+                                                                      tenantIndex
+                                                                          .toString()) {
+                                                                    expandedTenantIndex[
+                                                                            "${rowIndex}${LeaserowIndex}"] =
+                                                                        null;
+                                                                  } else {
+                                                                    expandedTenantIndex[
+                                                                            "${rowIndex}${LeaserowIndex}"] =
+                                                                        tenantIndex
+                                                                            .toString();
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            5),
+                                                                padding: !isTenantExpanded
+                                                                    ? const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                            10)
+                                                                    : const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            10),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              24),
+                                                                  child: FaIcon(
+                                                                    isTenantExpanded
+                                                                        ? FontAwesomeIcons
+                                                                            .sortUp
+                                                                        : FontAwesomeIcons
+                                                                            .sortDown,
+                                                                    size: 20,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    .02),
+                                                            Expanded(
+                                                              child: RichText(
+                                                                  text: TextSpan(
+                                                                      children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Tenant ${tenantIndex + 1} ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            grey,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        fontSize:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          ': ${tenant.tenantName ?? '-'}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        fontSize:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                  ])),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (isTenantExpanded)
+                                                      Column(
+                                                        children: tenant
+                                                            .recurrings!
+                                                            .asMap()
+                                                            .entries
+                                                            .map((entry) {
+                                                          var recurring =
+                                                              entry.value;
+                                                          return Column(
+                                                            children: [
+                                                              Divider(
+                                                                color:
+                                                                    blueColor,
+                                                              ),
+                                                              ListTile(
+                                                                contentPadding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                title: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          2.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: <Widget>[
+                                                                      Expanded(
+                                                                          flex:
+                                                                              1,
+                                                                          child:
+                                                                              Text("")),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              2,
+                                                                          child:
+                                                                              Text(
+                                                                            "Date: ${recurring.date != null ? dateProvider.formatCurrentDate(DateTime.fromMillisecondsSinceEpoch(recurring.date! * 1000).toString()) : ""}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              5,
+                                                                          child:
+                                                                              Text(
+                                                                            "    ${recurring.account}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              3,
+                                                                          child:
+                                                                              Text(
+                                                                            "\$${recurring.amount}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                  ],
+                                                );
+                                              }).toList(),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList());
+                                }).toList(),
+                              ),
+                            )
+                          ],
+                        ),
+                      ));
   }
 
   Future<void> generateAccountTotalReportPdf() async {
