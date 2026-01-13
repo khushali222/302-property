@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -24,15 +22,14 @@ import 'package:three_zero_two_property/StaffModule/repository/lease_provider.da
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Property%20Tax/Property_tax_Table.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/Insurance Premium/Insurance_premium_Table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Insurance Premium/Insurance_premium_Table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Insurance Premium/Insurance_Policies_Table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/infrastracture.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/property_mortgage_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Utilities/Utilities_table.dart';
-
 import '../../../../Model/Properties_revenue_model.dart';
 import '../../../../Model/properties_Lease_model.dart';
 import '../../../../provider/dateProvider.dart';
-
 import '../../../widgets/Properties_revenue_table.dart';
 import '../../../widgets/custom_staff_lease_table.dart';
 import '../../../widgets/appbar.dart';
@@ -114,6 +111,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Map<String, dynamic>>> futurePropertyTaxes;
   bool isLoaders = false;
   int _taxInsuranceSelectedIndex = 0;
+  bool _isTaxInsuranceDropdownOpen = false;
   //late Future<List<RentalSummary>> futuresummery;
 
   unit_properties? unit;
@@ -2361,6 +2359,10 @@ class _Summery_pageState extends State<Summery_page>
                             "title": "Property Tax",
                             "index": isMultiUnit ? 8 : 7
                           },
+                          // {
+                          //   "title": "Tax and Insurance",
+                          //   "index": isMultiUnit ? 8 : 7
+                          // },
                           // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
@@ -2617,13 +2619,31 @@ class _Summery_pageState extends State<Summery_page>
           if (isMultiUnit) {
             return Mortgage_page(data);
           } else {
-            return TaxAndInsurance_page(data);
+            // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
+            return Property_tax_Table(
+              propertyId: widget.properties.rentalId ?? "",
+              showAppBar: false,
+              showDrawer: false,
+              showAddButton: true,
+            );
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
-          return TaxAndInsurance_page(data);
+          // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
+          return Property_tax_Table(
+            propertyId: widget.properties.rentalId ?? "",
+            showAppBar: false,
+            showDrawer: false,
+            showAddButton: true,
+          );
         } else if (_selectedIndex == 8) {
           if (isMultiUnit) {
-            return TaxAndInsurance_page(data);
+            // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
+            return Property_tax_Table(
+              propertyId: widget.properties.rentalId ?? "",
+              showAppBar: false,
+              showDrawer: false,
+              showAddButton: true,
+            );
           } else {
             return Utilities_Page(data);
           }
@@ -2645,85 +2665,263 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
+  // TaxAndInsurance_page - COMMENTED OUT: Showing only Property Tax for now
+  // Uncomment this when you want to show Tax and Insurance dropdown again
+  /*
   TaxAndInsurance_page(List<unit_properties> unit) {
-    // Old code - just return Property Tax table directly
-    return Property_tax_Table(
-      propertyId: widget.properties.rentalId ?? "",
-      showAppBar: false,
-      showDrawer: false,
-      showAddButton: true,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Dropdown Menu Design
+          // Collapsible Dropdown Menu
+          Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Dropdown Header
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isTaxInsuranceDropdownOpen =
+                            !_isTaxInsuranceDropdownOpen;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                          bottomLeft: _isTaxInsuranceDropdownOpen
+                              ? Radius.zero
+                              : Radius.circular(8),
+                          bottomRight: _isTaxInsuranceDropdownOpen
+                              ? Radius.zero
+                              : Radius.circular(8),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _taxInsuranceSelectedIndex == 0
+                                ? Icons.receipt
+                                : Icons.shield,
+                            color: blueColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _taxInsuranceSelectedIndex == 0
+                                  ? 'Tax'
+                                  : 'Insurance',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 16,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            _isTaxInsuranceDropdownOpen
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_right,
+                            color: blueColor,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Dropdown Menu Items (shown when expanded)
+                  if (_isTaxInsuranceDropdownOpen)
+                    Column(
+                      children: [
+                        // Tax Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _taxInsuranceSelectedIndex = 0;
+                              _isTaxInsuranceDropdownOpen = false;
+                              _taxInsuranceTabController?.animateTo(0);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _taxInsuranceSelectedIndex == 0
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.receipt,
+                                  color: _taxInsuranceSelectedIndex == 0
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Tax',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _taxInsuranceSelectedIndex == 0
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _taxInsuranceSelectedIndex == 0
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Insurance Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _taxInsuranceSelectedIndex = 1;
+                              _isTaxInsuranceDropdownOpen = false;
+                              _taxInsuranceTabController?.animateTo(1);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _taxInsuranceSelectedIndex == 1
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.shield,
+                                  color: _taxInsuranceSelectedIndex == 1
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Insurance',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _taxInsuranceSelectedIndex == 1
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _taxInsuranceSelectedIndex == 1
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+          // const SizedBox(height: 8),
+          // Tab Content - Show selected content directly instead of TabBarView
+          _taxInsuranceSelectedIndex == 0
+              ? Property_tax_Table(
+                  propertyId: widget.properties.rentalId ?? "",
+                  showAppBar: false,
+                  showDrawer: false,
+                  showAddButton: true,
+                )
+              : PropertyInsurance_page(unit),
+        ],
+      ),
     );
-
-    // New code with Tax and Insurance tabs - commented out for now
-    // return ConstrainedBox(
-    //   constraints: BoxConstraints(
-    //     maxHeight: MediaQuery.of(context).size.height * 0.75,
-    //   ),
-    //   child: DefaultTabController(
-    //     length: 2,
-    //     child: Column(
-    //       mainAxisSize: MainAxisSize.min,
-    //       children: [
-    //         Container(
-    //           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-    //           decoration: BoxDecoration(
-    //             color: Colors.grey.shade200,
-    //             borderRadius: BorderRadius.circular(8),
-    //           ),
-    //           child: TabBar(
-    //             controller: _taxInsuranceTabController,
-    //             indicator: BoxDecoration(
-    //               color: blueColor,
-    //               borderRadius: BorderRadius.circular(8),
-    //             ),
-    //             indicatorColor: blueColor,
-    //             labelColor: Colors.white,
-    //             unselectedLabelColor: blueColor,
-    //             labelStyle: TextStyle(
-    //               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 16,
-    //               fontWeight: FontWeight.bold,
-    //             ),
-    //             unselectedLabelStyle: TextStyle(
-    //               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 16,
-    //               fontWeight: FontWeight.w500,
-    //             ),
-    //             onTap: (index) {
-    //               setState(() {
-    //                 _taxInsuranceSelectedIndex = index;
-    //               });
-    //             },
-    //             tabs: const [
-    //               Tab(text: 'Tax'),
-    //               Tab(text: 'Insurance'),
-    //             ],
-    //           ),
-    //         ),
-    //         Flexible(
-    //           child: TabBarView(
-    //             controller: _taxInsuranceTabController,
-    //             children: [
-    //               Property_tax_Table(
-    //                 propertyId: widget.properties.rentalId ?? "",
-    //                 showAppBar: false,
-    //                 showDrawer: false,
-    //                 showAddButton: true,
-    //               ),
-    //               PropertyInsurance_page(unit),
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
+  */
 
   PropertyInsurance_page(List<unit_properties> unit) {
-    return Insurance_premium_Table(
-      propertyId: widget.properties.rentalId ?? "",
-      showAppBar: false,
-      showDrawer: false,
-      showAddButton: true,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Insurance Premium History Table
+          Insurance_premium_Table(
+            propertyId: widget.properties.rentalId ?? "",
+            showAppBar: false,
+            showDrawer: false,
+            showAddButton: true,
+          ),
+          const SizedBox(height: 20),
+          // Insurance Policies Table
+          Insurance_Policies_Table(
+            propertyId: widget.properties.rentalId ?? "",
+            showAppBar: false,
+            showDrawer: false,
+            showAddButton: true,
+          ),
+        ],
+      ),
     );
   }
 

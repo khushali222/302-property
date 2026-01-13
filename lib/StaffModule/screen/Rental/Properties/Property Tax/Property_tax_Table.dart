@@ -390,20 +390,45 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
           border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "    YEAR",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "Status    ",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
-            ),
-          ],
+        title: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width:
+                    20, // Space for icon (5 left + 5 right + 20 icon + 5 padding)
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "Year",
+                    style: TextStyle(
+                        color: const Color(0xFF1E3A8A),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  margin: EdgeInsets.only(left: 50, right: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: Text(
+                    "Status",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: const Color(0xFF1E3A8A),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -415,28 +440,26 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     return TableRow(
       children: [
         TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  leftLabel,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
-                ),
-                const SizedBox(height: 2.0),
-                Text(
-                  leftValue,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                leftLabel,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
+              ),
+              const SizedBox(height: 2.0),
+              Text(
+                leftValue,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
           ),
         ),
         TableCell(
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.only(
+                left: 8.0, top: 4.0, bottom: 4.0, right: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -515,9 +538,10 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         .take(itemsPerPage)
         .toList();
 
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 20),
           // Header Section with Title and Add Button
@@ -719,7 +743,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 2,
+                                                flex: 4,
                                                 child: Container(
                                                   margin: EdgeInsets.only(
                                                       left: 50, right: 5),
@@ -757,6 +781,11 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                   ),
                                                 ),
                                               ),
+                                              SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.02),
                                             ],
                                           ),
                                         ),
@@ -905,19 +934,19 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                         },
                                                         children: [
                                                           _buildTableRow(
-                                                            'AMOUNT:',
+                                                            'Amount:',
                                                             _getDisplayValue(
                                                                 _formatCurrency(
                                                                     tax['tax_amount'])),
-                                                            'DUE DATE',
+                                                            'Due Date',
                                                             _formatDateSafely(
                                                                 tax['due_date']),
                                                           ),
                                                           _buildTableRow(
-                                                            'PAID DATE',
+                                                            'Paid Date',
                                                             _formatDateSafely(
                                                                 tax['paid_date']),
-                                                            'RECEIPT',
+                                                            'Receipt',
                                                             tax['receipt'] !=
                                                                         null &&
                                                                     tax['receipt']

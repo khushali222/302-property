@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -9,15 +10,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../constant/constant.dart';
-import 'AddEditInsurancePremium.dart';
+import '../../../../Model/PropertyInsuranceModel.dart';
 
-class Insurance_premium_Table extends StatefulWidget {
+class Insurance_Policies_Table extends StatefulWidget {
   final String propertyId;
   final bool showAppBar;
   final bool showDrawer;
   final bool showAddButton;
 
-  const Insurance_premium_Table({
+  const Insurance_Policies_Table({
     Key? key,
     required this.propertyId,
     this.showAppBar = false,
@@ -26,17 +27,15 @@ class Insurance_premium_Table extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<Insurance_premium_Table> createState() =>
-      _Insurance_premium_TableState();
+  State<Insurance_Policies_Table> createState() =>
+      _Insurance_Policies_TableState();
 }
 
-class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
-  final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _premiums = [];
-  List<Map<String, dynamic>> _filteredPremiums = [];
+class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
+  List<PropertyInsuranceData> _policies = [];
+  List<PropertyInsuranceData> _filteredPolicies = [];
   bool _isLoading = false;
   int? expandedIndex;
-  String searchValue = "";
   int currentPage = 0;
   int itemsPerPage = 10;
 
@@ -45,17 +44,13 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   @override
   void initState() {
     super.initState();
-    _loadInsurancePremiums();
+    print('=== Insurance_Policies_Table INITIALIZED (Admin Module) ===');
+    print('Property ID: ${widget.propertyId}');
+    _loadInsurancePolicies();
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadInsurancePremiums() async {
-    print('=== LOADING INSURANCE PREMIUMS ===');
+  Future<void> _loadInsurancePolicies() async {
+    print('=== LOADING INSURANCE POLICIES (Admin Module) ===');
     setState(() {
       _isLoading = true;
     });
@@ -65,13 +60,11 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      // Use property-specific API endpoint
-      print('Loading insurance premiums for property ID: ${widget.propertyId}');
-      print(
-          'API URL: ${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}');
+      print('Loading insurance policies for property ID: ${widget.propertyId}');
+      print('API URL: ${Api_url}/api/property-insurance/${widget.propertyId}');
+
       final response = await http.get(
-        Uri.parse(
-            '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}'),
+        Uri.parse('${Api_url}/api/property-insurance/${widget.propertyId}'),
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
@@ -84,21 +77,21 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data['success'] == true &&
-            data['data'] != null &&
-            data['data']['insurance_premiums'] != null) {
+        if (data['success'] == true && data['data'] != null) {
           print(
-              'Successfully loaded ${data['data']['insurance_premiums'].length} insurance premiums');
+              'Successfully loaded ${data['data'].length} insurance policies');
           setState(() {
-            _premiums = List<Map<String, dynamic>>.from(
-                data['data']['insurance_premiums']);
-            _filteredPremiums = List.from(_premiums);
+            _policies = (data['data'] as List)
+                .map((item) => PropertyInsuranceData.fromJson(item))
+                .where((policy) => policy.isDelete != true)
+                .toList();
+            _filteredPolicies = List.from(_policies);
           });
         } else {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('No insurance premiums found for this property.'),
+                content: Text('No insurance policies found for this property.'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -118,7 +111,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'Failed to load insurance premiums: ${response.statusCode}'),
+                  'Failed to load insurance policies: ${response.statusCode}'),
               backgroundColor: Colors.red,
             ),
           );
@@ -128,7 +121,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading insurance premiums: ${e.toString()}'),
+            content: Text('Error loading insurance policies: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -142,25 +135,17 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
     }
   }
 
-  void _openAddPremiumForm() {
-    print('=== OPENING ADD INSURANCE PREMIUM FORM ===');
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddEditInsurancePremium(
-          propertyId: widget.propertyId,
-        ),
-      ),
-    ).then((result) {
-      if (result == true) {
-        print('=== RETURNED FROM ADD PREMIUM FORM ===');
-        print('Refreshing premium list...');
-        _loadInsurancePremiums();
-      }
-    });
+  void _openAddPolicyForm() {
+    // TODO: Navigate to add/edit form when created
+    print('=== OPENING ADD INSURANCE POLICY FORM ===');
+    Fluttertoast.showToast(
+      msg: "Add Insurance Policy form - Coming soon",
+      backgroundColor: Colors.blue,
+      textColor: Colors.white,
+    );
   }
 
-  void _deletePremium(String id) {
+  void _deletePolicy(String id) {
     _showDeleteAlert(context, id);
   }
 
@@ -170,7 +155,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc:
-          "Once deleted, you will not be able to recover this insurance premium record!",
+          "Once deleted, you will not be able to recover this insurance policy!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -181,11 +166,8 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print('Deleting insurance premium record with ID: $id');
-
-            // Call API to delete the premium record
-            await _deletePremiumRecord(id);
-
+            print('Deleting insurance policy with ID: $id');
+            await _deletePolicyRecord(id);
             Navigator.pop(context);
           },
           color: blueColor,
@@ -208,7 +190,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
     ).show();
   }
 
-  Future<void> _deletePremiumRecord(String id) async {
+  Future<void> _deletePolicyRecord(String id) async {
     try {
       setState(() {
         _isLoading = true;
@@ -218,14 +200,12 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
 
-      print('=== DELETING INSURANCE PREMIUM RECORD ===');
-      print('Premium ID: $id');
-      print('Property ID: ${widget.propertyId}');
+      print('=== DELETING INSURANCE POLICY ===');
+      print('Policy ID: $id');
       print('Admin ID: $adminId');
 
       final response = await http.delete(
-        Uri.parse(
-            '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}/$id'),
+        Uri.parse('${Api_url}/api/property-insurance/$id'),
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
@@ -239,35 +219,36 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
-          // Remove from local lists
           setState(() {
-            _premiums.removeWhere((premium) => premium['_id'] == id);
-            _filteredPremiums.removeWhere((premium) => premium['_id'] == id);
+            _policies
+                .removeWhere((policy) => policy.id != null && policy.id == id);
+            _filteredPolicies
+                .removeWhere((policy) => policy.id != null && policy.id == id);
           });
 
           Fluttertoast.showToast(
-            msg: "Insurance premium record deleted successfully",
+            msg: "Insurance policy deleted successfully",
             backgroundColor: Colors.green,
             textColor: Colors.white,
           );
         } else {
           Fluttertoast.showToast(
-            msg: data['message'] ?? 'Failed to delete insurance premium record',
+            msg: data['message'] ?? 'Failed to delete insurance policy',
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
         }
       } else {
         Fluttertoast.showToast(
-          msg: 'Failed to delete insurance premium record',
+          msg: 'Failed to delete insurance policy',
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
       }
     } catch (e) {
-      print('Error deleting insurance premium record: $e');
+      print('Error deleting insurance policy: $e');
       Fluttertoast.showToast(
-        msg: 'Error deleting insurance premium record: ${e.toString()}',
+        msg: 'Error deleting insurance policy: ${e.toString()}',
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -278,30 +259,62 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
     }
   }
 
-  void _editPremium(Map<String, dynamic> premium) {
-    print('=== OPENING EDIT INSURANCE PREMIUM FORM ===');
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddEditInsurancePremium(
-          propertyId: widget.propertyId,
-          premiumId: premium['_id'],
-          premiumData: premium,
-        ),
-      ),
-    ).then((result) {
-      if (result == true) {
-        print('=== RETURNED FROM EDIT PREMIUM FORM ===');
-        print('Refreshing premium list...');
-        _loadInsurancePremiums();
-      }
-    });
+  void _editPolicy(PropertyInsuranceData policy) {
+    // TODO: Navigate to edit form when created
+    print('=== OPENING EDIT INSURANCE POLICY FORM ===');
+    Fluttertoast.showToast(
+      msg: "Edit Insurance Policy form - Coming soon",
+      backgroundColor: Colors.blue,
+      textColor: Colors.white,
+    );
   }
 
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
     return '\$${numValue.toStringAsFixed(2)}';
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MM/dd/yyyy').format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  String _getStatusBadge(PropertyInsuranceData policy) {
+    // Check if policy is expired based on expiration date
+    if (policy.expirationDate != null && policy.expirationDate!.isNotEmpty) {
+      try {
+        final expirationDate = DateTime.parse(policy.expirationDate!);
+        final now = DateTime.now();
+        if (expirationDate.isBefore(now)) {
+          return 'Expired';
+        }
+      } catch (e) {
+        // If date parsing fails, use status from API
+      }
+    }
+
+    // Use status from API if not expired
+    if (policy.status != null) {
+      return policy.status!;
+    }
+    return 'Active';
+  }
+
+  Color _getStatusColor(PropertyInsuranceData policy) {
+    final status = _getStatusBadge(policy);
+    if (status.toLowerCase() == 'expired') {
+      return Colors.red;
+    }
+    if (status.toLowerCase() == 'active') {
+      return Colors.green;
+    }
+    return Colors.orange;
   }
 
   Widget _buildHeaders() {
@@ -319,15 +332,14 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                width:
-                    20, // Space for icon (5 left + 5 right + 20 icon + 5 padding)
+                width: 20,
               ),
               Expanded(
                 flex: 3,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
-                    "Year",
+                    "Insurance\nCompany",
                     style: TextStyle(
                         color: const Color(0xFF1E3A8A),
                         fontWeight: FontWeight.bold),
@@ -337,11 +349,11 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
               Expanded(
                 flex: 4,
                 child: Container(
-                  margin: EdgeInsets.only(left: 50, right: 5),
+                  margin: EdgeInsets.only(left: 20, right: 5),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   child: Text(
-                    "Carrier",
+                    "  Status",
                     textAlign: TextAlign.start,
                     style: TextStyle(
                         color: const Color(0xFF1E3A8A),
@@ -405,8 +417,8 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   }
 
   Widget _buildContent() {
-    final totalPages = (_filteredPremiums.length / itemsPerPage).ceil();
-    final currentPageData = _filteredPremiums
+    final totalPages = (_filteredPolicies.length / itemsPerPage).ceil();
+    final List<PropertyInsuranceData> currentPageData = _filteredPolicies
         .skip(currentPage * itemsPerPage)
         .take(itemsPerPage)
         .toList();
@@ -424,7 +436,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
               child: Row(
                 children: [
                   Text(
-                    "Insurance Premium History",
+                    "Insurance Policies",
                     style: TextStyle(
                         color: blueColor,
                         fontWeight: FontWeight.bold,
@@ -432,7 +444,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                   ),
                   Spacer(),
                   GestureDetector(
-                    onTap: _openAddPremiumForm,
+                    onTap: _openAddPolicyForm,
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 50
@@ -474,39 +486,38 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                     ),
                   ),
                 )
-              : _filteredPremiums.isEmpty
-                  ? SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 64,
-                              color: Colors.grey[400],
+              : _filteredPolicies.isEmpty
+                  ? Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.inbox_outlined,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No insurance policies found for this property',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No insurance premiums found for this property',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
-                              ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try adding a new insurance policy',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Try adjusting your search or add a new insurance premium',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     )
                   : Column(
@@ -524,7 +535,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                   currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
-                                Map<String, dynamic> premium = entry.value;
+                                PropertyInsuranceData policy = entry.value;
 
                                 return Container(
                                   margin:
@@ -597,21 +608,14 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                         }
                                                       });
                                                     },
-                                                    child: Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                '${premium['year'] ?? 'N/A'}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                    child: Text(
+                                                      policy.insuranceCompanyName ??
+                                                          'N/A',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
@@ -621,19 +625,40 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                 flex: 4,
                                                 child: Container(
                                                   margin: EdgeInsets.only(
-                                                      left: 50, right: 5),
+                                                      left: 20, right: 20),
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 8,
                                                       vertical: 6),
-                                                  child: Text(
-                                                    premium['carrier'] ?? 'N/A',
-                                                    textAlign: TextAlign.start,
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 13,
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: _getStatusColor(
+                                                              policy)
+                                                          .withOpacity(0.1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                        color: _getStatusColor(
+                                                            policy),
+                                                        width: 1,
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      _getStatusBadge(policy),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: _getStatusColor(
+                                                            policy),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -669,14 +694,96 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                       },
                                                       children: [
                                                         _buildTableRow(
-                                                          'Insurance Premium:',
-                                                          premium['formatted_premium'] ??
-                                                              _formatCurrency(
-                                                                  premium[
-                                                                      'insurance_premium']),
-                                                          '',
-                                                          '',
+                                                          'Policy Number:',
+                                                          policy.policyNumber ??
+                                                              'N/A',
+                                                          'Effective Date:',
+                                                          _formatDate(policy
+                                                              .effectiveDate),
                                                         ),
+                                                        _buildTableRow(
+                                                          'Expiration Date:',
+                                                          _formatDate(policy
+                                                              .expirationDate),
+                                                          'Premium Amount:',
+                                                          _formatCurrency(policy
+                                                              .premiumAmount),
+                                                        ),
+                                                        if (policy.policyType !=
+                                                                null &&
+                                                            policy.policyType!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Policy Type:',
+                                                            policy.policyType ??
+                                                                'N/A',
+                                                            'Named Insured:',
+                                                            policy.namedInsured ??
+                                                                'N/A',
+                                                          ),
+                                                        if (policy.paymentTerms !=
+                                                                null &&
+                                                            policy.paymentTerms!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Payment Terms:',
+                                                            policy.paymentTerms ??
+                                                                'N/A',
+                                                            'Deductible:',
+                                                            policy.deductible !=
+                                                                    null
+                                                                ? _formatCurrency(
+                                                                    policy
+                                                                        .deductible)
+                                                                : 'N/A',
+                                                          ),
+                                                        if (policy.agentName !=
+                                                                null &&
+                                                            policy.agentName!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Agent Name:',
+                                                            policy.agentName ??
+                                                                'N/A',
+                                                            'Agent Phone:',
+                                                            policy.agentPhone ??
+                                                                'N/A',
+                                                          ),
+                                                        if (policy.agentEmail !=
+                                                                null &&
+                                                            policy.agentEmail!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Agent Email:',
+                                                            policy.agentEmail ??
+                                                                'N/A',
+                                                            'Broker Name:',
+                                                            policy.brokerName ??
+                                                                'N/A',
+                                                          ),
+                                                        if (policy.mailingAddress !=
+                                                                null &&
+                                                            policy
+                                                                .mailingAddress!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Mailing Address:',
+                                                            policy.mailingAddress ??
+                                                                'N/A',
+                                                            '',
+                                                            '',
+                                                          ),
+                                                        if (policy.notes !=
+                                                                null &&
+                                                            policy.notes!
+                                                                .isNotEmpty)
+                                                          _buildTableRow(
+                                                            'Notes:',
+                                                            policy.notes ??
+                                                                'N/A',
+                                                            '',
+                                                            '',
+                                                          ),
                                                       ],
                                                     ),
                                                   ),
@@ -688,8 +795,12 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   GestureDetector(
-                                                    onTap: () => _deletePremium(
-                                                        premium['_id']),
+                                                    onTap: () {
+                                                      if (policy.id != null) {
+                                                        _deletePolicy(
+                                                            policy.id!);
+                                                      }
+                                                    },
                                                     child: Container(
                                                       height: 35,
                                                       width: 35,
@@ -721,7 +832,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                   const SizedBox(width: 5),
                                                   GestureDetector(
                                                     onTap: () =>
-                                                        _editPremium(premium),
+                                                        _editPolicy(policy),
                                                     child: Container(
                                                       height: 35,
                                                       width: 35,
@@ -792,7 +903,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                               child: Text(value.toString()),
                                             );
                                           }).toList(),
-                                          onChanged: _filteredPremiums.length >
+                                          onChanged: _filteredPolicies.length >
                                                   itemsPerPageOptions.first
                                               ? (newValue) {
                                                   setState(() {
