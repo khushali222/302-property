@@ -11,13 +11,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../constant/constant.dart';
 import '../../../../Model/PropertyInsuranceModel.dart';
+import 'AddEditInsurancePolicy.dart';
 
 class Insurance_Policies_Table extends StatefulWidget {
   final String propertyId;
   final bool showAppBar;
   final bool showDrawer;
   final bool showAddButton;
-
   const Insurance_Policies_Table({
     Key? key,
     required this.propertyId,
@@ -136,13 +136,21 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   }
 
   void _openAddPolicyForm() {
-    // TODO: Navigate to add/edit form when created
     print('=== OPENING ADD INSURANCE POLICY FORM ===');
-    Fluttertoast.showToast(
-      msg: "Add Insurance Policy form - Coming soon",
-      backgroundColor: Colors.blue,
-      textColor: Colors.white,
-    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditInsurancePolicy(
+          propertyId: widget.propertyId,
+        ),
+      ),
+    ).then((result) {
+      if (result == true) {
+        print('=== RETURNED FROM ADD POLICY FORM ===');
+        print('Refreshing policy list...');
+        _loadInsurancePolicies();
+      }
+    });
   }
 
   void _deletePolicy(String id) {
@@ -260,13 +268,23 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   }
 
   void _editPolicy(PropertyInsuranceData policy) {
-    // TODO: Navigate to edit form when created
     print('=== OPENING EDIT INSURANCE POLICY FORM ===');
-    Fluttertoast.showToast(
-      msg: "Edit Insurance Policy form - Coming soon",
-      backgroundColor: Colors.blue,
-      textColor: Colors.white,
-    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditInsurancePolicy(
+          propertyId: widget.propertyId,
+          policyId: policy.id,
+          policyData: policy,
+        ),
+      ),
+    ).then((result) {
+      if (result == true) {
+        print('=== RETURNED FROM EDIT POLICY FORM ===');
+        print('Refreshing policy list...');
+        _loadInsurancePolicies();
+      }
+    });
   }
 
   String _formatCurrency(dynamic amount) {
@@ -709,81 +727,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                           _formatCurrency(policy
                                                               .premiumAmount),
                                                         ),
-                                                        if (policy.policyType !=
-                                                                null &&
-                                                            policy.policyType!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Policy Type:',
-                                                            policy.policyType ??
-                                                                'N/A',
-                                                            'Named Insured:',
-                                                            policy.namedInsured ??
-                                                                'N/A',
-                                                          ),
-                                                        if (policy.paymentTerms !=
-                                                                null &&
-                                                            policy.paymentTerms!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Payment Terms:',
-                                                            policy.paymentTerms ??
-                                                                'N/A',
-                                                            'Deductible:',
-                                                            policy.deductible !=
-                                                                    null
-                                                                ? _formatCurrency(
-                                                                    policy
-                                                                        .deductible)
-                                                                : 'N/A',
-                                                          ),
-                                                        if (policy.agentName !=
-                                                                null &&
-                                                            policy.agentName!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Agent Name:',
-                                                            policy.agentName ??
-                                                                'N/A',
-                                                            'Agent Phone:',
-                                                            policy.agentPhone ??
-                                                                'N/A',
-                                                          ),
-                                                        if (policy.agentEmail !=
-                                                                null &&
-                                                            policy.agentEmail!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Agent Email:',
-                                                            policy.agentEmail ??
-                                                                'N/A',
-                                                            'Broker Name:',
-                                                            policy.brokerName ??
-                                                                'N/A',
-                                                          ),
-                                                        if (policy.mailingAddress !=
-                                                                null &&
-                                                            policy
-                                                                .mailingAddress!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Mailing Address:',
-                                                            policy.mailingAddress ??
-                                                                'N/A',
-                                                            '',
-                                                            '',
-                                                          ),
-                                                        if (policy.notes !=
-                                                                null &&
-                                                            policy.notes!
-                                                                .isNotEmpty)
-                                                          _buildTableRow(
-                                                            'Notes:',
-                                                            policy.notes ??
-                                                                'N/A',
-                                                            '',
-                                                            '',
-                                                          ),
                                                       ],
                                                     ),
                                                   ),

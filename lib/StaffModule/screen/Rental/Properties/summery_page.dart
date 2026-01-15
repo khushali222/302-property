@@ -2356,13 +2356,9 @@ class _Summery_pageState extends State<Summery_page>
                           },
                           {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
                           {
-                            "title": "Property Tax",
+                            "title": "Tax and Insurance",
                             "index": isMultiUnit ? 8 : 7
                           },
-                          // {
-                          //   "title": "Tax and Insurance",
-                          //   "index": isMultiUnit ? 8 : 7
-                          // },
                           // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
@@ -2619,31 +2615,13 @@ class _Summery_pageState extends State<Summery_page>
           if (isMultiUnit) {
             return Mortgage_page(data);
           } else {
-            // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
-            return Property_tax_Table(
-              propertyId: widget.properties.rentalId ?? "",
-              showAppBar: false,
-              showDrawer: false,
-              showAddButton: true,
-            );
+            return TaxAndInsurance_page(data);
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
-          // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
-          return Property_tax_Table(
-            propertyId: widget.properties.rentalId ?? "",
-            showAppBar: false,
-            showDrawer: false,
-            showAddButton: true,
-          );
+          return TaxAndInsurance_page(data);
         } else if (_selectedIndex == 8) {
           if (isMultiUnit) {
-            // return TaxAndInsurance_page(data); // Commented out - showing only Property Tax for now
-            return Property_tax_Table(
-              propertyId: widget.properties.rentalId ?? "",
-              showAppBar: false,
-              showDrawer: false,
-              showAddButton: true,
-            );
+            return TaxAndInsurance_page(data);
           } else {
             return Utilities_Page(data);
           }
@@ -2665,9 +2643,6 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  // TaxAndInsurance_page - COMMENTED OUT: Showing only Property Tax for now
-  // Uncomment this when you want to show Tax and Insurance dropdown again
-  /*
   TaxAndInsurance_page(List<unit_properties> unit) {
     return SingleChildScrollView(
       child: Column(
@@ -2898,7 +2873,6 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
-  */
 
   PropertyInsurance_page(List<unit_properties> unit) {
     return SingleChildScrollView(
@@ -2912,14 +2886,14 @@ class _Summery_pageState extends State<Summery_page>
             showDrawer: false,
             showAddButton: true,
           ),
-          const SizedBox(height: 20),
-          // Insurance Policies Table
-          Insurance_Policies_Table(
-            propertyId: widget.properties.rentalId ?? "",
-            showAppBar: false,
-            showDrawer: false,
-            showAddButton: true,
-          ),
+          // const SizedBox(height: 20),
+          // // Insurance Policies Table
+          // Insurance_Policies_Table(
+          //   propertyId: widget.properties.rentalId ?? "",
+          //   showAppBar: false,
+          //   showDrawer: false,
+          //   showAddButton: true,
+          // ),
         ],
       ),
     );

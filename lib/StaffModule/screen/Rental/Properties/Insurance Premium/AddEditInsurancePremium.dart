@@ -36,6 +36,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
   bool _isLoading = false;
   bool _hasValidated = false;
   String? _generalError;
+  List<Map<String, dynamic>> _existingPremiums = [];
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
       _populateFormWithData(widget.premiumData!);
       _hasValidated = false;
     }
+    _loadExistingPremiums();
   }
 
   @override
@@ -68,6 +70,38 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
+  }
+
+  Future<void> _loadExistingPremiums() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      final response = await http.get(
+        Uri.parse(
+            '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true &&
+            data['data'] != null &&
+            data['data']['insurance_premiums'] != null) {
+          setState(() {
+            _existingPremiums = List<Map<String, dynamic>>.from(
+                data['data']['insurance_premiums']);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error loading existing premiums: $e');
+    }
   }
 
   void _populateFormWithData(Map<String, dynamic> premiumData) {
@@ -112,7 +146,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      String? username = prefs.getString('username') ?? 'User';
 
       String amountStr = _premiumAmountController.text
           .replaceAll('\$', '')
@@ -163,31 +196,23 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
           _showFieldError('general', errorMessage);
         }
       } else {
-        // Add mode - POST request to /api/history
+        // Add mode - POST request to /api/rentals/insurance-premiums/{propertyId}
         print('=== CREATING INSURANCE PREMIUM ===');
         print('Property ID: ${widget.propertyId}');
 
         final response = await http
             .post(
-              Uri.parse('${Api_url}/api/history'),
+              Uri.parse(
+                  '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}'),
               headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'CRM $token',
                 'id': 'CRM $id',
               },
               body: json.encode({
-                'entity_type': 'property',
-                'entity_id': widget.propertyId,
-                'action_type': 'created',
-                'description':
-                    'Insurance Premium Added (${_yearController.text.trim()}): Carrier: ${_carrierController.text.trim()}, Premium: \$${premiumAmount.toStringAsFixed(2)}',
-                'username': username,
-                'category': 'Renter Insurance',
-                'metadata': {
-                  'year': _yearController.text.trim(),
-                  'carrier': _carrierController.text.trim(),
-                  'insurance_premium': premiumAmount,
-                },
+                'year': _yearController.text.trim(),
+                'carrier': _carrierController.text.trim(),
+                'insurance_premium': premiumAmount,
               }),
             )
             .timeout(const Duration(seconds: 30));
@@ -195,9 +220,9 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
         print('Create Response Status: ${response.statusCode}');
         print('Create Response Body: ${response.body}');
 
-        if (response.statusCode == 201) {
+        if (response.statusCode == 200 || response.statusCode == 201) {
           final data = json.decode(response.body);
-          if (data['statusCode'] == 201) {
+          if (data['success'] == true) {
             if (mounted) {
               Navigator.pop(context, true); // Return true to indicate success
             }
@@ -364,7 +389,11 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(color: Colors.red, width: 2),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.red, width: 2),
                         ),
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -376,6 +405,27 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                             (value == null || value.trim().isEmpty)) {
                           return 'Year is required';
                         }
+                        // Check for duplicate year
+                        if (_hasValidated &&
+                            value != null &&
+                            value.trim().isNotEmpty) {
+                          String yearValue = value.trim();
+                          // In edit mode, exclude current premium's year from duplicate check
+                          bool isDuplicate = _existingPremiums.any((premium) {
+                            String existingYear =
+                                premium['year']?.toString().trim() ?? '';
+                            // If editing, skip the current premium
+                            if (widget.premiumId != null &&
+                                premium['_id'] == widget.premiumId) {
+                              return false;
+                            }
+                            return existingYear == yearValue;
+                          });
+
+                          if (isDuplicate) {
+                            return 'A premium for this year already exists. Only one premium per year is allowed.';
+                          }
+                        }
                         return null;
                       },
                       onChanged: (value) {
@@ -383,6 +433,8 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                           setState(() {
                             _generalError = null;
                           });
+                          // Trigger validation to check for duplicates
+                          _formKey.currentState?.validate();
                         }
                       },
                     ),
