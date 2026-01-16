@@ -165,28 +165,46 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc:
-          "Once deleted, you will not be able to recover this insurance premium record!",
-      style: AlertStyle(
+      desc: "Once deleted, you will not be able to recover this property!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(
         backgroundColor: Colors.white,
+        //  overlayColor: Colors.black.withOpacity(.8)
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print('Deleting insurance premium record with ID: $id');
-
-            // Call API to delete the premium record
-            await _deletePremiumRecord(id);
-
-            Navigator.pop(context);
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await _deletePremiumRecord(id, reason.text);
+              Navigator.pop(context);
+            }
           },
           color: blueColor,
         ),
@@ -198,9 +216,9 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
-          radius: BorderRadius.circular(8),
+          radius: BorderRadius.circular(8), // Rounded corners
           border: Border.all(
-            color: blueColor,
+            color: blueColor, // Blue border
             width: 1.5,
           ),
         ),
@@ -208,7 +226,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
     ).show();
   }
 
-  Future<void> _deletePremiumRecord(String id) async {
+  Future<void> _deletePremiumRecord(String id, String reason) async {
     try {
       setState(() {
         _isLoading = true;
@@ -222,16 +240,22 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       print('Premium ID: $id');
       print('Property ID: ${widget.propertyId}');
       print('Admin ID: $adminId');
+      print('Reason: $reason');
 
-      final response = await http.delete(
-        Uri.parse(
-            '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .delete(
+            Uri.parse(
+                '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}/$id'),
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'CRM $token',
+              'id': 'CRM $adminId',
+            },
+            body: json.encode({
+              'reason': reason,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       print('Delete Response Status: ${response.statusCode}');
       print('Delete Response Body: ${response.body}');
@@ -488,23 +512,15 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No insurance premiums found for this property',
+                              'No insurance premium records available.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.grey[600],
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Try adjusting your search or add a new insurance premium',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -765,85 +781,89 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Pagination Controls
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: _filteredPremiums.length >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage = 0;
-                                                  });
-                                                }
-                                              : null,
+                        // Pagination Controls - Only show if data exceeds itemsPerPage
+                        if (_filteredPremiums.length > itemsPerPage)
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: _filteredPremiums
+                                                        .length >
+                                                    itemsPerPageOptions.first
+                                                ? (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage = 0;
+                                                    });
+                                                  }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  IconButton(
-                                    icon: Icon(Icons.chevron_left,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Text(
-                                    'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
-                                    style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: 14,
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: Icon(Icons.chevron_left,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.chevron_right,
-                                        color: currentPage >= totalPages - 1
-                                            ? Colors.grey
-                                            : blueColor),
-                                    onPressed: currentPage >= totalPages - 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          },
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    Text(
+                                      'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.chevron_right,
+                                          color: currentPage >= totalPages - 1
+                                              ? Colors.grey
+                                              : blueColor),
+                                      onPressed: currentPage >= totalPages - 1
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 20),
                       ],
                     ),

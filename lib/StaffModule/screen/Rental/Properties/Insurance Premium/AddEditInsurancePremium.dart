@@ -371,35 +371,8 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _yearController,
-                      decoration: InputDecoration(
-                        hintText: 'e.g., 2023, 2024, 2025',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: blueColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.red, width: 2),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.red, width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                      ),
+                    FormField<String>(
+                      initialValue: _yearController.text,
                       validator: (value) {
                         if (_hasValidated &&
                             (value == null || value.trim().isEmpty)) {
@@ -428,14 +401,71 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                         }
                         return null;
                       },
-                      onChanged: (value) {
-                        if (_hasValidated && value.trim().isNotEmpty) {
-                          setState(() {
-                            _generalError = null;
-                          });
-                          // Trigger validation to check for duplicates
-                          _formKey.currentState?.validate();
-                        }
+                      builder: (FormFieldState<String> state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: _yearController,
+                              onChanged: (value) {
+                                state.didChange(value);
+                                if (_hasValidated) {
+                                  state.validate();
+                                }
+                                if (_hasValidated && value.trim().isNotEmpty) {
+                                  setState(() {
+                                    _generalError = null;
+                                  });
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'e.g., 2023, 2024, 2025',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                errorStyle: const TextStyle(
+                                  fontSize: 0,
+                                  height: 0,
+                                ),
+                                isDense: true,
+                              ),
+                            ),
+                            if (state.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                                child: Text(
+                                  state.errorText ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                    height: 1.0,
+                                  ),
+                                  maxLines: 3,
+                                ),
+                              ),
+                          ],
+                        );
                       },
                     ),
                     const SizedBox(height: 20),
@@ -450,31 +480,8 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _carrierController,
-                      decoration: InputDecoration(
-                        hintText: 'e.g., ABC Insurance',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: blueColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                      ),
+                    FormField<String>(
+                      initialValue: _carrierController.text,
                       validator: (value) {
                         if (_hasValidated &&
                             (value == null || value.trim().isEmpty)) {
@@ -482,12 +489,67 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                         }
                         return null;
                       },
-                      onChanged: (value) {
-                        if (_hasValidated && value.trim().isNotEmpty) {
-                          setState(() {
-                            _generalError = null;
-                          });
-                        }
+                      builder: (FormFieldState<String> state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: _carrierController,
+                              onChanged: (value) {
+                                state.didChange(value);
+                                if (_hasValidated) {
+                                  state.validate();
+                                }
+                                if (_hasValidated && value.trim().isNotEmpty) {
+                                  setState(() {
+                                    _generalError = null;
+                                  });
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'e.g., ABC Insurance',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                errorStyle: const TextStyle(
+                                  fontSize: 0,
+                                  height: 0,
+                                ),
+                                isDense: true,
+                              ),
+                            ),
+                            if (state.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                                child: Text(
+                                  state.errorText ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                    height: 1.0,
+                                  ),
+                                  maxLines: 2,
+                                ),
+                              ),
+                          ],
+                        );
                       },
                     ),
                     const SizedBox(height: 20),
@@ -502,43 +564,8 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _premiumAmountController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}')),
-                      ],
-                      decoration: InputDecoration(
-                        hintText: 'e.g., 1200.00',
-                        prefixText: '\$ ',
-                        prefixStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: blueColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                      ),
+                    FormField<String>(
+                      initialValue: _premiumAmountController.text,
                       validator: (value) {
                         if (_hasValidated &&
                             (value == null || value.trim().isEmpty)) {
@@ -556,17 +583,84 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                         }
                         return null;
                       },
-                      onChanged: (value) {
-                        if (_hasValidated && value.trim().isNotEmpty) {
-                          String amountStr =
-                              value.replaceAll('\$', '').replaceAll(',', '');
-                          double? amount = double.tryParse(amountStr);
-                          if (amount != null && amount > 0) {
-                            setState(() {
-                              _generalError = null;
-                            });
-                          }
-                        }
+                      builder: (FormFieldState<String> state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: _premiumAmountController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d+\.?\d{0,2}')),
+                              ],
+                              onChanged: (value) {
+                                state.didChange(value);
+                                if (_hasValidated) {
+                                  state.validate();
+                                }
+                                if (_hasValidated && value.trim().isNotEmpty) {
+                                  String amountStr =
+                                      value.replaceAll('\$', '').replaceAll(',', '');
+                                  double? amount = double.tryParse(amountStr);
+                                  if (amount != null && amount > 0) {
+                                    setState(() {
+                                      _generalError = null;
+                                    });
+                                  }
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'e.g., 1200.00',
+                                prefixText: '\$ ',
+                                prefixStyle: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                errorStyle: const TextStyle(
+                                  fontSize: 0,
+                                  height: 0,
+                                ),
+                                isDense: true,
+                              ),
+                            ),
+                            if (state.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                                child: Text(
+                                  state.errorText ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                    height: 1.0,
+                                  ),
+                                  maxLines: 2,
+                                ),
+                              ),
+                          ],
+                        );
                       },
                     ),
                     const SizedBox(height: 40),

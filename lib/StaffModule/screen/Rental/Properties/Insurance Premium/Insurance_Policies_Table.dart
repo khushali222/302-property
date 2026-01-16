@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../../constant/constant.dart';
+import '../../../../../provider/dateProvider.dart';
 import '../../../../../Model/PropertyInsuranceModel.dart';
 import 'AddEditInsurancePolicy.dart';
 
@@ -63,7 +65,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
 
       print('Loading insurance policies for property ID: ${widget.propertyId}');
       print('API URL: ${Api_url}/api/property-insurance/${widget.propertyId}');
-      
+
       final response = await http.get(
         Uri.parse('${Api_url}/api/property-insurance/${widget.propertyId}'),
         headers: {
@@ -79,7 +81,8 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
-          print('Successfully loaded ${data['data'].length} insurance policies');
+          print(
+              'Successfully loaded ${data['data'].length} insurance policies');
           setState(() {
             _policies = (data['data'] as List)
                 .map((item) => PropertyInsuranceData.fromJson(item))
@@ -158,25 +161,46 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc:
-          "Once deleted, you will not be able to recover this insurance policy!",
-      style: AlertStyle(
+      desc: "Once deleted, you will not be able to recover this property!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(
         backgroundColor: Colors.white,
+        //  overlayColor: Colors.black.withOpacity(.8)
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print('Deleting insurance policy with ID: $id');
-            await _deletePolicyRecord(id);
-            Navigator.pop(context);
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await _deletePolicyRecord(id, reason.text);
+              Navigator.pop(context);
+            }
           },
           color: blueColor,
         ),
@@ -188,9 +212,9 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
-          radius: BorderRadius.circular(8),
+          radius: BorderRadius.circular(8), // Rounded corners
           border: Border.all(
-            color: blueColor,
+            color: blueColor, // Blue border
             width: 1.5,
           ),
         ),
@@ -198,7 +222,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
     ).show();
   }
 
-  Future<void> _deletePolicyRecord(String id) async {
+  Future<void> _deletePolicyRecord(String id, String reason) async {
     try {
       setState(() {
         _isLoading = true;
@@ -211,15 +235,21 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       print('=== DELETING INSURANCE POLICY ===');
       print('Policy ID: $id');
       print('Admin ID: $adminId');
+      print('Reason: $reason');
 
-      final response = await http.delete(
-        Uri.parse('${Api_url}/api/property-insurance/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .delete(
+            Uri.parse('${Api_url}/api/property-insurance/$id'),
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'CRM $token',
+              'id': 'CRM $adminId',
+            },
+            body: json.encode({
+              'reason': reason,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       print('Delete Response Status: ${response.statusCode}');
       print('Delete Response Body: ${response.body}');
@@ -228,8 +258,10 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           setState(() {
-            _policies.removeWhere((policy) => policy.id != null && policy.id == id);
-            _filteredPolicies.removeWhere((policy) => policy.id != null && policy.id == id);
+            _policies
+                .removeWhere((policy) => policy.id != null && policy.id == id);
+            _filteredPolicies
+                .removeWhere((policy) => policy.id != null && policy.id == id);
           });
 
           Fluttertoast.showToast(
@@ -291,41 +323,81 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
     return '\$${numValue.toStringAsFixed(2)}';
   }
 
-  String _formatDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) return 'N/A';
+  String _formatDate(String? dateValue) {
+    if (dateValue == null || dateValue.trim().isEmpty || dateValue == 'null') {
+      return 'N/A';
+    }
+
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('MM/dd/yyyy').format(date);
+      String formattedDate = dateProvider.formatCurrentDate(dateValue);
+
+      // If the formatted date is the same as the original (meaning parsing failed),
+      // try to parse it as ISO 8601 format manually
+      if (formattedDate == dateValue && dateValue.contains('T')) {
+        try {
+          // Extract just the date part from ISO 8601 format (before 'T')
+          String dateOnly = dateValue.split('T')[0];
+          DateTime parsedDate = DateTime.parse(dateOnly);
+          return DateFormat(dateProvider.dateFormat).format(parsedDate);
+        } catch (e) {
+          return 'N/A';
+        }
+      }
+
+      return formattedDate;
     } catch (e) {
-      return dateString;
+      return 'N/A';
     }
   }
 
   String _getStatusBadge(PropertyInsuranceData policy) {
-    // Check if policy is expired based on expiration date
-    if (policy.expirationDate != null && policy.expirationDate!.isNotEmpty) {
-      try {
-        final expirationDate = DateTime.parse(policy.expirationDate!);
-        final now = DateTime.now();
-        if (expirationDate.isBefore(now)) {
-          return 'Expired';
-        }
-      } catch (e) {
-        // If date parsing fails, use status from API
+    // If no expiration date, return "Active"
+    if (policy.expirationDate == null || policy.expirationDate!.isEmpty) {
+      return 'Active';
+    }
+
+    try {
+      // Parse expiration date - handle ISO 8601 format
+      String dateString = policy.expirationDate!;
+      if (dateString.contains('T')) {
+        dateString = dateString.split('T')[0];
       }
+      final parsedExpirationDate = DateTime.parse(dateString);
+
+      // Normalize both dates to start of day (like moment().startOf('day'))
+      final today = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      final expirationDate = DateTime(parsedExpirationDate.year,
+          parsedExpirationDate.month, parsedExpirationDate.day);
+
+      // Calculate difference in days (like exp.diff(today, 'days'))
+      final diffDays = expirationDate.difference(today).inDays;
+
+      // If difference is 0 or less → "Expired"
+      if (diffDays <= 0) {
+        return 'Expired';
+      }
+      // If difference is 14 days or less → "Expiring Soon"
+      if (diffDays <= 14) {
+        return 'Expiring Soon';
+      }
+      // Otherwise → "Active"
+      return 'Active';
+    } catch (e) {
+      // If date parsing fails, return "Active"
+      print('Error parsing expiration date: $e');
+      return 'Active';
     }
-    
-    // Use status from API if not expired
-    if (policy.status != null) {
-      return policy.status!;
-    }
-    return 'Active';
   }
 
   Color _getStatusColor(PropertyInsuranceData policy) {
     final status = _getStatusBadge(policy);
     if (status.toLowerCase() == 'expired') {
       return Colors.red;
+    }
+    if (status.toLowerCase() == 'expiring soon') {
+      return Colors.orange;
     }
     if (status.toLowerCase() == 'active') {
       return Colors.green;
@@ -516,21 +588,12 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No insurance policies found for this property',
+                            'No insurance records available.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Try adding a new insurance policy',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
                             ),
                           ),
                         ],
@@ -625,7 +688,8 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                       });
                                                     },
                                                     child: Text(
-                                                      policy.insuranceCompanyName ?? 'N/A',
+                                                      policy.insuranceCompanyName ??
+                                                          'N/A',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -646,9 +710,10 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                       horizontal: 8,
                                                       vertical: 6),
                                                   child: Container(
-                                                    padding: EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 4),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: _getStatusColor(
                                                               policy)
@@ -664,9 +729,11 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                     ),
                                                     child: Text(
                                                       _getStatusBadge(policy),
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       style: TextStyle(
-                                                        color: _getStatusColor(policy),
+                                                        color: _getStatusColor(
+                                                            policy),
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         fontSize: 11,
@@ -707,15 +774,19 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                       children: [
                                                         _buildTableRow(
                                                           'Policy Number:',
-                                                          policy.policyNumber ?? 'N/A',
+                                                          policy.policyNumber ??
+                                                              'N/A',
                                                           'Effective Date:',
-                                                          _formatDate(policy.effectiveDate),
+                                                          _formatDate(policy
+                                                              .effectiveDate),
                                                         ),
                                                         _buildTableRow(
                                                           'Expiration Date:',
-                                                          _formatDate(policy.expirationDate),
+                                                          _formatDate(policy
+                                                              .expirationDate),
                                                           'Premium Amount:',
-                                                          _formatCurrency(policy.premiumAmount),
+                                                          _formatCurrency(policy
+                                                              .premiumAmount),
                                                         ),
                                                       ],
                                                     ),
@@ -730,7 +801,8 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                                                   GestureDetector(
                                                     onTap: () {
                                                       if (policy.id != null) {
-                                                        _deletePolicy(policy.id!);
+                                                        _deletePolicy(
+                                                            policy.id!);
                                                       }
                                                     },
                                                     child: Container(
@@ -808,85 +880,89 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Pagination Controls
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: _filteredPolicies.length >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage = 0;
-                                                  });
-                                                }
-                                              : null,
+                        // Pagination Controls - Only show if data exceeds itemsPerPage
+                        if (_filteredPolicies.length > itemsPerPage)
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: _filteredPolicies
+                                                        .length >
+                                                    itemsPerPageOptions.first
+                                                ? (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage = 0;
+                                                    });
+                                                  }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  IconButton(
-                                    icon: Icon(Icons.chevron_left,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Text(
-                                    'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
-                                    style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: 14,
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: Icon(Icons.chevron_left,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.chevron_right,
-                                        color: currentPage >= totalPages - 1
-                                            ? Colors.grey
-                                            : blueColor),
-                                    onPressed: currentPage >= totalPages - 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          },
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    Text(
+                                      'Page ${currentPage + 1} of ${totalPages == 0 ? 1 : totalPages}',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.chevron_right,
+                                          color: currentPage >= totalPages - 1
+                                              ? Colors.grey
+                                              : blueColor),
+                                      onPressed: currentPage >= totalPages - 1
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 20),
                       ],
                     ),

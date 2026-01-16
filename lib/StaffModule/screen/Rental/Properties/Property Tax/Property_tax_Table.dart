@@ -101,6 +101,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
           print('Successfully loaded ${data['data'].length} taxes');
           setState(() {
             _taxes = List<Map<String, dynamic>>.from(data['data']);
+            _sortTaxes();
             _filteredtax = List.from(_taxes);
           });
         } else {
@@ -156,6 +157,25 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     }
   }
 
+  void _sortTaxes() {
+    _taxes.sort((a, b) {
+      String yearA = (_getTaxYear(a) ?? '').toString();
+      String yearB = (_getTaxYear(b) ?? '').toString();
+
+      // Try to parse as integers for numeric comparison
+      int? yearAInt = int.tryParse(yearA);
+      int? yearBInt = int.tryParse(yearB);
+
+      if (yearAInt != null && yearBInt != null) {
+        // Sort in descending order (newest first)
+        return yearBInt.compareTo(yearAInt);
+      }
+
+      // If parsing fails, do string comparison in descending order
+      return yearB.compareTo(yearA);
+    });
+  }
+
   void _loadFallbackMortgages() {
     // Fallback tax data for development/testing when API is not accessible
     setState(() {
@@ -188,6 +208,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
           'paid_date': '', // This will also show as N/A
         },
       ];
+      _sortTaxes();
       _filteredtax = List.from(_taxes);
     });
   }
@@ -214,28 +235,46 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this tax record!",
-      style: AlertStyle(
+      desc: "Once deleted, you will not be able to recover this property!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(
         backgroundColor: Colors.white,
         //  overlayColor: Colors.black.withOpacity(.8)
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print('Deleting tax record with ID: $id');
-
-            // Call API to delete the tax record
-            await _deleteTaxRecord(id);
-
-            Navigator.pop(context);
+            if (reason.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              await _deleteTaxRecord(id, reason.text);
+              Navigator.pop(context);
+            }
           },
           color: blueColor,
         ),
@@ -257,7 +296,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     ).show();
   }
 
-  Future<void> _deleteTaxRecord(String id) async {
+  Future<void> _deleteTaxRecord(String id, String reason) async {
     try {
       setState(() {
         _isLoading = true;
@@ -271,15 +310,21 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       print('=== DELETING TAX RECORD ===');
       print('Tax ID: $id');
       print('Admin ID: $adminId');
+      print('Reason: $reason');
 
-      final response = await http.delete(
-        Uri.parse('${Api_url}/api/taxes/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': 'CRM $token',
-          'id': 'CRM $satffid',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .delete(
+            Uri.parse('${Api_url}/api/taxes/$id'),
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'CRM $token',
+              'id': 'CRM $satffid',
+            },
+            body: json.encode({
+              'reason': reason,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       print('Delete Response Status: ${response.statusCode}');
       print('Delete Response Body: ${response.body}');
@@ -503,6 +548,23 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     return (value == null || value.trim().isEmpty) ? '' : value;
   }
 
+  // Helper methods to handle both camelCase and snake_case field names
+  dynamic _getTaxYear(Map<String, dynamic> tax) {
+    return tax['tax_year'] ?? tax['taxYear'];
+  }
+
+  dynamic _getTaxAmount(Map<String, dynamic> tax) {
+    return tax['tax_amount'] ?? tax['taxBill'];
+  }
+
+  String? _getDueDate(Map<String, dynamic> tax) {
+    return tax['due_date'] ?? tax['dueDate'];
+  }
+
+  String? _getPaidDate(Map<String, dynamic> tax) {
+    return tax['paid_date'] ?? tax['paidDate'];
+  }
+
   String _formatDateSafely(String? dateValue) {
     if (dateValue == null || dateValue.trim().isEmpty || dateValue == 'null') {
       return 'N/A';
@@ -615,21 +677,14 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No tax found for this property',
+                              'No tax records available.',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.grey[600],
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Try adjusting your search or add a new tax',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -727,7 +782,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                '${tax['tax_year'] ?? 'N/A'}',
+                                                                '${_getTaxYear(tax) ?? 'N/A'}',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
@@ -937,15 +992,18 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                             'Amount:',
                                                             _getDisplayValue(
                                                                 _formatCurrency(
-                                                                    tax['tax_amount'])),
+                                                                    _getTaxAmount(
+                                                                        tax))),
                                                             'Due Date',
                                                             _formatDateSafely(
-                                                                tax['due_date']),
+                                                                _getDueDate(
+                                                                    tax)),
                                                           ),
                                                           _buildTableRow(
                                                             'Paid Date',
                                                             _formatDateSafely(
-                                                                tax['paid_date']),
+                                                                _getPaidDate(
+                                                                    tax)),
                                                             'Receipt',
                                                             tax['receipt'] !=
                                                                         null &&
@@ -1066,84 +1124,87 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Pagination Controls
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: _filteredtax.length >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage = 0;
-                                                  });
-                                                }
-                                              : null,
+                        // Pagination Controls - Only show if data exceeds itemsPerPage
+                        if (_filteredtax.length > itemsPerPage)
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: _filteredtax.length >
+                                                    itemsPerPageOptions.first
+                                                ? (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage = 0;
+                                                    });
+                                                  }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 0
-                                          ? Colors.grey
-                                          : const Color(0xFF1E3A8A),
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : const Color(0xFF1E3A8A),
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Text(
-                                      'Page ${currentPage + 1} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages - 1
-                                          ? const Color(0xFF1E3A8A)
-                                          : Colors.grey,
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages - 1
+                                            ? const Color(0xFF1E3A8A)
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages - 1
+                                          ? () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
+                                          : null,
                                     ),
-                                    onPressed: currentPage < totalPages - 1
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 20),
                       ],
                     ),

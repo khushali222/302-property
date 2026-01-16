@@ -1025,7 +1025,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: blueColor, width: 2),
+              borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1096,7 +1096,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: blueColor, width: 2),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

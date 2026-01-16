@@ -6,8 +6,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:email_validator/email_validator.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../provider/dateProvider.dart';
 import '../../../../widgets/appbar.dart';
@@ -328,14 +326,13 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           }
         } else if (controller == _expirationDateController) {
           _expirationDate = picked;
-          // Validate expiration date is after effective date
+          // Validate expiration date is not before effective date (same day is allowed)
           if (_effectiveDate != null &&
-              (_expirationDate!.isBefore(_effectiveDate!) ||
-                  _expirationDate!.isAtSameMomentAs(_effectiveDate!))) {
+              _expirationDate!.isBefore(_effectiveDate!)) {
             // Show warning but don't clear
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Expiration date must be after effective date.'),
+                content: Text('Expiration date must be on or after effective date.'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -559,7 +556,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: blueColor,
                     ),
@@ -567,7 +564,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -623,63 +620,104 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           ),
         ),
         const SizedBox(height: 8),
-        prefixText != null
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, left: 16),
-                    child: Text(
-                      prefixText,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+        FormField<String>(
+          initialValue: controller.text,
+          validator: validator ?? (value) {
+            if (required && _hasValidated &&
+                (value == null || value
+                    .trim()
+                    .isEmpty)) {
+              return '$label is required';
+            }
+            return null;
+          },
+          builder: (FormFieldState<String> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  inputFormatters: inputFormatters,
+                  maxLines: maxLines ?? 1,
+                  cursorColor: blueColor,
+                  style: const TextStyle(fontSize: 14),
+                  onChanged: (value) {
+                    state.didChange(value);
+                    if (_hasValidated) {
+                      state.validate();
+                    }
+                  },
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 14,
+                    ),
+                    prefixIcon: prefixText != null
+                        ? Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 8),
+                      child: Text(
+                        prefixText,
+                        style: TextStyle(
+                          color: Colors.grey[800],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
+                    )
+                        : null,
+                    prefixIconConstraints: prefixText != null
+                        ? const BoxConstraints(minWidth: 0, minHeight: 0)
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: prefixText != null ? 8 : 16,
+                      vertical: 14,
+                    ),
+                    errorStyle: const TextStyle(
+                      fontSize: 0,
+                      height: 0,
+                    ),
+                    isDense: true,
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                    child: Text(
+                      state.errorText ?? '',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                        height: 1.0,
+                      ),
+                      maxLines: 2,
                     ),
                   ),
-                  Expanded(
-                    child: CustomTextField(
-                      controller: controller,
-                      hintText: hint ?? '',
-                      keyboardType: keyboardType ?? TextInputType.text,
-                      inputFormatters: inputFormatters,
-                      optional: !required,
-                      maxLines: maxLines,
-                      validator: validator ?? (value) {
-                        if (required && _hasValidated &&
-                            (value == null || value.trim().isEmpty)) {
-                          return '$label is required';
-                        }
-                        return null;
-                      },
-                      showElevation: false,
-                      borderColor: Colors.grey[300],
-                      borderWidth: 1.0,
-                      isInRow: false,
-                    ),
-                  ),
-                ],
-              )
-            : CustomTextField(
-                controller: controller,
-                hintText: hint ?? '',
-                keyboardType: keyboardType ?? TextInputType.text,
-                inputFormatters: inputFormatters,
-                optional: !required,
-                maxLines: maxLines,
-                validator: validator ?? (value) {
-                  if (required && _hasValidated &&
-                      (value == null || value.trim().isEmpty)) {
-                    return '$label is required';
-                  }
-                  return null;
-                },
-                showElevation: false,
-                borderColor: Colors.grey[300],
-                borderWidth: 1.0,
-                isInRow: false,
-              ),
+              ],
+            );
+          },
+        ),
         const SizedBox(height: 16),
       ],
     );
@@ -722,92 +760,122 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           ),
         ),
         const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            _selectDate(
-              context, 
-              controller, 
-              selectedDate, 
-              isExpiration: label.contains('Expiration'),
-              onDateSelected: (date) {
-                setState(() {
-                  if (label.contains('Effective')) {
-                    _effectiveDate = date;
-                  } else if (label.contains('Expiration')) {
-                    _expirationDate = date;
-                  } else if (label.contains('Cancellation')) {
-                    _cancellationNoticeDate = date;
-                  }
-                });
-              },
+        FormField<String>(
+          initialValue: controller.text,
+          validator: (value) {
+            if (required &&
+                _hasValidated &&
+                (value == null || value
+                    .trim()
+                    .isEmpty)) {
+              return '$label is required';
+            }
+            return null;
+          },
+          builder: (FormFieldState<String> state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _selectDate(
+                      context, 
+                      controller, 
+                      selectedDate, 
+                      isExpiration: label.contains('Expiration'),
+                      onDateSelected: (date) {
+                        setState(() {
+                          if (label.contains('Effective')) {
+                            _effectiveDate = date;
+                          } else if (label.contains('Expiration')) {
+                            _expirationDate = date;
+                          } else if (label.contains('Cancellation')) {
+                            _cancellationNoticeDate = date;
+                          }
+                        });
+                        state.didChange(controller.text);
+                        state.validate();
+                      },
+                    );
+                  },
+                  child: AbsorbPointer(
+                    child: Builder(
+                      builder: (context) {
+                        final dateProvider = Provider.of<DateProvider>(
+                            context, listen: false);
+                        // Convert date format to hint format (e.g., MM/dd/yyyy -> MM/DD/YYYY, dd/MMM/yyyy -> DD/MMM/YYYY)
+                        String dateFormatHint = dateProvider.dateFormat
+                            .replaceAll('dd', 'DD')
+                            .replaceAll('d', 'DD')
+                            .replaceAll('MMM', 'MMM')
+                            .replaceAll('MM', 'MM')
+                            .replaceAll('M', 'MM')
+                            .replaceAll('yyyy', 'YYYY')
+                            .replaceAll('yy', 'YY');
+
+                        return TextFormField(
+                          controller: controller,
+                          onChanged: (value) {
+                            state.didChange(value);
+                            if (_hasValidated) {
+                              state.validate();
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: dateFormatHint,
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              color: blueColor,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                            ),
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            errorStyle: const TextStyle(
+                              fontSize: 0,
+                              height: 0,
+                            ),
+                            isDense: true,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                    child: Text(
+                      state.errorText ?? '',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                        height: 1.0,
+                      ),
+                      maxLines: 2,
+                    ),
+                  ),
+              ],
             );
           },
-          child: AbsorbPointer(
-            child: Builder(
-              builder: (context) {
-                final dateProvider = Provider.of<DateProvider>(
-                    context, listen: false);
-                // Convert date format to hint format (e.g., MM/dd/yyyy -> MM/DD/YYYY, dd/MMM/yyyy -> DD/MMM/YYYY)
-                String dateFormatHint = dateProvider.dateFormat
-                    .replaceAll('dd', 'DD')
-                    .replaceAll('d', 'DD')
-                    .replaceAll('MMM', 'MMM')
-                    .replaceAll('MM', 'MM')
-                    .replaceAll('M', 'MM')
-                    .replaceAll('yyyy', 'YYYY')
-                    .replaceAll('yy', 'YY');
-
-                return TextFormField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    hintText: dateFormatHint,
-                    hintStyle: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
-                    suffixIcon: Icon(
-                      Icons.calendar_today,
-                      color: blueColor,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    errorStyle: const TextStyle(
-                      fontSize: 12,
-                      height: 1.0,
-                    ),
-                    errorMaxLines: 2,
-                    isDense: true,
-                  ),
-                  validator: (value) {
-                    if (required &&
-                        _hasValidated &&
-                        (value == null || value
-                            .trim()
-                            .isEmpty)) {
-                      return '$label is required';
-                    }
-                    return null;
-                  },
-                );
-              },
-            ),
-          ),
         ),
         const SizedBox(height: 16),
       ],
@@ -871,22 +939,30 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 DropdownButtonHideUnderline(
                   child: DropdownButton2<String>(
                     isExpanded: true,
-                    hint: Row(
-                      children: [
-                        const SizedBox(width: 4),
-                        Expanded(
+                    hint: Text(
+                      hint ?? 'Select ${label.replaceAll(' (Optional)', '')}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: disabled ? Colors.grey[300] : Colors.grey[400],
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    value: disabled ? null : value,
+                    selectedItemBuilder: (BuildContext context) {
+                      return items.map<Widget>((String item) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
                           child: Text(
-                            hint ?? 'Select ${label.replaceAll(' (Optional)', '')}',
-                            style: TextStyle(
+                            item,
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: disabled ? Colors.grey[300] : Colors.grey[400],
+                              color: Colors.black,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    ),
-                    value: disabled ? null : value,
+                        );
+                      }).toList();
+                    },
                     items: items.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
@@ -912,7 +988,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                     },
                     buttonStyleData: ButtonStyleData(
                       height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                     // padding: const EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
@@ -943,7 +1019,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, left: 0),
+                    padding: const EdgeInsets.only(top: 4.0, left: 16,right: 16),
                     child: Text(
                       state.errorText ?? '',
                       style: const TextStyle(
@@ -988,7 +1064,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             children: [
               const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8, bottom: 8),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
@@ -1013,7 +1089,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -1022,7 +1098,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1035,7 +1111,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                           color: Colors.grey[600],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      
 
                       // General Error Message
                       if (_generalError != null && _hasValidated)
@@ -1089,26 +1165,20 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         hint: 'Enter insurance company name',
                         required: true,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Policy Number',
-                              controller: _policyNumberController,
-                              hint: 'Enter policy number',
-                              required: true,
-                              validator: (value) {
-                                if (_hasValidated && (value == null || value.trim().isEmpty)) {
-                                  return 'Policy Number is required';
-                                }
-                                if (_hasValidated && value != null && value.trim().length < 2) {
-                                  return 'Policy Number must be at least 2 characters';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
+                      _buildTextField(
+                        label: 'Policy Number',
+                        controller: _policyNumberController,
+                        hint: 'Enter policy number',
+                        required: true,
+                        validator: (value) {
+                          if (_hasValidated && (value == null || value.trim().isEmpty)) {
+                            return 'Policy Number is required';
+                          }
+                          if (_hasValidated && value != null && value.trim().length < 2) {
+                            return 'Policy Number must be at least 2 characters';
+                          }
+                          return null;
+                        },
                       ),
                       _buildDropdown(
                         label: 'Policy Type',
@@ -1148,34 +1218,25 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         'Insured Party Details',
                         'Information about the policyholder and property',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Named Insured',
-                              controller: _namedInsuredController,
-                              hint: 'Enter named insured',
-                              required: true,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Premium Amount',
-                              controller: _premiumAmountController,
-                              hint: 'Enter premium amount',
-                              required: true,
-                              keyboardType: const TextInputType
-                                  .numberWithOptions(
-                                  decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d+\.?\d{0,2}')),
-                              ],
-                              prefixText: '\$ ',
-                            ),
-                          ),
+                      _buildTextField(
+                        label: 'Named Insured',
+                        controller: _namedInsuredController,
+                        hint: 'Enter named insured',
+                        required: true,
+                      ),
+                      _buildTextField(
+                        label: 'Premium Amount',
+                        controller: _premiumAmountController,
+                        hint: 'Enter premium amount',
+                        required: true,
+                        keyboardType: const TextInputType
+                            .numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}')),
                         ],
+                        prefixText: '\$ ',
                       ),
                       _buildTextField(
                         label: 'Mailing Address',
@@ -1197,26 +1258,17 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         'Coverage Dates',
                         'Policy effective and expiration dates',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildDateField(
-                              label: 'Policy Effective Date',
-                              controller: _effectiveDateController,
-                              selectedDate: _effectiveDate,
-                              required: true,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildDateField(
-                              label: 'Policy Expiration Date',
-                              controller: _expirationDateController,
-                              selectedDate: _expirationDate,
-                              required: true,
-                            ),
-                          ),
-                        ],
+                      _buildDateField(
+                        label: 'Policy Effective Date',
+                        controller: _effectiveDateController,
+                        selectedDate: _effectiveDate,
+                        required: true,
+                      ),
+                      _buildDateField(
+                        label: 'Policy Expiration Date',
+                        controller: _expirationDateController,
+                        selectedDate: _expirationDate,
+                        required: true,
                       ),
                       _buildDateField(
                         label: 'Cancellation/Non-Renewal Notice Date',
@@ -1230,39 +1282,30 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         'Financial Information',
                         'Premium amounts, deductibles, and payment terms',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Deductible',
-                              controller: _deductibleController,
-                              hint: 'Enter deductible amount',
-                              keyboardType: const TextInputType
-                                  .numberWithOptions(
-                                  decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d+\.?\d{0,2}')),
-                              ],
-                              prefixText: '\$ ',
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Payment Terms',
-                              value: _selectedPaymentTerms,
-                              items: _paymentTermsOptions,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedPaymentTerms = value;
-                                });
-                              },
-                              required: true,
-                              hint: 'Select Payment Terms',
-                            ),
-                          ),
+                      _buildTextField(
+                        label: 'Deductible',
+                        controller: _deductibleController,
+                        hint: 'Enter deductible amount',
+                        keyboardType: const TextInputType
+                            .numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}')),
                         ],
+                        prefixText: '\$ ',
+                      ),
+                      _buildDropdown(
+                        label: 'Payment Terms',
+                        value: _selectedPaymentTerms,
+                        items: _paymentTermsOptions,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedPaymentTerms = value;
+                          });
+                        },
+                        required: true,
+                        hint: 'Select Payment Terms',
                       ),
 
                       // Section 5: Claims and Customer Service Information
@@ -1271,56 +1314,38 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         'Claims and Customer Service Information',
                         'Contact information for claims and policy management',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Agent or Broker Name',
-                              controller: _agentNameController,
-                              hint: 'Enter agent or broker name',
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Agent Phone',
-                              controller: _agentPhoneController,
-                              hint: '(xxx) xxx-xxxx',
-                              keyboardType: TextInputType.phone,
-                              inputFormatters: [PhoneNumberFormatter()],
-                              validator: (value) {
-                                if (value != null && value.isNotEmpty) {
-                                  // Remove formatting to check digit count
-                                  String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
-                                  if (digitsOnly.length != 10) {
-                                    return 'Phone number must be exactly 10 digits';
-                                  }
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
+                      _buildTextField(
+                        label: 'Agent or Broker Name',
+                        controller: _agentNameController,
+                        hint: 'Enter agent or broker name',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Agent Email',
-                              controller: _agentEmailController,
-                              hint: 'Enter agent email',
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Broker Name',
-                              controller: _brokerNameController,
-                              hint: 'Enter broker name',
-                            ),
-                          ),
-                        ],
+                      _buildTextField(
+                        label: 'Agent Phone',
+                        controller: _agentPhoneController,
+                        hint: '(xxx) xxx-xxxx',
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [PhoneNumberFormatter()],
+                        validator: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            // Remove formatting to check digit count
+                            String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
+                            if (digitsOnly.length != 10) {
+                              return 'Phone number must be exactly 10 digits';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        label: 'Agent Email',
+                        controller: _agentEmailController,
+                        hint: 'Enter agent email',
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      _buildTextField(
+                        label: 'Broker Name',
+                        controller: _brokerNameController,
+                        hint: 'Enter broker name',
                       ),
                       _buildTextField(
                         label: 'Claims Contact Information',
@@ -1328,31 +1353,22 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         hint: 'Phone numbers or websites for filing claims',
                         maxLines: 2,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTextField(
-                              label: 'Underwriting Office',
-                              controller: _underwritingOfficeController,
-                              hint: 'Enter underwriting office',
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Status',
-                              value: _selectedStatus,
-                              items: _statusOptions,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedStatus = value;
-                                });
-                              },
-                              required: true,
-                              hint: 'Select Status',
-                            ),
-                          ),
-                        ],
+                      _buildTextField(
+                        label: 'Underwriting Office',
+                        controller: _underwritingOfficeController,
+                        hint: 'Enter underwriting office',
+                      ),
+                      _buildDropdown(
+                        label: 'Status',
+                        value: _selectedStatus,
+                        items: _statusOptions,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedStatus = value;
+                          });
+                        },
+                        required: true,
+                        hint: 'Select Status',
                       ),
                       _buildTextField(
                         label: 'Notes',
@@ -1361,7 +1377,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         maxLines: 4,
                       ),
 
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 10),
 
                       // Buttons
                       Row(
@@ -1424,6 +1440,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                           ),
                         ],
                       ),
+                    
+                    const SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -1433,430 +1451,5 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         ),
       ),
     );
-  }
-}
-
-// CustomTextField widget for responsive text fields
-class CustomTextField extends StatefulWidget {
-  final String hintText;
-  final TextEditingController? controller;
-  final TextInputType keyboardType;
-  final String? Function(String?)? validator;
-  final bool obscureText;
-  final Function(String)? onChanged;
-  final Function(String)? onChanged2;
-  final Widget? suffixIcon;
-  final IconData? prefixIcon;
-  final void Function()? onSuffixIconPressed;
-  final void Function()? onTap;
-  final String? label;
-  final bool readOnnly;
-  final bool? amount_check;
-  final String? max_amount;
-  final String? error_mess;
-  final bool? optional;
-  final bool? email;
-  final bool? pass;
-  final bool? phone;
-  final bool? worknum;
-  final bool? phonenum;
-  final bool? businessnum;
-  final List<TextInputFormatter>? inputFormatters;
-  final TextEditingController? otherController;
-  final TextEditingController? businessController;
-  final TextEditingController? telephoneController;
-  final TextEditingController? alterController;
-  final TextEditingController? emrgencyController;
-  final bool? samephonenumber;
-  final bool? isInRow;
-  final Border? customBorder;
-  final Color? borderColor;
-  final double? borderWidth;
-  final bool showElevation;
-  final int? errorMaxLines;
-  final TextInputAction? textInputAction;
-  final int? maxLines;
-
-  CustomTextField({
-    Key? key,
-    this.onChanged,
-    this.controller,
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.text,
-    this.readOnnly = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.validator,
-    this.onSuffixIconPressed,
-    this.label,
-    this.onTap,
-    this.onChanged2,
-    this.amount_check,
-    this.max_amount,
-    this.error_mess,
-    this.optional = false,
-    this.email,
-    this.pass,
-    this.phone,
-    this.inputFormatters,
-    this.worknum,
-    this.phonenum,
-    this.businessnum,
-    this.otherController,
-    this.businessController,
-    this.telephoneController,
-    this.alterController,
-    this.emrgencyController,
-    this.samephonenumber = false,
-    this.isInRow = false,
-    this.customBorder,
-    this.borderColor,
-    this.borderWidth,
-    this.showElevation = false,
-    this.errorMaxLines,
-    this.textInputAction,
-    this.maxLines,
-  }) : super(key: key);
-
-  @override
-  CustomTextFieldState createState() => CustomTextFieldState();
-}
-
-class CustomTextFieldState extends State<CustomTextField> {
-  String? _errorMessage;
-  TextEditingController _textController = TextEditingController();
-  late FocusNode _focusNode;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _focusNode.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = widget.controller ?? TextEditingController();
-    _focusNode = FocusNode();
-  }
-
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
-    return KeyboardActionsConfig(
-      actions: [
-        KeyboardActionsItem(
-          focusNode: _focusNode,
-          toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () {
-                  if (widget.onChanged2 != null) {
-                    widget.onChanged2!(_textController.text);
-                  }
-                  node.unfocus();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(14.0),
-                  child: Text(
-                    "Done",
-                    style: TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              );
-            },
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _validatePhoneNumber(String value) {
-    String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
-    if (formattedPhoneNumber.length != 10) {
-      setState(() {
-        _errorMessage = "Phone number must be 10 digits";
-      });
-    } else {
-      if (widget.telephoneController != null &&
-          widget.telephoneController?.text == value) {
-        setState(() {
-          _errorMessage = 'Number cannot be the same as another';
-        });
-      } else if (widget.otherController != null &&
-          widget.otherController?.text == value) {
-        setState(() {
-          _errorMessage = 'Number cannot be the same as another';
-        });
-      } else if (widget.businessController != null &&
-          widget.businessController?.text == value) {
-        setState(() {
-          _errorMessage = 'Number cannot be the same as another';
-        });
-      } else {
-        setState(() {
-          _errorMessage = null;
-        });
-      }
-    }
-  }
-
-  void _validateEmail(String value) {
-    if (!EmailValidator.validate(value)) {
-      setState(() {
-        _errorMessage = "Email is not valid";
-      });
-    } else {
-      if (widget.alterController != null &&
-          widget.alterController?.text == value) {
-        setState(() {
-          _errorMessage = 'Email cannot be the same';
-        });
-      } else if (widget.emrgencyController != null &&
-          widget.emrgencyController?.text == value) {
-        setState(() {
-          _errorMessage = 'Email cannot be the same';
-        });
-      } else {
-        setState(() {
-          _errorMessage = null;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final shouldUseKeyboardActions =
-        widget.keyboardType == TextInputType.number;
-
-    bool hasError = _errorMessage != null && _errorMessage!.isNotEmpty;
-
-    Widget textfield = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FormField<String>(
-          validator: widget.optional!
-              ? (value) {
-                  if (widget.controller!.text.trim().isEmpty) {
-                    return null;
-                  } else if (widget.phone != null) {
-                    _validatePhoneNumber(widget.controller!.text.trim());
-                    if (_errorMessage == null) {
-                      return null;
-                    }
-                    return '';
-                  } else if (widget.email != null) {
-                    _validateEmail(widget.controller!.text.trim());
-                    if (_errorMessage == null) {
-                      return null;
-                    }
-                    return '';
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text.trim()) >
-                          double.parse(widget.max_amount!)) {
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  }
-                  return null;
-                }
-              : (value) {
-                  if (widget.validator != null) {
-                    String? result = widget.validator!(value);
-                    if (result != null) {
-                      setState(() {
-                        _errorMessage = result;
-                      });
-                      return result;
-                    }
-                  }
-                  if (widget.controller!.text.trim().isEmpty) {
-                    setState(() {
-                      if (widget.label == null)
-                        _errorMessage = 'Please ${widget.hintText}';
-                      else
-                        _errorMessage = 'Please ${widget.label}';
-                    });
-                    return '';
-                  } else if (widget.phone != null) {
-                    String formattedPhoneNumber =
-                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
-                    if (widget.samephonenumber != null &&
-                        widget.samephonenumber!) {
-                      setState(() {
-                        _errorMessage =
-                            'Phone number and work number cannot be the same';
-                      });
-                      return '';
-                    } else {
-                      setState(() {
-                        _errorMessage = null;
-                      });
-                    }
-                  } else if (widget.email != null) {
-                    if (!EmailValidator.validate(
-                        widget.controller!.text.trim())) {
-                      setState(() {
-                        _errorMessage = "Email is not valid";
-                      });
-                      return '';
-                    }
-                  } else if (widget.pass != null) {
-                    String? validationMessage =
-                        ValidatePassword(widget.controller!.text.trim());
-                    if (validationMessage != null) {
-                      setState(() {
-                        _errorMessage = validationMessage;
-                      });
-                      return '';
-                    }
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text.trim()) >
-                          double.parse(widget.max_amount!)) {
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  }
-                  return null;
-                },
-          builder: (FormFieldState<String> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Material(
-                  elevation: widget.showElevation ? 2 : 0,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: widget.maxLines != null && widget.maxLines! > 1
-                        ? null
-                        : 50,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: widget.customBorder ??
-                          (widget.borderColor != null
-                              ? Border.all(
-                                  color: widget.borderColor!,
-                                  width: widget.borderWidth ?? 1.0)
-                              : null),
-                      boxShadow: widget.showElevation
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                offset: const Offset(4, 4),
-                                blurRadius: 3,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: TextFormField(
-                      onFieldSubmitted: widget.onChanged2,
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          setState(() {
-                            _errorMessage = null;
-                          });
-                        }
-                        if (widget.onChanged != null) widget.onChanged!(value);
-                      },
-                      inputFormatters: widget.inputFormatters ?? [],
-                      focusNode: _focusNode,
-                      onTap: () {
-                        if (widget.onTap != null) {
-                          widget.onTap!();
-                          setState(() {
-                            _errorMessage = null;
-                          });
-                        }
-                      },
-                      obscureText: widget.obscureText,
-                      readOnly: widget.readOnnly,
-                      keyboardType: widget.keyboardType,
-                      textInputAction: widget.textInputAction,
-                      maxLines: widget.maxLines ?? 1,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },
-                      controller: widget.controller,
-                      cursorColor: blueColor,
-                      style: const TextStyle(fontSize: 14),
-                      decoration: InputDecoration(
-                        suffixIcon: widget.suffixIcon,
-                        hintStyle: const TextStyle(
-                            fontSize: 14, color: Color(0xFFb0b6c3)),
-                        border: InputBorder.none,
-                        hintText: widget.hintText,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 14),
-                      ),
-                    ),
-                  ),
-                ),
-                hasError
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 4, right: 8),
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (widget.pass == true) const SizedBox(width: 4),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Text(
-                                    _errorMessage!,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12.0,
-                                      height: 1.0,
-                                    ),
-                                    maxLines: widget.pass == true ? 6 : 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ],
-            );
-          },
-        ),
-      ],
-    );
-    return shouldUseKeyboardActions
-        ? SizedBox(
-            height: widget.isInRow == true
-                ? 70
-                : (hasError
-                    ? (widget.pass == true ? 150 : 74)
-                    : 54),
-            child: KeyboardActions(
-              config: _buildConfig(context),
-              child: textfield,
-            ),
-          )
-        : widget.isInRow == true
-            ? SizedBox(
-                height: 82,
-                child: textfield,
-              )
-            : textfield;
   }
 }

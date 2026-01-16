@@ -553,6 +553,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
         DialogButton(
           child: const Text(
             "OK",
+
+
+
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),

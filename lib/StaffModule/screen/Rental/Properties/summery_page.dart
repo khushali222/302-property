@@ -2886,14 +2886,14 @@ class _Summery_pageState extends State<Summery_page>
             showDrawer: false,
             showAddButton: true,
           ),
-          // const SizedBox(height: 20),
-          // // Insurance Policies Table
-          // Insurance_Policies_Table(
-          //   propertyId: widget.properties.rentalId ?? "",
-          //   showAppBar: false,
-          //   showDrawer: false,
-          //   showAddButton: true,
-          // ),
+          const SizedBox(height: 20),
+          // Insurance Policies Table
+          Insurance_Policies_Table(
+            propertyId: widget.properties.rentalId ?? "",
+            showAppBar: false,
+            showDrawer: false,
+            showAddButton: true,
+          ),
         ],
       ),
     );
