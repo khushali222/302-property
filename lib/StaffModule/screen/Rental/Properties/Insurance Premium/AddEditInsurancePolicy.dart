@@ -25,8 +25,7 @@ class AddEditInsurancePolicy extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AddEditInsurancePolicy> createState() =>
-      _AddEditInsurancePolicyState();
+  State<AddEditInsurancePolicy> createState() => _AddEditInsurancePolicyState();
 }
 
 class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
@@ -85,7 +84,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
       if (policyType == null) {
         return;
       }
-      
+
       if (policyType == 'Homeowners Insurance (HO Policies)') {
         _formNumberOptions = [
           'HO-1 (Basic Form)',
@@ -218,29 +217,87 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
   void _populateFormWithData(PropertyInsuranceData policy) {
     setState(() {
-      _insuranceCompanyNameController.text =
-          policy.insuranceCompanyName ?? '';
+      _insuranceCompanyNameController.text = policy.insuranceCompanyName ?? '';
       _policyNumberController.text = policy.policyNumber ?? '';
-      _selectedPolicyType = policy.policyType;
-      _selectedFormNumber = policy.formNumber;
-      // Update form number options based on policy type
+      // Validate that policy type exists in options before setting it
+      if (policy.policyType != null &&
+          _policyTypeOptions.contains(policy.policyType)) {
+        _selectedPolicyType = policy.policyType;
+      } else {
+        _selectedPolicyType = null;
+      }
+      // Update form number options based on policy type (directly update since we're in setState)
+      _formNumberOptions = [];
       if (_selectedPolicyType != null) {
-        _updateFormNumberOptions(_selectedPolicyType);
+        if (_selectedPolicyType == 'Homeowners Insurance (HO Policies)') {
+          _formNumberOptions = [
+            'HO-1 (Basic Form)',
+            'HO-2 (Broad Form)',
+            'HO-3 (Special Form)',
+            'HO-4 (Contents Broad Form)',
+            'HO-5 (Comprehensive Form)',
+            'HO-6 (Unit-Owners Form)',
+            'HO-8 (Modified Coverage Form)',
+          ];
+        } else if (_selectedPolicyType ==
+            'Landlord or Dwelling Policies (DP Policies)') {
+          _formNumberOptions = [
+            'DP-1 (Basic Form)',
+            'DP-2 (Broad Form)',
+            'DP-3 (Special Form)',
+            'DP-4 (Contents Broad Form)',
+            'DP-5 (Comprehensive Form)',
+          ];
+        } else if (_selectedPolicyType == 'Specialty Property Insurance') {
+          _formNumberOptions = [
+            'SP-1 (Basic Specialty)',
+            'SP-2 (Broad Specialty)',
+            'SP-3 (Special Specialty)',
+            'SP-4 (Comprehensive Specialty)',
+          ];
+        } else if (_selectedPolicyType == 'Commercial Property Insurance') {
+          _formNumberOptions = [
+            'CP-1 (Basic Commercial)',
+            'CP-2 (Broad Commercial)',
+            'CP-3 (Special Commercial)',
+            'CP-4 (Comprehensive Commercial)',
+            'CP-5 (Commercial Package)',
+          ];
+        }
+        // Validate that form number exists in options before setting it
+        if (policy.formNumber != null &&
+            _formNumberOptions.contains(policy.formNumber)) {
+          _selectedFormNumber = policy.formNumber;
+        } else {
+          _selectedFormNumber = null;
+        }
+      } else {
+        _selectedFormNumber = null;
       }
       _namedInsuredController.text = policy.namedInsured ?? '';
       _mailingAddressController.text = policy.mailingAddress ?? '';
       _additionalInsuredController.text = policy.additionalInsured ?? '';
-      _premiumAmountController.text =
-          policy.premiumAmount?.toString() ?? '';
+      _premiumAmountController.text = policy.premiumAmount?.toString() ?? '';
       _deductibleController.text = policy.deductible?.toString() ?? '';
-      _selectedPaymentTerms = policy.paymentTerms;
+      // Validate that payment terms exists in options before setting it
+      if (policy.paymentTerms != null &&
+          _paymentTermsOptions.contains(policy.paymentTerms)) {
+        _selectedPaymentTerms = policy.paymentTerms;
+      } else {
+        _selectedPaymentTerms = null;
+      }
       _agentNameController.text = policy.agentName ?? '';
       _agentPhoneController.text = policy.agentPhone ?? '';
       _agentEmailController.text = policy.agentEmail ?? '';
       _brokerNameController.text = policy.brokerName ?? '';
       _claimsContactInfoController.text = policy.claimsContactInfo ?? '';
       _underwritingOfficeController.text = policy.underwritingOffice ?? '';
-      _selectedStatus = policy.status ?? 'Active';
+      // Validate that status exists in options before setting it
+      if (policy.status != null && _statusOptions.contains(policy.status)) {
+        _selectedStatus = policy.status;
+      } else {
+        _selectedStatus = 'Active'; // Default to Active if not found
+      }
       _notesController.text = policy.notes ?? '';
 
       // Parse dates
@@ -248,19 +305,18 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         try {
           _effectiveDate = DateTime.parse(policy.effectiveDate!);
           final dateProvider =
-          Provider.of<DateProvider>(context, listen: false);
+              Provider.of<DateProvider>(context, listen: false);
           _effectiveDateController.text =
               dateProvider.formatCurrentDate(policy.effectiveDate!);
         } catch (e) {
           print('Error parsing effective date: $e');
         }
       }
-      if (policy.expirationDate != null &&
-          policy.expirationDate!.isNotEmpty) {
+      if (policy.expirationDate != null && policy.expirationDate!.isNotEmpty) {
         try {
           _expirationDate = DateTime.parse(policy.expirationDate!);
           final dateProvider =
-          Provider.of<DateProvider>(context, listen: false);
+              Provider.of<DateProvider>(context, listen: false);
           _expirationDateController.text =
               dateProvider.formatCurrentDate(policy.expirationDate!);
         } catch (e) {
@@ -273,7 +329,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           _cancellationNoticeDate =
               DateTime.parse(policy.cancellationNoticeDate!);
           final dateProvider =
-          Provider.of<DateProvider>(context, listen: false);
+              Provider.of<DateProvider>(context, listen: false);
           _cancellationNoticeDateController.text =
               dateProvider.formatCurrentDate(policy.cancellationNoticeDate!);
         } catch (e) {
@@ -290,7 +346,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate ?? DateTime.now(),
-      firstDate: isExpiration ? (_effectiveDate ?? DateTime.now()) : DateTime(2000),
+      firstDate:
+          isExpiration ? (_effectiveDate ?? DateTime.now()) : DateTime(2000),
       lastDate: DateTime(2100),
       initialDatePickerMode: DatePickerMode.day,
       builder: (BuildContext context, Widget? child) {
@@ -315,12 +372,13 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
       setState(() {
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         controller.text = dateProvider.formatCurrentDate(apiFormatDate);
-        
+
         // Update the DateTime objects
         if (controller == _effectiveDateController) {
           _effectiveDate = picked;
           // If effective date is after expiration date, clear expiration date
-          if (_expirationDate != null && _effectiveDate!.isAfter(_expirationDate!)) {
+          if (_expirationDate != null &&
+              _effectiveDate!.isAfter(_expirationDate!)) {
             _expirationDate = null;
             _expirationDateController.text = '';
           }
@@ -332,7 +390,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             // Show warning but don't clear
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Expiration date must be on or after effective date.'),
+                content:
+                    Text('Expiration date must be on or after effective date.'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -340,7 +399,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         } else if (controller == _cancellationNoticeDateController) {
           _cancellationNoticeDate = picked;
         }
-        
+
         if (onDateSelected != null) {
           onDateSelected(picked);
         }
@@ -407,21 +466,20 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             : (_expirationDateController.text.isNotEmpty
                 ? _convertToApiFormat(_expirationDateController.text)
                 : ''),
-        'cancellation_notice_date':
-            _cancellationNoticeDate != null
-                ? '${DateFormat('yyyy-MM-dd').format(_cancellationNoticeDate!)}T00:00:00.000Z'
-                : (_cancellationNoticeDateController.text.isNotEmpty
-                    ? _convertToApiFormat(_cancellationNoticeDateController.text)
-                    : null),
+        'cancellation_notice_date': _cancellationNoticeDate != null
+            ? '${DateFormat('yyyy-MM-dd').format(_cancellationNoticeDate!)}T00:00:00.000Z'
+            : (_cancellationNoticeDateController.text.isNotEmpty
+                ? _convertToApiFormat(_cancellationNoticeDateController.text)
+                : null),
         'premium_amount': _premiumAmountController.text.isNotEmpty
             ? double.tryParse(_premiumAmountController.text
-            .replaceAll('\$', '')
-            .replaceAll(',', ''))
+                .replaceAll('\$', '')
+                .replaceAll(',', ''))
             : null,
         'deductible': _deductibleController.text.isNotEmpty
             ? double.tryParse(_deductibleController.text
-            .replaceAll('\$', '')
-            .replaceAll(',', ''))
+                .replaceAll('\$', '')
+                .replaceAll(',', ''))
             : null,
         'payment_terms': _selectedPaymentTerms ?? '',
         'claims_contact_info': _claimsContactInfoController.text.trim(),
@@ -441,14 +499,14 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
         final response = await http
             .put(
-          Uri.parse('${Api_url}/api/property-insurance/${widget.policyId}'),
-          headers: {
-            'Content-Type': 'application/json',
-            'authorization': 'CRM $token',
-            'id': 'CRM $id',
-          },
-          body: json.encode(requestData),
-        )
+              Uri.parse('${Api_url}/api/property-insurance/${widget.policyId}'),
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'CRM $token',
+                'id': 'CRM $id',
+              },
+              body: json.encode(requestData),
+            )
             .timeout(const Duration(seconds: 30));
 
         print('Edit Response Status: ${response.statusCode}');
@@ -477,14 +535,14 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
         final response = await http
             .post(
-          Uri.parse('${Api_url}/api/property-insurance'),
-          headers: {
-            'Content-Type': 'application/json',
-            'authorization': 'CRM $token',
-            'id': 'CRM $id',
-          },
-          body: json.encode(requestData),
-        )
+              Uri.parse('${Api_url}/api/property-insurance'),
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'CRM $token',
+                'id': 'CRM $id',
+              },
+              body: json.encode(requestData),
+            )
             .timeout(const Duration(seconds: 30));
 
         print('Create Response Status: ${response.statusCode}');
@@ -622,15 +680,15 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         const SizedBox(height: 8),
         FormField<String>(
           initialValue: controller.text,
-          validator: validator ?? (value) {
-            if (required && _hasValidated &&
-                (value == null || value
-                    .trim()
-                    .isEmpty)) {
-              return '$label is required';
-            }
-            return null;
-          },
+          validator: validator ??
+              (value) {
+                if (required &&
+                    _hasValidated &&
+                    (value == null || value.trim().isEmpty)) {
+                  return '$label is required';
+                }
+                return null;
+              },
           builder: (FormFieldState<String> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -656,16 +714,16 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                     ),
                     prefixIcon: prefixText != null
                         ? Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 8),
-                      child: Text(
-                        prefixText,
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    )
+                            padding: const EdgeInsets.only(left: 16, right: 8),
+                            child: Text(
+                              prefixText,
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          )
                         : null,
                     prefixIconConstraints: prefixText != null
                         ? const BoxConstraints(minWidth: 0, minHeight: 0)
@@ -684,11 +742,15 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                      borderSide: BorderSide(
+                          color:
+                              state.hasError ? Colors.red : Colors.grey[300]!),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                      borderSide: BorderSide(
+                          color:
+                              state.hasError ? Colors.red : Colors.grey[300]!),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: prefixText != null ? 8 : 16,
@@ -703,7 +765,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                    padding:
+                        const EdgeInsets.only(top: 4.0, left: 16, right: 16),
                     child: Text(
                       state.errorText ?? '',
                       style: const TextStyle(
@@ -765,9 +828,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           validator: (value) {
             if (required &&
                 _hasValidated &&
-                (value == null || value
-                    .trim()
-                    .isEmpty)) {
+                (value == null || value.trim().isEmpty)) {
               return '$label is required';
             }
             return null;
@@ -779,9 +840,9 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 GestureDetector(
                   onTap: () {
                     _selectDate(
-                      context, 
-                      controller, 
-                      selectedDate, 
+                      context,
+                      controller,
+                      selectedDate,
                       isExpiration: label.contains('Expiration'),
                       onDateSelected: (date) {
                         setState(() {
@@ -801,8 +862,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                   child: AbsorbPointer(
                     child: Builder(
                       builder: (context) {
-                        final dateProvider = Provider.of<DateProvider>(
-                            context, listen: false);
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
                         // Convert date format to hint format (e.g., MM/dd/yyyy -> MM/DD/YYYY, dd/MMM/yyyy -> DD/MMM/YYYY)
                         String dateFormatHint = dateProvider.dateFormat
                             .replaceAll('dd', 'DD')
@@ -845,10 +906,13 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: state.hasError ? Colors.red : Colors.grey[300]!),
+                              borderSide: BorderSide(
+                                  color: state.hasError
+                                      ? Colors.red
+                                      : Colors.grey[300]!),
                             ),
-                            contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
                             errorStyle: const TextStyle(
                               fontSize: 0,
                               height: 0,
@@ -862,7 +926,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                    padding:
+                        const EdgeInsets.only(top: 4.0, left: 16, right: 16),
                     child: Text(
                       state.errorText ?? '',
                       style: const TextStyle(
@@ -947,7 +1012,11 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    value: disabled ? null : value,
+                    value: disabled
+                        ? null
+                        : (value != null && items.contains(value)
+                            ? value
+                            : null),
                     selectedItemBuilder: (BuildContext context) {
                       return items.map<Widget>((String item) {
                         return Align(
@@ -976,19 +1045,21 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         ),
                       );
                     }).toList(),
-                    onChanged: disabled ? null : (newValue) {
-                      state.didChange(newValue);
-                      if (onChanged != null) {
-                        onChanged(newValue);
-                      }
-                      // Trigger validation after change
-                      if (_hasValidated) {
-                        _formKey.currentState?.validate();
-                      }
-                    },
+                    onChanged: disabled
+                        ? null
+                        : (newValue) {
+                            state.didChange(newValue);
+                            if (onChanged != null) {
+                              onChanged(newValue);
+                            }
+                            // Trigger validation after change
+                            if (_hasValidated) {
+                              _formKey.currentState?.validate();
+                            }
+                          },
                     buttonStyleData: ButtonStyleData(
                       height: 50,
-                     // padding: const EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 14),
+                      // padding: const EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
@@ -1019,7 +1090,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, left: 16,right: 16),
+                    padding:
+                        const EdgeInsets.only(top: 4.0, left: 16, right: 16),
                     child: Text(
                       state.errorText ?? '',
                       style: const TextStyle(
@@ -1064,7 +1136,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             children: [
               const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8, bottom: 8),
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16.0, top: 8, bottom: 8),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
@@ -1098,7 +1171,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
-                  padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 8),
+                  padding:
+                      const EdgeInsets.only(left: 18.0, right: 18.0, top: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1111,7 +1185,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                           color: Colors.grey[600],
                         ),
                       ),
-                      
 
                       // General Error Message
                       if (_generalError != null && _hasValidated)
@@ -1171,10 +1244,13 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         hint: 'Enter policy number',
                         required: true,
                         validator: (value) {
-                          if (_hasValidated && (value == null || value.trim().isEmpty)) {
+                          if (_hasValidated &&
+                              (value == null || value.trim().isEmpty)) {
                             return 'Policy Number is required';
                           }
-                          if (_hasValidated && value != null && value.trim().length < 2) {
+                          if (_hasValidated &&
+                              value != null &&
+                              value.trim().length < 2) {
                             return 'Policy Number must be at least 2 characters';
                           }
                           return null;
@@ -1188,7 +1264,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                           setState(() {
                             _selectedPolicyType = value;
                             _selectedFormNumber = null; // Reset form number
-                            _updateFormNumberOptions(value); // Update form number options
+                            _updateFormNumberOptions(
+                                value); // Update form number options
                           });
                         },
                         hint: 'Select Policy Type',
@@ -1202,10 +1279,10 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         onChanged: _selectedPolicyType == null
                             ? null
                             : (value) {
-                          setState(() {
-                            _selectedFormNumber = value;
-                          });
-                        },
+                                setState(() {
+                                  _selectedFormNumber = value;
+                                });
+                              },
                         hint: _selectedPolicyType == null
                             ? 'Select Policy Type First'
                             : 'Select Form Number',
@@ -1229,8 +1306,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         controller: _premiumAmountController,
                         hint: 'Enter premium amount',
                         required: true,
-                        keyboardType: const TextInputType
-                            .numberWithOptions(
+                        keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
@@ -1286,8 +1362,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         label: 'Deductible',
                         controller: _deductibleController,
                         hint: 'Enter deductible amount',
-                        keyboardType: const TextInputType
-                            .numberWithOptions(
+                        keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
@@ -1328,7 +1403,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                         validator: (value) {
                           if (value != null && value.isNotEmpty) {
                             // Remove formatting to check digit count
-                            String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
+                            String digitsOnly =
+                                value.replaceAll(RegExp(r'[^\d]'), '');
                             if (digitsOnly.length != 10) {
                               return 'Phone number must be exactly 10 digits';
                             }
@@ -1388,8 +1464,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                             onPressed: _isLoading
                                 ? null
                                 : () {
-                              Navigator.pop(context);
-                            },
+                                    Navigator.pop(context);
+                                  },
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 32, vertical: 16),
@@ -1421,27 +1497,27 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                             ),
                             child: _isLoading
                                 ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white),
-                              ),
-                            )
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  )
                                 : const Text(
-                              'Save',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
+                                    'Save',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
-                    
-                    const SizedBox(height: 10),
+
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),

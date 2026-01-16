@@ -219,25 +219,85 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
     setState(() {
       _insuranceCompanyNameController.text = policy.insuranceCompanyName ?? '';
       _policyNumberController.text = policy.policyNumber ?? '';
-      _selectedPolicyType = policy.policyType;
-      _selectedFormNumber = policy.formNumber;
-      // Update form number options based on policy type
+      // Validate that policy type exists in options before setting it
+      if (policy.policyType != null && 
+          _policyTypeOptions.contains(policy.policyType)) {
+        _selectedPolicyType = policy.policyType;
+      } else {
+        _selectedPolicyType = null;
+      }
+      // Update form number options based on policy type (directly update since we're in setState)
+      _formNumberOptions = [];
       if (_selectedPolicyType != null) {
-        _updateFormNumberOptions(_selectedPolicyType);
+        if (_selectedPolicyType == 'Homeowners Insurance (HO Policies)') {
+          _formNumberOptions = [
+            'HO-1 (Basic Form)',
+            'HO-2 (Broad Form)',
+            'HO-3 (Special Form)',
+            'HO-4 (Contents Broad Form)',
+            'HO-5 (Comprehensive Form)',
+            'HO-6 (Unit-Owners Form)',
+            'HO-8 (Modified Coverage Form)',
+          ];
+        } else if (_selectedPolicyType == 'Landlord or Dwelling Policies (DP Policies)') {
+          _formNumberOptions = [
+            'DP-1 (Basic Form)',
+            'DP-2 (Broad Form)',
+            'DP-3 (Special Form)',
+            'DP-4 (Contents Broad Form)',
+            'DP-5 (Comprehensive Form)',
+          ];
+        } else if (_selectedPolicyType == 'Specialty Property Insurance') {
+          _formNumberOptions = [
+            'SP-1 (Basic Specialty)',
+            'SP-2 (Broad Specialty)',
+            'SP-3 (Special Specialty)',
+            'SP-4 (Comprehensive Specialty)',
+          ];
+        } else if (_selectedPolicyType == 'Commercial Property Insurance') {
+          _formNumberOptions = [
+            'CP-1 (Basic Commercial)',
+            'CP-2 (Broad Commercial)',
+            'CP-3 (Special Commercial)',
+            'CP-4 (Comprehensive Commercial)',
+            'CP-5 (Commercial Package)',
+          ];
+        }
+        // Validate that form number exists in options before setting it
+        if (policy.formNumber != null && 
+            _formNumberOptions.contains(policy.formNumber)) {
+          _selectedFormNumber = policy.formNumber;
+        } else {
+          _selectedFormNumber = null;
+        }
+      } else {
+        _selectedFormNumber = null;
       }
       _namedInsuredController.text = policy.namedInsured ?? '';
       _mailingAddressController.text = policy.mailingAddress ?? '';
       _additionalInsuredController.text = policy.additionalInsured ?? '';
       _premiumAmountController.text = policy.premiumAmount?.toString() ?? '';
       _deductibleController.text = policy.deductible?.toString() ?? '';
-      _selectedPaymentTerms = policy.paymentTerms;
+      // Validate that payment terms exists in options before setting it
+      if (policy.paymentTerms != null && 
+          _paymentTermsOptions.contains(policy.paymentTerms)) {
+        _selectedPaymentTerms = policy.paymentTerms;
+      } else {
+        _selectedPaymentTerms = null;
+      }
       _agentNameController.text = policy.agentName ?? '';
       _agentPhoneController.text = policy.agentPhone ?? '';
       _agentEmailController.text = policy.agentEmail ?? '';
       _brokerNameController.text = policy.brokerName ?? '';
       _claimsContactInfoController.text = policy.claimsContactInfo ?? '';
       _underwritingOfficeController.text = policy.underwritingOffice ?? '';
-      _selectedStatus = policy.status ?? 'Active';
+      // Validate that status exists in options before setting it
+      if (policy.status != null && 
+          _statusOptions.contains(policy.status)) {
+        _selectedStatus = policy.status;
+      } else {
+        _selectedStatus = 'Active'; // Default to Active if not found
+      }
       _notesController.text = policy.notes ?? '';
 
       // Parse dates
@@ -945,7 +1005,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    value: disabled ? null : value,
+                    value: disabled ? null : (value != null && items.contains(value) ? value : null),
                     selectedItemBuilder: (BuildContext context) {
                       return items.map<Widget>((String item) {
                         return Align(
