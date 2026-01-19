@@ -365,6 +365,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
       print("Error fetching profile data: $e");
       return;
     }
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final pdf = pw.Document();
     final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
     pdf.addPage(
@@ -526,7 +527,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Align(
-                            child: pw.Text(charge.date ?? ''),
+                            child: pw.Text(charge.date != null
+                                ? dateProvider.formatCurrentDate(charge.date!)
+                                : ''),
                           ),
                         ),
                         pw.Padding(
@@ -566,6 +569,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   }
 
   Future<void> _exportExcel(List<Scheduled_Payment> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final workbook = syncXlsx.Workbook();
     final sheet = workbook.worksheets[0];
     final headers = ['Date', 'Property', 'Tenant', 'Account', 'Amount'];
@@ -574,7 +578,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     }
     for (int row = 0; row < data.length; row++) {
       final charge = data[row];
-      sheet.getRangeByIndex(row + 2, 1).setText(charge.date ?? '');
+      sheet.getRangeByIndex(row + 2, 1).setText(charge.date != null
+          ? dateProvider.formatCurrentDate(charge.date!)
+          : '');
       sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
       sheet
           .getRangeByIndex(row + 2, 3)
@@ -601,11 +607,12 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   }
 
   Future<void> _exportCSV(List<Scheduled_Payment> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
     csvBuffer.writeln('Date,Property,Tenant,Account,Amount');
     for (final charge in data) {
       csvBuffer.writeln([
-        charge.date ?? '',
+        charge.date != null ? dateProvider.formatCurrentDate(charge.date!) : '',
         charge.rentalAddress ?? '',
         charge.tenant?.tenantName ?? '',
         charge.account ?? '',

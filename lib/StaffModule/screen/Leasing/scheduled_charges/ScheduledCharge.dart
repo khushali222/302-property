@@ -117,30 +117,30 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   children: [
                     width < 400
                         ? Text("Date ",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Date",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -174,21 +174,21 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -222,21 +222,21 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -666,6 +666,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       print("Error fetching profile data: $e");
       return;
     }
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -804,7 +805,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text(charge.actionDate ?? ''),
+                            child: pw.Text(charge.actionDate != null
+                                ? dateProvider
+                                    .formatCurrentDate(charge.actionDate!)
+                                : ''),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
@@ -842,6 +846,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   }
 
   Future<void> _exportCSV(List<ScheduledCharges> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
 
     // Add header
@@ -850,7 +855,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     // Add data rows
     for (final charge in data) {
       csvBuffer.writeln([
-        charge.actionDate ?? '',
+        charge.actionDate != null
+            ? dateProvider.formatCurrentDate(charge.actionDate!)
+            : '',
         charge.rentalAddress ?? '',
         charge.description ?? '',
         charge.account ?? '',
@@ -886,6 +893,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   }
 
   Future<void> _exportExcel(List<ScheduledCharges> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final workbook = syncXlsx.Workbook();
     final sheet = workbook.worksheets[0];
 
@@ -898,7 +906,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     // Add data rows
     for (int row = 0; row < data.length; row++) {
       final charge = data[row];
-      sheet.getRangeByIndex(row + 2, 1).setText(charge.actionDate ?? '');
+      sheet.getRangeByIndex(row + 2, 1).setText(charge.actionDate != null
+          ? dateProvider.formatCurrentDate(charge.actionDate!)
+          : '');
       sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
       sheet.getRangeByIndex(row + 2, 3).setText(charge.description ?? '');
       sheet.getRangeByIndex(row + 2, 4).setText(charge.account ?? '');

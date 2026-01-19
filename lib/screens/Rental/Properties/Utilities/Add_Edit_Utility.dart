@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,12 +67,15 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
       _accountNumberController.text = _originalAccountNumber!;
       // Format phone number for display (handles both formatted and unformatted)
       String phoneToDisplay = _originalCustomerServicePhone!;
+      print('Original phone from API: $phoneToDisplay');
       if (phoneToDisplay.isNotEmpty) {
         // Remove any existing formatting first, then format it
         String digitsOnly = phoneToDisplay.replaceAll(RegExp(r'\D'), '');
+        print('Phone digits only: $digitsOnly');
         if (digitsOnly.length == 10) {
-          _customerServicePhoneController.text =
-              formatPhoneNumberedit(digitsOnly);
+          String formatted = formatPhoneNumberedit(digitsOnly);
+          print('Formatted phone for display: $formatted');
+          _customerServicePhoneController.text = formatted;
         } else {
           _customerServicePhoneController.text = phoneToDisplay;
         }
@@ -188,13 +192,11 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
         throw Exception('Admin ID or token not found');
       }
 
-      // Prepare phone number (remove formatting for API)
-      String phoneDigits =
-          _customerServicePhoneController.text.replaceAll(RegExp(r'\D'), '');
+      // Prepare phone number (send formatted phone number to API)
+      String formattedPhone = _customerServicePhoneController.text.trim();
 
-      print('Phone number before sending to API: $phoneDigits');
-      print(
-          'Phone number from controller: ${_customerServicePhoneController.text}');
+      print('Phone number from controller (formatted): $formattedPhone');
+      print('Phone number being sent to API: $formattedPhone');
 
       Map<String, dynamic> requestData = {
         'admin_id': adminId,
@@ -202,7 +204,7 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
         'utility_name': _utilityNameController.text.trim(),
         'provider_name': _providerNameController.text.trim(),
         'account_number': _accountNumberController.text.trim(),
-        'customer_service_phone': phoneDigits,
+        'customer_service_phone': formattedPhone,
       };
 
       // Add unit_id if provided (for multi-unit properties)
@@ -452,14 +454,9 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
                             elevation: 0,
                           ),
                           child: _isLoading
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
-                                  ),
+                              ? SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 20.0,
                                 )
                               : Text(
                                   isEditMode ? 'Update' : 'Save',

@@ -18,8 +18,8 @@ String image_url =
 // String Api_url = "http://192.168.1.50:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
- //String Api_url = "https://staging.cloudrentalmanager.com";
-String Api_url = "https://development.cloudrentalmanager.com";
+String Api_url = "https://staging.cloudrentalmanager.com";
+//String Api_url = "https://development.cloudrentalmanager.com";
 
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";

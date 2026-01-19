@@ -2359,7 +2359,7 @@ class _Summery_pageState extends State<Summery_page>
                             "title": "Tax and Insurance",
                             "index": isMultiUnit ? 8 : 7
                           },
-                          // {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
+                          {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
                         ]);
 
                         return Row(
