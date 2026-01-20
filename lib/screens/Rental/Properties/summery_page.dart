@@ -41,6 +41,7 @@ import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import '../mortgage/property_mortgage_table.dart';
+import 'Additional Stats/Additional_Stats_table.dart';
 import 'Property Tax/Property_tax_Table.dart';
 import 'Insurance Premium/Insurance_premium_Table.dart';
 import 'Insurance Premium/Insurance_Policies_Table.dart';
@@ -1995,6 +1996,10 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 8 : 7
                           },
                           {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
+                          {
+                            "title": "Additional Stats",
+                            "index": isMultiUnit ? 10 : 9
+                          },
                         ]);
 
                         return Row(
@@ -2733,8 +2738,19 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 9 && isMultiUnit) {
           return Utilities_Page(data);
+        } else if (_selectedIndex == 9) {
+          if (isMultiUnit) {
+            return Utilities_Page(data);
+          } else {
+            return Additional_Stats_page(data);
+          }
+        } else if (_selectedIndex == 10) {
+          if (isMultiUnit) {
+            return Additional_Stats_page(data);
+          } else {
+            return Container();
+          }
         }
-
         return Container();
       },
     );
@@ -12996,6 +13012,15 @@ class _Summery_pageState extends State<Summery_page>
     return InfrastructurePart(
       properties: widget.properties,
       units: unit,
+    );
+  }
+
+  Additional_Stats_page(List<unit_properties> unit) {
+    return Additional_Stats_table(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
     );
   }
 

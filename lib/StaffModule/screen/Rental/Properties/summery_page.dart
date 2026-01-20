@@ -45,6 +45,7 @@ import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
 import '../../../repository/unit_data.dart';
+import 'Additional Stats/Additional_Stats_table.dart';
 import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
@@ -2360,6 +2361,10 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 8 : 7
                           },
                           {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
+                          {
+                            "title": "Additional Stats",
+                            "index": isMultiUnit ? 10 : 9
+                          },
                         ]);
 
                         return Row(
@@ -2627,10 +2632,30 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 9 && isMultiUnit) {
           return Utilities_Page(data);
+        } else if (_selectedIndex == 9) {
+          if (isMultiUnit) {
+            return Utilities_Page(data);
+          } else {
+            return Additional_Stats_page(data);
+          }
+        } else if (_selectedIndex == 10) {
+          if (isMultiUnit) {
+            return Additional_Stats_page(data);
+          } else {
+            return Container();
+          }
         }
-
         return Container();
       },
+    );
+  }
+
+  Additional_Stats_page(List<unit_properties> unit) {
+    return Additional_Stats_table(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
     );
   }
 
