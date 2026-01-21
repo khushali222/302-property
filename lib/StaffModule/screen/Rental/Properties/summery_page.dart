@@ -103,6 +103,7 @@ class _Summery_pageState extends State<Summery_page>
   ];
   TabController? _tabController;
   TabController? _taxInsuranceTabController;
+  TabController? _additionalStatsTabController;
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
   late Future<List<unit_properties>> futureUnitsummery;
@@ -113,6 +114,8 @@ class _Summery_pageState extends State<Summery_page>
   bool isLoaders = false;
   int _taxInsuranceSelectedIndex = 0;
   bool _isTaxInsuranceDropdownOpen = false;
+  int _additionalStatsSelectedIndex = 0;
+  bool _isAdditionalStatsDropdownOpen = false;
   //late Future<List<RentalSummary>> futuresummery;
 
   unit_properties? unit;
@@ -251,6 +254,7 @@ class _Summery_pageState extends State<Summery_page>
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
     _tabController = TabController(length: 5, vsync: this);
     _taxInsuranceTabController = TabController(length: 2, vsync: this);
+    _additionalStatsTabController = TabController(length: 3, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     futureRentalDetails = Properies_summery_Repo()
         .fetchrentalDetails(widget.properties.rentalId!);
@@ -599,6 +603,7 @@ class _Summery_pageState extends State<Summery_page>
   void dispose() {
     _tabController?.dispose();
     _taxInsuranceTabController?.dispose();
+    _additionalStatsTabController?.dispose();
     super.dispose();
   }
 
@@ -2352,18 +2357,13 @@ class _Summery_pageState extends State<Summery_page>
                           {"title": "Lease", "index": isMultiUnit ? 4 : 3},
                           {"title": "Revenue", "index": isMultiUnit ? 5 : 4},
                           {
-                            "title": "Infrastructure",
+                            "title": "Tax and Insurance",
                             "index": isMultiUnit ? 6 : 5
                           },
-                          {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
-                          {
-                            "title": "Tax and Insurance",
-                            "index": isMultiUnit ? 8 : 7
-                          },
-                          {"title": "Utilities", "index": isMultiUnit ? 9 : 8},
+                          {"title": "Utilities", "index": isMultiUnit ? 7 : 6},
                           {
                             "title": "Additional Stats",
-                            "index": isMultiUnit ? 10 : 9
+                            "index": isMultiUnit ? 8 : 7
                           },
                         ]);
 
@@ -2604,46 +2604,26 @@ class _Summery_pageState extends State<Summery_page>
           if (isMultiUnit) {
             return Revenue_page();
           } else {
-            return Infrastructure_page(data);
+            return TaxAndInsurance_page(data);
           }
         } else if (_selectedIndex == 6 && isMultiUnit) {
-          return Infrastructure_page(data);
+          return TaxAndInsurance_page(data);
         } else if (_selectedIndex == 6) {
           if (isMultiUnit) {
-            return Infrastructure_page(data);
+            return TaxAndInsurance_page(data);
           } else {
-            return Mortgage_page(data);
+            return Utilities_Page(data);
           }
         } else if (_selectedIndex == 7 && isMultiUnit) {
-          return Mortgage_page(data);
+          return Utilities_Page(data);
         } else if (_selectedIndex == 7) {
           if (isMultiUnit) {
-            return Mortgage_page(data);
+            return Utilities_Page(data);
           } else {
-            return TaxAndInsurance_page(data);
+            return Additional_Stats_page(data);
           }
         } else if (_selectedIndex == 8 && isMultiUnit) {
-          return TaxAndInsurance_page(data);
-        } else if (_selectedIndex == 8) {
-          if (isMultiUnit) {
-            return TaxAndInsurance_page(data);
-          } else {
-            return Utilities_Page(data);
-          }
-        } else if (_selectedIndex == 9 && isMultiUnit) {
-          return Utilities_Page(data);
-        } else if (_selectedIndex == 9) {
-          if (isMultiUnit) {
-            return Utilities_Page(data);
-          } else {
-            return Additional_Stats_page(data);
-          }
-        } else if (_selectedIndex == 10) {
-          if (isMultiUnit) {
-            return Additional_Stats_page(data);
-          } else {
-            return Container();
-          }
+          return Additional_Stats_page(data);
         }
         return Container();
       },
@@ -2651,11 +2631,297 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Additional_Stats_page(List<unit_properties> unit) {
-    return Additional_Stats_table(
-      propertyId: widget.properties.rentalId ?? "",
-      showAppBar: false,
-      showDrawer: false,
-      showAddButton: true,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Collapsible Dropdown Menu
+          Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.grey.shade300,
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Dropdown Header
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isAdditionalStatsDropdownOpen =
+                            !_isAdditionalStatsDropdownOpen;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                          bottomLeft: _isAdditionalStatsDropdownOpen
+                              ? Radius.zero
+                              : Radius.circular(8),
+                          bottomRight: _isAdditionalStatsDropdownOpen
+                              ? Radius.zero
+                              : Radius.circular(8),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _additionalStatsSelectedIndex == 0
+                                ? Icons.assessment
+                                : _additionalStatsSelectedIndex == 1
+                                    ? Icons.home_work
+                                    : Icons.account_balance,
+                            color: blueColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _additionalStatsSelectedIndex == 0
+                                  ? 'Additional Stats'
+                                  : _additionalStatsSelectedIndex == 1
+                                      ? 'Infrastructure'
+                                      : 'Mortgage',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 14
+                                        : 16,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            _isAdditionalStatsDropdownOpen
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_right,
+                            color: blueColor,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Dropdown Menu Items (shown when expanded)
+                  if (_isAdditionalStatsDropdownOpen)
+                    Column(
+                      children: [
+                        // Additional Stats Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _additionalStatsSelectedIndex = 0;
+                              _isAdditionalStatsDropdownOpen = false;
+                              _additionalStatsTabController?.animateTo(0);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _additionalStatsSelectedIndex == 0
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.assessment,
+                                  color: _additionalStatsSelectedIndex == 0
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Additional Stats',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _additionalStatsSelectedIndex == 0
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _additionalStatsSelectedIndex == 0
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Infrastructure Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _additionalStatsSelectedIndex = 1;
+                              _isAdditionalStatsDropdownOpen = false;
+                              _additionalStatsTabController?.animateTo(1);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _additionalStatsSelectedIndex == 1
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.home_work,
+                                  color: _additionalStatsSelectedIndex == 1
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Infrastructure',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _additionalStatsSelectedIndex == 1
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _additionalStatsSelectedIndex == 1
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Mortgage Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _additionalStatsSelectedIndex = 2;
+                              _isAdditionalStatsDropdownOpen = false;
+                              _additionalStatsTabController?.animateTo(2);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _additionalStatsSelectedIndex == 2
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.account_balance,
+                                  color: _additionalStatsSelectedIndex == 2
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Mortgage',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _additionalStatsSelectedIndex == 2
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _additionalStatsSelectedIndex == 2
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+          // Tab Content - Show selected content directly instead of TabBarView
+          _additionalStatsSelectedIndex == 0
+              ? Additional_Stats_table(
+                  propertyId: widget.properties.rentalId ?? "",
+                  showAppBar: false,
+                  showDrawer: false,
+                  showAddButton: true,
+                )
+              : _additionalStatsSelectedIndex == 1
+                  ? Infrastructure_page(unit)
+                  : Mortgage_page(unit),
+        ],
+      ),
     );
   }
 
