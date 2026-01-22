@@ -120,6 +120,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       DateTime? parsedDate;
+      bool isAlreadyLocalTime = false; // Track if date is already in local time
 
       // Step 1: Handle verbose JavaScript date format FIRST
       // Format: "Mon Dec 08 2025 08:00:03 GMT+0000 (Coordinated Universal Time)"
@@ -171,6 +172,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           try {
             // Parse as UTC and convert to local time (matching web behavior)
             parsedDate = DateTime.parse(dateTimeString).toLocal();
+            isAlreadyLocalTime = true; // Already converted to local time
             print(
                 '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
           } catch (e) {
@@ -187,6 +189,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                 .hasMatch(dateTimeString)) {
               parsedDate =
                   DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+              isAlreadyLocalTime = true; // Already in local time format
               print(
                   '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
             } else if (RegExp(r'^\d{4}-\d{2}-\d{2}$')
@@ -284,25 +287,22 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       // Step 4: Format parsed date
       print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
 
-      // For lease history, ALWAYS use web format: yyyy-MM-dd HH:mm:ss (24-hour format)
-      // If date came as ISO with Z (UTC), it's already converted to local time above
-      // If date came as "yyyy-MM-dd HH:mm:ss", it's already in local time
-      // Format: yyyy-MM-dd HH:mm:ss (e.g., "2026-01-06 08:00:03")
-      if (widget.historyType == HistoryType.lease) {
-        // Use parsed date (already in local time if it was UTC)
-        // Format: yyyy-MM-dd HH:mm:ss (24-hour format to match web)
-        String formattedResult =
-            DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
+      // Apply timezone offset only if date is not already in local time
+      // For lease history with "yyyy-MM-dd HH:mm:ss" or ISO Z (converted to local),
+      // the time is already correct, so don't apply offset
+      DateTime dateToFormat;
+      if (widget.historyType == HistoryType.lease && isAlreadyLocalTime) {
+        // For lease history that's already in local time, use as-is
+        dateToFormat = parsedDate;
         print(
-            '🔵 [LEASE HISTORY] Formatted as web format (yyyy-MM-dd HH:mm:ss): "$formattedResult"');
-        return formattedResult;
+            '🔵 [LEASE HISTORY] Using date as-is (already local time): $dateToFormat');
+      } else {
+        // For other history types or dates that need conversion, apply timezone offset
+        dateToFormat = parsedDate.add(Duration(hours: 5, minutes: 30));
+        print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
       }
 
-      // For other history types, apply timezone offset (matching DateProvider's behavior)
-      DateTime dateToFormat = parsedDate.add(Duration(hours: 5, minutes: 30));
-      print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
-
-      // For other history types, use user's preferences
+      // Use user's date format preferences for all history types including lease
       // Get user's date format preference
       String dateFormat = dateProvider.dateFormat;
       // Get user's time format preference and ALWAYS include seconds

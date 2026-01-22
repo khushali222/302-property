@@ -52,7 +52,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
   TabController? _tabController;
   bool isError = false;
   bool isChecked = false;
-  late LeaseSummary leasegetdata;
+  LeaseSummary? leasegetdata;
   final TextEditingController damageAmountController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> tenants = [];
@@ -72,6 +72,12 @@ class _Evict_tenantState extends State<Evict_tenant> {
           return fullName.contains(query.toLowerCase());
         }).toList();
       }
+      // Update selected tenant IDs to match filtered tenants
+      selectedTenantIds = filteredTenants
+          .map((tenant) => tenant['tenant_id']?.toString())
+          .where((id) => id != null)
+          .cast<String>()
+          .toList();
     });
   }
 
@@ -100,7 +106,8 @@ class _Evict_tenantState extends State<Evict_tenant> {
       });
     });
 
-    fetchTenant();
+    // Don't call fetchTenant here - it will be called after leaseData loads
+    leaseData();
 
     super.initState();
   }
@@ -204,28 +211,38 @@ class _Evict_tenantState extends State<Evict_tenant> {
   }
 
   Future<void> fetchTenant() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-    String? token = prefs.getString("token");
+    // Use tenant data from lease summary instead of fetching all tenants
+    // This ensures we only show current tenants for this lease
+    if (leasegetdata != null && leasegetdata!.data != null) {
+      final leaseData = leasegetdata!.data!;
+      if (leaseData.tenantData != null && leaseData.tenantData!.isNotEmpty) {
+        setState(() {
+          // Convert Tenant objects to Map format expected by UI
+          tenants = leaseData.tenantData!.map((tenant) {
+            return {
+              'tenant_id': tenant.tenantId,
+              'tenant_firstName': tenant.tenantFirstName ?? '',
+              'tenant_lastName': tenant.tenantLastName ?? '',
+              'tenant_phoneNumber': tenant.tenantPhoneNumber ?? '',
+              'moveout_date': null, // Current tenants don't have moveout_date
+            };
+          }).toList();
+          filteredTenants = List.from(tenants);
 
-    final response = await http.get(
-      Uri.parse("${Api_url}/api/tenant/lease-tenant/$adminId"),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $adminId",
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final tenant = data['data'] as List;
-
-      setState(() {
-        tenants = tenant.cast<Map<String, dynamic>>();
-        filteredTenants = List.from(tenants);
-      });
-    } else {
-      print("Failed to load templates");
+          // Automatically select all current tenants (no checkboxes needed)
+          selectedTenantIds = tenants
+              .map((tenant) => tenant['tenant_id']?.toString())
+              .where((id) => id != null)
+              .cast<String>()
+              .toList();
+        });
+      } else {
+        setState(() {
+          tenants = [];
+          filteredTenants = [];
+          selectedTenantIds = [];
+        });
+      }
     }
   }
 
@@ -246,8 +263,8 @@ class _Evict_tenantState extends State<Evict_tenant> {
   bool isEvicting = false;
 
   bool isFormValid() {
-    // Check if at least one tenant is selected
-    if (selectedTenantIds.isEmpty) {
+    // Check if at least one tenant exists (all current tenants are automatically selected)
+    if (filteredTenants.isEmpty) {
       return false;
     }
 
@@ -267,10 +284,15 @@ class _Evict_tenantState extends State<Evict_tenant> {
   }
 
   Future<void> evictTenant() async {
+    // Prevent double-tap/double-execution
+    if (isEvicting) {
+      return;
+    }
+
     if (!isFormValid()) {
       Fluttertoast.showToast(
           msg:
-              "Please select at least one tenant and enter a valid damage amount");
+              "Please ensure tenants are available and enter a valid damage amount");
       return;
     }
 
@@ -284,18 +306,35 @@ class _Evict_tenantState extends State<Evict_tenant> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      // Process each selected tenant
-      for (String tenantId in selectedTenantIds) {
-        Map<String, dynamic> evictData = {
-          "tenant_id": tenantId,
-          "damage_amount": damageAmountController.text.isEmpty
-              ? "0"
-              : damageAmountController.text,
-          "charge_of_lease_balance": isChecked,
-          "lease_id": widget.leaseId,
-          "admin_id": adminId,
-        };
+      if (adminId == null || adminId.isEmpty) {
+        Fluttertoast.showToast(msg: "Admin ID not found. Please login again.");
+        setState(() {
+          isEvicting = false;
+        });
+        return;
+      }
 
+      if (selectedTenantIds.isEmpty) {
+        Fluttertoast.showToast(msg: "No tenants selected for eviction.");
+        setState(() {
+          isEvicting = false;
+        });
+        return;
+      }
+
+      // Send evict data - API gets tenants from lease_id
+      Map<String, dynamic> evictData = {
+        "damage_amount": damageAmountController.text.isEmpty
+            ? "0"
+            : damageAmountController.text,
+        "charge_of_lease_balance": isChecked == true, // Ensure boolean
+        "lease_id": widget.leaseId,
+        "admin_id": adminId,
+      };
+
+      print("Evicting tenants with data: $evictData");
+
+      try {
         final response = await http.post(
           Uri.parse("$Api_url/api/tenant/evict-tenant"),
           headers: {
@@ -305,22 +344,78 @@ class _Evict_tenantState extends State<Evict_tenant> {
           },
           body: jsonEncode(evictData),
         );
-        print("post data evict tenant ${response.body}");
+
+        print("Evict tenant response status: ${response.statusCode}");
+        print("Evict tenant response body: ${response.body}");
+
+        String? successMessage;
+
         if (response.statusCode == 200) {
-          Fluttertoast.showToast(msg: "Tenant evicted successfully");
-          Navigator.of(context).pop();
+          try {
+            final responseData = jsonDecode(response.body);
+            // Check the statusCode in the response body (handle both int and string)
+            final responseStatusCode = responseData['statusCode'];
+            if (responseStatusCode == 200 || responseStatusCode == '200') {
+              successMessage =
+                  responseData['message'] ?? 'Tenant(s) evicted successfully';
+              print("Success: $successMessage");
+            } else {
+              final errorMsg = responseData['message'] ?? 'Unknown error';
+              print("Error evicting tenants: $errorMsg");
+              setState(() {
+                isEvicting = false;
+              });
+              Fluttertoast.showToast(msg: errorMsg);
+              return;
+            }
+          } catch (e) {
+            // If parsing fails but HTTP status is 200, assume success
+            print("Response parsed as success (HTTP 200): $e");
+            successMessage = 'Tenant(s) evicted successfully';
+          }
         } else {
-          Fluttertoast.showToast(
-              msg: "Failed to evict tenant. Please try again.");
+          try {
+            final errorData = jsonDecode(response.body);
+            final errorMsg = errorData['message'] ?? errorData.toString();
+            print("Error evicting tenants: $errorMsg");
+            setState(() {
+              isEvicting = false;
+            });
+            Fluttertoast.showToast(msg: errorMsg);
+            return;
+          } catch (e) {
+            print("Error evicting tenants: ${response.body}");
+            setState(() {
+              isEvicting = false;
+            });
+            Fluttertoast.showToast(
+                msg: "Failed to evict tenants. Please try again.");
+            return;
+          }
         }
+
+        setState(() {
+          isEvicting = false;
+        });
+
+        Fluttertoast.showToast(
+            msg: successMessage ?? "Tenant(s) evicted successfully");
+        Navigator.of(context).pop();
+      } catch (e) {
+        print("Exception evicting tenants: $e");
+        setState(() {
+          isEvicting = false;
+        });
+        Fluttertoast.showToast(
+            msg: "An error occurred: ${e.toString()}. Please try again.");
       }
     } catch (e) {
-      print(e);
-      Fluttertoast.showToast(msg: "An error occurred. Please try again.");
-    } finally {
+      print("Error in evictTenant: $e");
       setState(() {
         isEvicting = false;
       });
+      Fluttertoast.showToast(
+          msg: "An error occurred: ${e.toString()}. Please try again.");
     }
   }
 
@@ -339,39 +434,44 @@ class _Evict_tenantState extends State<Evict_tenant> {
     );
 
     if (response.statusCode == 200) {
+      final summary = LeaseSummary.fromJson(jsonDecode(response.body));
       setState(() {
-        leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
-        print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
-        if (determineStatus(
-            leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
-          // Lease is expired
-          startDateController.text = formatDate(DateTime.now().toString());
+        leasegetdata = summary;
+        final leaseData = summary.data;
+        if (leaseData != null) {
+          print("Renew lease ${leaseData.renewLeases?.length ?? 0}");
+          if (determineStatus(leaseData.startDate, leaseData.endDate)) {
+            // Lease is expired
+            startDateController.text = formatDate(DateTime.now().toString());
 
-          // Set the end date to one month from today's date
-          DateTime newEndDate = DateTime(DateTime.now().year,
-              DateTime.now().month + 1, DateTime.now().day);
-          endDateController.text = formatDate(
-              DateFormat('yyyy-MM-dd').format(newEndDate).toString());
-        }
-        if (leasegetdata.data!.renewLeases != null &&
-            leasegetdata.data!.renewLeases!.isNotEmpty) {
-          // Lease is active
-          if (!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!,
-              leasegetdata.data!.renewLeases!.last.endDate!)) {
-            DateTime endDate =
-                formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
-
-            // Set start date to the current lease's end date
-            startDateController.text =
-                formatDate(DateFormat('yyyy-MM-dd').format(endDate).toString());
-
-            // Extend the lease for one month from the current lease's end date
-            DateTime newEndDate =
-                DateTime(endDate.year, endDate.month + 1, endDate.day);
+            // Set the end date to one month from today's date
+            DateTime newEndDate = DateTime(DateTime.now().year,
+                DateTime.now().month + 1, DateTime.now().day);
             endDateController.text = formatDate(
                 DateFormat('yyyy-MM-dd').format(newEndDate).toString());
           }
+          if (leaseData.renewLeases != null &&
+              leaseData.renewLeases!.isNotEmpty) {
+            // Lease is active
+            if (!determineStatus(leaseData.renewLeases!.last.startDate!,
+                leaseData.renewLeases!.last.endDate!)) {
+              DateTime endDate =
+                  formatDates(leaseData.renewLeases!.last.endDate!);
+
+              // Set start date to the current lease's end date
+              startDateController.text = formatDate(
+                  DateFormat('yyyy-MM-dd').format(endDate).toString());
+
+              // Extend the lease for one month from the current lease's end date
+              DateTime newEndDate =
+                  DateTime(endDate.year, endDate.month + 1, endDate.day);
+              endDateController.text = formatDate(
+                  DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+            }
+          }
         }
+        // Load tenants from lease data after lease summary is loaded
+        fetchTenant();
       });
     } else {
       throw Exception('Failed to load lease summary');
@@ -508,22 +608,22 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                     ),
                                     const SizedBox(height: 8),
                                     Container(
-                                      padding:
-                                          const EdgeInsets.symmetric(horizontal: 5),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
                                       child: TextField(
                                         controller: damageAmountController,
-                                        keyboardType:
-                                            const TextInputType.numberWithOptions(
-                                                decimal: true),
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
                                         decoration: InputDecoration(
                                           hintText: 'Enter damage amount',
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8),
-                                            borderSide:
-                                                const BorderSide(color: Colors.grey),
+                                            borderSide: const BorderSide(
+                                                color: Colors.grey),
                                           ),
-                                          contentPadding: const EdgeInsets.symmetric(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
                                             horizontal: 10,
                                             vertical: 12,
                                           ),
@@ -636,7 +736,8 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                       color: blueColor),
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      const EdgeInsets.symmetric(
+                                                      const EdgeInsets
+                                                          .symmetric(
                                                     horizontal: 15,
                                                     vertical: 12,
                                                   ),
@@ -672,12 +773,11 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                     ),
                                                   ),
                                                 ),
-                                                const SizedBox(width: 50),
                                               ],
                                             ),
                                           ),
                                           const Divider(height: 1),
-                                          if (tenants.isNotEmpty)
+                                          if (filteredTenants.isNotEmpty)
                                             ...filteredTenants.map((tenant) {
                                               return Column(
                                                 children: [
@@ -691,7 +791,8 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                           flex: 3,
                                                           child: Text(
                                                             '${tenant['tenant_firstName'] ?? ''} ${tenant['tenant_lastName'] ?? ''}',
-                                                            style: const TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               fontSize: 14,
                                                             ),
                                                           ),
@@ -701,37 +802,11 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                           child: Text(
                                                             tenant['tenant_phoneNumber'] ??
                                                                 '-',
-                                                            style: const TextStyle(
-                                                                fontSize: 14),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        14),
                                                           ),
-                                                        ),
-                                                        Checkbox(
-                                                          value: selectedTenantIds
-                                                              .contains(tenant[
-                                                                  'tenant_id']),
-                                                          onChanged:
-                                                              (bool? checked) {
-                                                            final tenantId =
-                                                                tenant[
-                                                                    'tenant_id'];
-                                                            if (tenantId !=
-                                                                null) {
-                                                              setState(() {
-                                                                if (checked ==
-                                                                    true) {
-                                                                  selectedTenantIds
-                                                                      .add(
-                                                                          tenantId);
-                                                                } else {
-                                                                  selectedTenantIds
-                                                                      .remove(
-                                                                          tenantId);
-                                                                }
-                                                              });
-                                                            }
-                                                          },
-                                                          activeColor:
-                                                              blueColor,
                                                         ),
                                                       ],
                                                     ),
@@ -740,6 +815,17 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                 ],
                                               );
                                             }).toList(),
+                                          if (filteredTenants.isEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: Text(
+                                                'No current tenants found',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
                                         ],
                                       ),
                                     ),
@@ -754,7 +840,12 @@ class _Evict_tenantState extends State<Evict_tenant> {
                               GestureDetector(
                                 onTap: isEvicting || !isFormValid()
                                     ? null
-                                    : evictTenant,
+                                    : () {
+                                        // Prevent double-tap
+                                        if (!isEvicting) {
+                                          evictTenant();
+                                        }
+                                      },
                                 child: Container(
                                   height:
                                       MediaQuery.of(context).size.width < 500

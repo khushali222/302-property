@@ -91,6 +91,7 @@ import 'provider/notification_provider.dart';
 // }
 
 void main() {
+
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     timeago.setLocaleMessages('en_custom', CustomTimeAgo());

@@ -149,54 +149,40 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     }
   }
 
-  // Function to fetch late fees from API
+  // Function to fetch late fees from Financial table data
   Future<List<Map<String, dynamic>>> fetchLateFees() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      String? adminId = prefs.getString("adminId");
+      // Get lease ledger data (same data used in Financial table)
+      final leaseLedger = await _leaseLedgerFuture;
 
-      final url =
-          Uri.parse('$Api_url/api/leases/lease-charges/${widget.leaseId}');
+      if (leaseLedger == null || leaseLedger.data == null) {
+        return [];
+      }
 
-      final response = await http.get(
-        url,
-        headers: {
-          "authorization": "CRM $token",
-          "id": "CRM $adminId",
-        },
-      );
+      List<Map<String, dynamic>> lateFees = [];
 
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        final data = jsonData['data'];
+      // Filter for Charge type entries
+      final chargeEntries =
+          leaseLedger.data!.where((data) => data.type == "Charge").toList();
 
-        List<Map<String, dynamic>> lateFees = [];
-
-        // Access late_rent_payments.entries from the response
-        if (data != null && data['late_rent_payments'] != null) {
-          final lateRentPayments = data['late_rent_payments'];
-          if (lateRentPayments['entries'] != null) {
-            List<dynamic> entries = lateRentPayments['entries'];
-
-            // Filter for late fee entries only - must have is_lateFee == true AND charge_type == "Late Fee Income"
-            for (var entry in entries) {
-              if (entry['is_lateFee'] == true &&
-                  entry['charge_type'] == 'Late Fee Income') {
-                lateFees.add({
-                  'date': entry['date'] ?? '',
-                  'amount': (entry['amount'] ?? 0).toDouble(),
-                  'entry_id': entry['entry_id'] ?? '',
-                });
-              }
+      // Filter for late fee income entries from charge entries
+      for (var chargeData in chargeEntries) {
+        if (chargeData.entry != null && chargeData.entry!.isNotEmpty) {
+          for (var entry in chargeData.entry!) {
+            // Filter for late fee income entries - check chargeType == "Late Fee Income"
+            if (entry.chargeType == 'Late Fee Income') {
+              lateFees.add({
+                'date': entry.date ?? '',
+                'amount': entry.amount ?? 0.0,
+                'entry_id': entry.entryId ?? '',
+              });
             }
           }
         }
-
-        return lateFees;
-      } else {
-        throw Exception('Failed to load late fees: ${response.statusCode}');
       }
+
+      print('Late Fee Income Count from Financial table: ${lateFees.length}');
+      return lateFees;
     } catch (e) {
       print('Error fetching late fees: $e');
       throw Exception('Error fetching late fees: $e');
@@ -4023,8 +4009,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                   .only(
                                                                   left: 20.0),
                                                           child: Text(
-                                                            lateFee['date'] ??
-                                                                '',
+                                                            lateFee['date'] !=
+                                                                        null &&
+                                                                    lateFee['date']
+                                                                        .toString()
+                                                                        .isNotEmpty
+                                                                ? dateProvider
+                                                                    .formatCurrentDate(
+                                                                        lateFee['date']
+                                                                            .toString())
+                                                                : '',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
@@ -4083,7 +4077,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               );
                             },
                           ),
-
                         ],
                       ),
                     ),

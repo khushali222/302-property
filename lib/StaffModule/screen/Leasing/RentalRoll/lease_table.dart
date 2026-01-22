@@ -98,39 +98,50 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void sortData(List<Lease1> data) {
-    // Always apply default sort by remaining days in descending order (highest remaining days first)
-    data.sort((a, b) {
-      // Handle null or "---" values for remaining days
-      String aDays = a.remainingDays ?? "---";
-      String bDays = b.remainingDays ?? "---";
+    // If status is "All", sort by lease start date in descending order
+    if (selectedStatus == "All") {
+      data.sort((a, b) {
+        if (a.startDate == null && b.startDate == null) return 0;
+        if (a.startDate == null) return 1;
+        if (b.startDate == null) return -1;
+        // Descending order (newest start date first)
+        return b.startDate!.compareTo(a.startDate!);
+      });
+    } else {
+      // Always apply default sort by remaining days in descending order (highest remaining days first)
+      data.sort((a, b) {
+        // Handle null or "---" values for remaining days
+        String aDays = a.remainingDays ?? "---";
+        String bDays = b.remainingDays ?? "---";
 
-      // Debug logging
-      // print(
-      //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
-      // print(
-      //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+        // Debug logging
+        // print(
+        //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+        // print(
+        //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
 
-      // If both are "---", they are equal
-      if (aDays == "---" && bDays == "---") return 0;
+        // If both are "---", they are equal
+        if (aDays == "---" && bDays == "---") return 0;
 
-      // If one is "---", put it at the end
-      if (aDays == "---") return 1;
-      if (bDays == "---") return -1;
+        // If one is "---", put it at the end
+        if (aDays == "---") return 1;
+        if (bDays == "---") return -1;
 
-      // Parse numeric values and sort in descending order
-      try {
-        double aValue = double.parse(aDays);
-        double bValue = double.parse(bDays);
-        int result = bValue.compareTo(aValue); // Descending order
-        print(
-            "DEBUG: Numeric comparison - A: $aValue, B: $bValue, Result: $result");
-        return result;
-      } catch (e) {
-        // If parsing fails, fall back to string comparison
-        print("DEBUG: Parse error: $e, falling back to string comparison");
-        return bDays.compareTo(aDays);
-      }
-    });
+        // Parse numeric values and sort in descending order
+        try {
+          double aValue = double.parse(aDays);
+          double bValue = double.parse(bDays);
+          int result = bValue.compareTo(aValue); // Descending order
+          print(
+              "DEBUG: Numeric comparison - A: $aValue, B: $bValue, Result: $result");
+          return result;
+        } catch (e) {
+          // If parsing fails, fall back to string comparison
+          print("DEBUG: Parse error: $e, falling back to string comparison");
+          return bDays.compareTo(aDays);
+        }
+      });
+    }
 
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
@@ -575,8 +586,36 @@ class _Lease_tableState extends State<Lease_table> {
     }
   }
 
+  String _formatDateSafely(String? dateValue, DateProvider dateProvider) {
+    if (dateValue == null || dateValue.trim().isEmpty || dateValue == 'null') {
+      return 'N/A';
+    }
+
+    try {
+      String formattedDate = dateProvider.formatCurrentDate(dateValue);
+
+      // Check if the formatted date is invalid (contains "Invalid" or is the same as input when input looks invalid)
+      if (formattedDate.toLowerCase().contains('invalid') ||
+          (formattedDate == dateValue &&
+              !RegExp(r'^\d{1,2}[/-]\d{1,2}[/-]\d{4}').hasMatch(dateValue) &&
+              !RegExp(r'^\d{4}[/-]\d{1,2}[/-]\d{1,2}').hasMatch(dateValue))) {
+        return 'N/A';
+      }
+
+      return formattedDate;
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
   String selectedStatus = "Active";
-  final List<String> statusOptions = ["Active", "Expired", "All"];
+  final List<String> statusOptions = ["Active", "Expired", "Future", "All"];
+  List<String> selectedRentalOwners = [];
+  List<String> availableRentalOwners = [];
+  final GlobalKey _rentalOwnerDropdownKey = GlobalKey();
+  final ValueNotifier<List<String>> _selectedRentalOwnersNotifier =
+      ValueNotifier<List<String>>([]);
+
   void _showAlertforLimit(BuildContext context) {
     Alert(
       context: context,
@@ -749,149 +788,152 @@ class _Lease_tableState extends State<Lease_table> {
                   //SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
-                    child: Row(
+                    child: Column(
                       children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 19),
-                        Material(
-                          elevation: 0,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                            ),
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  searchValue = value;
-                                  if (currentPage != 0) currentPage = 0;
-                                });
-                              },
-                              cursorColor: Colors.blue,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                contentPadding: EdgeInsets.all(11),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: DropdownButtonHideUnderline(
-                            child: Material(
+                        // First row: Search bar and Status dropdown
+                        Row(
+                          children: [
+                            if (MediaQuery.of(context).size.width < 500)
+                              const SizedBox(width: 2),
+                            if (MediaQuery.of(context).size.width > 500)
+                              const SizedBox(width: 19),
+                            Material(
                               elevation: 0,
                               borderRadius: BorderRadius.circular(8),
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Text(
-                                  '',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 500)
+                                        ? 45
+                                        : 50,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? MediaQuery.of(context).size.width * .52
+                                    : MediaQuery.of(context).size.width * .49,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: const Color(0xFF8A95A8)),
                                 ),
-                                value: selectedStatus,
-                                items: statusOptions.map((String status) {
-                                  return DropdownMenuItem<String>(
-                                    value: status,
-                                    child: Text(status),
-                                  );
-                                }).toList(),
-                                buttonStyleData: ButtonStyleData(
-                                  height:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 45
-                                          : 50,
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: const Color(0xFF8A95A8),
-                                    ),
-                                    color: Colors.white,
+                                child: TextField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      searchValue = value;
+                                      if (currentPage != 0) currentPage = 0;
+                                    });
+                                  },
+                                  cursorColor: Colors.blue,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Search here...",
+                                    hintStyle:
+                                        TextStyle(color: Color(0xFF8A95A8)),
+                                    contentPadding: EdgeInsets.all(11),
                                   ),
-                                  elevation: 0,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedStatus = newValue!;
-                                    if (currentPage != 0) currentPage = 0;
-                                  });
-                                  // widget.onStatusChanged(selectedStatus);
-                                },
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 250,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  offset: const Offset(0, 0),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(20),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
                               ),
                             ),
-                          ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: DropdownButtonHideUnderline(
+                                child: Material(
+                                  elevation: 0,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: DropdownButton2<String>(
+                                    isExpanded: true,
+                                    hint: const Text(
+                                      '',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF8A95A8),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    value: selectedStatus,
+                                    items: statusOptions.map((String status) {
+                                      return DropdownMenuItem<String>(
+                                        value: status,
+                                        child: Text(status),
+                                      );
+                                    }).toList(),
+                                    buttonStyleData: ButtonStyleData(
+                                      height:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 45
+                                              : 50,
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.only(
+                                          left: 14, right: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: const Color(0xFF8A95A8),
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedStatus = newValue!;
+                                        if (currentPage != 0) currentPage = 0;
+                                      });
+                                      // widget.onStatusChanged(selectedStatus);
+                                    },
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: 250,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      offset: const Offset(0, 0),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(20),
+                                        thickness: MaterialStateProperty.all(6),
+                                        thumbVisibility:
+                                            MaterialStateProperty.all(true),
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                      padding:
+                                          EdgeInsets.only(left: 14, right: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (MediaQuery.of(context).size.width < 500)
+                              const SizedBox(width: 8),
+                            if (MediaQuery.of(context).size.width > 500)
+                              const SizedBox(width: 25),
+                          ],
                         ),
-
-                        // Spacer(),
-                        // Column(
-                        //   mainAxisAlignment: MainAxisAlignment.end,
-                        //   crossAxisAlignment: CrossAxisAlignment.end,
-                        //   children: [
-                        //     Text(
-                        //       'Added : ${leaseCount.toString()}',
-                        //       style: TextStyle(
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Color(0xFF8A95A8),
-                        //         fontSize:
-                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        //       ),
-                        //     ),
-                        //     SizedBox(
-                        //       width: 5,
-                        //     ),
-                        //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                        //     Text(
-                        //       'Total : ${leaseCountLimit.toString()}',
-                        //       style: TextStyle(
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Color(0xFF8A95A8),
-                        //         fontSize:
-                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 8),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 25),
+                        // Second row: Rental Owner dropdown (half screen width)
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            if (MediaQuery.of(context).size.width < 500)
+                              const SizedBox(width: 2),
+                            if (MediaQuery.of(context).size.width > 500)
+                              const SizedBox(width: 19),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width < 500
+                                  ? MediaQuery.of(context).size.width * .52
+                                  : MediaQuery.of(context).size.width * .49,
+                              child: DropdownButtonHideUnderline(
+                                child: Material(
+                                  elevation: 0,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: _buildRentalOwnerDropdown(),
+                                ),
+                              ),
+                              key: _rentalOwnerDropdownKey,
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -940,6 +982,31 @@ class _Lease_tableState extends State<Lease_table> {
                           );
                         } else {
                           var data = snapshot.data!;
+
+                          // Populate available rental owners from lease data
+                          if (data.isNotEmpty) {
+                            final uniqueRentalOwners = data
+                                .map((lease) => lease.rentalOwnerName)
+                                .where((name) =>
+                                    name != null &&
+                                    name.isNotEmpty &&
+                                    name != "N/A")
+                                .cast<String>()
+                                .toSet()
+                                .toList()
+                              ..sort();
+                            if (availableRentalOwners.toString() !=
+                                uniqueRentalOwners.toString()) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                setState(() {
+                                  availableRentalOwners = uniqueRentalOwners;
+                                  // Sync notifier with current selections
+                                  _selectedRentalOwnersNotifier.value =
+                                      List.from(selectedRentalOwners);
+                                });
+                              });
+                            }
+                          }
 
                           // Debug logging to see raw data
                           print("DEBUG: Raw lease data from API:");
@@ -999,53 +1066,51 @@ class _Lease_tableState extends State<Lease_table> {
 
 // Apply the status filter next
                           if (selectedStatus == "Active") {
+                            final today =
+                                DateTime.now().toIso8601String().split("T")[0];
                             data = data.where((lease) {
-                              DateTime now = DateTime.now();
-                              DateTime? startDate;
-                              try {
-                                startDate = DateTime.parse(lease.startDate!);
-                              } catch (e) {
-                                return false;
-                              }
+                              if (lease.startDate == null) return false;
 
                               // For "at will" or null end date, only check start date
                               if (lease.endDate == null ||
                                   lease.endDate!.toLowerCase() == "at will") {
-                                return startDate.isBefore(now) ||
-                                    startDate.isAtSameMomentAs(now);
+                                return lease.startDate!.compareTo(today) <= 0;
                               }
 
                               // For regular end dates, check both start and end dates
-                              DateTime? endDate;
-                              try {
-                                endDate = DateTime.parse(lease.endDate!);
-                              } catch (e) {
-                                return false;
-                              }
-                              return (startDate.isBefore(now) ||
-                                      startDate.isAtSameMomentAs(now)) &&
-                                  (endDate.isAfter(now) ||
-                                      endDate.isAtSameMomentAs(now));
+                              if (lease.endDate == null) return false;
+                              return lease.startDate!.compareTo(today) <= 0 &&
+                                  lease.endDate!.compareTo(today) >= 0;
                             }).toList();
                           } else if (selectedStatus == "Expired") {
+                            final today =
+                                DateTime.now().toIso8601String().split("T")[0];
                             data = data.where((lease) {
                               // At will leases can't expire
                               if (lease.endDate == null ||
                                   lease.endDate!.toLowerCase() == "at will") {
                                 return false;
                               }
-                              DateTime now = DateTime.now();
-                              DateTime? endDate;
-                              try {
-                                endDate = DateTime.parse(lease.endDate!);
-                              } catch (e) {
-                                return false;
-                              }
-                              return endDate.isBefore(now);
+                              return lease.endDate!.compareTo(today) < 0;
+                            }).toList();
+                          } else if (selectedStatus == "Future") {
+                            final today =
+                                DateTime.now().toIso8601String().split("T")[0];
+                            data = data.where((lease) {
+                              if (lease.startDate == null) return false;
+                              return lease.startDate!.compareTo(today) > 0;
                             }).toList();
                           } else if (selectedStatus == "All") {
                             // No additional filtering needed
                             data = data;
+                          }
+
+                          // Apply rental owner filter
+                          if (selectedRentalOwners.isNotEmpty) {
+                            data = data
+                                .where((lease) => selectedRentalOwners
+                                    .contains(lease.rentalOwnerName))
+                                .toList();
                           }
 
                           // Remove data.reversed.toList() to let sortData handle the ordering
@@ -1968,6 +2033,205 @@ class _Lease_tableState extends State<Lease_table> {
   String _getDisplayValue(String? value) {
     // Return 'N/A' if the value is null or empty, otherwise return the value
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
+
+  Widget _buildRentalOwnerDropdown() {
+    // Use selectedRentalOwners directly for display text
+    String displayText = selectedRentalOwners.isEmpty
+        ? 'Select rental owners'
+        : selectedRentalOwners.length == 1
+            ? selectedRentalOwners.first
+            : '${selectedRentalOwners.length} owners selected';
+
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _selectedRentalOwnersNotifier,
+      builder: (context, currentSelected, _) {
+        return DropdownButton2<String>(
+          isExpanded: true,
+          hint: Row(
+            children: [
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  displayText,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF8A95A8),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          value: null, // Always null for multi-select
+          items: availableRentalOwners.map((owner) {
+            return DropdownMenuItem<String>(
+              value: owner,
+              enabled: false, // Disable to prevent dropdown from closing
+              child: ValueListenableBuilder<List<String>>(
+                valueListenable: _selectedRentalOwnersNotifier,
+                builder: (context, currentSelectedList, _) {
+                  final isCurrentlySelected =
+                      currentSelectedList.contains(owner);
+
+                  return InkWell(
+                    onTap: () {
+                      if (isCurrentlySelected) {
+                        selectedRentalOwners.remove(owner);
+                      } else {
+                        selectedRentalOwners.add(owner);
+                      }
+                      _selectedRentalOwnersNotifier.value =
+                          List.from(selectedRentalOwners);
+                      setState(() {
+                        if (currentPage != 0) currentPage = 0;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: isCurrentlySelected,
+                          onChanged: (bool? value) {
+                            if (value == true) {
+                              selectedRentalOwners.add(owner);
+                            } else {
+                              selectedRentalOwners.remove(owner);
+                            }
+                            _selectedRentalOwnersNotifier.value =
+                                List.from(selectedRentalOwners);
+                            setState(() {
+                              if (currentPage != 0) currentPage = 0;
+                            });
+                          },
+                          activeColor: blueColor,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        Expanded(
+                          child: Text(
+                            owner,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isCurrentlySelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            // Do nothing - selection handled in item's InkWell
+          },
+          buttonStyleData: ButtonStyleData(
+            height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+            width: double.infinity,
+            padding: const EdgeInsets.only(left: 14, right: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: const Color(0xFF8A95A8),
+              ),
+              color: Colors.white,
+            ),
+            elevation: 0,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 250,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            offset: const Offset(0, 0),
+            scrollbarTheme: ScrollbarThemeData(
+              radius: const Radius.circular(40),
+              thickness: MaterialStateProperty.all(6),
+              thumbVisibility: MaterialStateProperty.all(true),
+            ),
+          ),
+          menuItemStyleData: const MenuItemStyleData(
+            height: 40,
+            padding: EdgeInsets.only(left: 14, right: 14),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showRentalOwnerFilterDialog(BuildContext context) {
+    List<String> tempSelected = List.from(selectedRentalOwners);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Select Rental Owners'),
+              content: Container(
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: availableRentalOwners.map((owner) {
+                      return CheckboxListTile(
+                        title: Text(owner),
+                        value: tempSelected.contains(owner),
+                        activeColor: blueColor,
+                        onChanged: (bool? value) {
+                          setDialogState(() {
+                            if (value == true) {
+                              tempSelected.add(owner);
+                            } else {
+                              tempSelected.remove(owner);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setDialogState(() {
+                      tempSelected.clear();
+                    });
+                  },
+                  child: const Text('Clear All'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedRentalOwners = tempSelected;
+                      if (currentPage != 0) currentPage = 0;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: blueColor,
+                  ),
+                  child: const Text('Apply'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
