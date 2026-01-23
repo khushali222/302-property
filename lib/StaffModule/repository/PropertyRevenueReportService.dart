@@ -12,10 +12,11 @@ class PropertyRevenueReportService {
     required String previousStartDate,
     required String previousEndDate,
   }) async {
-    print('Fetching property revenue report');
+    print('Fetching property revenue report (Staff)');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+    String? staffId = prefs.getString('staff_id');
 
     try {
       // Build query parameters
@@ -31,11 +32,11 @@ class PropertyRevenueReportService {
           Uri.parse('$Api_url/api/rentals/property_revenue_report/$adminId')
               .replace(queryParameters: queryParams);
 
-      print('API URL: $uri');
+      print('API URL (Staff): $uri');
 
       final response = await http.get(uri, headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // Use staff_id instead of adminId
         "Content-Type": "application/json",
       });
 

@@ -9,10 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/PropertyRevenueReportModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/repository/PropertyRevenueReportService.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
+import '../../../repository/PropertyRevenueReportService.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import '../../../widgets/custom_drawer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -442,8 +442,8 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
+      appBar: widget_302_Staff.App_Bar(context: context),
+      drawer: CustomDrawerStaff(
         currentpage: "Reports",
         dropdown: false,
       ),
@@ -451,7 +451,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           ? _buildNoInternetWidget()
           : Column(
               children: [
-                ReportHeader(title: "Property Revenue Report"),
+                StaffReportHeader(title: "Property Revenue Report"),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -1364,7 +1364,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-       color: index % 2 != 0 ? Color(0xFFF4F8FF): Colors.white,
+        color:index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Color(0xFFDBE0E5)),
         // boxShadow: [
@@ -1374,8 +1374,9 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         //     blurRadius: 4,
         //     offset: Offset(0, 2),
         //   ),
+       
         // ],
-    
+      
       ),
       child: Column(
         children: [
@@ -1434,11 +1435,6 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
                     period: property.previousPeriod,
                     dateProvider: dateProvider,
                   ),
-                  // SizedBox(height: 16),
-                  // // Change Amount and Percentage
-                  // if (property.revenueChangeAmount != null ||
-                  //     property.revenueChangePercentage != null)
-                  //   _buildChangeSection(property),
                 ],
               ),
             ),
@@ -1503,7 +1499,6 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           '\$${NumberFormat('#,##0.00').format(revenue)}',
           style: TextStyle(
             fontSize: 14,
-            //   fontWeight: FontWeight.bold,
             color: blueColor,
           ),
         ),

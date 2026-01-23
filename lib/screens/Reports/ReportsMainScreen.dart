@@ -762,12 +762,12 @@ class ReportScreen extends StatelessWidget {
                 //       'Detailed breakdown of outstanding lease balances by aging period',
                 //   "navigate": OutstandingLeaseBalance()
                 // },
-                // {
-                //   'title': 'Property Revenue Report',
-                //   'subtitle':
-                //       'Compare property revenue between current and previous periods',
-                //   "navigate": PropertyRevenueReport()
-                // },
+                {
+                  'title': 'Property Revenue Report',
+                  'subtitle':
+                      'Compare property revenue between current and previous periods',
+                  "navigate": PropertyRevenueReport()
+                },
               ],
               "Track payments, transactions, and owner accounts.",
               context),
