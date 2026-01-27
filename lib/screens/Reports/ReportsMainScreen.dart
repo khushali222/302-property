@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/Home_System_Report.dart';
+import 'ReportScreens/InsurancePremiumReport.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
 import 'ReportScreens/Rent_collection.dart';
@@ -819,6 +820,10 @@ class ReportScreen extends StatelessWidget {
                   'subtitle':
                       'Renter\'s insurance policies expiring within the selected time period',
                   "navigate": ExpiringInsurance()
+                },
+                {'title': 'Insurance Premium Report', 
+                'subtitle': 'Compare property insurance premiums across selected years/spans', 
+                "navigate": InsurancePremiumReport()
                 },
                 // {
                 //   'title': 'Property Insurance Summary',

@@ -8,6 +8,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Expiring_Insurance.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Home_System_Report.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/InsurancePremiumReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
@@ -22,17 +23,7 @@ import '../../../screens/Reports/ReportScreens/Rent_collection.dart';
 import '../../../widgets/titleBar.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:three_zero_two_property/constant/constant.dart';
-// import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
-// import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
-// import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
-// import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
-// import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
-// import 'package:three_zero_two_property/widgets/appbar.dart';
-// import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-// import 'package:three_zero_two_property/widgets/titleBar.dart';
-// import '../../widgets/custom_drawer.dart';
+
 
 class ReportsMainScreen extends StatefulWidget {
   @override
@@ -841,6 +832,11 @@ class ReportScreen extends StatelessWidget {
                   'subtitle':
                       'Renter’s insurance policies expiring within the selected time period',
                   "navigate": ExpiringInsurance()
+                },
+                {
+                  'title': 'Insurance Premium Report',
+                  'subtitle': 'Compare property insurance premiums across selected years/spans',
+                  "navigate": InsurancePremiumReport()
                 },
               ],
               "Coverage at a glance",

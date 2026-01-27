@@ -915,7 +915,6 @@ class _Tenants_tableState extends State<Tenants_table> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            
                             children: [
                               // Count display
                               FutureBuilder<Map<String, List<Tenant>>>(
@@ -970,18 +969,25 @@ class _Tenants_tableState extends State<Tenants_table> {
                               ),
                               //SizedBox(height: 12),
                               // Include Former Tenants checkbox
+                              SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Checkbox(
-                                    value: includeFormerTenants,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        includeFormerTenants = value!;
-                                        currentPage = 0; // Reset to first page
-                                      });
-                                    },
-                                    activeColor: blueColor,
+                                  SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: Checkbox(
+                                      value: includeFormerTenants,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          includeFormerTenants = value!;
+                                          currentPage =
+                                              0; // Reset to first page
+                                        });
+                                      },
+                                      activeColor: blueColor,
+                                    ),
                                   ),
+                                  SizedBox(width: 10),
                                   Text(
                                     'Include Former Tenants',
                                     style: TextStyle(
