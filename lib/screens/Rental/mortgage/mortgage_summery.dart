@@ -463,9 +463,9 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   const SizedBox(height: 20),
 
                   // // Payoff History Section
-                  // _buildPayoffHistorySection(),
-                  //
-                  // const SizedBox(height: 20),
+                  _buildPayoffHistorySection(),
+
+                  const SizedBox(height: 20),
 
                   // Payment Information Section
                   _buildPaymentInfoSection(),

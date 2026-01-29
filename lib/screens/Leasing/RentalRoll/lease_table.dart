@@ -1672,7 +1672,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   });
                                                                 }
                                                               },
-                                                              child: Container(
+                                                              child: 
+                                                              Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1702,6 +1703,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ],
                                                                 ),
                                                               ),
+                                                           
                                                             ),
                                                             const SizedBox(
                                                               width: 5,

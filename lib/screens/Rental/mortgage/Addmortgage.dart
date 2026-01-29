@@ -53,9 +53,11 @@ class AddMortgageScreen extends StatefulWidget {
   // pass the mortgage data to this screen from the previous screen
   final Map<String, dynamic>? mortgageData;
   final String? mortgageId; // For editing existing mortgages
-  final String? propertyId; // Property ID from context (when adding from property page)
+  final String?
+      propertyId; // Property ID from context (when adding from property page)
 
-  const AddMortgageScreen({Key? key, this.mortgageId, this.mortgageData, this.propertyId})
+  const AddMortgageScreen(
+      {Key? key, this.mortgageId, this.mortgageData, this.propertyId})
       : super(key: key);
 
   @override
@@ -134,7 +136,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     'Floating Rate Mortgage',
     'Fixed Rate Mortgage',
   ];
-  String _selectedMortgageType = ''; // Track selected mortgage type for reactive UI
+  String _selectedMortgageType =
+      ''; // Track selected mortgage type for reactive UI
   List<Map<String, dynamic>> _propertyOptions = [];
   bool _isLoadingProperties = false;
 
@@ -189,6 +192,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
 // add the first date picker for the start date
 
+  // Helper function to convert date format pattern to readable hint text
+  // Example: "MM/dd/yyyy" -> "mm/dd/yyyy", "dd-MM-yyyy" -> "dd-mm-yyyy", "yyyy-MM-dd" -> "yyyy-mm-dd"
+  String _getDateHintText(DateProvider dateProvider) {
+    String format = dateProvider.dateFormat;
+    // Convert format pattern to lowercase while preserving separators (/, -, etc.)
+    String hint =
+        format.replaceAll('M', 'm').replaceAll('d', 'd').replaceAll('y', 'y');
+    return hint;
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate,
       {DateTime? firstDate, DateTime? lastDate}) async {
@@ -198,7 +211,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     // Determine the actual firstDate and lastDate
     final actualFirstDate = firstDate ?? DateTime(2000);
     final actualLastDate = lastDate ?? DateTime(2100);
-    
+
     // Ensure initialDate is within the valid range
     DateTime actualInitialDate;
     if (initialDate != null) {
@@ -211,8 +224,10 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       }
     } else {
       // If no initial date, use firstDate if it's valid, otherwise today (but ensure it's within range)
-      if (actualFirstDate.isBefore(today) || actualFirstDate.isAtSameMomentAs(today)) {
-        actualInitialDate = actualFirstDate.isAfter(today) ? actualFirstDate : today;
+      if (actualFirstDate.isBefore(today) ||
+          actualFirstDate.isAtSameMomentAs(today)) {
+        actualInitialDate =
+            actualFirstDate.isAfter(today) ? actualFirstDate : today;
         if (actualInitialDate.isAfter(actualLastDate)) {
           actualInitialDate = actualLastDate;
         }
@@ -257,17 +272,24 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           _startDate = picked;
           controller.text = displayFormat;
           // Clear maturity date if it's before or equal to origination date
-          if (_endDate != null && (_endDate!.isBefore(_startDate!) || _endDate!.isAtSameMomentAs(_startDate!))) {
+          if (_endDate != null &&
+              (_endDate!.isBefore(_startDate!) ||
+                  _endDate!.isAtSameMomentAs(_startDate!))) {
             _endDate = null;
             _endDateController.text = '';
           }
           // Clear fixed interest expiration date if it's invalid (must be strictly between)
           if (_fixedInterestExpirationDate != null && _endDate != null) {
-            final startDateOnly = DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
-            final endDateOnly = DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
-            final expirationDateOnly = DateTime(_fixedInterestExpirationDate!.year, _fixedInterestExpirationDate!.month, _fixedInterestExpirationDate!.day);
-            
-            if (expirationDateOnly.isBefore(startDateOnly) || 
+            final startDateOnly =
+                DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+            final endDateOnly =
+                DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+            final expirationDateOnly = DateTime(
+                _fixedInterestExpirationDate!.year,
+                _fixedInterestExpirationDate!.month,
+                _fixedInterestExpirationDate!.day);
+
+            if (expirationDateOnly.isBefore(startDateOnly) ||
                 expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
                 expirationDateOnly.isAfter(endDateOnly) ||
                 expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
@@ -284,11 +306,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           controller.text = displayFormat;
           // Clear fixed interest expiration date if it's invalid (must be strictly between)
           if (_fixedInterestExpirationDate != null && _startDate != null) {
-            final startDateOnly = DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
-            final endDateOnly = DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
-            final expirationDateOnly = DateTime(_fixedInterestExpirationDate!.year, _fixedInterestExpirationDate!.month, _fixedInterestExpirationDate!.day);
-            
-            if (expirationDateOnly.isBefore(startDateOnly) || 
+            final startDateOnly =
+                DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+            final endDateOnly =
+                DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+            final expirationDateOnly = DateTime(
+                _fixedInterestExpirationDate!.year,
+                _fixedInterestExpirationDate!.month,
+                _fixedInterestExpirationDate!.day);
+
+            if (expirationDateOnly.isBefore(startDateOnly) ||
                 expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
                 expirationDateOnly.isAfter(endDateOnly) ||
                 expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
@@ -597,9 +624,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         final mortgageType = mortgageData['mortgage_type']?.toString() ?? '';
         if (mortgageType.isNotEmpty) {
           // Map API values to dropdown display values
-          if (mortgageType == 'floating_rate' || mortgageType == 'Floating Rate Mortgage') {
+          if (mortgageType == 'floating_rate' ||
+              mortgageType == 'Floating Rate Mortgage') {
             _typeController.text = 'Floating Rate Mortgage';
-          } else if (mortgageType == 'fixed_rate' || mortgageType == 'Fixed Rate Mortgage') {
+          } else if (mortgageType == 'fixed_rate' ||
+              mortgageType == 'Fixed Rate Mortgage') {
             _typeController.text = 'Fixed Rate Mortgage';
           } else {
             // Try to match by partial string
@@ -670,33 +699,34 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
         // Set selected mortgage type for reactive UI
         _selectedMortgageType = _typeController.text;
-        
+
         // Populate conditional fields based on mortgage type
         if (_typeController.text == 'Fixed Rate Mortgage') {
           _fixedInterestPeriodController.text =
               mortgageData['fixed_interest_period']?.toString() ?? '';
-          
+
           if (mortgageData['fixed_interest_expiration_date'] != null &&
-              mortgageData['fixed_interest_expiration_date'].toString().isNotEmpty) {
+              mortgageData['fixed_interest_expiration_date']
+                  .toString()
+                  .isNotEmpty) {
             try {
-              _fixedInterestExpirationDate =
-                  DateTime.parse(mortgageData['fixed_interest_expiration_date']);
+              _fixedInterestExpirationDate = DateTime.parse(
+                  mortgageData['fixed_interest_expiration_date']);
               final dateProvider =
                   Provider.of<DateProvider>(context, listen: false);
-              String apiFormatDate =
-                  DateFormat('yyyy-MM-dd').format(_fixedInterestExpirationDate!);
+              String apiFormatDate = DateFormat('yyyy-MM-dd')
+                  .format(_fixedInterestExpirationDate!);
               _fixedInterestExpirationDateController.text =
                   dateProvider.formatCurrentDate(apiFormatDate);
             } catch (e) {
               _fixedInterestExpirationDateController.text = '';
             }
           }
-          
+
           _spreadOnFloatingRateController.text =
               mortgageData['spread_on_floating_rate']?.toString() ?? '';
         } else if (_typeController.text == 'Floating Rate Mortgage') {
-          _spreadController.text =
-              mortgageData['spread']?.toString() ?? '';
+          _spreadController.text = mortgageData['spread']?.toString() ?? '';
         }
 
         // Format payment dates properly for display using DateProvider
@@ -790,7 +820,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   void _saveForm() async {
     // Validate dates before form validation
     if (_startDate != null && _endDate != null) {
-      if (_endDate!.isBefore(_startDate!) || _endDate!.isAtSameMomentAs(_startDate!)) {
+      if (_endDate!.isBefore(_startDate!) ||
+          _endDate!.isAtSameMomentAs(_startDate!)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Maturity Date must be after Origination Date'),
@@ -800,10 +831,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         return;
       }
     }
-    
+
     // Validate Fixed Interest Expiration Date for Fixed Rate Mortgage
-    if (_selectedMortgageType == 'Fixed Rate Mortgage' || 
-        (_selectedMortgageType.isEmpty && _typeController.text == 'Fixed Rate Mortgage')) {
+    if (_selectedMortgageType == 'Fixed Rate Mortgage' ||
+        (_selectedMortgageType.isEmpty &&
+            _typeController.text == 'Fixed Rate Mortgage')) {
       if (_fixedInterestExpirationDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -815,17 +847,36 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       }
       if (_startDate != null && _endDate != null) {
         // Must be strictly between Origination and Maturity dates (exclusive)
-        final startDateOnly = DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
-        final endDateOnly = DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
-        final expirationDateOnly = DateTime(_fixedInterestExpirationDate!.year, _fixedInterestExpirationDate!.month, _fixedInterestExpirationDate!.day);
-        
-        if (expirationDateOnly.isBefore(startDateOnly) || 
-            expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
-            expirationDateOnly.isAfter(endDateOnly) ||
+        // expDate > startDate AND expDate < endDate
+        final startDateOnly =
+            DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+        final endDateOnly =
+            DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+        final expirationDateOnly = DateTime(
+            _fixedInterestExpirationDate!.year,
+            _fixedInterestExpirationDate!.month,
+            _fixedInterestExpirationDate!.day);
+
+        // Check: expDate > startDate (must be after origination date)
+        if (expirationDateOnly.isBefore(startDateOnly) ||
+            expirationDateOnly.isAtSameMomentAs(startDateOnly)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Fixed interest expiration date must be after origination date'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        // Check: expDate < endDate (must be before maturity date)
+        if (expirationDateOnly.isAfter(endDateOnly) ||
             expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Fixed Interest Expiration Date must be strictly between Origination Date and Maturity Date'),
+              content: Text(
+                  'Fixed interest expiration date must be before maturity date'),
               backgroundColor: Colors.red,
             ),
           );
@@ -833,7 +884,43 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         }
       }
     }
-    
+
+    // Validate Last Payment Date (if provided, cannot be in the future)
+    if (_lastPaymentDate != null) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+      final lastPaymentDateOnly = DateTime(_lastPaymentDate!.year,
+          _lastPaymentDate!.month, _lastPaymentDate!.day);
+
+      if (lastPaymentDateOnly.isAfter(today)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Last payment date cannot be in the future'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
+    // Validate Next Payment Date (if provided, cannot be in the past)
+    if (_nextPaymentDate != null) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+      final nextPaymentDateOnly = DateTime(_nextPaymentDate!.year,
+          _nextPaymentDate!.month, _nextPaymentDate!.day);
+
+      if (nextPaymentDateOnly.isBefore(today)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Next payment date cannot be in the past'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -846,17 +933,22 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
         // Prepare the data according to your API structure
         // If no properties selected but propertyId is available from context, use it
-        List<String> propertyIds = _selectedProperties.map((p) => p['rental_id'].toString()).toList().cast<String>();
-        if (propertyIds.isEmpty && widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+        List<String> propertyIds = _selectedProperties
+            .map((p) => p['rental_id'].toString())
+            .toList()
+            .cast<String>();
+        if (propertyIds.isEmpty &&
+            widget.propertyId != null &&
+            widget.propertyId!.isNotEmpty) {
           propertyIds = [widget.propertyId!];
         }
-        
+
         // Determine mortgage type
-        final mortgageType = _selectedMortgageType.isNotEmpty 
-            ? _selectedMortgageType 
+        final mortgageType = _selectedMortgageType.isNotEmpty
+            ? _selectedMortgageType
             : _typeController.text.trim();
         final isFixedRate = mortgageType == 'Fixed Rate Mortgage';
-        
+
         // Build base mortgage data
         final mortgageData = <String, dynamic>{
           'properties': propertyIds,
@@ -901,14 +993,17 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                   })
               .toList(),
         };
-        
+
         // Add conditional fields based on mortgage type
         if (isFixedRate) {
-          mortgageData['fixed_interest_period'] = _fixedInterestPeriodController.text.trim();
-          mortgageData['fixed_interest_expiration_date'] = _fixedInterestExpirationDate != null
-              ? _fixedInterestExpirationDate!.toIso8601String()
-              : '';
-          mortgageData['spread_on_floating_rate'] = _spreadOnFloatingRateController.text.trim();
+          mortgageData['fixed_interest_period'] =
+              _fixedInterestPeriodController.text.trim();
+          mortgageData['fixed_interest_expiration_date'] =
+              _fixedInterestExpirationDate != null
+                  ? _fixedInterestExpirationDate!.toIso8601String()
+                  : '';
+          mortgageData['spread_on_floating_rate'] =
+              _spreadOnFloatingRateController.text.trim();
         } else {
           mortgageData['spread'] = _spreadController.text.trim();
         }
@@ -1235,18 +1330,25 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     Builder(
                       builder: (context) {
-                        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-                        final exampleDate = dateProvider.formatCurrentDate('2026-01-28');
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final exampleDate =
+                            dateProvider.formatCurrentDate('2026-01-28');
                         // Create hint by replacing digits and letters with placeholder
-                        final dateHint = exampleDate.replaceAll(RegExp(r'\d'), 'X').replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        // final dateHint = exampleDate
+                        //     .replaceAll(RegExp(r'\d'), 'X')
+                        //     .replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        final dateHint = _getDateHintText(dateProvider);
                         return _buildDateField(
                           controller: _startDateController,
                           label: 'Origination Date *',
                           hint: dateHint,
-                          validator: (value) => _validateRequired(value, 'Origination Date'),
+                          validator: (value) =>
+                              _validateRequired(value, 'Origination Date'),
                           onTap: () {
                             final DateTime now = DateTime.now();
-                            final DateTime today = DateTime(now.year, now.month, now.day);
+                            final DateTime today =
+                                DateTime(now.year, now.month, now.day);
                             // Do not allow future dates for Origination Date
                             _selectDate(
                               context,
@@ -1262,9 +1364,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     Builder(
                       builder: (context) {
-                        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-                        final exampleDate = dateProvider.formatCurrentDate('2026-01-28');
-                        final dateHint = exampleDate.replaceAll(RegExp(r'\d'), 'X').replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
                         return _buildDateField(
                           controller: _endDateController,
                           label: 'Maturity Date *',
@@ -1274,7 +1376,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                               return 'Maturity Date is required';
                             }
                             if (_startDate != null && _endDate != null) {
-                              if (_endDate!.isBefore(_startDate!) || _endDate!.isAtSameMomentAs(_startDate!)) {
+                              if (_endDate!.isBefore(_startDate!) ||
+                                  _endDate!.isAtSameMomentAs(_startDate!)) {
                                 return 'Maturity Date must be after Origination Date';
                               }
                             }
@@ -1284,7 +1387,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             if (_startDate == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Please select Origination Date first'),
+                                  content: Text(
+                                      'Please select Origination Date first'),
                                   backgroundColor: Colors.red,
                                 ),
                               );
@@ -1292,7 +1396,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             }
                             // Maturity date must be after origination date
                             // Add 1 day to start date to ensure it's after
-                            final minDate = DateTime(_startDate!.year, _startDate!.month, _startDate!.day).add(const Duration(days: 1));
+                            final minDate = DateTime(_startDate!.year,
+                                    _startDate!.month, _startDate!.day)
+                                .add(const Duration(days: 1));
                             _selectDate(context, _endDateController, _endDate,
                                 firstDate: minDate);
                           },
@@ -1306,22 +1412,26 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         hint: 'Enter amortization period'),
                     const SizedBox(height: 16),
                     // Conditional fields based on mortgage type
-                    if (_selectedMortgageType == 'Fixed Rate Mortgage' || 
-                        (_selectedMortgageType.isEmpty && _typeController.text == 'Fixed Rate Mortgage')) ...[
+                    if (_selectedMortgageType == 'Fixed Rate Mortgage' ||
+                        (_selectedMortgageType.isEmpty &&
+                            _typeController.text == 'Fixed Rate Mortgage')) ...[
                       _buildTextField(
                         controller: _fixedInterestPeriodController,
                         label: 'Fixed Interest Period (months) *',
                         hint: 'Enter fixed interest period in months',
                         keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        validator: (value) => _validateRequired(value, 'Fixed Interest Period'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Fixed Interest Period'),
                       ),
                       const SizedBox(height: 16),
                       Builder(
                         builder: (context) {
-                          final dateProvider = Provider.of<DateProvider>(context, listen: false);
-                          final exampleDate = dateProvider.formatCurrentDate('2026-01-28');
-                          final dateHint = exampleDate.replaceAll(RegExp(r'\d'), 'X').replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                          final dateProvider =
+                              Provider.of<DateProvider>(context, listen: false);
+                          final dateHint = _getDateHintText(dateProvider);
                           return _buildDateField(
                             controller: _fixedInterestExpirationDateController,
                             label: 'Fixed Interest Expiration Date *',
@@ -1330,16 +1440,26 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Fixed Interest Expiration Date is required';
                               }
-                              if (_startDate != null && _endDate != null && _fixedInterestExpirationDate != null) {
+                              if (_startDate != null &&
+                                  _endDate != null &&
+                                  _fixedInterestExpirationDate != null) {
                                 // Must be strictly between Origination and Maturity dates (exclusive)
-                                final startDateOnly = DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
-                                final endDateOnly = DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
-                                final expirationDateOnly = DateTime(_fixedInterestExpirationDate!.year, _fixedInterestExpirationDate!.month, _fixedInterestExpirationDate!.day);
-                                
-                                if (expirationDateOnly.isBefore(startDateOnly) || 
-                                    expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
+                                final startDateOnly = DateTime(_startDate!.year,
+                                    _startDate!.month, _startDate!.day);
+                                final endDateOnly = DateTime(_endDate!.year,
+                                    _endDate!.month, _endDate!.day);
+                                final expirationDateOnly = DateTime(
+                                    _fixedInterestExpirationDate!.year,
+                                    _fixedInterestExpirationDate!.month,
+                                    _fixedInterestExpirationDate!.day);
+
+                                if (expirationDateOnly
+                                        .isBefore(startDateOnly) ||
+                                    expirationDateOnly
+                                        .isAtSameMomentAs(startDateOnly) ||
                                     expirationDateOnly.isAfter(endDateOnly) ||
-                                    expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
+                                    expirationDateOnly
+                                        .isAtSameMomentAs(endDateOnly)) {
                                   return 'Must be strictly between Origination and Maturity dates';
                                 }
                               }
@@ -1349,7 +1469,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                               if (_startDate == null || _endDate == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Please select Origination Date and Maturity Date first'),
+                                    content: Text(
+                                        'Please select Origination Date and Maturity Date first'),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
@@ -1357,21 +1478,30 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                               }
                               // Fixed Interest Expiration Date must be strictly between start and end dates
                               // After origination date (at least 1 day after)
-                              final minDate = DateTime(_startDate!.year, _startDate!.month, _startDate!.day).add(const Duration(days: 1));
+                              final minDate = DateTime(_startDate!.year,
+                                      _startDate!.month, _startDate!.day)
+                                  .add(const Duration(days: 1));
                               // Before maturity date (at least 1 day before)
-                              final maxDate = DateTime(_endDate!.year, _endDate!.month, _endDate!.day).subtract(const Duration(days: 1));
-                              
-                              // Ensure minDate is before maxDate (there's at least 1 day gap between them)
-                              if (minDate.isAfter(maxDate) || minDate.isAtSameMomentAs(maxDate)) {
+                              final maxDate = DateTime(_endDate!.year,
+                                      _endDate!.month, _endDate!.day)
+                                  .subtract(const Duration(days: 1));
+
+                              // Allow 2-day gap: if maturity is exactly 2 days after origination,
+                              // there's still 1 day in between for expiration date
+                              // Only show error if there's less than 2 days gap (i.e., maturity is same day or next day)
+                              final daysDifference =
+                                  _endDate!.difference(_startDate!).inDays;
+                              if (daysDifference < 2) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Maturity Date must be at least 2 days after Origination Date for Fixed Interest Expiration Date'),
+                                    content: Text(
+                                        'Maturity Date must be at least 2 days after Origination Date for Fixed Interest Expiration Date'),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
                                 return;
                               }
-                              
+
                               _selectDate(
                                 context,
                                 _fixedInterestExpirationDateController,
@@ -1389,19 +1519,28 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         label: 'Spread on Floating Rate (%) *',
                         hint: 'Enter spread on floating rate',
                         keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        validator: (value) => _validateRequired(value, 'Spread on Floating Rate'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Spread on Floating Rate'),
                       ),
                       const SizedBox(height: 16),
-                    ] else if (_selectedMortgageType == 'Floating Rate Mortgage' || 
-                               (_selectedMortgageType.isEmpty && _typeController.text == 'Floating Rate Mortgage')) ...[
+                    ] else if (_selectedMortgageType ==
+                            'Floating Rate Mortgage' ||
+                        (_selectedMortgageType.isEmpty &&
+                            _typeController.text ==
+                                'Floating Rate Mortgage')) ...[
                       _buildTextField(
                         controller: _spreadController,
                         label: 'Spread (%) *',
                         hint: 'Enter spread',
                         keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        validator: (value) => _validateRequired(value, 'Spread'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Spread'),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -1425,9 +1564,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     Builder(
                       builder: (context) {
-                        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-                        final exampleDate = dateProvider.formatCurrentDate('2026-01-28');
-                        final dateHint = exampleDate.replaceAll(RegExp(r'\d'), 'X').replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
                         return _buildDateField(
                           controller: _lastPaymentDateController,
                           label: 'Last Payment Date',
@@ -1447,9 +1586,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     Builder(
                       builder: (context) {
-                        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-                        final exampleDate = dateProvider.formatCurrentDate('2026-01-28');
-                        final dateHint = exampleDate.replaceAll(RegExp(r'\d'), 'X').replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
                         return _buildDateField(
                           controller: _nextPaymentDateController,
                           label: 'Next Payment Date',

@@ -13,6 +13,7 @@ import '../../../../provider/dateProvider.dart';
 import '../../../../widgets/CustomTableShimmer.dart';
 import '../../../../widgets/file_viewer.dart';
 import 'Add_DocumentRental.dart';
+import 'Edit_DocumentRental.dart';
 
 class DocumentRentalTable extends StatefulWidget {
   String leaseId;
@@ -98,8 +99,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
             Expanded(
               child: Row(
                 children: [
-                  Text(" Document\nType",
-                      textAlign: TextAlign.center,
+                  Text(" Document\n Title",
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
@@ -108,19 +109,20 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 ],
               ),
             ),
-            Expanded(
-              child: Row(
-                children: [
-                  Text("    Document\n    Name",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                  SizedBox(width: 5),
-                ],
-              ),
-            ),
+            // Expanded(
+            //   child: Row(
+            //     children: [
+            //       Text("    Document\n    Name",
+            //           textAlign: TextAlign.center,
+            //           style: TextStyle(
+            //               color: blueColor,
+            //               fontWeight: FontWeight.bold,
+            //               fontSize: 15)),
+            //       SizedBox(width: 5),
+            //     ],
+            //   ),
+            // ),
+
             Expanded(
               child: InkWell(
                 child: Padding(
@@ -128,12 +130,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: Row(
                     children: [
                       width < 400
-                          ? Text("           Date ",
+                          ? Text("        Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          : Text("           Date ",
+                          : Text("        Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -410,7 +412,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     children: [
                                                       TextSpan(
                                                         text:
-                                                            '${item["file_type"] ?? '-'}',
+                                                            '${item["file_name"] ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -428,7 +430,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                           Expanded(
                                             flex: 2,
                                             child: Text(
-                                              "${item["file_name"]}",
+                                              "${item["signing_status"]}",
                                               style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold,
@@ -437,18 +439,18 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                             ),
                                           ),
                                           SizedBox(width: 20),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              "${dateProvider.formatCurrentDate(item["date_created"])}",
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
+                                          // Expanded(
+                                          //   flex: 0,
+                                          //   child: Text(
+                                          //     "${dateProvider.formatCurrentDate(item["date_created"])}",
+                                          //     style: TextStyle(
+                                          //       color: blueColor,
+                                          //       fontWeight: FontWeight.bold,
+                                          //       fontSize: 14,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          // SizedBox(width: 10),
                                         ],
                                       ),
                                     ),
@@ -482,7 +484,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                'Created By : ',
+                                                                'Tenant Name : ',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -491,8 +493,61 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                                     grey), // Bold and black
                                                           ),
                                                           TextSpan(
+                                                            text: (item["tenantDetails"] !=
+                                                                        null &&
+                                                                    item["tenantDetails"]
+                                                                        is List &&
+                                                                    (item["tenantDetails"]
+                                                                            as List)
+                                                                        .isNotEmpty)
+                                                                ? '${item["tenantDetails"][0]["tenant_firstName"]} ${item["tenantDetails"][0]["tenant_lastName"]}'
+                                                                : 'N/A',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    blueColor), // Bold and black
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 5),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  FaIcon(
+                                                    isRowExpanded
+                                                        ? FontAwesomeIcons
+                                                            .sortUp
+                                                        : FontAwesomeIcons
+                                                            .sortDown,
+                                                    size: 40,
+                                                    color: Colors.transparent,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text.rich(
+                                                      TextSpan(
+                                                        children: [
+                                                          TextSpan(
                                                             text:
-                                                                '${item["adminDetails"]["first_name"]} ${item["adminDetails"]["last_name"]}',
+                                                                'Created On : ',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    grey), // Bold and black
+                                                          ),
+                                                          TextSpan(
+                                                            text: dateProvider
+                                                                .formatCurrentDate(
+                                                                    item[
+                                                                        "date_created"]),
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -513,16 +568,54 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (item["document_name"] !=
+                                                      if (item["document_id"] !=
                                                               null &&
-                                                          item["document_name"]
+                                                          item["document_id"]
                                                               .toString()
                                                               .isNotEmpty) {
+                                                        // Use document_id to construct lease document preview URL
+                                                        final documentId =
+                                                            item["document_id"]
+                                                                .toString();
+                                                        final documentName = item[
+                                                                "file_name"] ??
+                                                            item[
+                                                                "document_name"] ??
+                                                            "Document";
+                                                        // Use mime_type first (actual MIME type), fallback to document_type
+                                                        String? mimeType;
+                                                        if (item["mime_type"] !=
+                                                                null &&
+                                                            item["mime_type"]
+                                                                .toString()
+                                                                .isNotEmpty) {
+                                                          mimeType =
+                                                              item["mime_type"]
+                                                                  .toString();
+                                                        } else if (item[
+                                                                "document_type"] !=
+                                                            null) {
+                                                          final docType = item[
+                                                                  "document_type"]
+                                                              .toString();
+                                                          // Only use document_type if it looks like a MIME type (contains '/')
+                                                          if (docType
+                                                              .contains('/')) {
+                                                            mimeType = docType;
+                                                          }
+                                                        }
+                                                        final previewUrl =
+                                                            '$Api_url/api/lease-document/preview-document/$documentId';
+
+                                                        print(
+                                                            "Opening document preview: $previewUrl");
                                                         FileViewer
                                                             .showReceiptDialog(
-                                                                context,
-                                                                item[
-                                                                    "document_name"]);
+                                                          context,
+                                                          documentName,
+                                                          fileUrl: previewUrl,
+                                                          mimeType: mimeType,
+                                                        );
                                                       } else {
                                                         Fluttertoast.showToast(
                                                           msg:
@@ -562,6 +655,64 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
+                                                  // GestureDetector(
+                                                  //   onTap: () {
+                                                  //     // Navigate to edit screen
+                                                  //     Navigator.of(context)
+                                                  //         .push(
+                                                  //             MaterialPageRoute(
+                                                  //       builder: (context) =>
+                                                  //           EditDocument(
+                                                  //         leaseId:
+                                                  //             widget.leaseId,
+                                                  //         documentData: item,
+                                                  //       ),
+                                                  //     ))
+                                                  //         .then((result) {
+                                                  //       if (result == true) {
+                                                  //         // Refresh the table
+                                                  //         setState(() {
+                                                  //           isLoading = true;
+                                                  //           _futureRentersInsurance =
+                                                  //               fetchRentersInsuranceData();
+                                                  //         });
+                                                  //       }
+                                                  //     });
+                                                  //   },
+                                                  //   child:
+                                                  //    Container(
+                                                  //               height: 35,
+                                                  //               width: 35,
+                                                  //               decoration: BoxDecoration(
+                                                  //                   borderRadius:
+                                                  //                       BorderRadius
+                                                  //                           .circular(
+                                                  //                               8),
+                                                  //                   color: Colors
+                                                  //                       .green
+                                                  //                       .shade50), // color:Colors.grey[100],
+                                                  //               child:
+                                                  //                   const Row(
+                                                  //                 mainAxisAlignment:
+                                                  //                     MainAxisAlignment
+                                                  //                         .center,
+                                                  //                 crossAxisAlignment:
+                                                  //                     CrossAxisAlignment
+                                                  //                         .center,
+                                                  //                 children: [
+                                                  //                   FaIcon(
+                                                  //                     FontAwesomeIcons
+                                                  //                         .edit,
+                                                  //                     size: 15,
+                                                  //                     color: Colors
+                                                  //                         .green,
+                                                  //                   ),
+                                                  //                 ],
+                                                  //               ),
+                                                  //             ),
+                                                  //
+                                                  // ),
+                                                  // SizedBox(width: 10),
                                                   GestureDetector(
                                                     onTap: () {
                                                       // print("calling");
