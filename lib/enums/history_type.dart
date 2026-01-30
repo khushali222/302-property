@@ -2,6 +2,7 @@ enum HistoryType {
   tenant,
   property,
   lease,
+  mortgage,
   applicant;
 
   String get apiPath {
@@ -12,6 +13,8 @@ enum HistoryType {
         return 'property';
       case HistoryType.lease:
         return 'lease';
+      case HistoryType.mortgage:
+        return 'mortgage';
       case HistoryType.applicant:
         return 'applicant';
     }

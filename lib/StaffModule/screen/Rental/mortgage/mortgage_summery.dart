@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/enums/history_type.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/custom_history_table.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -187,10 +189,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                    right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
                 child: titleBar(
                   width: double.infinity,
                   title: 'Mortgage Summary',
@@ -481,7 +485,21 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   //     _buildInfoRow('Status', status.toUpperCase()),
                   //   ],
                   // ),
+                  SizedBox(
+                    height: 20,
+                  ),
 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: CustomHistoryTable(
+                        historyType: HistoryType.mortgage,
+                        entityId: mortgageData!['id'] ??
+                            mortgageData!['_id'] ??
+                            widget.mortgageData!['_id'],
+                        title: 'Mortgage History',
+                        blueColor: blueColor,
+                        itemsPerPage: 10),
+                  ),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -1046,12 +1064,14 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   final amount = payoff['amount'] ?? 0;
                   final dateString = payoff['date']?.toString() ?? '';
                   String formattedDate = 'N/A';
-                  
+
                   if (dateString.isNotEmpty) {
                     try {
                       final date = DateTime.parse(dateString);
-                      final apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
-                      formattedDate = dateProvider.formatCurrentDate(apiFormatDate);
+                      final apiFormatDate =
+                          DateFormat('yyyy-MM-dd').format(date);
+                      formattedDate =
+                          dateProvider.formatCurrentDate(apiFormatDate);
                     } catch (e) {
                       formattedDate = 'Invalid Date';
                     }
@@ -1060,7 +1080,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   String addedBy = 'N/A';
                   if (payoff['added_by'] != null) {
                     if (payoff['added_by'] is Map) {
-                      final addedByData = payoff['added_by'] as Map<String, dynamic>;
+                      final addedByData =
+                          payoff['added_by'] as Map<String, dynamic>;
                       final firstName = addedByData['first_name'] ?? '';
                       final lastName = addedByData['last_name'] ?? '';
                       addedBy = '$firstName $lastName'.trim();
@@ -1088,9 +1109,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border(
-                              left: BorderSide(color: Colors.grey.shade300, width: 1),
-                              right: BorderSide(color: Colors.grey.shade300, width: 1),
-                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                              left: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              right: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
                             ),
                           ),
                           child: Row(
@@ -1120,9 +1144,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Icon(
-                                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                                  isExpanded
+                                      ? Icons.expand_less
+                                      : Icons.expand_more,
                                   color: Colors.grey[600],
                                   size: 20,
                                 ),
@@ -1139,9 +1166,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           decoration: BoxDecoration(
                             color: Colors.grey.shade50,
                             border: Border(
-                              left: BorderSide(color: Colors.grey.shade300, width: 1),
-                              right: BorderSide(color: Colors.grey.shade300, width: 1),
-                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                              left: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              right: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
                             ),
                           ),
                           child: Row(
@@ -1170,5 +1200,4 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       ),
     );
   }
-
 }

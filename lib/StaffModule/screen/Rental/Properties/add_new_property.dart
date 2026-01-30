@@ -3765,8 +3765,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 13
-                                                              : 15),
+                                                              ? 12
+                                                              : 14),
                                                 ),
                                               ],
                                             ),

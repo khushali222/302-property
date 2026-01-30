@@ -142,6 +142,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
   bool _isLoading = false;
 
+  // Store original mortgage data for comparison
+  Map<String, dynamic>? _originalMortgageData;
+
   @override
   void initState() {
     super.initState();
@@ -582,6 +585,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
   void _populateFormWithData(Map<String, dynamic> mortgageData) {
     try {
+      // Store original data for comparison
+      _originalMortgageData = Map<String, dynamic>.from(mortgageData);
       setState(() {
         // Bank Information
         _bankNameController.text = mortgageData['bank_name'] ?? '';
@@ -800,6 +805,224 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
   }
 
+  // Compare current form data with original data
+  bool _hasChanges() {
+    if (_originalMortgageData == null || widget.mortgageId == null) {
+      // If no original data or not in edit mode, consider it as having changes (for new records)
+      return widget.mortgageId == null;
+    }
+
+    try {
+      // We'll build the current data similar to _saveForm
+      List<String> propertyIds = _selectedProperties
+          .map((p) => p['rental_id'].toString())
+          .toList()
+          .cast<String>();
+      if (propertyIds.isEmpty &&
+          widget.propertyId != null &&
+          widget.propertyId!.isNotEmpty) {
+        propertyIds = [widget.propertyId!];
+      }
+
+      final mortgageType = _selectedMortgageType.isNotEmpty
+          ? _selectedMortgageType
+          : _typeController.text.trim();
+      final isFixedRate = mortgageType == 'Fixed Rate Mortgage';
+
+      // Build current mortgage data
+      final currentData = <String, dynamic>{
+        'properties': propertyIds,
+        'bank_name': _bankNameController.text.trim(),
+        'bank_address': _bankAddressController.text.trim(),
+        'bank_contact_no': _bankContactController.text.trim(),
+        'bank_email': _bankEmailController.text.trim(),
+        'relationship_manager_first_name':
+            _managerFirstNameController.text.trim(),
+        'relationship_manager_last_name':
+            _managerLastNameController.text.trim(),
+        'relationship_manager_phone': _managerPhoneController.text.trim(),
+        'relationship_manager_email': _managerEmailController.text.trim(),
+        'mortgage_no': _mortgageNumberController.text.trim(),
+        'mortgage_type': isFixedRate ? 'fixed_rate' : 'floating_rate',
+        'loan_amount': _loanAmountController.text.trim(),
+        'interest_rate': _interestRateController.text.trim(),
+        'start_date': _startDate != null ? _startDate!.toIso8601String() : '',
+        'end_date': _endDate != null ? _endDate!.toIso8601String() : '',
+        'amortization_period': _amortizationPeriodController.text.trim(),
+        'status':
+            _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
+        'remaining_balance': _remainingBalanceController.text.trim(),
+        'last_payment_date':
+            _lastPaymentDate != null ? _lastPaymentDate!.toIso8601String() : '',
+        'next_payment_date':
+            _nextPaymentDate != null ? _nextPaymentDate!.toIso8601String() : '',
+        'borrower_first_name': _borrowerFirstNameController.text.trim(),
+        'borrower_last_name': _borrowerLastNameController.text.trim(),
+        'borrower_ssn': _borrowerSSNController.text.trim(),
+        'borrower_address': _borrowerAddressController.text.trim(),
+        'borrower_phone': _borrowerPhoneController.text.trim(),
+        'borrower_email': _borrowerEmailController.text.trim(),
+        'payoffs': _payoffs
+            .map((payoff) => {
+                  'amount': payoff['amount'],
+                  'date': (payoff['date'] as DateTime).toIso8601String(),
+                  if (payoff['_id'] != null) '_id': payoff['_id'],
+                })
+            .toList(),
+      };
+
+      // Add conditional fields based on mortgage type
+      if (isFixedRate) {
+        currentData['fixed_interest_period'] =
+            _fixedInterestPeriodController.text.trim();
+        currentData['fixed_interest_expiration_date'] =
+            _fixedInterestExpirationDate != null
+                ? _fixedInterestExpirationDate!.toIso8601String()
+                : '';
+        currentData['spread_on_floating_rate'] =
+            _spreadOnFloatingRateController.text.trim();
+      } else {
+        currentData['spread'] = _spreadController.text.trim();
+      }
+
+      // Normalize original data for comparison
+      final originalData = <String, dynamic>{};
+      originalData['properties'] =
+          List<String>.from(_originalMortgageData!['properties'] ?? []);
+      originalData['bank_name'] = _originalMortgageData!['bank_name'] ?? '';
+      originalData['bank_address'] =
+          _originalMortgageData!['bank_address'] ?? '';
+      originalData['bank_contact_no'] =
+          _originalMortgageData!['bank_contact_no'] ?? '';
+      originalData['bank_email'] = _originalMortgageData!['bank_email'] ?? '';
+      originalData['relationship_manager_first_name'] =
+          _originalMortgageData!['relationship_manager_first_name'] ?? '';
+      originalData['relationship_manager_last_name'] =
+          _originalMortgageData!['relationship_manager_last_name'] ?? '';
+      originalData['relationship_manager_phone'] =
+          _originalMortgageData!['relationship_manager_phone'] ?? '';
+      originalData['relationship_manager_email'] =
+          _originalMortgageData!['relationship_manager_email'] ?? '';
+      originalData['mortgage_no'] = _originalMortgageData!['mortgage_no'] ?? '';
+      originalData['mortgage_type'] =
+          _originalMortgageData!['mortgage_type'] ?? '';
+      originalData['loan_amount'] =
+          _originalMortgageData!['loan_amount']?.toString() ?? '';
+      originalData['interest_rate'] =
+          _originalMortgageData!['interest_rate']?.toString() ?? '';
+      originalData['start_date'] =
+          _originalMortgageData!['start_date']?.toString() ?? '';
+      originalData['end_date'] =
+          _originalMortgageData!['end_date']?.toString() ?? '';
+      originalData['amortization_period'] =
+          _originalMortgageData!['amortization_period']?.toString() ?? '';
+      originalData['status'] =
+          _originalMortgageData!['status']?.toString() ?? '';
+      originalData['remaining_balance'] =
+          _originalMortgageData!['remaining_balance']?.toString() ?? '';
+      originalData['last_payment_date'] =
+          _originalMortgageData!['last_payment_date']?.toString() ?? '';
+      originalData['next_payment_date'] =
+          _originalMortgageData!['next_payment_date']?.toString() ?? '';
+      originalData['borrower_first_name'] =
+          _originalMortgageData!['borrower_first_name'] ?? '';
+      originalData['borrower_last_name'] =
+          _originalMortgageData!['borrower_last_name'] ?? '';
+      originalData['borrower_ssn'] =
+          _originalMortgageData!['borrower_ssn'] ?? '';
+      originalData['borrower_address'] =
+          _originalMortgageData!['borrower_address'] ?? '';
+      originalData['borrower_phone'] =
+          _originalMortgageData!['borrower_phone'] ?? '';
+      originalData['borrower_email'] =
+          _originalMortgageData!['borrower_email'] ?? '';
+
+      // Handle payoffs - normalize dates to ISO8601 format for comparison
+      if (_originalMortgageData!['payoffs'] != null &&
+          _originalMortgageData!['payoffs'] is List) {
+        originalData['payoffs'] =
+            (_originalMortgageData!['payoffs'] as List).map((payoff) {
+          String dateStr = '';
+          if (payoff['date'] != null) {
+            try {
+              // If it's already a DateTime object, convert to ISO8601
+              if (payoff['date'] is DateTime) {
+                dateStr = (payoff['date'] as DateTime).toIso8601String();
+              } else {
+                // If it's a string, try to parse and convert to ISO8601
+                dateStr =
+                    DateTime.parse(payoff['date'].toString()).toIso8601String();
+              }
+            } catch (e) {
+              dateStr = payoff['date']?.toString() ?? '';
+            }
+          }
+          return {
+            'amount': payoff['amount'],
+            'date': dateStr,
+            if (payoff['_id'] != null) '_id': payoff['_id'],
+          };
+        }).toList();
+      } else {
+        originalData['payoffs'] = [];
+      }
+
+      // Handle conditional fields
+      if (isFixedRate) {
+        originalData['fixed_interest_period'] =
+            _originalMortgageData!['fixed_interest_period']?.toString() ?? '';
+        originalData['fixed_interest_expiration_date'] =
+            _originalMortgageData!['fixed_interest_expiration_date']
+                    ?.toString() ??
+                '';
+        originalData['spread_on_floating_rate'] =
+            _originalMortgageData!['spread_on_floating_rate']?.toString() ?? '';
+      } else {
+        originalData['spread'] =
+            _originalMortgageData!['spread']?.toString() ?? '';
+      }
+
+      // Compare properties lists
+      final currentProps = List<String>.from(currentData['properties'] ?? [])
+        ..sort();
+      final originalProps = List<String>.from(originalData['properties'] ?? [])
+        ..sort();
+      if (currentProps.toString() != originalProps.toString()) {
+        return true;
+      }
+
+      // Compare payoffs
+      final currentPayoffs = List.from(currentData['payoffs'] ?? []);
+      final originalPayoffs = List.from(originalData['payoffs'] ?? []);
+      if (currentPayoffs.length != originalPayoffs.length) {
+        return true;
+      }
+      for (int i = 0; i < currentPayoffs.length; i++) {
+        final currentPayoff = currentPayoffs[i];
+        final originalPayoff = originalPayoffs[i];
+        if (currentPayoff['amount'] != originalPayoff['amount'] ||
+            currentPayoff['date'] != originalPayoff['date']) {
+          return true;
+        }
+      }
+
+      // Compare all other fields
+      for (String key in currentData.keys) {
+        if (key != 'properties' && key != 'payoffs') {
+          if (currentData[key] != originalData[key]) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    } catch (e) {
+      print('Error comparing data: $e');
+      // If comparison fails, assume there are changes to be safe
+      return true;
+    }
+  }
+
   void _saveForm() async {
     // Validate dates before form validation
     if (_startDate != null && _endDate != null) {
@@ -866,6 +1089,20 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           return;
         }
       }
+    }
+
+    // Check if in edit mode and if there are any changes - do this before business logic validations
+    if (widget.mortgageId != null && !_hasChanges()) {
+      // No changes made, don't call API and skip business logic validations
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No changes detected. Nothing to update.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
     }
 
     // Validate Last Payment Date (if provided, cannot be in the future)
@@ -1687,15 +1924,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                 ),
                               ),
                               child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
+                                  ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
                                     )
                                   : Text(
                                       widget.mortgageId != null

@@ -5,8 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,9 +62,8 @@ class _EditDocumentState extends State<EditDocument> {
     selectedTenantId = widget.documentData['tenant_id']?.toString();
     documentId = widget.documentData['document_id']?.toString() ?? '';
 
-    // If there's an existing file, show it
+    // If there's an existing file, mark it as existing
     if (widget.documentData['document_name'] != null) {
-      _uploadedFileNames = [widget.documentData['document_name']];
       _hasExistingFile = true;
     }
   }
@@ -85,10 +84,8 @@ class _EditDocumentState extends State<EditDocument> {
   ];
   String? selectedValue;
   bool isLoading = false;
-  List<File> _pdfFiles = [];
-
-  List<String> _uploadedFileNames = [];
   String? _fileUploadError;
+  File? _selectedFile; // Store the selected file for upload
 
   // Tenant dropdown variables
   List<Map<String, dynamic>> tenants = [];
@@ -421,36 +418,53 @@ class _EditDocumentState extends State<EditDocument> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          height: 40,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            onPressed: () async {
-                              _pickPdfFiles().then((_) {
+                        if (_selectedFile == null)
+                          GestureDetector(
+                            onTap: () {
+                              _pickFile().then((_) {
                                 setState(() {
-                                  _fileUploadError =
-                                      null; // Clear error when file is selected
-                                  _hasExistingFile = false; // New file uploaded
-                                }); // Rebuild the widget after selecting the image
+                                  _fileUploadError = null;
+                                  _hasExistingFile = false;
+                                });
                               });
                             },
-                            child: Text(
-                              'Upload here',
-                              style: TextStyle(
-                                  color: Color(0xFFf7f8f9),
-                                  fontWeight: FontWeight.bold),
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/Upload.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Click to upload new document',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Supported File Types: PDF, JPG, PNG, GIF, BMP, TIFF, WEBP',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                         if (_fileUploadError != null)
                           Padding(
                             padding: const EdgeInsets.only(left: 14, top: 8),
@@ -462,11 +476,11 @@ class _EditDocumentState extends State<EditDocument> {
                               ),
                             ),
                           ),
-                        if (_hasExistingFile && _uploadedFileNames.isNotEmpty)
+                        if (_hasExistingFile && _selectedFile == null)
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
-                              'Current file: ${_uploadedFileNames.first}',
+                              'Current file: ${widget.documentData['document_name'] ?? 'N/A'}',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
@@ -474,37 +488,65 @@ class _EditDocumentState extends State<EditDocument> {
                               ),
                             ),
                           ),
-                        SingleChildScrollView(
-                          child: Column(
-                            children: _uploadedFileNames.map((fileName) {
-                              int index = _uploadedFileNames.indexOf(fileName);
-                              return ListTile(
-                                title: Text(
-                                  fileName,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF748097),
+                        if (_selectedFile != null) ...[
+                          SizedBox(height: 8),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  style: BorderStyle.solid),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 15),
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 8),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(6),
+                                    border:
+                                        Border.all(color: Colors.grey[300]!),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          _selectedFile!.path.split('/').last,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedFile = null;
+                                            _fileUploadError = null;
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          size: 18,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _uploadedFileNames.removeAt(index);
-                                      _fileUploadError =
-                                          null; // Clear error when file is removed
-                                      _hasExistingFile = false;
-                                    });
-                                  },
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.remove,
-                                    color: Color(0xFF748097),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -586,69 +628,76 @@ class _EditDocumentState extends State<EditDocument> {
     );
   }
 
-  Future<void> _pickPdfFiles() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-      allowMultiple: false,
-    );
-
-    if (result != null) {
-      List<File> files = result.paths
-          .where((path) => path != null)
-          .map((path) => File(path!))
-          .toList();
-
-      if (files.isNotEmpty) {
-        setState(() {
-          _pdfFiles = files;
-        });
-
-        for (var file in _pdfFiles) {
-          await _uploadPdf(file);
-        }
-      }
-    }
-  }
-
-  Future<void> _uploadPdf(File pdfFile) async {
+  Future<void> _pickFile() async {
     try {
-      String? fileName = await uploadPdf(pdfFile);
-      setState(() {
-        if (fileName != null) {
-          if (_uploadedFileNames.isNotEmpty) {
-            _uploadedFileNames.clear();
-          }
-          _uploadedFileNames.add(fileName);
-          _hasExistingFile = false; // New file uploaded
-        }
-      });
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [
+          'pdf',
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'bmp',
+          'tiff',
+          'webp'
+        ],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        File file = File(result.files.single.path!);
+        setState(() {
+          _selectedFile = file;
+        });
+      }
     } catch (e) {
-      print('PDF upload failed: $e');
-      setState(() {
-        _fileUploadError = 'Failed to upload file: $e';
-      });
+      print('Error picking file: $e');
+      Fluttertoast.showToast(
+        msg: 'Error selecting file: ${e.toString()}',
+        toastLength: Toast.LENGTH_SHORT,
+      );
     }
   }
 
-  Future<String?> uploadPdf(File pdfFile) async {
-    final String uploadUrl = '${image_upload_url}/api/images/upload';
-
-    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
-
-    var response = await request.send();
-    var responseData = await http.Response.fromStream(response);
-    print(responseData);
-    var responseBody = json.decode(responseData.body);
-    print(responseBody);
-    if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'File uploaded successfully');
-      List file = responseBody['files'];
-      return file.first["filename"];
-    } else {
-      throw Exception('Failed to upload file: ${responseBody['message']}');
+  String _getMimeType(String filePath) {
+    final extension = filePath.toLowerCase().split('.').last;
+    switch (extension) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'bmp':
+        return 'image/bmp';
+      case 'tiff':
+      case 'tif':
+        return 'image/tiff';
+      case 'webp':
+        return 'image/webp';
+      default:
+        return 'application/octet-stream';
     }
+  }
+
+  bool _isValidFileType(String fileName) {
+    final supportedExtensions = [
+      '.pdf',
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+      '.tiff',
+      '.webp'
+    ];
+    final extension =
+        fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+    return supportedExtensions.contains(extension);
   }
 
   Future<void> fetchTenants() async {
@@ -722,19 +771,35 @@ class _EditDocumentState extends State<EditDocument> {
       }
 
       // Add file if a new file was uploaded
-      if (_uploadedFileNames.isNotEmpty && !_hasExistingFile) {
-        // Get the uploaded file path (we need to track this)
-        // For now, we'll need to upload the file again or use the filename
-        // Since we already uploaded it, we can use the filename
-        // But the API might need the actual file, so let's check if we have the file path
-        if (_pdfFiles.isNotEmpty) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'document',
-              _pdfFiles.first.path,
-            ),
-          );
+      if (_selectedFile != null) {
+        // Validate file type
+        if (!_isValidFileType(_selectedFile!.path)) {
+          setState(() {
+            _fileUploadError =
+                'Unsupported file type. Please select PDF, JPG, PNG, GIF, BMP, TIFF, or WEBP files.';
+            isLoading = false;
+          });
+          return;
         }
+
+        // Get mime type from file extension
+        final mimeType = _getMimeType(_selectedFile!.path);
+        final originalFilename = _selectedFile!.path.split('/').last;
+
+        // Add file with explicit content-type
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'document',
+            _selectedFile!.path,
+            filename: originalFilename,
+            contentType: MediaType.parse(mimeType),
+          ),
+        );
+
+        // Add mime_type field
+        request.fields['mime_type'] = mimeType;
+        request.fields['document_type'] = mimeType;
+        request.fields['original_filename'] = originalFilename;
       }
 
       print(

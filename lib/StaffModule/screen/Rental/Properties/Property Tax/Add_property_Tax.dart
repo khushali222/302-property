@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +13,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../provider/dateProvider.dart';
 import '../../../../widgets/appbar.dart';
@@ -50,10 +52,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
 
   // Status options
   final List<String> _statusOptions = [
-    'Pending',
+    'Due',
     'Paid',
     'Overdue',
-    'Cancelled'
   ];
 
   // Year options (2000 to current year)
@@ -62,38 +63,49 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   bool _isLoading = false;
   bool _hasValidated = false; // Track if validation has been attempted
 
-  String _convertToApiFormat(String displayDate) {
-    if (displayDate.isEmpty) return "";
+  String? _getApiFormatDate(TextEditingController controller,
+      DateTime? storedDate, DateProvider dateProvider) {
+    // If we have the stored DateTime object, use it directly
+    if (storedDate != null) {
+      return DateFormat('yyyy-MM-dd').format(storedDate);
+    }
+
+    // Otherwise, parse from the controller text using DateProvider
+    if (controller.text.isEmpty) return null;
+
     try {
-      DateTime? parsedDate;
+      String displayDate = controller.text.trim();
 
-      // Try to parse the date using common formats
-      List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
-        'yyyy-MM-dd',
-        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
-        'dd/MM/yyyy',
-        'dd-MM-yyyy',
-        'dd/MMM/yyyy' // Added for current format
-      ];
+      // Try to parse using DateProvider's dateFormat
+      try {
+        // Parse using the current date format from DateProvider
+        DateTime parsedDate =
+            DateFormat(dateProvider.dateFormat).parse(displayDate);
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } catch (e) {
+        // If that fails, try common formats
+        List<String> dateFormats = [
+          'MM/dd/yyyy',
+          'MM-dd-yyyy',
+          'yyyy-MM-dd',
+          'dd/MM/yyyy',
+          'dd-MM-yyyy',
+        ];
 
-      for (String format in dateFormats) {
-        try {
-          parsedDate = DateFormat(format).parse(displayDate);
-          break;
-        } catch (e) {
-          continue;
+        for (String format in dateFormats) {
+          try {
+            DateTime parsedDate = DateFormat(format).parse(displayDate);
+            return DateFormat('yyyy-MM-dd').format(parsedDate);
+          } catch (e) {
+            continue;
+          }
         }
       }
 
-      if (parsedDate != null) {
-        return DateFormat('yyyy-MM-dd').format(parsedDate);
-      } else {
-        return displayDate; // Return original if parsing fails
-      }
+      return null; // Return null if parsing fails
     } catch (e) {
-      return displayDate; // Return original if parsing fails
+      print('Error parsing date: $e');
+      return null;
     }
   }
 
@@ -203,7 +215,14 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         _assessmentController.text =
             taxData['assessment_value']?.toString() ?? '';
         _taxYearController.text = taxData['tax_year']?.toString() ?? '';
-        _statusController.text = taxData['status'] ?? '';
+
+        // Handle status - add to options if not present (for old data compatibility)
+        String status = taxData['status'] ?? '';
+        if (status.isNotEmpty && !_statusOptions.contains(status)) {
+          _statusOptions.add(status);
+        }
+        _statusController.text = status;
+
         _notesController.text = taxData['notes'] ?? '';
 
         // Handle existing receipt
@@ -211,6 +230,36 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         if (_existingReceipt != null && _existingReceipt!.isNotEmpty) {
           _uploadedFileNames.add(_existingReceipt!);
         }
+
+        // Store initial values for change detection
+        // Normalize dates to API format (yyyy-MM-dd) for comparison
+        String? normalizeDateForStorage(dynamic dateValue) {
+          if (dateValue == null || dateValue.toString().isEmpty) return null;
+          try {
+            // If it's already in yyyy-MM-dd format, return as is
+            if (dateValue.toString().length == 10 &&
+                dateValue.toString().contains('-')) {
+              return dateValue.toString().substring(0, 10);
+            }
+            // Otherwise parse and format
+            final date = DateTime.parse(dateValue.toString());
+            return DateFormat('yyyy-MM-dd').format(date);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        _initialValues = {
+          'tax_authority': _taxAuthorityController.text.trim(),
+          'tax_amount': taxData['tax_amount']?.toString() ?? '',
+          'assessment_value': taxData['assessment_value']?.toString() ?? '',
+          'tax_year': _taxYearController.text.trim(),
+          'status': _statusController.text.trim(),
+          'notes': _notesController.text.trim(),
+          'due_date': normalizeDateForStorage(taxData['due_date']),
+          'paid_date': normalizeDateForStorage(taxData['paid_date']),
+          'receipt': _existingReceipt,
+        };
 
         // Handle dates using DateProvider
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -249,31 +298,18 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       _hasValidated = true;
     });
 
-    // Manual validation
+    // Validate required fields only (Tax Year and Tax Amount)
     bool isValid = true;
 
-    // Validate all required fields
+    // Validate Tax Year (required)
     if (_taxYearController.text.trim().isEmpty) {
       isValid = false;
     }
-    if (_taxAuthorityController.text.trim().isEmpty) {
-      isValid = false;
-    }
+
+    // Validate Tax Amount (required)
     if (_taxAmountController.text.trim().isEmpty) {
       isValid = false;
-    }
-    if (_assessmentController.text.trim().isEmpty) {
-      isValid = false;
-    }
-    if (_dueDateController.text.trim().isEmpty) {
-      isValid = false;
-    }
-    if (_statusController.text.trim().isEmpty) {
-      isValid = false;
-    }
-
-    // Validate amount fields
-    if (_taxAmountController.text.isNotEmpty) {
+    } else {
       final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
       if (!amountRegex.hasMatch(_taxAmountController.text)) {
         isValid = false;
@@ -286,173 +322,330 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       }
     }
 
-    if (_assessmentController.text.isNotEmpty) {
-      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
-      if (!amountRegex.hasMatch(_assessmentController.text)) {
-        isValid = false;
-      } else {
-        final amount =
-            double.tryParse(_assessmentController.text.replaceAll('\$', ''));
-        if (amount == null || amount <= 0) {
-          isValid = false;
+    if (!isValid) {
+      print('=== VALIDATION FAILED ===');
+      print('Required fields validation failed');
+      return;
+    }
+
+    print('=== VALIDATION PASSED ===');
+
+    // Get DateProvider for date conversion
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
+    // Check if in edit mode and no changes were made
+    if (widget.taxId != null && _initialValues != null) {
+      final currentDueDate =
+          _getApiFormatDate(_dueDateController, _dueDate, dateProvider);
+      final currentPaidDate =
+          _getApiFormatDate(_paidDateController, _paidDate, dateProvider);
+      final currentReceipt =
+          _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null;
+
+      final currentValues = {
+        'tax_authority': _taxAuthorityController.text.trim(),
+        'tax_amount': _taxAmountController.text.replaceAll('\$', ''),
+        'assessment_value': _assessmentController.text.replaceAll('\$', ''),
+        'tax_year': _taxYearController.text.trim(),
+        'status': _statusController.text.trim(),
+        'notes': _notesController.text.trim(),
+        'due_date': currentDueDate,
+        'paid_date': currentPaidDate,
+        'receipt': currentReceipt,
+      };
+
+      // Compare values (normalize amounts for comparison)
+      bool hasChanges = false;
+
+      // Helper function to normalize strings (handle null/empty)
+      String normalizeString(dynamic value) {
+        if (value == null) return '';
+        return value.toString().trim();
+      }
+
+      // Helper function to normalize amounts (compare as doubles)
+      bool compareAmounts(dynamic initial, String? current) {
+        if (current == null) current = '';
+        if (initial == null &&
+            (current.isEmpty || current == '0' || current == '0.0'))
+          return true;
+        if (initial == null) return false;
+
+        final initialStr = initial.toString().replaceAll('\$', '').trim();
+        final currentStr = current.replaceAll('\$', '').trim();
+
+        if (initialStr.isEmpty &&
+            (currentStr.isEmpty || currentStr == '0' || currentStr == '0.0'))
+          return true;
+        if (initialStr.isEmpty || currentStr.isEmpty) return false;
+
+        final initialAmount = double.tryParse(initialStr) ?? 0.0;
+        final currentAmount = double.tryParse(currentStr) ?? 0.0;
+
+        return initialAmount == currentAmount;
+      }
+
+      // Helper function to normalize dates (handle null and format)
+      String? normalizeDate(dynamic value) {
+        if (value == null || value.toString().isEmpty) return null;
+        try {
+          String dateStr = value.toString().trim();
+          // If it's already in yyyy-MM-dd format, return as is
+          if (dateStr.length >= 10 && dateStr.contains('-')) {
+            return dateStr.substring(0, 10);
+          }
+          // Try to parse and format
+          final date = DateTime.parse(dateStr);
+          return DateFormat('yyyy-MM-dd').format(date);
+        } catch (e) {
+          return null;
         }
+      }
+
+      // Compare each field independently (not using else if to check all fields)
+      String initialAuth = normalizeString(_initialValues!['tax_authority']);
+      String currentAuth = normalizeString(currentValues['tax_authority']);
+      if (initialAuth != currentAuth) {
+        print('Change detected: tax_authority ($initialAuth != $currentAuth)');
+        hasChanges = true;
+      }
+
+      if (!compareAmounts(
+          _initialValues!['tax_amount'], currentValues['tax_amount'])) {
+        print(
+            'Change detected: tax_amount (${_initialValues!['tax_amount']} != ${currentValues['tax_amount']})');
+        hasChanges = true;
+      }
+
+      if (!compareAmounts(_initialValues!['assessment_value'],
+          currentValues['assessment_value'])) {
+        print(
+            'Change detected: assessment_value (${_initialValues!['assessment_value']} != ${currentValues['assessment_value']})');
+        hasChanges = true;
+      }
+
+      String initialYear = normalizeString(_initialValues!['tax_year']);
+      String currentYear = normalizeString(currentValues['tax_year']);
+      if (initialYear != currentYear) {
+        print('Change detected: tax_year ($initialYear != $currentYear)');
+        hasChanges = true;
+      }
+
+      String initialStatus = normalizeString(_initialValues!['status']);
+      String currentStatus = normalizeString(currentValues['status']);
+      if (initialStatus != currentStatus) {
+        print('Change detected: status ($initialStatus != $currentStatus)');
+        hasChanges = true;
+      }
+
+      String initialNotes = normalizeString(_initialValues!['notes']);
+      String currentNotes = normalizeString(currentValues['notes']);
+      if (initialNotes != currentNotes) {
+        print('Change detected: notes ($initialNotes != $currentNotes)');
+        hasChanges = true;
+      }
+
+      String? initialDueDate = normalizeDate(_initialValues!['due_date']);
+      String? currentDueDateNormalized =
+          normalizeDate(currentValues['due_date']);
+      if (initialDueDate != currentDueDateNormalized) {
+        print(
+            'Change detected: due_date ($initialDueDate != $currentDueDateNormalized)');
+        hasChanges = true;
+      }
+
+      String? initialPaidDate = normalizeDate(_initialValues!['paid_date']);
+      String? currentPaidDateNormalized =
+          normalizeDate(currentValues['paid_date']);
+      if (initialPaidDate != currentPaidDateNormalized) {
+        print(
+            'Change detected: paid_date ($initialPaidDate != $currentPaidDateNormalized)');
+        hasChanges = true;
+      }
+
+      String initialReceipt = normalizeString(_initialValues!['receipt']);
+      String currentReceiptNormalized =
+          normalizeString(currentValues['receipt']);
+      if (initialReceipt != currentReceiptNormalized) {
+        print(
+            'Change detected: receipt ($initialReceipt != $currentReceiptNormalized)');
+        hasChanges = true;
+      }
+
+      print('=== CHANGE DETECTION DEBUG ===');
+      print('Initial Values: $_initialValues');
+      print('Current Values: $currentValues');
+      print('Has Changes: $hasChanges');
+
+      if (!hasChanges) {
+        print('=== NO CHANGES DETECTED - STOPPING HERE ===');
+        print('No changes made to the form. Skipping API call.');
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: "No changes were made",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.orange,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+        // Explicitly return to prevent API call
+        print('=== RETURNING - API CALL WILL NOT BE MADE ===');
+        return;
+      } else {
+        print('=== CHANGES DETECTED - PROCEEDING WITH API CALL ===');
       }
     }
 
-    if (isValid) {
-      print('=== VALIDATION PASSED ===');
-      setState(() {
-        _isLoading = true;
-      });
+    // Only reach here if creating new record OR if changes were detected in edit mode
+    print('=== PROCEEDING TO API CALL ===');
+    setState(() {
+      _isLoading = true;
+    });
 
-      try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? token = prefs.getString('token');
-        String? id = prefs.getString('adminId');
-        String? satffid = prefs.getString("staff_id");
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      String? satffid = prefs.getString("staff_id");
 
-        print('Token: ${token != null ? "Present" : "Missing"}');
-        print('Admin ID: ${id != null ? "Present" : "Missing"}');
+      print('Token: ${token != null ? "Present" : "Missing"}');
+      print('Admin ID: ${id != null ? "Present" : "Missing"}');
 
-        // Prepare the tax data according to your API structure
-        final taxData = {
-          'propertyId': widget.propertyId, // Include property ID
-          'admin_id': id, // Add admin_id field
-          'tax_authority': _taxAuthorityController.text.trim(),
-          'tax_amount':
-              double.tryParse(_taxAmountController.text.replaceAll('\$', '')) ??
-                  0.0,
-          'assessment_value': double.tryParse(
-                  _assessmentController.text.replaceAll('\$', '')) ??
-              0.0,
-          'tax_year': _taxYearController.text.trim(),
-          'due_date': _dueDateController.text.isNotEmpty
-              ? _convertToApiFormat(_dueDateController.text.trim())
-              : null,
-          'paid_date': _paidDateController.text.isNotEmpty
-              ? _convertToApiFormat(_paidDateController.text.trim())
-              : null,
-          'status':
-              _statusController.text.trim(), // Keep original capitalization
-          'notes': _notesController.text.trim(),
-          'receipt':
-              _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null,
-        };
+      // Prepare the tax data according to your API structure
+      final taxData = {
+        'propertyId': widget.propertyId, // Include property ID
+        'admin_id': id, // Add admin_id field
+        'tax_authority': _taxAuthorityController.text.trim(),
+        'tax_amount':
+            double.tryParse(_taxAmountController.text.replaceAll('\$', '')) ??
+                0.0,
+        'assessment_value':
+            double.tryParse(_assessmentController.text.replaceAll('\$', '')) ??
+                0.0,
+        'tax_year': _taxYearController.text.trim(),
+        'due_date':
+            _getApiFormatDate(_dueDateController, _dueDate, dateProvider),
+        'paid_date':
+            _getApiFormatDate(_paidDateController, _paidDate, dateProvider),
+        'status': _statusController.text.trim(), // Keep original capitalization
+        'notes': _notesController.text.trim(),
+        'receipt':
+            _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null,
+      };
 
-        print('=== TAX DATA TO SEND ===');
-        print('Property ID: ${widget.propertyId}');
-        print('Admin ID: $id');
-        print('Tax Authority: ${_taxAuthorityController.text.trim()}');
-        print('Tax Amount: ${_taxAmountController.text}');
-        print('Assessment Value: ${_assessmentController.text}');
-        print('Tax Year: ${_taxYearController.text.trim()}');
-        print('Due Date: ${_dueDateController.text}');
-        print('Paid Date: ${_paidDateController.text}');
-        print('Status: ${_statusController.text.trim()}');
-        print('Notes: ${_notesController.text.trim()}');
+      print('=== TAX DATA TO SEND ===');
+      print('Property ID: ${widget.propertyId}');
+      print('Admin ID: $id');
+      print('Tax Authority: ${_taxAuthorityController.text.trim()}');
+      print('Tax Amount: ${_taxAmountController.text}');
+      print('Assessment Value: ${_assessmentController.text}');
+      print('Tax Year: ${_taxYearController.text.trim()}');
+      print('Due Date: ${_dueDateController.text}');
+      print('Paid Date: ${_paidDateController.text}');
+      print('Status: ${_statusController.text.trim()}');
+      print('Notes: ${_notesController.text.trim()}');
+      print(
+          'Receipt: ${_uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "None"}');
+      print('Full Tax Data: $taxData');
+
+      http.Response response;
+      String apiUrl = '$Api_url/api/taxes';
+
+      print('=== API REQUEST ===');
+      print('API URL: $apiUrl');
+      print('Is Edit Mode: ${widget.taxId != null}');
+
+      if (widget.taxId != null) {
+        // Update existing tax (PUT)
+        print('Making PUT request to: $apiUrl/${widget.taxId}');
+        response = await http
+            .put(
+              Uri.parse('$apiUrl/${widget.taxId}'),
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'CRM $token',
+                'id': 'CRM $satffid',
+              },
+              body: json.encode(taxData),
+            )
+            .timeout(const Duration(seconds: 30));
+      } else {
+        // Create new tax (POST)
+        print('Making POST request to: $apiUrl');
+        response = await http
+            .post(
+              Uri.parse(apiUrl),
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'CRM $token',
+                'id': 'CRM $satffid',
+              },
+              body: json.encode(taxData),
+            )
+            .timeout(const Duration(seconds: 30));
+      }
+
+      print('=== API RESPONSE ===');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('=== SUCCESS ===');
         print(
-            'Receipt: ${_uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "None"}');
-        print('Full Tax Data: $taxData');
-
-        http.Response response;
-        String apiUrl = '$Api_url/api/taxes';
-
-        print('=== API REQUEST ===');
-        print('API URL: $apiUrl');
-        print('Is Edit Mode: ${widget.taxId != null}');
-
-        if (widget.taxId != null) {
-          // Update existing tax (PUT)
-          print('Making PUT request to: $apiUrl/${widget.taxId}');
-          response = await http
-              .put(
-                Uri.parse('$apiUrl/${widget.taxId}'),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'authorization': 'CRM $token',
-                  'id': 'CRM $satffid',
-                },
-                body: json.encode(taxData),
-              )
-              .timeout(const Duration(seconds: 30));
-        } else {
-          // Create new tax (POST)
-          print('Making POST request to: $apiUrl');
-          response = await http
-              .post(
-                Uri.parse(apiUrl),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'authorization': 'CRM $token',
-                  'id': 'CRM $satffid',
-                },
-                body: json.encode(taxData),
-              )
-              .timeout(const Duration(seconds: 30));
-        }
-
-        print('=== API RESPONSE ===');
-        print('Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          print('=== SUCCESS ===');
-          print(
-              'Tax record ${widget.taxId != null ? "updated" : "created"} successfully!');
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(widget.taxId != null
-                    ? 'Tax record updated successfully!'
-                    : 'Tax record created successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            print('=== NAVIGATING BACK ===');
-            Navigator.pop(context);
-          }
-        } else {
-          print('=== ERROR ===');
-          print('Failed to save tax record. Status: ${response.statusCode}');
-          // Reset validation flag if form submission fails
-          setState(() {
-            _hasValidated = false;
-          });
-          if (mounted) {
-            final errorData = json.decode(response.body);
-            final errorMessage =
-                errorData['message'] ?? 'Failed to save tax record';
-            print('Error Message: $errorMessage');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(errorMessage),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        }
-      } catch (e) {
-        print('=== EXCEPTION ===');
-        print('Exception occurred: $e');
+            'Tax record ${widget.taxId != null ? "updated" : "created"} successfully!');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error saving tax record: ${e.toString()}'),
+              content: Text(widget.taxId != null
+                  ? 'Tax record updated successfully!'
+                  : 'Tax record created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          print('=== NAVIGATING BACK ===');
+          Navigator.pop(context);
+        }
+      } else {
+        print('=== ERROR ===');
+        print('Failed to save tax record. Status: ${response.statusCode}');
+        // Reset validation flag if form submission fails
+        setState(() {
+          _hasValidated = false;
+        });
+        if (mounted) {
+          final errorData = json.decode(response.body);
+          final errorMessage =
+              errorData['message'] ?? 'Failed to save tax record';
+          print('Error Message: $errorMessage');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
               backgroundColor: Colors.red,
             ),
           );
         }
-      } finally {
-        print('=== FINALLY BLOCK ===');
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
       }
-    } else {
-      print('=== VALIDATION FAILED ===');
-      print('Form validation failed, not submitting');
+    } catch (e) {
+      print('=== EXCEPTION ===');
+      print('Exception occurred: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving tax record: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      print('=== FINALLY BLOCK ===');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
     print('=== SAVE FORM ENDED ===');
   }
@@ -465,6 +658,10 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   List<String> _uploadedFileNames = [];
   List<String> _imageUrls = [];
   String? _existingReceipt; // Store existing receipt filename from API
+
+  // Store initial values for change detection in edit mode
+  Map<String, dynamic>? _initialValues;
+
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -571,11 +768,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       }
 
       String? fileName = await uploadImage(imageFile);
-      setState(() {
-        _uploadedFileNames.add(fileName!);
-        _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
-      });
+      if (fileName != null) {
+        setState(() {
+          _uploadedFileNames.add(fileName);
+          _uploadedFileName = fileName;
+          _imageUrls.add(fileName);
+        });
+      }
     } catch (e) {
       print('Image upload failed: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -646,27 +845,27 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                         ? 'Update tax record details'
                         : 'Add new tax record for this property'),
                     const SizedBox(height: 16),
-                    _buildDropdownField(
+                    // _buildDropdownField(
+                    //   controller: _taxYearController,
+                    //   label: 'Tax Year *',
+                    //   hint: 'Select tax year',
+                    //   validator: (value) =>
+                    //       _validateRequired(value, 'Tax year'),
+                    //   items: _yearOptions,
+                    // ),
+                    _buildTextField(
                       controller: _taxYearController,
                       label: 'Tax Year *',
                       hint: 'Select tax year',
                       validator: (value) =>
                           _validateRequired(value, 'Tax year'),
-                      items: _yearOptions,
                     ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _taxAuthorityController,
-                      label: 'Tax Authority *',
-                      hint: 'Enter tax authority',
-                      validator: (value) =>
-                          _validateRequired(value, 'Tax authority'),
-                    ),
+
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _taxAmountController,
                       label: 'Tax Amount *',
-                      hint: '\$Enter Tax amount',
+                      hint: '\$ Enter Tax amount',
                       keyboardType: TextInputType.number,
                       validator: _validateAmount,
                       inputFormatters: [
@@ -675,11 +874,16 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
+                      controller: _taxAuthorityController,
+                      label: 'Tax Authority',
+                      hint: 'Enter tax authority',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
                       controller: _assessmentController,
-                      label: 'Assessment Value *',
-                      hint: '\$Enter assessment value',
+                      label: 'Assessment Value',
+                      hint: '\$ Enter assessment value',
                       keyboardType: TextInputType.number,
-                      validator: _validateAmount,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
@@ -687,14 +891,12 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                     const SizedBox(height: 16),
                     _buildDateField(
                       controller: _dueDateController,
-                      label: 'Due Date *',
+                      label: 'Due Date',
                       hint: Provider.of<DateProvider>(context, listen: false)
                           .dateFormat
                           .toUpperCase(),
                       onTap: () =>
                           _selectDate(context, _dueDateController, _dueDate),
-                      validator: (value) =>
-                          _validateRequired(value, 'Due date'),
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
@@ -709,7 +911,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                     const SizedBox(height: 16),
                     _buildDropdownField(
                       controller: _statusController,
-                      label: 'Status *',
+                      label: 'Status',
                       hint: 'Select status',
                       validator: (value) => _validateRequired(value, 'Status'),
                       items: _statusOptions,
@@ -933,15 +1135,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                                 ),
                               ),
                               child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
+                                  ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
                                     )
                                   : Text(
                                       widget.taxId != null ? 'Update' : 'Save',
@@ -1154,7 +1350,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         const SizedBox(height: 8),
         DropdownButtonHideUnderline(
           child: Material(
-            elevation: 3,
+            // elevation: 3,
             borderRadius: BorderRadius.circular(8),
             child: DropdownButton2<String>(
               isExpanded: true,
@@ -1199,7 +1395,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFF8A95A8),
+                    color: Colors.grey[300]!,
                   ),
                   color: Colors.white,
                 ),

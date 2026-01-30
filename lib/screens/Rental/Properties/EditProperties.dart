@@ -4349,8 +4349,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 13
-                                                              : 15),
+                                                              ? 12
+                                                              : 14),
                                                 ),
                                               ],
                                             ),

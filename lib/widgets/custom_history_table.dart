@@ -804,6 +804,40 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           descriptionWithoutBodyPreview, bodyPreviewValue);
     }
 
+    // Pattern 0.8: Check for mortgage history format with "Changes:" and old → new values
+    // Format: "Mortgage updated by X: ... Changes: Field: \"old\" → \"new\"; Field2: \"old2\" → \"new2\""
+    if (widget.historyType == HistoryType.mortgage &&
+        descriptionWithoutBodyPreview.contains('Changes:')) {
+      final changesIndex = descriptionWithoutBodyPreview.indexOf('Changes:');
+      final header =
+          descriptionWithoutBodyPreview.substring(0, changesIndex).trim();
+      final changesText = descriptionWithoutBodyPreview
+          .substring(changesIndex + 'Changes:'.length)
+          .trim();
+
+      if (header.isNotEmpty) {
+        details.add(header);
+      }
+
+      // Split changes by semicolon, preserving the old → new format
+      final changes = changesText
+          .split(';')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      details.addAll(changes);
+
+      // Add body preview at the end if it exists
+      if (bodyPreviewValue.isNotEmpty) {
+        bodyPreviewValue = bodyPreviewValue.replaceAll(RegExp(r'<[^>]+>'), '');
+        bodyPreviewValue = bodyPreviewValue.replaceAll('**', '');
+        bodyPreviewValue = bodyPreviewValue.replaceAll('&nbsp;', ' ');
+        details.add('Body preview: $bodyPreviewValue');
+      }
+
+      return details;
+    }
+
     // Pattern 1: Check for "Changes:" which indicates field changes
     final changesIndex = descriptionWithoutBodyPreview.indexOf('Changes:');
     if (changesIndex != -1) {
@@ -2122,7 +2156,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           firstItemLower.startsWith('payment created') ||
           firstItemLower.startsWith('lease created') ||
           firstItemLower.startsWith('tenant moved out') ||
-          firstItemLower.startsWith('tenant updated')) {
+          firstItemLower.startsWith('tenant updated') ||
+          firstItemLower.startsWith('mortgage updated')) {
         hasHeader = true;
         headerText = firstItem;
         detailItems = parsedDetails.sublist(1);
@@ -2153,7 +2188,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header - wrap properly to prevent awkward text breaking
           Text(
             headerText,
             style: const TextStyle(
@@ -2161,6 +2196,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
+            softWrap: true,
+            overflow: TextOverflow.visible,
           ),
           // Details (indented)
           if (detailItems.isNotEmpty)
@@ -2211,6 +2248,130 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                   if (colonIndex > 0 && colonIndex < detail.length - 1) {
                     final key = detail.substring(0, colonIndex).trim();
                     final value = detail.substring(colonIndex + 1).trim();
+
+                    // Special handling for mortgage history: parse "old" → "new" format
+                    if (widget.historyType == HistoryType.mortgage &&
+                        value.contains('→')) {
+                      // Parse format: "old" → "new" or "old" → "new" (with quotes)
+                      final arrowIndex = value.indexOf('→');
+                      if (arrowIndex > 0) {
+                        final oldValuePart =
+                            value.substring(0, arrowIndex).trim();
+                        final newValuePart =
+                            value.substring(arrowIndex + 1).trim();
+
+                        // Remove quotes if present
+                        String oldValue =
+                            oldValuePart.replaceAll('"', '').trim();
+                        String newValue =
+                            newValuePart.replaceAll('"', '').trim();
+
+                        // If old value is empty or same as new, it might be an addition (like "Added new payoff...")
+                        if (oldValue.isEmpty ||
+                            oldValue == newValue ||
+                            !oldValuePart.contains('"')) {
+                          // This is an addition, not a change - show as plain text
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom: index < detailItems.length - 1 ? 4 : 0,
+                                left: isEntryItem && !isEntryDetailsHeader
+                                    ? 16.0
+                                    : 0.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '$key: ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        // Render old → new with colors - inline layout like web
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: index < detailItems.length - 1 ? 6 : 0,
+                              left: isEntryItem && !isEntryDetailsHeader
+                                  ? 16.0
+                                  : 0.0),
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              // Key label
+                              Text(
+                                '$key: ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              // Old value in red background
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade100,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  oldValue,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.red.shade900,
+                                  ),
+                                ),
+                              ),
+                              // Arrow
+                              Text(
+                                ' → ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              // New value in green background
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade100,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  newValue,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.green.shade900,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
 
                     return Padding(
                       padding: EdgeInsets.only(
@@ -2290,6 +2451,121 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         if (colonIndex > 0 && colonIndex < displayDetail.length - 1) {
           final key = displayDetail.substring(0, colonIndex).trim();
           final value = displayDetail.substring(colonIndex + 1).trim();
+
+          // Special handling for mortgage history: parse "old" → "new" format
+          if (widget.historyType == HistoryType.mortgage &&
+              value.contains('→')) {
+            final arrowIndex = value.indexOf('→');
+            if (arrowIndex > 0) {
+              final oldValuePart = value.substring(0, arrowIndex).trim();
+              final newValuePart = value.substring(arrowIndex + 1).trim();
+
+              // Remove quotes if present
+              String oldValue = oldValuePart.replaceAll('"', '').trim();
+              String newValue = newValuePart.replaceAll('"', '').trim();
+
+              // If old value is empty or same as new, it might be an addition
+              if (oldValue.isEmpty ||
+                  oldValue == newValue ||
+                  !oldValuePart.contains('"')) {
+                // This is an addition, not a change - show as plain text
+                return Padding(
+                  padding: EdgeInsets.only(
+                      left: isIndented ? 16.0 : 0.0,
+                      bottom: index < parsedDetails.length - 1 ? 6 : 0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$key: ',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Render old → new with colors - inline layout like web
+              return Padding(
+                padding: EdgeInsets.only(
+                    left: isIndented ? 16.0 : 0.0,
+                    bottom: index < parsedDetails.length - 1 ? 6 : 0),
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    // Key label
+                    Text(
+                      '$key: ',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    // Old value in red background
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        oldValue,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.red.shade900,
+                        ),
+                      ),
+                    ),
+                    // Arrow
+                    const Text(
+                      ' → ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    // New value in green background
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        newValue,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.green.shade900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          }
 
           // Special handling: Body preview value should be displayed as plain text
           // Don't parse nested key-values inside it (like Email Address:, Password:, etc.)
@@ -2540,6 +2816,18 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            "     Description",
+                            style: TextStyle(
+                              color: widget.blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
                           ),
                         ),
