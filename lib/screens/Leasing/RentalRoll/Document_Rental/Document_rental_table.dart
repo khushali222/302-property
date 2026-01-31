@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../widgets/CustomTableShimmer.dart';
@@ -980,23 +981,29 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   Future<void> downloadDocument(
       String documentId, String fileName, String mimeType) async {
     try {
+      if (!mounted) return; // Check if widget is still mounted
+      
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
       if (token == null || adminId == null) {
-        Fluttertoast.showToast(
-          msg: "Authentication error",
-          backgroundColor: Colors.red,
-        );
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: "Authentication error",
+            backgroundColor: Colors.red,
+          );
+        }
         return;
       }
 
       // Show loading toast
-      Fluttertoast.showToast(
-        msg: "Downloading document...",
-        backgroundColor: Colors.blue,
-      );
+      if (mounted) {
+        Fluttertoast.showToast(
+          msg: "Downloading document...",
+          backgroundColor: Colors.blue,
+        );
+      }
 
       // Download the file with authentication headers
       final response = await http.get(
@@ -1004,6 +1011,11 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         headers: {
           'authorization': 'CRM $token',
           'id': 'CRM $adminId',
+        },
+      ).timeout(
+        Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Download timeout - please try again');
         },
       );
 
@@ -1067,12 +1079,23 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         // Get appropriate directory based on platform
         Directory directory;
         if (Platform.isAndroid) {
-          // For Android, try Downloads folder first
-          directory = Directory('/storage/emulated/0/Download');
-          if (!await directory.exists()) {
-            // Fallback to external storage or app documents
-            directory = await getExternalStorageDirectory() ??
-                await getApplicationDocumentsDirectory();
+          // For Android 10+ (API 29+), use app's external storage directory
+          // This doesn't require special permissions
+          directory = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
+          
+          // Try to create Downloads subdirectory in app's external storage
+          final downloadsDir = Directory('${directory.path}/Download');
+          if (!await downloadsDir.exists()) {
+            try {
+              await downloadsDir.create(recursive: true);
+              directory = downloadsDir;
+            } catch (e) {
+              // If creating Downloads folder fails, use the main directory
+              print('Could not create Downloads folder: $e');
+            }
+          } else {
+            directory = downloadsDir;
           }
         } else {
           // For iOS, use temporary directory (better for sharing)
@@ -1100,32 +1123,62 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         final file = File('${directory.path}/$finalFileName');
         await file.writeAsBytes(response.bodyBytes);
 
-        // Show success message
-        Fluttertoast.showToast(
-          msg: Platform.isAndroid
-              ? "Document saved to Downloads folder"
-              : "Document ready to share",
-          backgroundColor: Colors.green,
-        );
+        // Show success message and share file
+        if (mounted) {
+          String saveLocation = Platform.isAndroid 
+              ? "saved in app storage"
+              : "ready to share";
+          
+          Fluttertoast.showToast(
+            msg: "Document $saveLocation",
+            backgroundColor: Colors.green,
+          );
 
-        // Share the file (works on both iOS and Android)
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text: 'Document: $fileName',
-          subject: fileName,
-        );
+          // Share the file (works on both iOS and Android)
+          // This allows user to save to Downloads or share via other apps
+          try {
+            await Share.shareXFiles(
+              [XFile(file.path)],
+              text: 'Document: $fileName',
+              subject: fileName,
+            );
+          } catch (shareError) {
+            print('Share error: $shareError');
+            // If share fails, file is still saved - show message
+            if (mounted) {
+              Fluttertoast.showToast(
+                msg: Platform.isAndroid 
+                    ? "File saved. Use file manager to access: ${directory.path}"
+                    : "File saved successfully",
+                backgroundColor: Colors.blue,
+              );
+            }
+          }
+        }
       } else {
-        Fluttertoast.showToast(
-          msg: "Failed to download document",
-          backgroundColor: Colors.red,
-        );
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: "Failed to download document",
+            backgroundColor: Colors.red,
+          );
+        }
       }
     } catch (e) {
       print('Download error: $e');
-      Fluttertoast.showToast(
-        msg: "Error downloading document: ${e.toString()}",
-        backgroundColor: Colors.red,
-      );
+      if (mounted) {
+        String errorMsg = "Error downloading document";
+        if (e.toString().contains('timeout')) {
+          errorMsg = "Download timeout - please try again";
+        } else if (e.toString().length > 50) {
+          errorMsg = "Download failed - please try again";
+        } else {
+          errorMsg = "Error: ${e.toString()}";
+        }
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          backgroundColor: Colors.red,
+        );
+      }
     }
   }
 

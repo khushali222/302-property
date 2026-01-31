@@ -185,6 +185,7 @@ class _FileViewerState extends State<FileViewer> {
   bool _isLoading = true;
   String? _error;
   String? _downloadedFilePath; // For PDFs that need authentication
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -194,6 +195,60 @@ class _FileViewerState extends State<FileViewer> {
     print('showInDialog: ${widget.showInDialog}');
     print('fileUrl: ${widget.fileUrl}');
     _checkFileAvailability();
+    _cleanupOldTempFiles(); // Clean up old temp files on init
+  }
+
+  // Clean up old temp files (older than 1 hour) to prevent memory issues
+  Future<void> _cleanupOldTempFiles() async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final now = DateTime.now();
+      final files = tempDir.listSync();
+      
+      int cleanedCount = 0;
+      for (var file in files) {
+        if (file is File && file.path.contains('_lease') || file.path.contains('_check')) {
+          final stat = await file.stat();
+          final age = now.difference(stat.modified);
+          // Delete files older than 1 hour
+          if (age.inHours > 1) {
+            try {
+              await file.delete();
+              cleanedCount++;
+            } catch (e) {
+              print('Error deleting old temp file: $e');
+            }
+          }
+        }
+      }
+      if (cleanedCount > 0) {
+        print('=== CLEANED UP $cleanedCount OLD TEMP FILES ===');
+      }
+    } catch (e) {
+      print('Error cleaning up temp files: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    // Clean up downloaded file after a delay to allow viewing
+    if (_downloadedFilePath != null) {
+      // Schedule cleanup after 10 seconds to allow user to view/share
+      Future.delayed(Duration(seconds: 10), () {
+        try {
+          final file = File(_downloadedFilePath!);
+          if (file.existsSync()) {
+            file.deleteSync();
+            print('=== CLEANED UP TEMP FILE ===');
+            print('Deleted: $_downloadedFilePath');
+          }
+        } catch (e) {
+          print('Error cleaning up temp file: $e');
+        }
+      });
+    }
+    super.dispose();
   }
 
   void _checkFileAvailability() {
@@ -205,19 +260,25 @@ class _FileViewerState extends State<FileViewer> {
         widget.fileUrl!.contains('/api/lease-document/preview-document/')) {
       _downloadAuthenticatedFile();
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      if (!_isDisposed && mounted) {
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
       print('_isLoading set to false');
     }
   }
 
   Future<void> _downloadAuthenticatedFile() async {
     try {
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
+      if (!_isDisposed && mounted) {
+        setState(() {
+          _isLoading = true;
+          _error = null;
+        });
+      }
 
       print('=== DOWNLOADING AUTHENTICATED FILE ===');
       print('URL: ${widget.fileUrl}');
@@ -371,11 +432,19 @@ class _FileViewerState extends State<FileViewer> {
         print('File extension: $extension');
         print('Content-Type: $contentType');
 
-        setState(() {
-          _downloadedFilePath = file.path;
-          _isLoading = false;
-        });
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _downloadedFilePath = file.path;
+            _isLoading = false;
+          });
+        }
       } else {
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _error = 'Failed to download file (Status: ${response.statusCode})';
+            _isLoading = false;
+          });
+        }
         // Try to parse error response
         String errorMessage =
             'Failed to download file: Status ${response.statusCode}';
@@ -405,10 +474,12 @@ class _FileViewerState extends State<FileViewer> {
         errorMessage = 'File not found or file is corrupted/empty';
       }
 
-      setState(() {
-        _isLoading = false;
-        _error = errorMessage;
-      });
+      if (!_isDisposed && mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = errorMessage;
+        });
+      }
     }
   }
 
@@ -554,9 +625,11 @@ class _FileViewerState extends State<FileViewer> {
   }
 
   void _showError(String message) {
-    setState(() {
-      _error = message;
-    });
+    if (!_isDisposed && mounted) {
+      setState(() {
+        _error = message;
+      });
+    }
   }
 
   Widget _buildImageWidget() {
@@ -705,26 +778,32 @@ class _FileViewerState extends State<FileViewer> {
       pageFling: true,
       pageSnap: true,
       onRender: (pages) {
-        setState(() {
-          _isLoading = false;
-        });
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       },
       onError: (error) {
         print('=== PDF ERROR ===');
         print('PDF URL: $pdfUrl');
         print('Error: $error');
-        setState(() {
-          _isLoading = false;
-          _error = 'Failed to load PDF: ${error.toString()}';
-        });
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _isLoading = false;
+            _error = 'Failed to load PDF: ${error.toString()}';
+          });
+        }
       },
       onPageError: (page, error) {
         print('=== PDF PAGE ERROR ===');
         print('Page: $page');
         print('Error: $error');
-        setState(() {
-          _error = 'Failed to load page $page: ${error.toString()}';
-        });
+        if (!_isDisposed && mounted) {
+          setState(() {
+            _error = 'Failed to load page $page: ${error.toString()}';
+          });
+        }
       },
       onViewCreated: (PDFViewController pdfViewController) {
         // PDF loaded successfully
