@@ -47,6 +47,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   int itemsPerPage = 10;
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
   List<Map<String, dynamic>> rentersInsuranceModel = [];
+  
+  // Signature tracking data
+  List<Map<String, dynamic>> signatureTrackingData = [];
+  
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
@@ -64,6 +68,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
       });
+      // Fetch signature tracking after documents are loaded
+      fetchSignatureTracking();
       return data;
     } catch (e) {
       setState(() {
@@ -327,6 +333,200 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     }
   }
 
+  // Fetch signature tracking data
+  Future<void> fetchSignatureTracking() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? staffId = prefs.getString("staff_id");
+      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+      String? token = prefs.getString('token');
+
+      if (token == null || id == null) {
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('$Api_url/api/lease-document/signature-tracking/${widget.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        if (parsedJson['success'] == true && parsedJson['data'] != null) {
+          final trackingRecords = parsedJson['data']['tracking_records'] ?? [];
+          setState(() {
+            signatureTrackingData = List<Map<String, dynamic>>.from(trackingRecords);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching signature tracking: $e');
+    }
+  }
+
+  // Get signature status for a document
+  String? getSignatureStatus(String documentId) {
+    // First check signature tracking data (webhook data - primary source)
+    try {
+      final trackingRecord = signatureTrackingData.firstWhere(
+        (record) => record['document_id'] == documentId || 
+                    record['signature_request_id'] == documentId,
+      );
+
+      if (trackingRecord['status'] != null) {
+        return trackingRecord['status'].toString();
+      }
+    } catch (e) {
+      // No tracking record found, continue to next check
+    }
+
+    // Then check document list (database fallback)
+    try {
+      final document = rentersInsuranceModel.firstWhere(
+        (doc) => doc['document_id'] == documentId,
+      );
+
+      // Check signatureTracking field first
+      if (document['signatureTracking'] != null && 
+          document['signatureTracking']['status'] != null) {
+        return document['signatureTracking']['status'].toString();
+      }
+      
+      // Fallback to signing_status (but ignore 'pending')
+      if (document['signing_status'] != null && 
+          document['signing_status'].toString().toLowerCase() != 'pending') {
+        return document['signing_status'].toString();
+      }
+    } catch (e) {
+      // Document not found, return null
+    }
+
+    return null;
+  }
+
+  // Get formatted status with display info
+  Map<String, dynamic>? getFormattedStatus(String documentId) {
+    final signatureStatus = getSignatureStatus(documentId);
+    
+    if (signatureStatus == null) {
+      return null;
+    }
+
+    // Normalize status
+    String normalizedStatus = signatureStatus;
+    String displayStatus = normalizedStatus.toLowerCase();
+
+    // Map database statuses to webhook statuses for consistency
+    if (normalizedStatus.toLowerCase() == 'signed') {
+      displayStatus = 'signed';
+    } else if (normalizedStatus.toLowerCase() == 'pending') {
+      displayStatus = 'sent'; // Show pending as "sent"
+    }
+
+    // Check if signed document path exists for "ready to download"
+    try {
+      final trackingRecord = signatureTrackingData.firstWhere(
+        (record) => (record['document_id'] == documentId || 
+                     record['signature_request_id'] == documentId) &&
+                    record['signed_document_path'] != null,
+      );
+
+      if (normalizedStatus.toLowerCase() == 'signed') {
+        displayStatus = 'ready to download';
+      }
+    } catch (e) {
+      // No tracking record with signed document path found
+    }
+
+    return {
+      'displayStatus': displayStatus,
+      'originalStatus': normalizedStatus,
+    };
+  }
+
+  // Get status display widget
+  Widget _buildStatusWidget(Map<String, dynamic> item) {
+    final documentId = item['document_id']?.toString() ?? '';
+    
+    // Step 1: Check if regular document (is_from_lease === true)
+    if (item['is_from_lease'] == true) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Color(0xFFCCE5FF), // Blue background
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          'Regular Document',
+          style: TextStyle(
+            color: Color(0xFF004085), // Blue text
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
+    // Step 2: Check signature status
+    final formattedStatus = getFormattedStatus(documentId);
+    if (formattedStatus != null) {
+      final displayStatus = formattedStatus['displayStatus']?.toString().toLowerCase() ?? '';
+      final originalStatus = formattedStatus['originalStatus']?.toString() ?? '';
+      
+      // Map status to colors
+      Map<String, Map<String, Color>> statusColors = {
+        'unsigned': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'sent': {'bg': Color(0xFFFFF3CD), 'text': Color(0xFF856404)},
+        'opened': {'bg': Color(0xFFCCE5FF), 'text': Color(0xFF004085)},
+        'signed': {'bg': Color(0xFFD4EDDA), 'text': Color(0xFF155724)},
+        'ready to download': {'bg': Color(0xFF28A745), 'text': Colors.white},
+        'declined': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'canceled': {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)},
+        'cancelled': {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)},
+        'error': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'pending': {'bg': Color(0xFFFFF3CD), 'text': Color(0xFF856404)},
+      };
+
+      // Capitalize first letter for display
+      String statusText = displayStatus.split(' ').map((word) {
+        return word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1);
+      }).join(' ');
+
+      final colors = statusColors[displayStatus] ?? 
+                     {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)};
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: colors['bg'],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          statusText,
+          style: TextStyle(
+            color: colors['text'],
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
+    // Step 3: No status - show "Not Sent"
+    return Text(
+      'Not Sent',
+      style: TextStyle(
+        color: Colors.grey,
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   Future<Map<String, dynamic>> deleteNote({
     required String noteid,
   }) async {
@@ -369,6 +569,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     // TODO: implement initState
     super.initState();
     _futureRentersInsurance = fetchRentersInsuranceData();
+    fetchSignatureTracking(); // Fetch signature tracking data
   }
 
   Widget _buildHeaders() {
@@ -481,6 +682,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                       isLoading = true; // Show loading state
                       _futureRentersInsurance = fetchRentersInsuranceData();
                     });
+                    fetchSignatureTracking(); // Refresh signature tracking
                   }
                 },
                 child: Container(
@@ -672,14 +874,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                           SizedBox(width: 30),
                                           Expanded(
                                             flex: 2,
-                                            child: Text(
-                                              "${item["signing_status"]}",
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
+                                            child: _buildStatusWidget(item),
                                           ),
                                           // SizedBox(width: 20),
                                           // Expanded(
@@ -758,7 +953,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(height: 5),
+                                              // SizedBox(height: 5),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
@@ -919,6 +1114,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                             _futureRentersInsurance =
                                                                 fetchRentersInsuranceData();
                                                           });
+                                                          fetchSignatureTracking(); // Refresh signature tracking
                                                         }
                                                       });
                                                     },
@@ -973,7 +1169,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                                   .circular(8),
                                                           color: Colors
                                                               .blue.shade50),
-                                                      child: const Row(
+                                                      child:  Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
@@ -985,54 +1181,54 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                             FontAwesomeIcons
                                                                 .download,
                                                             size: 15,
-                                                            color: Colors.blue,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 10),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      // print("calling");
-                                                      // print( "${image_url}${item["document_name"]}");
-                                                      // const PDF().fromUrl(
-                                                      //  "${image_url}${item["document_name"]}",
-                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                      // );
-                                                      _showDeleteAlert(context,
-                                                          item["document_id"]);
-                                                      // showPdfDialog(context, pdfUrl);
-                                                    },
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          color: Colors
-                                                              .red.shade50),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
-                                                            size: 15,
-                                                            color: Colors.red,
+                                                            color: blueColor,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
                                                   SizedBox(width: 15),
+                                                  // GestureDetector(
+                                                  //   onTap: () {
+                                                  //     // print("calling");
+                                                  //     // print( "${image_url}${item["document_name"]}");
+                                                  //     // const PDF().fromUrl(
+                                                  //     //  "${image_url}${item["document_name"]}",
+                                                  //     //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                  //     //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                  //     // );
+                                                  //     _showDeleteAlert(context,
+                                                  //         item["document_id"]);
+                                                  //     // showPdfDialog(context, pdfUrl);
+                                                  //   },
+                                                  //   child: Container(
+                                                  //     height: 35,
+                                                  //     width: 35,
+                                                  //     decoration: BoxDecoration(
+                                                  //         borderRadius:
+                                                  //             BorderRadius
+                                                  //                 .circular(8),
+                                                  //         color: Colors
+                                                  //             .red.shade50),
+                                                  //     child: const Row(
+                                                  //       mainAxisAlignment:
+                                                  //           MainAxisAlignment
+                                                  //               .center,
+                                                  //       crossAxisAlignment:
+                                                  //           CrossAxisAlignment
+                                                  //               .center,
+                                                  //       children: [
+                                                  //         FaIcon(
+                                                  //           FontAwesomeIcons
+                                                  //               .trashCan,
+                                                  //           size: 15,
+                                                  //           color: Colors.red,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
+                                                  // SizedBox(width: 15),
                                                 ],
                                               ),
                                               SizedBox(

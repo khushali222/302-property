@@ -8826,7 +8826,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   Text(
                     "Account Name",
                     style: TextStyle(
@@ -8984,7 +8984,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 30),
                       Expanded(
                         child: InkWell(
                           onTap: () {
@@ -8995,6 +8995,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(3),
+                              border: Border.all(color: blueColor),
                             ),
                             child: Center(
                               child: Text(
@@ -9007,6 +9008,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   if (isError)
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
@@ -9057,7 +9059,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   Text(
                     "Account Name",
                     style: TextStyle(
@@ -9151,7 +9153,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     hintText: 'Enter notes',
                     controller: editNote,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   Row(
                     children: [
                       Expanded(
@@ -9241,6 +9243,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(3),
+                              border: Border.all(color: blueColor),
                             ),
                             child: Center(
                               child: Text(
@@ -9253,6 +9256,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   if (editIsError)
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
