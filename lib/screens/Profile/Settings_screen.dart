@@ -1185,6 +1185,19 @@ class _TabBarExampleState extends State<TabBarExample> {
               ),
               InkWell(
                 onTap: () {
+                  _showEditAccount(context, data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                  color: Colors.green,
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              InkWell(
+                onTap: () {
                   handleDelete(data);
                 },
                 child: const FaIcon(
@@ -6036,43 +6049,71 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   child: Column(
                                                                     children: [
                                                                       Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.end,
                                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
-                                                                          Expanded(
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () async {
+                                                                              _showEditAccount(context, account);
+                                                                            },
                                                                             child:
-                                                                                GestureDetector(
-                                                                              onTap: () {
-                                                                                _showDeleteAlert(context, account.accountId!);
-                                                                              },
-                                                                              child: Container(
-                                                                                height: 40,
-                                                                                decoration: BoxDecoration(
-                                                                                  border: Border.all(color: Colors.red, width: 1.5),
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                ),
-                                                                                child: const Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                  children: [
-                                                                                    FaIcon(
-                                                                                      FontAwesomeIcons.trashCan,
-                                                                                      size: 15,
-                                                                                      color: Colors.red,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 10,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "Delete",
-                                                                                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                                                                                    )
-                                                                                  ],
-                                                                                ),
+                                                                                Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.green.shade50,
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                              ),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.edit,
+                                                                                    size: 15,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                             ),
                                                                           ),
+                                                                          SizedBox(
+                                                                              width: 10),
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              _showDeleteAlert(context, account.accountId!);
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.red.shade50,
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                              ),
+                                                                              child: const Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.trashCan,
+                                                                                    size: 15,
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              width: 10),
                                                                         ],
                                                                       ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              10),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -8931,8 +8972,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                             child: Center(
                               child: isLoading
-                                  ? const CircularProgressIndicator(
+                                  ? const SpinKitFadingCircle(
                                       color: Colors.white,
+                                      size: 20,
                                     )
                                   : const Text(
                                       'Add',
@@ -8966,6 +9008,252 @@ class _TabBarExampleState extends State<TabBarExample> {
                     ],
                   ),
                   if (isError)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Please fill all fields',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void _showEditAccount(BuildContext context, Setting4 account) {
+    // Store original values for comparison
+    final String originalAccountName = account.account ?? '';
+    final String originalNote = account.notes ?? '';
+    final String? originalAccountType = account.accountType;
+    final String? originalFundType = account.fundType;
+
+    // Create controllers for edit dialog
+    TextEditingController editAccountName =
+        TextEditingController(text: account.account ?? '');
+    TextEditingController editNote =
+        TextEditingController(text: account.notes ?? '');
+    String? editSelectedAccounttype = account.accountType;
+    String? editSelectedFundtype = account.fundType;
+    bool editIsLoading = false;
+    bool editIsError = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              'Edit Account',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    "Account Name",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter account name';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter account name',
+                    controller: editAccountName,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Account Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (editSelectedAccounttype == null) {
+                        return 'Please select an account type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: accounttypeitems,
+                    selectedValue: editSelectedAccounttype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        editSelectedAccounttype = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Fund Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (editSelectedFundtype == null) {
+                        return 'Please select a fund type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: fundtypeitems,
+                    selectedValue: editSelectedFundtype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        editSelectedFundtype = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Note",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter notes';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter notes',
+                    controller: editNote,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            if (editSelectedAccounttype == null ||
+                                editAccountName.text.trim().isEmpty ||
+                                editSelectedFundtype == null) {
+                              setState(() {
+                                editIsError = true;
+                              });
+                            } else {
+                              // Check if any changes were made
+                              final String currentAccountName =
+                                  editAccountName.text.trim();
+                              final String currentNote = editNote.text.trim();
+
+                              bool hasChanges =
+                                  currentAccountName != originalAccountName ||
+                                      currentNote != originalNote ||
+                                      editSelectedAccounttype !=
+                                          originalAccountType ||
+                                      editSelectedFundtype != originalFundType;
+
+                              if (!hasChanges) {
+                                // No changes made, just close dialog and show message
+                                Navigator.pop(context);
+                                Fluttertoast.showToast(msg: "No changes made");
+                                return;
+                              }
+
+                              setState(() {
+                                editIsLoading = true;
+                                editIsError = false;
+                              });
+
+                              try {
+                                await accountRepository().updateAccount(
+                                  accountId: account.accountId!,
+                                  account: currentAccountName,
+                                  accounttype: editSelectedAccounttype,
+                                  fundtype: editSelectedFundtype,
+                                  chargetype: account.chargeType ?? "",
+                                  notes: currentNote,
+                                );
+                                Navigator.pop(context);
+                                _refreshAccounts();
+                              } catch (e) {
+                                setState(() {
+                                  editIsError = true;
+                                });
+                              } finally {
+                                setState(() {
+                                  editIsLoading = false;
+                                });
+                              }
+                            }
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Center(
+                              child: editIsLoading
+                                  ? const SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
+                                    )
+                                  : const Text(
+                                      'Update',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: blueColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (editIsError)
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
                       child: Text(

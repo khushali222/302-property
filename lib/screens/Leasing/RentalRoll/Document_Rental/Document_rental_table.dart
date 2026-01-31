@@ -1,13 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../widgets/CustomTableShimmer.dart';
@@ -655,64 +657,99 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
-                                                  // GestureDetector(
-                                                  //   onTap: () {
-                                                  //     // Navigate to edit screen
-                                                  //     Navigator.of(context)
-                                                  //         .push(
-                                                  //             MaterialPageRoute(
-                                                  //       builder: (context) =>
-                                                  //           EditDocument(
-                                                  //         leaseId:
-                                                  //             widget.leaseId,
-                                                  //         documentData: item,
-                                                  //       ),
-                                                  //     ))
-                                                  //         .then((result) {
-                                                  //       if (result == true) {
-                                                  //         // Refresh the table
-                                                  //         setState(() {
-                                                  //           isLoading = true;
-                                                  //           _futureRentersInsurance =
-                                                  //               fetchRentersInsuranceData();
-                                                  //         });
-                                                  //       }
-                                                  //     });
-                                                  //   },
-                                                  //   child:
-                                                  //    Container(
-                                                  //               height: 35,
-                                                  //               width: 35,
-                                                  //               decoration: BoxDecoration(
-                                                  //                   borderRadius:
-                                                  //                       BorderRadius
-                                                  //                           .circular(
-                                                  //                               8),
-                                                  //                   color: Colors
-                                                  //                       .green
-                                                  //                       .shade50), // color:Colors.grey[100],
-                                                  //               child:
-                                                  //                   const Row(
-                                                  //                 mainAxisAlignment:
-                                                  //                     MainAxisAlignment
-                                                  //                         .center,
-                                                  //                 crossAxisAlignment:
-                                                  //                     CrossAxisAlignment
-                                                  //                         .center,
-                                                  //                 children: [
-                                                  //                   FaIcon(
-                                                  //                     FontAwesomeIcons
-                                                  //                         .edit,
-                                                  //                     size: 15,
-                                                  //                     color: Colors
-                                                  //                         .green,
-                                                  //                   ),
-                                                  //                 ],
-                                                  //               ),
-                                                  //             ),
-                                                  //
-                                                  // ),
-                                                  // SizedBox(width: 10),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // Navigate to edit screen
+                                                      Navigator.of(context)
+                                                          .push(
+                                                              MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditDocument(
+                                                          leaseId:
+                                                              widget.leaseId,
+                                                          documentData: item,
+                                                        ),
+                                                      ))
+                                                          .then((result) {
+                                                        if (result == true) {
+                                                          // Refresh the table
+                                                          setState(() {
+                                                            isLoading = true;
+                                                            _futureRentersInsurance =
+                                                                fetchRentersInsuranceData();
+                                                          });
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors.green
+                                                              .shade50), // color:Colors.grey[100],
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .edit,
+                                                            size: 15,
+                                                            color: Colors.green,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      downloadDocument(
+                                                          item["document_id"],
+                                                          item["file_name"] ??
+                                                              item[
+                                                                  "document_name"] ??
+                                                              "document",
+                                                          item["mime_type"] ??
+                                                              item[
+                                                                  "document_type"] ??
+                                                              "application/octet-stream");
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .blue.shade50),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .download,
+                                                            size: 15,
+                                                            color: Colors.blue,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10),
                                                   GestureDetector(
                                                     onTap: () {
                                                       // print("calling");
@@ -937,6 +974,158 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       // Handle any other exceptions
       print('Error fetching data: $e');
       return [];
+    }
+  }
+
+  Future<void> downloadDocument(
+      String documentId, String fileName, String mimeType) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+
+      if (token == null || adminId == null) {
+        Fluttertoast.showToast(
+          msg: "Authentication error",
+          backgroundColor: Colors.red,
+        );
+        return;
+      }
+
+      // Show loading toast
+      Fluttertoast.showToast(
+        msg: "Downloading document...",
+        backgroundColor: Colors.blue,
+      );
+
+      // Download the file with authentication headers
+      final response = await http.get(
+        Uri.parse('$Api_url/api/lease-document/download-document/$documentId'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Determine file extension from mime type or Content-Type header
+        String extension = 'pdf'; // default
+
+        // Check Content-Type header first (most reliable)
+        String? contentTypeHeader = response.headers['content-type'];
+        if (contentTypeHeader != null && contentTypeHeader.isNotEmpty) {
+          mimeType = contentTypeHeader.split(';')[0].trim();
+        }
+
+        // Map mime types to extensions
+        if (mimeType.contains('image/jpeg') || mimeType.contains('image/jpg')) {
+          extension = 'jpg';
+        } else if (mimeType.contains('image/png')) {
+          extension = 'png';
+        } else if (mimeType.contains('image/gif')) {
+          extension = 'gif';
+        } else if (mimeType.contains('image/bmp')) {
+          extension = 'bmp';
+        } else if (mimeType.contains('image/tiff') ||
+            mimeType.contains('image/tif')) {
+          extension = 'tiff';
+        } else if (mimeType.contains('image/webp')) {
+          extension = 'webp';
+        } else if (mimeType.contains('application/pdf')) {
+          extension = 'pdf';
+        } else if (mimeType.contains('image/')) {
+          // Generic image type - extract from mime type
+          extension = mimeType.split('/')[1].split(';')[0].trim();
+        }
+
+        // Clean filename and ensure it has proper extension
+        String cleanFileName =
+            fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+
+        // Check if filename already has extension
+        if (cleanFileName.contains('.')) {
+          String existingExt = cleanFileName.split('.').last.toLowerCase();
+          // If existing extension is valid, keep it; otherwise replace with detected extension
+          List<String> validExtensions = [
+            'pdf',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'tiff',
+            'tif',
+            'webp'
+          ];
+          if (!validExtensions.contains(existingExt)) {
+            cleanFileName = '${cleanFileName.split('.').first}.$extension';
+          }
+        } else {
+          cleanFileName = '$cleanFileName.$extension';
+        }
+
+        // Get appropriate directory based on platform
+        Directory directory;
+        if (Platform.isAndroid) {
+          // For Android, try Downloads folder first
+          directory = Directory('/storage/emulated/0/Download');
+          if (!await directory.exists()) {
+            // Fallback to external storage or app documents
+            directory = await getExternalStorageDirectory() ??
+                await getApplicationDocumentsDirectory();
+          }
+        } else {
+          // For iOS, use temporary directory (better for sharing)
+          directory = await getTemporaryDirectory();
+        }
+
+        // Create directory if it doesn't exist
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+        }
+
+        // Generate unique filename with timestamp to avoid conflicts
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        String finalFileName;
+        if (cleanFileName.contains('.')) {
+          final parts = cleanFileName.split('.');
+          final nameWithoutExt = parts.sublist(0, parts.length - 1).join('.');
+          final ext = parts.last;
+          finalFileName = '${nameWithoutExt}_$timestamp.$ext';
+        } else {
+          finalFileName = '${cleanFileName}_$timestamp.$extension';
+        }
+
+        // Save file
+        final file = File('${directory.path}/$finalFileName');
+        await file.writeAsBytes(response.bodyBytes);
+
+        // Show success message
+        Fluttertoast.showToast(
+          msg: Platform.isAndroid
+              ? "Document saved to Downloads folder"
+              : "Document ready to share",
+          backgroundColor: Colors.green,
+        );
+
+        // Share the file (works on both iOS and Android)
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text: 'Document: $fileName',
+          subject: fileName,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Failed to download document",
+          backgroundColor: Colors.red,
+        );
+      }
+    } catch (e) {
+      print('Download error: $e');
+      Fluttertoast.showToast(
+        msg: "Error downloading document: ${e.toString()}",
+        backgroundColor: Colors.red,
+      );
     }
   }
 
