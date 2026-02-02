@@ -166,6 +166,8 @@ class _EditDocumentState extends State<EditDocument> {
                             }
                             return null;
                           },
+                          showElevation: false,
+                          borderColor: Color( 0xFFCED4DA),
                           keyboardType: TextInputType.text,
                           hintText: 'Enter document name',
                           controller: firstName,
@@ -246,11 +248,11 @@ class _EditDocumentState extends State<EditDocument> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Colors.black26,
+                                              color: Color( 0xFFCED4DA),
                                             ),
                                             color: Colors.white,
                                           ),
-                                          elevation: 3,
+                                         // elevation: 3,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           maxHeight: 200,
@@ -380,11 +382,11 @@ class _EditDocumentState extends State<EditDocument> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Colors.black26,
+                                  color: Color( 0xFFCED4DA),
                                 ),
                                 color: Colors.white,
                               ),
-                              elevation: 3,
+                             // elevation: 3,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               maxHeight: 200,
@@ -478,13 +480,51 @@ class _EditDocumentState extends State<EditDocument> {
                           ),
                         if (_hasExistingFile && _selectedFile == null)
                           Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              'Current file: ${widget.documentData['document_name'] ?? 'N/A'}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey[600],
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                //color: Color(0xFFE3F2FD), // Light blue background
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.grey.shade300, // Blue border
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.insert_drive_file,
+                                    color: blueColor,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Current file:',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey[700],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(height: 2),
+                                        Text(
+                                          widget.documentData['document_name'] ?? 'N/A',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -621,6 +661,7 @@ class _EditDocumentState extends State<EditDocument> {
                   ],
                 ),
               ),
+            SizedBox(height: 25),
             ],
           ),
         ),

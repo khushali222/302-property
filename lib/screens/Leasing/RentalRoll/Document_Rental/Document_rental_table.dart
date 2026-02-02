@@ -140,12 +140,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: Row(
                     children: [
                       width < 400
-                          ? Text("        Status ",
+                          ? Text("           Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          : Text("        Status ",
+                          : Text("           Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -712,59 +712,18 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      downloadDocument(
-                                                          item["document_id"],
-                                                          item["file_name"] ??
-                                                              item[
-                                                                  "document_name"] ??
-                                                              "document",
-                                                          item["mime_type"] ??
-                                                              item[
-                                                                  "document_type"] ??
-                                                              "application/octet-stream");
-                                                    },
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          color: Colors
-                                                              .blue.shade50),
-                                                      child:  Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .download,
-                                                            size: 15,
-                                                            color: blueColor,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 15),
                                                   // GestureDetector(
                                                   //   onTap: () {
-                                                  //     // print("calling");
-                                                  //     // print( "${image_url}${item["document_name"]}");
-                                                  //     // const PDF().fromUrl(
-                                                  //     //  "${image_url}${item["document_name"]}",
-                                                  //     //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                  //     //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                  //     // );
-                                                  //     _showDeleteAlert(context,
-                                                  //         item["document_id"]);
-                                                  //     // showPdfDialog(context, pdfUrl);
+                                                  //     downloadDocument(
+                                                  //         item["document_id"],
+                                                  //         item["file_name"] ??
+                                                  //             item[
+                                                  //                 "document_name"] ??
+                                                  //             "document",
+                                                  //         item["mime_type"] ??
+                                                  //             item[
+                                                  //                 "document_type"] ??
+                                                  //             "application/octet-stream");
                                                   //   },
                                                   //   child: Container(
                                                   //     height: 35,
@@ -774,8 +733,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   //             BorderRadius
                                                   //                 .circular(8),
                                                   //         color: Colors
-                                                  //             .red.shade50),
-                                                  //     child: const Row(
+                                                  //             .blue.shade50),
+                                                  //     child:  Row(
                                                   //       mainAxisAlignment:
                                                   //           MainAxisAlignment
                                                   //               .center,
@@ -785,9 +744,9 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   //       children: [
                                                   //         FaIcon(
                                                   //           FontAwesomeIcons
-                                                  //               .trashCan,
+                                                  //               .download,
                                                   //           size: 15,
-                                                  //           color: Colors.red,
+                                                  //           color: blueColor,
                                                   //         ),
                                                   //       ],
                                                   //     ),
@@ -795,6 +754,48 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   // ),
                                                   
                                                   // SizedBox(width: 15),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // print("calling");
+                                                      // print( "${image_url}${item["document_name"]}");
+                                                      // const PDF().fromUrl(
+                                                      //  "${image_url}${item["document_name"]}",
+                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
+                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
+                                                      // );
+                                                      _showDeleteAlert(context,
+                                                          item["document_id"]);
+                                                      // showPdfDialog(context, pdfUrl);
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .red.shade50),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
+                                                            size: 15,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  
+                                                  SizedBox(width: 15),
                                                 ],
                                               ),
                                               SizedBox(
@@ -1064,17 +1065,20 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     // Step 1: Check if regular document (is_from_lease === true)
     if (item['is_from_lease'] == true) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        constraints: BoxConstraints(minHeight: 28),
         decoration: BoxDecoration(
           color: Color(0xFFCCE5FF), // Blue background
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(
-          'Regular Document',
-          style: TextStyle(
-            color: Color(0xFF004085), // Blue text
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
+        child: Center(
+          child: Text(
+            'Regular Document',
+            style: TextStyle(
+              color: Color(0xFF004085), // Blue text
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       );
@@ -1109,29 +1113,38 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                      {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)};
 
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        constraints: BoxConstraints(minHeight: 28),
         decoration: BoxDecoration(
           color: colors['bg'],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(
-          statusText,
-          style: TextStyle(
-            color: colors['text'],
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
+        child: Center(
+          child: Text(
+            statusText,
+            style: TextStyle(
+              color: colors['text'],
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       );
     }
 
     // Step 3: No status - show "Not Sent"
-    return Text(
-      'Not Sent',
-      style: TextStyle(
-        color: Colors.grey,
-        fontSize: 11,
-        fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      constraints: BoxConstraints(minHeight: 28),
+      child: Center(
+        child: Text(
+          'Not Sent',
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

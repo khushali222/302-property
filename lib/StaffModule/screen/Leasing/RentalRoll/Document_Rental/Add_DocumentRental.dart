@@ -108,6 +108,8 @@ class _AddDocumentState extends State<AddDocument> {
                             }
                             return null;
                           },
+                          showElevation: false,
+                          borderColor: Color( 0xFFCED4DA),
                           keyboardType: TextInputType.text,
                           hintText: 'Enter first name',
                           controller: firstName,
@@ -190,11 +192,11 @@ class _AddDocumentState extends State<AddDocument> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Colors.black26,
+                                              color: Color( 0xFFCED4DA),
                                             ),
                                             color: Colors.white,
                                           ),
-                                          elevation: 3,
+                                         // elevation: 3,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           maxHeight: 200,
@@ -320,11 +322,11 @@ class _AddDocumentState extends State<AddDocument> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Colors.black26,
+                                  color: Color( 0xFFCED4DA),
                                 ),
                                 color: Colors.white,
                               ),
-                              elevation: 3,
+                             // elevation: 3,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               maxHeight: 200,

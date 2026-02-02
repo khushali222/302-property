@@ -713,7 +713,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                             width: 13,
                           ),
                         Expanded(
-                          flex: permissions!.applicantAdd! ? 3 : 1,
+                          flex: permissions!.applicantAdd! ? 2 : 1,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: titleBar(
@@ -722,52 +722,89 @@ class _Applicants_tableState extends State<Applicants_table> {
                             ),
                           ),
                         ),
-                        if (permissions!.applicantAdd!)
-                          Flexible(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final result = await Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              const AddApplicant()));
-                                  if (result == true) {
-                                    setState(() {
-                                      futureApplicantdata =
-                                          ApplicantRepository()
-                                              .fetchApplicants();
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  height:
-                                      (MediaQuery.of(context).size.width < 768)
-                                          ? 50
-                                          : 60,
-                                  decoration: BoxDecoration(
-                                    color: blueColor,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "+ Add",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AddApplicant()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureApplicantdata =
+                                        ApplicantRepository().fetchApplicants();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "+ Add",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 3),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 18),
+                        ),
+                       Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                _showInviteApplicantsDialog();
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.mail_outline,
+                                          color: Colors.white, size: 16),
+                                      SizedBox(width: 3),
+                                      Text(
+                                        " Invite",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+             
+                     if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13),
                       ],
                     ),
                   ),
@@ -1911,6 +1948,414 @@ class _Applicants_tableState extends State<Applicants_table> {
                 ],
               ),
             ),
+    );
+  }
+  void _showInviteApplicantsDialog() {
+    TextEditingController emailController = TextEditingController();
+    List<String> emails = [];
+    String? errorMessage;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void addEmail(String email) {
+              print(email);
+              email = email.trim().replaceAll(",", "");
+              if (email.isEmpty) {
+                setState(() {
+                  errorMessage = 'Please enter an email address';
+                });
+              } else if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}")
+                  .hasMatch(email)) {
+                setState(() {
+                  errorMessage = 'Please enter a valid email address';
+                });
+              } else if (emails.contains(email)) {
+                setState(() {
+                  errorMessage = 'This email has already been added';
+                });
+              } else {
+                setState(() {
+                  errorMessage = null;
+                  emails.add(email);
+                });
+                emailController.clear();
+              }
+            }
+
+            Future<void> sendInvites() async {
+              try {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? adminId = prefs.getString('adminId');
+                String? staffId = prefs.getString('staff_id');
+                String? token = prefs.getString('token');
+
+                final response = await http.post(
+                  Uri.parse('$Api_url/api/applicant/invite'),
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'CRM $token',
+                    "id": "CRM $staffId",
+                  },
+                  body: jsonEncode({
+                    'emails': emails,
+                    'admin_id': adminId,
+                  }),
+                );
+                print(response.body);
+                if (response.statusCode == 200) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Invitations sent successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  throw Exception('Failed to send invites');
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to send invites. Please try again.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+
+            double screenWidth = MediaQuery.of(context).size.width;
+            double maxWidth = screenWidth - 48;
+            double minWidth = 400.0;
+            // Ensure maxWidth is at least minWidth to avoid clamp errors
+            if (maxWidth < minWidth) maxWidth = minWidth;
+            double dialogWidth = (screenWidth * 0.5).clamp(minWidth, maxWidth);
+            
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                width: dialogWidth,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                ),
+                padding: EdgeInsets.all(24),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header with close button
+
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.close, color: Colors.grey[700]),
+                            onPressed: () => Navigator.pop(context),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFE0F2F7),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.person_add,
+                                    color: Color(0xFF3399FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Invite Applicants',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF333333),
+                                        ),
+                                      ),
+                                    
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          
+                        ],
+                      ),
+                    SizedBox(height: 24),
+                    // Email Address Label
+                    Text(
+                      'Email Address',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    // Email Input Field with Add Button - Reserve space for error
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  hintText: 'example@email.com',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 14,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.email_outlined,
+                                    color: Colors.grey[400],
+                                    size: 20,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey[300]!,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: errorMessage != null ? Colors.red : Colors.grey[300]!,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: errorMessage != null ? Colors.red : blueColor,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.red,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  errorText: null, // Don't show error here
+                                ),
+                                onSubmitted: (value) => addEmail(emailController.text),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: blueColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: () => addEmail(emailController.text),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Fixed height error message container to prevent layout shift
+                        Container(
+                          height: errorMessage != null ? 20 : 0,
+                          padding: EdgeInsets.only(top: 4, left: 4),
+                          child: errorMessage != null
+                              ? Text(
+                                  errorMessage!,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    // Added Emails Section
+                    if (emails.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Added Emails',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF333333),
+                            ),
+                          ),
+                          Text(
+                            '${emails.length} ${emails.length == 1 ? 'recipient' : 'recipients'}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: emails
+                            .map((email) => ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: dialogWidth - 48, // Account for padding
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF0F0F0),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            email,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                              color: Color(0xFF333333),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              emails.remove(email);
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 16,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                      SizedBox(height: 24),
+                    ],
+                      // Action Buttons - Side by side
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(
+                                  color: Colors.grey[300]!,
+                                  width: 1,
+                                ),
+                              ),
+                              backgroundColor: Colors.white,
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: emails.isEmpty ? null : sendInvites,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              disabledBackgroundColor: Colors.grey[300],
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Send ${emails.length} ${emails.length == 1 ? 'Invite' : 'Invites'}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+            );
+          },
+        );
+      },
     );
   }
 }
