@@ -6,11 +6,11 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/OutstandingLeaseBalanceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/OutstandingLeaseBalanceService.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/StaffModule/repository/OutstandingLeaseBalanceService.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:intl/intl.dart';
+import '../../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -23,7 +23,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import '../../../repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -248,11 +248,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
+      String? staffId = prefs.getString('staff_id');
       final response = await http.get(
         Uri.parse('$Api_url/api/rentals/rental-owners/$id'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffId",
         },
       );
 
@@ -297,196 +298,21 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
     }
   }
 
-  Widget _buildMultiSelectRentalOwner() {
-    // Filter out "All" option for the dropdown
-    List<Map<String, dynamic>> rentalOwnersList = _rentalOwners
-        .where((o) => o['rentalowner_id']?.toString() != 'all')
-        .toList();
-
-    // Check if all owners are selected
-    bool allSelected = rentalOwnersList.isNotEmpty &&
-        rentalOwnersList.every((owner) => selectedRentalOwnerIds
-            .contains(owner['rentalowner_id']?.toString()));
-
-    return DropdownButtonHideUnderline(
-      child: Material(
-        elevation: 3,
-        borderRadius: BorderRadius.circular(8),
-        child: DropdownButton2<String>(
-          isExpanded: true,
-          hint: Row(
-            children: [
-              SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  selectedRentalOwnerIds.isEmpty
-                      ? "Select Rental Owners"
-                      : allSelected
-                          ? "All"
-                          : rentalOwnersList
-                              .where((owner) => selectedRentalOwnerIds.contains(
-                                  owner['rentalowner_id']?.toString()))
-                              .map((owner) =>
-                                  owner['rentalOwner_name']?.toString() ?? '')
-                              .join(', '),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          items: [
-            // "All" option at the top
-            DropdownMenuItem<String>(
-              value: 'all',
-              child: StatefulBuilder(
-                builder: (context, setState) {
-                  return CheckboxListTile(
-                    value: allSelected,
-                    title: Text(
-                      'All',
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (bool? checked) {
-                      setState(() {
-                        // Visual update
-                      });
-                      // Update the outer state (without fetching data)
-                      this.setState(() {
-                        if (checked == true) {
-                          // Select all rental owners
-                          selectedRentalOwnerIds = rentalOwnersList
-                              .map((owner) =>
-                                  owner['rentalowner_id']?.toString() ?? '')
-                              .where((id) => id.isNotEmpty)
-                              .toList();
-                        } else {
-                          // Deselect all
-                          selectedRentalOwnerIds = [];
-                        }
-                        // Convert to comma-separated string for API (but don't fetch yet)
-                        if (selectedRentalOwnerIds.isEmpty) {
-                          _rentalOwnerFilter = null;
-                        } else {
-                          _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
-                        }
-                        // Don't fetch data here - wait for Run button
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-            // Individual rental owners
-            ...rentalOwnersList.map((owner) {
-              return DropdownMenuItem<String>(
-                value: owner['rentalowner_id']?.toString(),
-                child: StatefulBuilder(
-                  builder: (context, setState) {
-                    bool isSelected = selectedRentalOwnerIds
-                        .contains(owner['rentalowner_id']?.toString());
-                    return CheckboxListTile(
-                      value: isSelected,
-                      title: Text(
-                        owner['rentalOwner_name']!,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      onChanged: (bool? checked) {
-                        setState(() {
-                          if (checked == true) {
-                            selectedRentalOwnerIds
-                                .add(owner['rentalowner_id']?.toString() ?? '');
-                          } else {
-                            selectedRentalOwnerIds
-                                .remove(owner['rentalowner_id']?.toString());
-                          }
-                        });
-                        // Update the outer state (without fetching data)
-                        this.setState(() {
-                          // Convert to comma-separated string for API (but don't fetch yet)
-                          if (selectedRentalOwnerIds.isEmpty) {
-                            _rentalOwnerFilter = null;
-                          } else {
-                            _rentalOwnerFilter =
-                                selectedRentalOwnerIds.join(',');
-                          }
-                          // Don't fetch data here - wait for Run button
-                        });
-                      },
-                    );
-                  },
-                ),
-              );
-            }),
-          ],
-          value:
-              null, // Since we're using multi-select, we don't set a single value
-          onChanged: (_) {}, // Keep the existing functionality
-          buttonStyleData: ButtonStyleData(
-            height: 50,
-            width: double.infinity,
-            padding: const EdgeInsets.only(left: 14, right: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: const Color(0xFF8A95A8),
-              ),
-              color: Colors.white,
-            ),
-            elevation: 0,
-          ),
-          dropdownStyleData: DropdownStyleData(
-            maxHeight: 250,
-            width: MediaQuery.of(context).size.width * 0.8,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            offset: const Offset(-20, 0),
-            scrollbarTheme: ScrollbarThemeData(
-              radius: const Radius.circular(40),
-              thickness: MaterialStateProperty.all(6),
-              thumbVisibility: MaterialStateProperty.all(true),
-            ),
-          ),
-          menuItemStyleData: const MenuItemStyleData(
-            height: 50,
-            padding: EdgeInsets.only(left: 14, right: 14),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Reports",
         dropdown: false,
       ),
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       body: _connectivityResult == ConnectivityResult.none
           ? _buildNoInternetWidget()
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  ReportHeader(
+                  StaffReportHeader(
                     title: 'Outstanding Lease Balance Report',
                   ),
                   // Filters Section - Always visible
@@ -628,11 +454,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Lottie.asset(
-          //   'assets/Nodata.png',
-          //   width: 200,
-          //   height: 200,
-          // ),
           Text(
             'No Outstanding Lease Balance Data',
             style: TextStyle(
@@ -803,45 +624,45 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
           ),
           child: PopupMenuButton<String>(
             offset: Offset(0, 50),
-              onSelected: (value) async {
-                // Show loading indicator
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+            onSelected: (value) async {
+              // Show loading indicator
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
 
-                try {
-                  // Fetch ALL data for export
-                  final allData = await fetchAllDataForExport();
-                  
-                  Navigator.pop(context); // Close loading dialog
+              try {
+                // Fetch ALL data for export
+                final allData = await fetchAllDataForExport();
+                
+                Navigator.pop(context); // Close loading dialog
 
-                  if (allData.isEmpty) {
-                    Fluttertoast.showToast(
-                      msg: 'No data to export',
-                      toastLength: Toast.LENGTH_SHORT,
-                    );
-                    return;
-                  }
-                  
-                  if (value == 'PDF') {
-                    await _generatePdf(allData);
-                  } else if (value == 'XLSX') {
-                    await _generateExcel(allData);
-                  } else if (value == 'CSV') {
-                    await _generateCsv(allData);
-                  }
-                } catch (e) {
-                  Navigator.pop(context); // Close loading dialog
+                if (allData.isEmpty) {
                   Fluttertoast.showToast(
-                    msg: 'Error exporting data: ${e.toString()}',
+                    msg: 'No data to export',
                     toastLength: Toast.LENGTH_SHORT,
                   );
+                  return;
                 }
-              },
+                
+                if (value == 'PDF') {
+                  await _generatePdf(allData);
+                } else if (value == 'XLSX') {
+                  await _generateExcel(allData);
+                } else if (value == 'CSV') {
+                  await _generateCsv(allData);
+                }
+              } catch (e) {
+                Navigator.pop(context); // Close loading dialog
+                Fluttertoast.showToast(
+                  msg: 'Error exporting data: ${e.toString()}',
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+              }
+            },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
                 value: 'PDF',
@@ -1145,101 +966,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
     );
   }
 
-  Widget _buildReportHeader() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Outstanding Lease Balance Report',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
-          // Row(
-          //   children: [
-          //     // Filter button
-          //     IconButton(
-          //       onPressed: () {
-          //         // TODO: Implement filter functionality
-          //       },
-          //       icon: Icon(
-          //         Icons.more_vert,
-          //         color: Colors.grey[600],
-          //       ),
-          //       tooltip: 'Report Filters',
-          //     ),
-          //     // Download button
-          //     IconButton(
-          //       onPressed: () {
-          //         // TODO: Implement download functionality
-          //       },
-          //       icon: Icon(
-          //         Icons.download,
-          //         color: Colors.grey[600],
-          //       ),
-          //       tooltip: 'Download Report',
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildControls() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText:
-                    'Search by tenant name, property address, or lease ID',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              onChanged: _onSearch,
-            ),
-          ),
-          SizedBox(width: 16),
-          DropdownButton<String>(
-            value: _statusFilter,
-            items: [
-              DropdownMenuItem(value: 'all', child: Text('All Status')),
-              DropdownMenuItem(value: 'active', child: Text('Active')),
-              DropdownMenuItem(value: 'inactive', child: Text('Inactive')),
-            ],
-            onChanged: (value) {
-              setState(() {
-                _statusFilter = value ?? 'all';
-                _currentPage = 1;
-                isLoading = true;
-              });
-              _futureOutstandingLeaseBalance =
-                  fetchOutstandingLeaseBalanceData();
-            },
-          ),
-          SizedBox(width: 16),
-          IconButton(
-            onPressed: _refreshData,
-            icon: Icon(Icons.refresh),
-            tooltip: 'Refresh Data',
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSummaryCards() {
     if (outstandingLeaseBalanceModel?.totals == null) return SizedBox.shrink();
 
@@ -1251,7 +977,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         children: [
           Expanded(
             child: Container(
-              //padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
@@ -1409,7 +1134,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   'Lease',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: 14,
                     color: Colors.black,
                   ),
                 ),
@@ -1449,7 +1174,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               ),
               Expanded(
                 child: Text(
-                  '90+\nDays',
+                  '90+ Days',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -1517,13 +1242,19 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   ),
                   Expanded(
                     child: Text(
+                      '', // Empty for 90+ days (like PDF)
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
                       account.amount != null && account.amount! > 0
                           ? '\$${NumberFormat('#,##0.00').format(account.amount!)}'
                           : '-',
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
                         color: blueColor,
+                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.right,
                     ),
@@ -1533,7 +1264,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
             );
           }).toList(),
 
-        // Balance row (totals like PDF)
+        // Balance row
         SizedBox(height: 8),
         Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
@@ -1674,7 +1405,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
-            // size: 30,
             color: currentPage == 1 ? Colors.grey : blueColor,
           ),
           onPressed: currentPage == 1
@@ -1685,11 +1415,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         ),
         Text(
           'Page $currentPage of $totalPages',
-          //   style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
-            // size: 30,
             FontAwesomeIcons.circleChevronRight,
             color: currentPage >= totalPages ? Colors.grey : blueColor,
           ),
@@ -1703,7 +1431,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
     );
   }
 
-  // Export Methods
+  // Export Methods - Same as main file
   Future<void> _generatePdf(List<OutstandingLeaseBalanceData> data) async {
     try {
       GetAddressAdminPdfService service = GetAddressAdminPdfService();
@@ -1749,9 +1477,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
             return pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                // Logo in top-left
                 pw.Image(image, width: 40, height: 40),
-                // Title and Date in center
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.center,
                   children: [
@@ -1771,7 +1497,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     ),
                   ],
                 ),
-                // Company name and page number in top-right
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
@@ -1796,11 +1521,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
             );
           },
           build: (pw.Context context) {
-            // Build table data with main entries and sub-items
             final List<List<dynamic>> tableData = [];
 
             for (var item in data) {
-              // Main lease entry - bold, with all columns
               tableData.add([
                 pw.Text(
                   '${item.propertyAddress ?? 'N/A'} | ${item.tenantNames ?? 'N/A'}',
@@ -1815,14 +1538,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
               ]);
 
-              // Add grand totals from main entry
               grandTotal030 += item.balance030 ?? 0.0;
               grandTotal3160 += item.balance3160 ?? 0.0;
               grandTotal6190 += item.balance6190 ?? 0.0;
               grandTotal90Plus += item.balance90Plus ?? 0.0;
               grandTotalBalance += item.outstandingBalance ?? 0.0;
 
-              // Sub-items (account breakdown) - indented, only Balance column
               if (item.accountBreakdown != null &&
                   item.accountBreakdown!.isNotEmpty) {
                 for (var account in item.accountBreakdown!) {
@@ -1833,17 +1554,16 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                         fontWeight: pw.FontWeight.normal,
                       ),
                     ),
-                    '', // 0-30 days empty for sub-items
-                    '', // 31-60 days empty for sub-items
-                    '', // 61-90 days empty for sub-items
-                    '', // 90+ days empty for sub-items
+                    '',
+                    '',
+                    '',
+                    '',
                     '\$${NumberFormat('#,##0.00').format(account.amount ?? 0)}',
                   ]);
                 }
               }
             }
 
-            // Add grand total row
             final grandTotalRow = [
               pw.Text(
                 'Grand Total',
@@ -1859,18 +1579,16 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
             ];
 
             return [
-              // Table header with custom styling
               pw.Table(
                 columnWidths: {
-                  0: pw.FlexColumnWidth(3), // Lease column
-                  1: pw.FlexColumnWidth(1.2), // 0-30 days
-                  2: pw.FlexColumnWidth(1.2), // 31-60 days
-                  3: pw.FlexColumnWidth(1.2), // 61-90 days
-                  4: pw.FlexColumnWidth(1.2), // 90+ days
-                  5: pw.FlexColumnWidth(1.5), // Balance
+                  0: pw.FlexColumnWidth(3),
+                  1: pw.FlexColumnWidth(1.2),
+                  2: pw.FlexColumnWidth(1.2),
+                  3: pw.FlexColumnWidth(1.2),
+                  4: pw.FlexColumnWidth(1.2),
+                  5: pw.FlexColumnWidth(1.5),
                 },
                 children: [
-                  // Header row
                   pw.TableRow(
                     decoration: pw.BoxDecoration(
                       color: PdfColor.fromHex("#5A86D5"),
@@ -1943,7 +1661,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                       ),
                     ],
                   ),
-                  // Data rows
                   ...tableData.map((row) {
                     return pw.TableRow(
                       children: [
@@ -1989,7 +1706,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                       ],
                     );
                   }).toList(),
-                  // Grand Total row
                   pw.TableRow(
                     children: [
                       pw.Padding(
@@ -2078,7 +1794,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       final syncXlsx.Workbook workbook = syncXlsx.Workbook();
       final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
-      // Headers
       sheet.getRangeByIndex(1, 1).setText('Lease');
       sheet.getRangeByIndex(1, 2).setText('0-30 Days');
       sheet.getRangeByIndex(1, 3).setText('31-60 Days');
@@ -2086,7 +1801,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       sheet.getRangeByIndex(1, 5).setText('90+ Days');
       sheet.getRangeByIndex(1, 6).setText('Balance');
 
-      // Style headers
       final syncXlsx.Style headerStyle = workbook.styles.add('headerStyle');
       headerStyle.backColor = '#5A86D5';
       headerStyle.fontColor = '#FFFFFF';
@@ -2110,13 +1824,11 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         rowIndex++;
       }
 
-      // Grand Total
       sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
       sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
       sheet.getRangeByIndex(rowIndex, 6).setNumber(grandTotal);
       sheet.getRangeByIndex(rowIndex, 6).cellStyle.bold = true;
 
-      // Auto-fit columns
       sheet.autoFitColumn(1);
       sheet.autoFitColumn(2);
       sheet.autoFitColumn(3);
@@ -2193,7 +1905,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         grandTotal += item.outstandingBalance ?? 0.0;
       }
 
-      // Add grand total
       csvBuffer.writeln([
         'Grand Total',
         '',

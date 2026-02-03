@@ -53,6 +53,7 @@ class PropertiesWorkOrders {
 class propertiesworkData {
   String? sId;
   String? workOrderId;
+  String? ticketNumber;
   String? adminId;
   String? rentalId;
   String? unitId;
@@ -79,6 +80,7 @@ class propertiesworkData {
   propertiesworkData({
     this.sId,
     this.workOrderId,
+    this.ticketNumber,
     this.adminId,
     this.rentalId,
     this.unitId,
@@ -106,6 +108,7 @@ class propertiesworkData {
   propertiesworkData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     workOrderId = json['workOrder_id'];
+    ticketNumber = json['ticket_number'];
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -144,6 +147,7 @@ class propertiesworkData {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = sId;
     data['workOrder_id'] = workOrderId;
+    data['ticket_number'] = ticketNumber;
     data['admin_id'] = adminId;
     data['rental_id'] = rentalId;
     data['unit_id'] = unitId;

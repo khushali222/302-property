@@ -1150,7 +1150,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               color: blueColor,
                                               fontWeight: FontWeight.bold,
                                             ),
-                                            textAlign: TextAlign.end,
+                                            textAlign: TextAlign.start,
                                             maxLines: 1,
                                             softWrap: false,
                                             overflow: TextOverflow.ellipsis,
@@ -1259,42 +1259,50 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               ),
                                               // Spacer(),
                                               Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text('Status:',
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 36),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text('Status:',
+                                                          style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13)),
+                                                      SizedBox(height: 2),
+                                                      Text(
+                                                        workOrder.workOrderData
+                                                                ?.status ??
+                                                            "N/A",
                                                         style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13)),
-                                                    SizedBox(height: 2),
-                                                    Text(
-                                                      workOrder.workOrderData
-                                                              ?.status ??
-                                                          "N/A",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                    SizedBox(height: 8),
-                                                    Text('Billable:',
+                                                            fontSize: 12),
+                                                      ),
+                                                      SizedBox(height: 8),
+                                                      Text('Billable:',
+                                                          style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13)),
+                                                      SizedBox(height: 2),
+                                                      Text(
+                                                        workOrder.workOrderData
+                                                                    ?.isBillable ==
+                                                                true
+                                                            ? "Yes"
+                                                            : "No",
                                                         style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13)),
-                                                    SizedBox(height: 2),
-                                                    Text(
-                                                      workOrder.workOrderData
-                                                                  ?.isBillable ==
-                                                              true
-                                                          ? "Yes"
-                                                          : "No",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                  ],
+                                                            fontSize: 12),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               SizedBox(
@@ -1447,7 +1455,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
                                           ),
-                                          textAlign: TextAlign.end,
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
                                       SizedBox(

@@ -760,7 +760,7 @@ class ReportScreen extends StatelessWidget {
                 // {
                 //   'title': 'Outstanding Lease Balance Report',
                 //   'subtitle':
-                //       'Detailed breakdown of outstanding lease balances by aging period',
+                //   'Detailed breakdown of outstanding lease balances with aging analysis',
                 //   "navigate": OutstandingLeaseBalance()
                 // },
                 {

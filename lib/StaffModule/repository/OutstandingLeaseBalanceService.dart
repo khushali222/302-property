@@ -5,8 +5,6 @@ import 'package:three_zero_two_property/Model/OutstandingLeaseBalanceModel.dart'
 import 'package:three_zero_two_property/constant/constant.dart';
 
 class OutstandingLeaseBalanceService {
-  // Define your API URL here
-
   Future<OutstandingLeaseBalanceModel> fetchOutstandingLeaseBalance({
     required String adminId,
     String statusFilter = 'all',
@@ -16,11 +14,12 @@ class OutstandingLeaseBalanceService {
     String sortBy = 'property_address',
     String sortOrder = 'asc',
   }) async {
-    print('Fetching outstanding lease balance');
+    print('Fetching outstanding lease balance (Staff)');
 
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+    String? staffId = prefs.getString('staff_id');
 
     try {
       // Build query parameters
@@ -41,16 +40,16 @@ class OutstandingLeaseBalanceService {
       Uri uri = Uri.parse('$Api_url/api/leases/outstanding-balance/$adminId')
           .replace(queryParameters: queryParams);
 
-      print('API URL: $uri');
+      print('API URL (Staff): $uri');
 
       final response = await http.get(uri, headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // Use staff_id instead of adminId
         "Content-Type": "application/json",
       });
 
       print('Response status: ${response.statusCode}');
-      print('Response body outstanding lease balance: ${response.body}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON

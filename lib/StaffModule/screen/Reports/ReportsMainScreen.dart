@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/InsurancePremiumReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/PropertyRevenueReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/dailytransaction.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/rentalownerreport.dart';
@@ -20,6 +21,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 
 import '../../../screens/Reports/ReportScreens/Rent_collection.dart';
+import 'ReportScreens/OutstandingLeaseBalance.dart';
 import '../../../widgets/titleBar.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
@@ -785,6 +787,18 @@ class ReportScreen extends StatelessWidget {
                   'title': 'Rent Roll Report',
                   'subtitle': 'Rent balance due by property and tenants',
                   "navigate": RentersInsurances()
+                },
+                // {
+                //   'title': 'Outstanding Lease Balance Report',
+                //   'subtitle':
+                //       'Detailed breakdown of outstanding lease balances with aging analysis',
+                //   "navigate": OutstandingLeaseBalance()
+                // },
+                {
+                  'title': 'Property Revenue Report',
+                  'subtitle':
+                      'Compare property revenue between current and previous periods',
+                  "navigate": PropertyRevenueReport()
                 },
               ],
               "Track payments, transactions, and owner accounts.",
