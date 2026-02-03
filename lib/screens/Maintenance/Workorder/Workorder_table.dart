@@ -1200,7 +1200,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               // Spacer(),
                                               Expanded(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.only(left: 36)  ,
+                                                  padding: const EdgeInsets.only(left: 42)  ,
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.start,

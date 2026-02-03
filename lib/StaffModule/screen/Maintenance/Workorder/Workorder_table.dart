@@ -1262,7 +1262,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 36),
+                                                          left: 42),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
