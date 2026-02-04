@@ -17,6 +17,7 @@ import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
+import '../screens/BidRoom/bid_room_table.dart';
 // import '../screens/Rental/mortgage/mortgageTable.dart'; // Commented out - Mortgage feature preserved but not shown in sidebar
 import '../screens/Dashboard/dashboard_one.dart';
 // import '../screens/Property_Type/Property_type_table.dart'; // Moved to Settings
@@ -76,6 +77,12 @@ Widget buildListTile(
             (context) => Tenants_table(),
             "Tenants",
           );
+        } else if (title == "Bid Room" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => BidRoomTable(),
+            "Bid Room",
+          );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -104,6 +111,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
     // "Vendor": (context) => Vendor_table(), // Vendor moved to Settings
     "Work Order": (context) => Workorder_table(),
+    "Bid Room": (context) => BidRoomTable(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),
