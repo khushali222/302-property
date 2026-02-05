@@ -412,16 +412,24 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width > 500 ? 20.0 : 16.0,
+              vertical: 20.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Title
-                titleBar(
-                  width: double.infinity,
-                  title: 'Create Bid Room',
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width > 500 ? 0 : 0,
+                  ),
+                  child: titleBar(
+                    width: double.infinity,
+                    title: 'Create Bid Room',
+                  ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 // Property Dropdown
                 _buildDropdownField(
                   label: 'Property',
@@ -666,14 +674,22 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                 : null,
             buttonStyleData: ButtonStyleData(
               height: 50,
-              padding: const EdgeInsets.only(left: 0, right: 8),
+              padding: const EdgeInsets.only(left: 16, right: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: Colors.white,
                 border: Border.all(
-                  color: Colors.grey[300]!,
+                  color: const Color(0xFFDBE0E5),
                   width: 1,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.05),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               elevation: 0,
             ),
@@ -752,11 +768,11 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -771,9 +787,10 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                 borderSide: BorderSide(color: Colors.red[500]!, width: 2),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               filled: true,
               fillColor: Colors.white,
+              isDense: true,
             ),
             style: TextStyle(
               fontSize: 14,
@@ -817,20 +834,21 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: blueColor, width: 2),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               filled: true,
               fillColor: Colors.white,
+              isDense: true,
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.calendar_today,
@@ -947,9 +965,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.white,
                     border: Border.all(
-                      color: Colors.grey[300]!,
+                      color: const Color(0xFFDBE0E5),
                       width: 1,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.05),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   elevation: 0,
                 ),

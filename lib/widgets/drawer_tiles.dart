@@ -24,6 +24,8 @@ import '../screens/Dashboard/dashboard_one.dart';
 // import '../screens/Rental/Rentalowner/Rentalowner_table.dart'; // Moved to Settings as Property Owners
 import '../screens/Staff_Member/Staffmemvertable.dart';
 import '../screens/Profile/Settings_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/VendorModule/screen/bid_room/vendor_bid_room_table.dart';
 
 Widget buildListTile(
   BuildContext context,
@@ -78,11 +80,22 @@ Widget buildListTile(
             "Tenants",
           );
         } else if (title == "Bid Room" && active != true) {
-          NavigationHelper.navigateWithValidationBuilder(
-            context,
-            (context) => BidRoomTable(),
-            "Bid Room",
-          );
+          SharedPreferences.getInstance().then((prefs) {
+            String? vendorId = prefs.getString('vendor_id');
+            if (vendorId != null && vendorId.isNotEmpty) {
+              NavigationHelper.navigateWithValidationBuilder(
+                context,
+                (context) => VendorBidRoomTable(),
+                "Bid Room",
+              );
+            } else {
+              NavigationHelper.navigateWithValidationBuilder(
+                context,
+                (context) => BidRoomTable(),
+                "Bid Room",
+              );
+            }
+          });
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -137,6 +150,23 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
       (context) => TabBarExample(initialTab: 'Property Type'),
       "Settings",
     );
+  } else if (option == "Bid Room") {
+    SharedPreferences.getInstance().then((prefs) {
+      String? vendorId = prefs.getString('vendor_id');
+      if (vendorId != null && vendorId.isNotEmpty) {
+        NavigationHelper.navigateWithValidationBuilder(
+          context,
+          (context) => VendorBidRoomTable(),
+          "Bid Room",
+        );
+      } else {
+        NavigationHelper.navigateWithValidationBuilder(
+          context,
+          (context) => BidRoomTable(),
+          "Bid Room",
+        );
+      }
+    });
   } else if (routes.containsKey(option)) {
     NavigationHelper.navigateWithValidationBuilder(
       context,

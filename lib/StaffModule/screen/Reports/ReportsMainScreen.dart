@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/dailytransaction.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/rentalownerreport.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/LeaseRenewalReport.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -644,6 +645,11 @@ List<ReportCardModel> reportCards = [
     title: "Rent Roll Report",
     description: "Report shows all leases with convenience fee override",
     destination: RentersInsurances(),
+  ),
+  ReportCardModel(
+    title: "Lease Renewal",
+    description: "Report of leases ending and month-to-month leases with renewal details",
+    destination: LeaseRenewalReportScreen(),
   ),
 ];
 

@@ -11,6 +11,8 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.d
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/work_order/workorder_table.dart';
+import 'package:three_zero_two_property/VendorModule/screen/bid_room/vendor_bid_room_table.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   String? workorder;
@@ -21,7 +23,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  ConnectivityResult? _connectivityResult ;
+  ConnectivityResult? _connectivityResult;
   int _selectedIndex = 0;
   String _workOrderFilter = "";
   // List of screens corresponding to each BottomNavigationBarItem
@@ -29,6 +31,7 @@ class _MainScreenState extends State<MainScreen> {
     Dashboard_vendors(),
     Profile_screen(),
     //  WorkOrderTable(),
+    VendorBidRoomTable(),
   ];
   void initState() {
     super.initState();
@@ -52,26 +55,33 @@ class _MainScreenState extends State<MainScreen> {
       ),
       Profile_screen(),
       WorkOrderTable(),
+      VendorBidRoomTable(),
     ];
   }
-  void checkInternet()async{
 
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
+
   void _onItemTapped(int index) {
     setState(() {
-
       _selectedIndex = index;
-      _screens[2] = _workOrderFilter == "" ? WorkOrderTable() : WorkOrderTable(filter: _workOrderFilter,);
-      _workOrderFilter = "";
+      _selectedIndex = index;
+      if (index == 2) {
+        _screens[2] = _workOrderFilter == ""
+            ? WorkOrderTable()
+            : WorkOrderTable(
+                filter: _workOrderFilter,
+              );
+        _workOrderFilter = "";
+      }
     });
-
   }
+
   Future<bool> _showExitPopup(BuildContext context) async {
     bool exitConfirmed = false;
 
@@ -141,66 +151,63 @@ class _MainScreenState extends State<MainScreen> {
 
     return exitConfirmed;
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
-        if(_selectedIndex != 0){
+      onWillPop: () async {
+        if (_selectedIndex != 0) {
           setState(() {
             _selectedIndex = 0;
           });
-        }
-        else{
-
+        } else {
           return await _showExitPopup(context);
-
         }
         return false;
       },
       child: Scaffold(
-
-        body:   _connectivityResult !=ConnectivityResult.none ? _screens[_selectedIndex]:SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/no_internet.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.fill,
-              ),
-              Text(
-                'No Internet',
-                style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Check your internet connection',
-                style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),// Display the selected screen
+        body: _connectivityResult != ConnectivityResult.none
+            ? _screens[_selectedIndex]
+            : SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Lottie.asset(
+                      'assets/no_internet.json',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.fill,
+                    ),
+                    Text(
+                      'No Internet',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Check your internet connection',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ), // Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          items:  [
+          items: [
             BottomNavigationBarItem(
-              icon:
-              SvgPicture.asset(
+              icon: SvgPicture.asset(
                 "assets/images/tenants/dashboard.svg",
                 height: 20,
                 width: 20,
-                color: _selectedIndex == 0 ? blueColor :grey,
+                color: _selectedIndex == 0 ? blueColor : grey,
               ),
               label: 'Dashboard',
             ),
             BottomNavigationBarItem(
-              icon:
-              SvgPicture.asset(
+              icon: SvgPicture.asset(
                 "assets/images/tenants/Admin.svg",
                 height: 20,
                 width: 20,
@@ -216,6 +223,14 @@ class _MainScreenState extends State<MainScreen> {
                 color: _selectedIndex == 2 ? blueColor : grey,
               ),
               label: 'Work Order',
+            ),
+            BottomNavigationBarItem(
+              icon: FaIcon(
+                FontAwesomeIcons.fileLines,
+                size: 20,
+                color: _selectedIndex == 3 ? blueColor : grey,
+              ),
+              label: 'Bid Room',
             ),
           ],
         ),
