@@ -76,7 +76,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   late bool isExpanded;
   bool sorting1 = false;
   bool sorting2 = false;
-  bool sorting3 = true;
+  bool sorting3 = false;
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
@@ -148,11 +148,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
             '  [$i] ${data[i].rentalAddress} - is_available: ${data[i].is_available}');
       }
     } else {
-      // Default sorting by createdAt in descending order (newest first)
+      // Default sorting by createdAt in ascending order (oldest first)
       data.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(b.createdAt!)
-            .compareTo(DateTime.parse(a.createdAt!));
+        return DateTime.parse(a.createdAt!)
+            .compareTo(DateTime.parse(b.createdAt!));
       });
 
       // Then sort by property name in ascending order (case-insensitive)
@@ -399,11 +399,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
     });
     checkInternet();
     futureRentalOwners = PropertiesRepository().fetchProperties().then((data) {
-      // Sort by createdAt in descending order first
+      // Sort by createdAt in ascending order first (oldest first)
       data.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(b.createdAt!)
-            .compareTo(DateTime.parse(a.createdAt!));
+        return DateTime.parse(a.createdAt!)
+            .compareTo(DateTime.parse(b.createdAt!));
       });
       // Then sort by property name in ascending order
       data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
@@ -553,9 +553,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
         DialogButton(
           child: const Text(
             "OK",
-
-
-
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
@@ -1460,7 +1457,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             }
 
                             sortData(data);
-
+                          
                             // Update the total data
                             _tableData = List<Rentals>.from(data);
 

@@ -1,0 +1,102 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../Model/bid_request.dart';
+import '../constant/constant.dart';
+
+class BidRequestRepository {
+  Future<BidRequestResponse> fetchBidRequests({
+    String? adminId,
+    int limit = 10000,
+    int page = 1,
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      // Use provided adminId or fallback to stored adminId
+      String? finalAdminId = adminId ?? id;
+
+      if (finalAdminId == null) {
+        throw Exception('Admin ID is required');
+      }
+
+      final url =
+          '${Api_url}/api/bid-request/bid-requests/$finalAdminId?limit=$limit&page=$page';
+
+      print('Fetching bid requests from: $url');
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $finalAdminId",
+        },
+      );
+
+      print('Bid requests response status: ${response.statusCode}');
+      print('Bid requests response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return BidRequestResponse.fromJson(jsonData);
+      } else {
+        final jsonData = json.decode(response.body);
+        Fluttertoast.showToast(
+            msg: jsonData['message'] ?? 'Failed to fetch bid requests');
+        throw Exception('Failed to fetch bid requests: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching bid requests: $e');
+      Fluttertoast.showToast(msg: 'Error fetching bid requests: $e');
+      rethrow;
+    }
+  }
+
+  Future<BidRequestDetailResponse> fetchBidRequestDetails({
+    required String bidRequestId,
+  }) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      if (id == null) {
+        throw Exception('Admin ID is required');
+      }
+
+      final url = '${Api_url}/api/bid-request/bid-request/$bidRequestId';
+
+      print('Fetching bid request details from: $url');
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      print('Bid request details response status: ${response.statusCode}');
+      print('Bid request details response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return BidRequestDetailResponse.fromJson(jsonData);
+      } else {
+        final jsonData = json.decode(response.body);
+        Fluttertoast.showToast(
+            msg: jsonData['message'] ?? 'Failed to fetch bid request details');
+        throw Exception(
+            'Failed to fetch bid request details: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching bid request details: $e');
+      Fluttertoast.showToast(msg: 'Error fetching bid request details: $e');
+      rethrow;
+    }
+  }
+}
+

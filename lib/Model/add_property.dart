@@ -44,6 +44,18 @@ class RentalOwners {
       };
 }
 
+class InsuredValue {
+  String? year;
+  String? insuredValue;
+
+  InsuredValue({this.year, this.insuredValue});
+
+  Map<String, dynamic> toJson() => {
+        'year': year,
+        'insured_value': insuredValue,
+      };
+}
+
 class Rental {
   String? rentalId;
   String? adminId;
@@ -55,6 +67,8 @@ class Rental {
   String? postcode;
   String? staffMemberId;
   String? processor_id;
+  String? placedInService;
+  List<InsuredValue>? insuredValues;
 
   Rental(
       {this.adminId,
@@ -66,7 +80,9 @@ class Rental {
       this.country,
       this.postcode,
       this.staffMemberId,
-      this.processor_id});
+      this.processor_id,
+      this.placedInService,
+      this.insuredValues});
 
   Map<String, dynamic> toJson() => {
         // rentalId: json['rental_id'] ?? "",
@@ -79,6 +95,10 @@ class Rental {
         'rental_country': country,
         'rental_postcode': postcode,
         'staffmember_id': staffMemberId,
+        if (placedInService != null && placedInService!.isNotEmpty)
+          'placed_in_service': placedInService,
+        if (insuredValues != null && insuredValues!.isNotEmpty)
+          'insured_values': insuredValues!.map((iv) => iv.toJson()).toList(),
         // 'processor_id':processor_id
       };
 }

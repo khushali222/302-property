@@ -24,6 +24,7 @@ import '../../../constant/constant.dart';
 import '../../../model/add_property.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../repository/Property_type.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/custom_drawer.dart';
@@ -129,6 +130,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   TextEditingController searchController = TextEditingController();
 
+  // Insured Value Information
+  TextEditingController datePlacedInService = TextEditingController();
+  List<HistoricalInsuredValue> historicalInsuredValues = [];
+  bool datePlacedInServiceError = false;
+  String datePlacedInServiceMessage = "";
+
   late Future<List<Staffmembers>> futureStaffMembers;
   String? selectedStaffmember;
 
@@ -231,6 +238,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
   @override
   void dispose() {
     searchController.dispose();
+    datePlacedInService.dispose();
+    for (var item in historicalInsuredValues) {
+      item.yearController.dispose();
+      item.valueController.dispose();
+    }
     super.dispose();
   }
 
@@ -702,6 +714,68 @@ class _Add_new_propertyState extends State<Add_new_property> {
         // print(controllers[j].text);
       }
     }
+  }
+
+  // Insured Value Information helper methods
+  void addHistoricalInsuredValue() {
+    setState(() {
+      historicalInsuredValues.add(HistoricalInsuredValue(
+        yearController: TextEditingController(),
+        valueController: TextEditingController(),
+      ));
+    });
+  }
+
+  void removeHistoricalInsuredValue(int index) {
+    setState(() {
+      historicalInsuredValues[index].yearController.dispose();
+      historicalInsuredValues[index].valueController.dispose();
+      historicalInsuredValues.removeAt(index);
+    });
+  }
+
+  Future<void> _selectDatePlacedInService() async {
+    print(datePlacedInService.text);
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      // initial date is select date or datetime.now()
+      initialDate: datePlacedInService.text.isEmpty
+          ? DateTime.now()
+          : DateFormat('MM/dd/yyyy').parse(datePlacedInService.text),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        datePlacedInService.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+        datePlacedInServiceError = false;
+      });
+    }
+  }
+
+  List<String> _generateYearList() {
+    int currentYear = DateTime.now().year;
+    // add last 50 years to the list
+    List<String> years = [];
+    for (int i = currentYear; i >= currentYear - 50; i--) {
+      years.add(i.toString());
+    }
+    return years.toList();
   }
 
   RentalOwner? Ownersdetails;
@@ -4214,6 +4288,502 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 const SizedBox(height: 10),
+                // Insured Value Information
+                // Material(
+                //   elevation: 6,
+                //   borderRadius: BorderRadius.circular(10),
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(10),
+                //       border: Border.all(color: blueColor),
+                //     ),
+                //     child: Padding(
+                //       padding: const EdgeInsets.only(
+                //           left: 10, right: 10, top: 10, bottom: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Row(
+                //             children: [
+                //               const SizedBox(width: 15),
+                //               Text(
+                //                 "Insured Value Information",
+                //                 style: TextStyle(
+                //                   fontWeight: FontWeight.bold,
+                //                   color: blueColor,
+                //                   fontSize:
+                //                       MediaQuery.of(context).size.width < 500
+                //                           ? 16.5
+                //                           : 20,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           const SizedBox(height: 15),
+                //           Row(
+                //             children: [
+                //               const SizedBox(width: 15),
+                //               Text(
+                //                 "Date Placed in Service *",
+                //                 style: TextStyle(
+                //                   color: const Color(0xFF8A95A8),
+                //                   fontWeight: FontWeight.bold,
+                //                   fontSize:
+                //                       MediaQuery.of(context).size.width < 500
+                //                           ? 14.5
+                //                           : 18,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           const SizedBox(height: 8),
+                //           Padding(
+                //             padding:
+                //                 const EdgeInsets.symmetric(horizontal: 15.0),
+                //             child: Container(
+                //               height: 50,
+                //               decoration: BoxDecoration(
+                //                 borderRadius: BorderRadius.circular(10),
+                //                 color: Colors.white,
+                //                 border: Border.all(
+                //                   color: datePlacedInServiceError
+                //                       ? Colors.red
+                //                       : const Color(0xFFDBE0E5),
+                //                 ),
+                //                 boxShadow: [
+                //                   BoxShadow(
+                //                     color: Colors.grey.withOpacity(0.1),
+                //                     spreadRadius: 1,
+                //                     blurRadius: 3,
+                //                     offset: const Offset(0, 1),
+                //                   ),
+                //                 ],
+                //               ),
+                //               child: Stack(
+                //                 children: [
+                //                   Positioned.fill(
+                //                     child: TextField(
+                //                       controller: datePlacedInService,
+                //                       readOnly: true,
+                //                       style: TextStyle(
+                //                         color: Colors.black,
+                //                         fontSize:
+                //                             MediaQuery.of(context).size.width <
+                //                                     500
+                //                                 ? 14
+                //                                 : 15,
+                //                       ),
+                //                       cursorColor: blueColor,
+                //                       decoration: InputDecoration(
+                //                         enabledBorder: InputBorder.none,
+                //                         border: InputBorder.none,
+                //                         contentPadding:
+                //                             const EdgeInsets.symmetric(
+                //                                 horizontal: 14, vertical: 14),
+                //                         hintText: "MM/DD/YYYY",
+                //                         hintStyle: TextStyle(
+                //                           color: Colors.grey[400],
+                //                           fontSize: MediaQuery.of(context)
+                //                                       .size
+                //                                       .width <
+                //                                   500
+                //                               ? 14
+                //                               : 15,
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                   Positioned(
+                //                     right: 12,
+                //                     top: 0,
+                //                     bottom: 0,
+                //                     child: Center(
+                //                       child: GestureDetector(
+                //                         onTap: _selectDatePlacedInService,
+                //                         child: Icon(
+                //                           Icons.calendar_today,
+                //                           color: const Color(0xFF8A95A8),
+                //                           size: MediaQuery.of(context)
+                //                                       .size
+                //                                       .width <
+                //                                   500
+                //                               ? 18
+                //                               : 20,
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //           if (datePlacedInServiceError)
+                //             Padding(
+                //               padding: const EdgeInsets.only(left: 15, top: 5),
+                //               child: Text(
+                //                 datePlacedInServiceMessage,
+                //                 style: TextStyle(
+                //                   color: Colors.red,
+                //                   fontSize:
+                //                       MediaQuery.of(context).size.width * 0.04,
+                //                 ),
+                //               ),
+                //             ),
+                //           const SizedBox(height: 20),
+                //           Row(
+                //             children: [
+                //               const SizedBox(width: 15),
+                //               Text(
+                //                 "Historical Insured Values",
+                //                 style: TextStyle(
+                //                   fontWeight: FontWeight.bold,
+                //                   color: blueColor,
+                //                   fontSize:
+                //                       MediaQuery.of(context).size.width < 500
+                //                           ? 16.5
+                //                           : 20,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           const SizedBox(height: 15),
+                //           if (historicalInsuredValues.isNotEmpty)
+                //             ...historicalInsuredValues
+                //                 .asMap()
+                //                 .entries
+                //                 .map((entry) {
+                //               int index = entry.key;
+                //               HistoricalInsuredValue item = entry.value;
+                //               return Padding(
+                //                 padding: const EdgeInsets.only(
+                //                     bottom: 15, left: 15, right: 0),
+                //                 child: Row(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: [
+                //                     Expanded(
+                //                       child: Column(
+                //                         crossAxisAlignment:
+                //                             CrossAxisAlignment.start,
+                //                         children: [
+                //                           Text(
+                //                             "YEAR *",
+                //                             style: TextStyle(
+                //                               color: const Color(0xFF8A95A8),
+                //                               fontWeight: FontWeight.bold,
+                //                               fontSize: MediaQuery.of(context)
+                //                                           .size
+                //                                           .width <
+                //                                       500
+                //                                   ? 14.5
+                //                                   : 16,
+                //                             ),
+                //                           ),
+                //                           const SizedBox(height: 8),
+                //                           Container(
+                //                             height: 50,
+                //                             decoration: BoxDecoration(
+                //                               borderRadius:
+                //                                   BorderRadius.circular(10),
+                //                               color: Colors.white,
+                //                               border: Border.all(
+                //                                 color: item.yearError
+                //                                     ? Colors.red
+                //                                     : const Color(0xFFDBE0E5),
+                //                               ),
+                //                               boxShadow: [
+                //                                 BoxShadow(
+                //                                   color: Colors.grey
+                //                                       .withOpacity(0.1),
+                //                                   spreadRadius: 1,
+                //                                   blurRadius: 3,
+                //                                   offset: const Offset(0, 1),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             child: DropdownButtonHideUnderline(
+                //                               child: DropdownButton2<String>(
+                //                                 value: item.year,
+                //                                 hint: Text(
+                //                                   'Select Year',
+                //                                   style: TextStyle(
+                //                                     fontSize:
+                //                                         MediaQuery.of(context)
+                //                                                     .size
+                //                                                     .width <
+                //                                                 500
+                //                                             ? 14
+                //                                             : 15,
+                //                                     color: Colors.grey[400],
+                //                                   ),
+                //                                 ),
+                //                                 onChanged: (String? newValue) {
+                //                                   setState(() {
+                //                                     item.year = newValue;
+                //                                     item.yearError = false;
+                //                                   });
+                //                                 },
+                //                                 items: _generateYearList()
+                //                                     .map((String year) {
+                //                                   return DropdownMenuItem<
+                //                                       String>(
+                //                                     value: year,
+                //                                     child: Text(
+                //                                       year,
+                //                                       style: TextStyle(
+                //                                         fontSize: MediaQuery.of(
+                //                                                         context)
+                //                                                     .size
+                //                                                     .width <
+                //                                                 500
+                //                                             ? 14
+                //                                             : 15,
+                //                                       ),
+                //                                     ),
+                //                                   );
+                //                                 }).toList(),
+                //                                 isExpanded: true,
+                //                                 buttonStyleData:
+                //                                     ButtonStyleData(
+                //                                   height: 50,
+                //                                   padding: const EdgeInsets
+                //                                       .symmetric(
+                //                                       horizontal: 0,
+                //                                       vertical: 14),
+                //                                   decoration: BoxDecoration(
+                //                                     borderRadius:
+                //                                         BorderRadius.circular(
+                //                                             10),
+                //                                     color: Colors.transparent,
+                //                                   ),
+                //                                 ),
+                //                                 dropdownStyleData:
+                //                                     DropdownStyleData(
+                //                                   maxHeight: 300,
+                //                                   decoration: BoxDecoration(
+                //                                     borderRadius:
+                //                                         BorderRadius.circular(
+                //                                             10),
+                //                                     color: Colors.white,
+                //                                   ),
+                //                                   scrollbarTheme:
+                //                                       ScrollbarThemeData(
+                //                                     radius:
+                //                                         const Radius.circular(
+                //                                             40),
+                //                                     thickness:
+                //                                         MaterialStateProperty
+                //                                             .all(6),
+                //                                     thumbVisibility:
+                //                                         MaterialStateProperty
+                //                                             .all(true),
+                //                                   ),
+                //                                 ),
+                //                                 menuItemStyleData:
+                //                                     const MenuItemStyleData(
+                //                                   height: 40,
+                //                                   padding: EdgeInsets.symmetric(
+                //                                       horizontal: 16,
+                //                                       vertical: 8),
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                           ),
+                //                           if (item.yearError)
+                //                             Padding(
+                //                               padding: const EdgeInsets.only(
+                //                                   top: 5, left: 2),
+                //                               child: Text(
+                //                                 "Required",
+                //                                 style: TextStyle(
+                //                                   color: Colors.red,
+                //                                   fontSize: 12,
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                         ],
+                //                       ),
+                //                     ),
+                //                     const SizedBox(width: 16),
+                //                     Expanded(
+                //                       child: Column(
+                //                         crossAxisAlignment:
+                //                             CrossAxisAlignment.start,
+                //                         children: [
+                //                           Text(
+                //                             "VALUE (\$) *",
+                //                             style: TextStyle(
+                //                               color: const Color(0xFF8A95A8),
+                //                               fontWeight: FontWeight.bold,
+                //                               fontSize: MediaQuery.of(context)
+                //                                           .size
+                //                                           .width <
+                //                                       500
+                //                                   ? 14.5
+                //                                   : 16,
+                //                             ),
+                //                           ),
+                //                           const SizedBox(height: 8),
+                //                           Container(
+                //                             height: 50,
+                //                             decoration: BoxDecoration(
+                //                               borderRadius:
+                //                                   BorderRadius.circular(10),
+                //                               color: Colors.white,
+                //                               border: Border.all(
+                //                                 color: item.valueError
+                //                                     ? Colors.red
+                //                                     : const Color(0xFFDBE0E5),
+                //                               ),
+                //                               boxShadow: [
+                //                                 BoxShadow(
+                //                                   color: Colors.grey
+                //                                       .withOpacity(0.1),
+                //                                   spreadRadius: 1,
+                //                                   blurRadius: 3,
+                //                                   offset: const Offset(0, 1),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             child: TextField(
+                //                               controller: item.valueController,
+                //                               keyboardType: TextInputType
+                //                                   .numberWithOptions(
+                //                                       decimal: true),
+                //                               style: TextStyle(
+                //                                 color: Colors.black,
+                //                                 fontSize: MediaQuery.of(context)
+                //                                             .size
+                //                                             .width <
+                //                                         500
+                //                                     ? 14
+                //                                     : 15,
+                //                               ),
+                //                               onChanged: (value) {
+                //                                 setState(() {
+                //                                   item.valueError = false;
+                //                                 });
+                //                               },
+                //                               cursorColor: blueColor,
+                //                               decoration: InputDecoration(
+                //                                 enabledBorder: InputBorder.none,
+                //                                 border: InputBorder.none,
+                //                                 contentPadding:
+                //                                     const EdgeInsets.symmetric(
+                //                                         horizontal: 14,
+                //                                         vertical: 14),
+                //                                 hintText: "Enter value..",
+                //                                 hintStyle: TextStyle(
+                //                                   color: Colors.grey[400],
+                //                                   fontSize:
+                //                                       MediaQuery.of(context)
+                //                                                   .size
+                //                                                   .width <
+                //                                               500
+                //                                           ? 14
+                //                                           : 15,
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                           ),
+                //                           if (item.valueError)
+                //                             Padding(
+                //                               padding: const EdgeInsets.only(
+                //                                   top: 5, left: 2),
+                //                               child: Text(
+                //                                 "Required",
+                //                                 style: TextStyle(
+                //                                   color: Colors.red,
+                //                                   fontSize: 12,
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                         ],
+                //                       ),
+                //                     ),
+                //                     const SizedBox(width: 5),
+                //                     Container(
+                //                       // color: Colors.blue,
+                //                       padding: const EdgeInsets.only(top: 35),
+                //                       child: InkWell(
+                //                         onTap: () =>
+                //                             removeHistoricalInsuredValue(index),
+                //                         child: Container(
+                //                           padding: const EdgeInsets.all(5),
+                //                           child: Center(
+                //                             child: FaIcon(
+                //                               FontAwesomeIcons.trashCan,
+                //                               color: Colors.red,
+                //                               size: MediaQuery.of(context)
+                //                                           .size
+                //                                           .width <
+                //                                       500
+                //                                   ? 18
+                //                                   : 20,
+                //                             ),
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               );
+                //             }).toList(),
+                //           const SizedBox(height: 10),
+                //           Padding(
+                //             padding:
+                //                 const EdgeInsets.symmetric(horizontal: 15.0),
+                //             child: GestureDetector(
+                //               onTap: addHistoricalInsuredValue,
+                //               child: Container(
+                //                 height: 40,
+                //                 padding: const EdgeInsets.symmetric(
+                //                     horizontal: 12, vertical: 8),
+                //                 decoration: BoxDecoration(
+                //                   color: blueColor,
+                //                   borderRadius: BorderRadius.circular(8),
+                //                   boxShadow: [
+                //                     BoxShadow(
+                //                       color: Colors.grey.withOpacity(0.2),
+                //                       spreadRadius: 1,
+                //                       blurRadius: 3,
+                //                       offset: const Offset(0, 1),
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 child: Row(
+                //                   mainAxisSize: MainAxisSize.min,
+                //                   children: [
+                //                     Icon(
+                //                       Icons.add,
+                //                       color: Colors.white,
+                //                       size: 20,
+                //                     ),
+                //                     const SizedBox(width: 8),
+                //                     Text(
+                //                       "Add Historical Insured Value",
+                //                       style: TextStyle(
+                //                         color: Colors.white,
+                //                         fontWeight: FontWeight.bold,
+                //                         fontSize:
+                //                             MediaQuery.of(context).size.width <
+                //                                     500
+                //                                 ? 13
+                //                                 : 15,
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                //
+                // const SizedBox(height: 20),
 
                 Row(
                   children: [
@@ -4353,6 +4923,56 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             // String? adminId = prefs.getString("adminId");
                             if (adminId != null) {
                               //  try {
+                              // Format placed_in_service date to yyyy-MM-dd
+                              String? formattedPlacedInService;
+                              if (datePlacedInService.text.isNotEmpty) {
+                                try {
+                                  // Parse the displayed date back to DateTime
+                                  DateTime? parsedDate;
+                                  List<String> dateFormats = [
+                                    'yyyy-MM-dd',
+                                    'yyyy-M-d',
+                                    'dd-MM-yyyy',
+                                    'd-M-yyyy',
+                                    'M/d/yyyy',
+                                    'MM/dd/yyyy',
+                                  ];
+                                  for (String format in dateFormats) {
+                                    try {
+                                      parsedDate = DateFormat(format)
+                                          .parse(datePlacedInService.text);
+                                      break;
+                                    } catch (e) {
+                                      continue;
+                                    }
+                                  }
+                                  if (parsedDate != null) {
+                                    formattedPlacedInService =
+                                        DateFormat('yyyy-MM-dd')
+                                            .format(parsedDate);
+                                  }
+                                } catch (e) {
+                                  print(
+                                      'Error formatting placed_in_service date: $e');
+                                }
+                              }
+
+                              // Create InsuredValue list from historicalInsuredValues
+                              List<InsuredValue> insuredValuesList = [];
+                              for (var item in historicalInsuredValues) {
+                                if (item.year != null &&
+                                    item.year!.isNotEmpty &&
+                                    item.valueController.text.isNotEmpty) {
+                                  // Remove commas from the value
+                                  String cleanValue = item.valueController.text
+                                      .replaceAll(',', '');
+                                  insuredValuesList.add(InsuredValue(
+                                    year: item.year,
+                                    insuredValue: cleanValue,
+                                  ));
+                                }
+                              }
+
                               Rental rentals = Rental(
                                   adminId: adminId,
                                   propertyId:
@@ -4363,7 +4983,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   country: country.text.trim(),
                                   postcode: postalcode.text.trim(),
                                   staffMemberId: sid,
-                                  processor_id: processorId);
+                                  processor_id: processorId,
+                                  placedInService: formattedPlacedInService,
+                                  // insuredValues: insuredValuesList.isNotEmpty
+                                  //     ? insuredValuesList
+                                  //     : null
+                              );
 
                               List<Unit> units = [];
                               if (propertyGroupControllers.isNotEmpty) {
@@ -4539,6 +5164,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         )),
                   ],
                 ),
+
                 const Column(
                   children: [
                     //SetshowRentalOwnerTable(),
@@ -4951,5 +5577,23 @@ class OwnersDetails {
   RentalOwner? Ownersdetails;
   OwnersDetails({
     required this.Ownersdetails,
+  });
+}
+
+class HistoricalInsuredValue {
+  String? year;
+  String? insuredValue;
+  TextEditingController yearController;
+  TextEditingController valueController;
+  bool yearError;
+  bool valueError;
+
+  HistoricalInsuredValue({
+    this.year,
+    this.insuredValue,
+    required this.yearController,
+    required this.valueController,
+    this.yearError = false,
+    this.valueError = false,
   });
 }

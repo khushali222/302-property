@@ -8,6 +8,8 @@ import 'package:three_zero_two_property/screens/Reports/ReportScreens/Convenienc
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Expiring_Insurance.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/LeaseRenewalReport.dart'
+    show LeaseRenewalReportScreen;
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
@@ -564,6 +566,12 @@ List<ReportCardModel> reportCards = [
     destination: ExpiringLeases(),
   ),
   ReportCardModel(
+    title: "Lease Renewal",
+    description:
+        "Report of leases ending and month-to-month leases with renewal details",
+    destination: LeaseRenewalReportScreen(),
+  ),
+  ReportCardModel(
     title: "Delinquent Tenants",
     description:
         "Tenants with an outstanding ledger balance as of a specific date",
@@ -757,12 +765,12 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'Rent balance due by property and tenants',
                   "navigate": RentersInsurances()
                 },
-                // {
-                //   'title': 'Outstanding Lease Balance Report',
-                //   'subtitle':
-                //   'Detailed breakdown of outstanding lease balances with aging analysis',
-                //   "navigate": OutstandingLeaseBalance()
-                // },
+                {
+                  'title': 'Outstanding Lease Balance Report',
+                  'subtitle':
+                  'Detailed breakdown of outstanding lease balances with aging analysis',
+                  "navigate": OutstandingLeaseBalance()
+                },
                 {
                   'title': 'Property Revenue Report',
                   'subtitle':
@@ -821,9 +829,11 @@ class ReportScreen extends StatelessWidget {
                       'Renter\'s insurance policies expiring within the selected time period',
                   "navigate": ExpiringInsurance()
                 },
-                {'title': 'Insurance Premium Report', 
-                'subtitle': 'Compare property insurance premiums across selected years/spans', 
-                "navigate": InsurancePremiumReport()
+                {
+                  'title': 'Insurance Premium Report',
+                  'subtitle':
+                      'Compare property insurance premiums across selected years/spans',
+                  "navigate": InsurancePremiumReport()
                 },
                 // {
                 //   'title': 'Property Insurance Summary',
@@ -864,6 +874,12 @@ class ReportScreen extends StatelessWidget {
                   'subtitle':
                       'Tenants with an outstanding ledger balance as of a specified date',
                   "navigate": DelinquentTenants()
+                },
+                {
+                  'title': 'Lease Renewal',
+                  'subtitle':
+                      'Report of leases ending and month-to-month leases with renewal details',
+                  "navigate": LeaseRenewalReportScreen()
                 },
                 {
                   'title': 'Convenience Fee Override',

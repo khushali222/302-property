@@ -153,9 +153,11 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
           sortOrder: _sortOrder,
         );
 
-        if (data.success == true && data.data != null && data.data!.isNotEmpty) {
+        if (data.success == true &&
+            data.data != null &&
+            data.data!.isNotEmpty) {
           allData.addAll(data.data!);
-          
+
           // Check if there are more pages
           if (data.pagination != null) {
             int totalPages = data.pagination!.totalPages ?? 1;
@@ -637,7 +639,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               try {
                 // Fetch ALL data for export
                 final allData = await fetchAllDataForExport();
-                
+
                 Navigator.pop(context); // Close loading dialog
 
                 if (allData.isEmpty) {
@@ -647,7 +649,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   );
                   return;
                 }
-                
+
                 if (value == 'PDF') {
                   await _generatePdf(allData);
                 } else if (value == 'XLSX') {
@@ -678,7 +680,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               ),
             ],
             child: Center(
-              child: FaIcon(FontAwesomeIcons.download, color: blueColor, size: 20),
+              child:
+                  FaIcon(FontAwesomeIcons.download, color: blueColor, size: 20),
             ),
           ),
         ),
@@ -762,7 +765,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                           if (selectedRentalOwnerIds.isEmpty) {
                             _rentalOwnerFilter = null;
                           } else {
-                            _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
+                            _rentalOwnerFilter =
+                                selectedRentalOwnerIds.join(',');
                           }
                         });
                       },
@@ -775,7 +779,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                                 // Select all rental owners
                                 selectedRentalOwnerIds = rentalOwnersList
                                     .map((owner) =>
-                                        owner['rentalowner_id']?.toString() ?? '')
+                                        owner['rentalowner_id']?.toString() ??
+                                        '')
                                     .where((id) => id.isNotEmpty)
                                     .toList();
                               } else {
@@ -788,12 +793,14 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                                 if (selectedRentalOwnerIds.isEmpty) {
                                   _rentalOwnerFilter = null;
                                 } else {
-                                  _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
+                                  _rentalOwnerFilter =
+                                      selectedRentalOwnerIds.join(',');
                                 }
                               });
                             },
                             activeColor: blueColor,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
                           ),
                           Expanded(
                             child: Text(
@@ -840,7 +847,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                             if (selectedRentalOwnerIds.isEmpty) {
                               _rentalOwnerFilter = null;
                             } else {
-                              _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
+                              _rentalOwnerFilter =
+                                  selectedRentalOwnerIds.join(',');
                             }
                           });
                         },
@@ -850,11 +858,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                               value: isCurrentlySelected,
                               onChanged: (bool? checked) {
                                 if (checked == true) {
-                                  selectedRentalOwnerIds
-                                      .add(owner['rentalowner_id']?.toString() ?? '');
+                                  selectedRentalOwnerIds.add(
+                                      owner['rentalowner_id']?.toString() ??
+                                          '');
                                 } else {
-                                  selectedRentalOwnerIds
-                                      .remove(owner['rentalowner_id']?.toString());
+                                  selectedRentalOwnerIds.remove(
+                                      owner['rentalowner_id']?.toString());
                                 }
                                 _selectedOwnersNotifier.value =
                                     List.from(selectedRentalOwnerIds);
@@ -863,12 +872,14 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                                   if (selectedRentalOwnerIds.isEmpty) {
                                     _rentalOwnerFilter = null;
                                   } else {
-                                    _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
+                                    _rentalOwnerFilter =
+                                        selectedRentalOwnerIds.join(',');
                                   }
                                 });
                               },
                               activeColor: blueColor,
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
                             Expanded(
                               child: Text(
@@ -891,43 +902,44 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 );
               }),
             ],
-            onChanged: (_) {}, // Do nothing - selection handled in item's InkWell
-      buttonStyleData: ButtonStyleData(
-        height: 50,
-        padding: const EdgeInsets.only(left: 12, right: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color(0xFF8A95A8),
-          ),
-          color: Colors.white,
-        ),
-        elevation: 0,
-      ),
-      iconStyleData: IconStyleData(
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: Colors.grey[600],
-          size: 18,
-        ),
-      ),
-      dropdownStyleData: DropdownStyleData(
-        maxHeight: 250,
-        width: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        offset: const Offset(-20, -5),
-        scrollbarTheme: ScrollbarThemeData(
-          radius: const Radius.circular(40),
-          thickness: MaterialStateProperty.all(6),
-          thumbVisibility: MaterialStateProperty.all(true),
-        ),
-      ),
-      menuItemStyleData: const MenuItemStyleData(
-        height: 40,
-        padding: EdgeInsets.only(left: 12, right: 12),
-      ),
+            onChanged:
+                (_) {}, // Do nothing - selection handled in item's InkWell
+            buttonStyleData: ButtonStyleData(
+              height: 50,
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF8A95A8),
+                ),
+                color: Colors.white,
+              ),
+              elevation: 0,
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.grey[600],
+                size: 18,
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 250,
+              width: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              offset: const Offset(-20, -5),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all(6),
+                thumbVisibility: MaterialStateProperty.all(true),
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.only(left: 12, right: 12),
+            ),
           ),
         );
       },
@@ -984,7 +996,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  
                   Padding(
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
@@ -1075,6 +1086,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     ),
                   ),
 
+                  // Spacing between tenant and amount
+                  SizedBox(width: 16),
+
                   // Total Balance
                   Text(
                     '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
@@ -1140,61 +1154,180 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 ),
               ),
               Expanded(
-                child: Text(
-                  '0-30 Days',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '0-30\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
                   ),
-                  textAlign: TextAlign.right,
                 ),
               ),
               Expanded(
-                child: Text(
-                  '31-60 Days',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '31-60\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
                   ),
-                  textAlign: TextAlign.right,
                 ),
               ),
               Expanded(
-                child: Text(
-                  '61-90 Days',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '61-90\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
                   ),
-                  textAlign: TextAlign.right,
                 ),
               ),
               Expanded(
-                child: Text(
-                  '90+ Days',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '90+\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
                   ),
-                  textAlign: TextAlign.right,
                 ),
               ),
-              Expanded(
-                child: Text(
-                  'Balance',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
+              // Expanded(
+              //   child: Text(
+              //     'Balance',
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: 13,
+              //       color: Colors.black,
+              //     ),
+              //     textAlign: TextAlign.right,
+              //   ),
+              // ),
+           
             ],
+          ),
+        ),
+        SizedBox(height: 8),
+
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          margin: EdgeInsets.only(bottom: 4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                  item.propertyAddress ?? '',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              
+                       ],
           ),
         ),
         SizedBox(height: 8),
@@ -1209,56 +1342,71 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 borderRadius: BorderRadius.circular(4),
               ),
               margin: EdgeInsets.only(bottom: 4),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      account.accountName ?? '',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          account.accountName ?? '',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '', // Empty for 0-30 days (like PDF)
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '', // Empty for 31-60 days (like PDF)
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '', // Empty for 61-90 days (like PDF)
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '', // Empty for 90+ days (like PDF)
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      account.amount != null && account.amount! > 0
-                          ? '\$${NumberFormat('#,##0.00').format(account.amount!)}'
-                          : '-',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 0-30 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
                       ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 31-60 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 61-90 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 90+ days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    ],
+                  ),
+                SizedBox(height: 8),
+                Row(
+           
+                children: [
+                    Text('Balance :', style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),),
+                    Spacer(),
+                    Text(
+                      '\$${NumberFormat('#,##0.00').format(account.amount ?? 0)}',
+                      style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),
                       textAlign: TextAlign.right,
                     ),
-                  ),
+                  ],
+                ),  
                 ],
               ),
             );
@@ -1266,86 +1414,92 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
 
         // Balance row
         SizedBox(height: 8),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border(
-              top: BorderSide(color: Colors.grey[300]!, width: 1),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Text(
-                  'Balance',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ],
-          ),
-        ),
+        // Container(
+        //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        //   decoration: BoxDecoration(
+        //     color: Colors.white,
+        //     borderRadius: BorderRadius.circular(4),
+        //     border: Border(
+        //       top: BorderSide(color: Colors.grey[300]!, width: 1),
+        //     ),
+        //   ),
+        //   child: Column(
+        //     children: [
+        //       Row(
+        //         children: [
+        //           Expanded(
+        //             flex: 2,
+        //             child: Text(
+        //               'Balance',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: Colors.grey[800],
+        //               ),
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: Text(
+        //               '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: blueColor,
+        //               ),
+        //               textAlign: TextAlign.right,
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: Text(
+        //               '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: blueColor,
+        //               ),
+        //               textAlign: TextAlign.right,
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: Text(
+        //               '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: blueColor,
+        //               ),
+        //               textAlign: TextAlign.right,
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: Text(
+        //               '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: blueColor,
+        //               ),
+        //               textAlign: TextAlign.right,
+        //             ),
+        //           ),
+        //           Expanded(
+        //             child: Text(
+        //               '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 13,
+        //                 color: blueColor,
+        //               ),
+        //               textAlign: TextAlign.right,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+           
+        //     ],
+        //   ),
+        // ),
+      
       ],
     );
   }

@@ -97,50 +97,17 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void sortData(List<Lease1> data) {
-    // If status is "All", sort by lease start date in descending order
-    if (selectedStatus == "All") {
-      data.sort((a, b) {
-        if (a.startDate == null && b.startDate == null) return 0;
-        if (a.startDate == null) return 1;
-        if (b.startDate == null) return -1;
-        // Descending order (newest start date first)
-        return b.startDate!.compareTo(a.startDate!);
-      });
-    } else {
-      // Always apply default sort by remaining days in descending order (highest remaining days first)
-      data.sort((a, b) {
-        // Handle null or "---" values for remaining days
-        String aDays = a.remainingDays ?? "---";
-        String bDays = b.remainingDays ?? "---";
-
-        // Debug logging
-        // print(
-        //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
-        // print(
-        //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
-
-        // If both are "---", they are equal
-        if (aDays == "---" && bDays == "---") return 0;
-
-        // If one is "---", put it at the end
-        if (aDays == "---") return 1;
-        if (bDays == "---") return -1;
-
-        // Parse numeric values and sort in descending order
-        try {
-          double aValue = double.parse(aDays);
-          double bValue = double.parse(bDays);
-          int result = bValue.compareTo(aValue); // Descending order
-          print(
-              "DEBUG: Numeric comparison - A: $aValue, B: $bValue, Result: $result");
-          return result;
-        } catch (e) {
-          // If parsing fails, fall back to string comparison
-          print("DEBUG: Parse error: $e, falling back to string comparison");
-          return bDays.compareTo(aDays);
-        }
-      });
-    }
+    // Default sort by end date in descending order (newest end date first)
+    data.sort((a, b) {
+      String aEnd = a.endDate ?? "";
+      String bEnd = b.endDate ?? "";
+      bool aAtWill = aEnd.isEmpty || aEnd.toLowerCase() == "at will";
+      bool bAtWill = bEnd.isEmpty || bEnd.toLowerCase() == "at will";
+      if (aAtWill && bAtWill) return 0;
+      if (aAtWill) return 1;
+      if (bAtWill) return -1;
+      return bEnd.compareTo(aEnd); // Descending: newest end date first
+    });
 
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
