@@ -453,6 +453,10 @@ class _MakePaymentState extends State<MakePayment> {
         return method;
       }).toList();
     }
+    // Clear selected method if it's not in the new list (avoids RangeError when changing tenant/method)
+    if (_selectedPaymentMethod != null && !_paymentMethods.contains(_selectedPaymentMethod)) {
+      _selectedPaymentMethod = null;
+    }
   }
 
   final List<String> _paymentMethodsforfree = ['Check', 'Cash'];
@@ -861,6 +865,7 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       isLoading = true;
       cardDetails = []; // Clear previous card details
+      selectedcardindex = null; // Avoid RangeError when list is rebuilt
     });
 
     final response = await http.get(
@@ -893,6 +898,11 @@ class _MakePaymentState extends State<MakePayment> {
       if (customerData != null) {
         setState(() {
           cardDetails = customerData.billing;
+          // Keep selected index only if still in range (avoids RangeError)
+          if (selectedcardindex != null &&
+              (selectedcardindex! < 0 || selectedcardindex! >= cardDetails.length)) {
+            selectedcardindex = null;
+          }
         });
       }
     } else if (response.statusCode == 404) {
@@ -1662,7 +1672,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
                                   hint: const Text('Select Method'),
-                                  value: _selectedPaymentMethod,
+                                  value: _paymentMethodsforfree.contains(_selectedPaymentMethod)
+                                      ? _selectedPaymentMethod
+                                      : null,
                                   items: _paymentMethodsforfree.map((method) {
                                     return DropdownMenuItem<String>(
                                       value: method,
@@ -1750,7 +1762,9 @@ class _MakePaymentState extends State<MakePayment> {
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
                                           hint: const Text('Select Method'),
-                                          value: _selectedPaymentMethod,
+                                          value: _paymentMethods.contains(_selectedPaymentMethod)
+                                              ? _selectedPaymentMethod
+                                              : null,
                                           items: _paymentMethods.map((method) {
                                             return DropdownMenuItem<String>(
                                               value: method,
@@ -2103,28 +2117,38 @@ class _MakePaymentState extends State<MakePayment> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(16.0),
-                                        child: Row(
+                                        child: Column(
                                           children: [
-                                            if (surCharge != null)
+                                            if (surCharge != null &&
+                                                selectedcardindex != null &&
+                                                selectedcardindex! < cardDetails.length)
                                               // ignore: unrelated_type_equality_checks
-                                              Text(
-                                                '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                style: TextStyle(
-                                                    color: blueColor,
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
+                                                    style: TextStyle(
+                                                        color: blueColor,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                ],
                                               ),
                                             if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(
-                                                  state.errorText ?? '',
-                                                  style: const TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 12),
-                                                ),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        top: 5),
+                                                    child: Text(
+                                                      state.errorText ?? '',
+                                                      style: const TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                           ],
                                         ),
