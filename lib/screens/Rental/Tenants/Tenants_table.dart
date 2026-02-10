@@ -285,6 +285,7 @@ class _Tenants_tableState extends State<Tenants_table> {
     fetchCompany();
   }
 
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();

@@ -105,6 +105,7 @@ class _Tenants_tableState extends State<Tenants_table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(

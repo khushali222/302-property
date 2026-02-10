@@ -5,6 +5,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ConvenienceFee.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/CustomReportBuilder.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Expiring_Insurance.dart';
@@ -797,11 +798,11 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'All completed work orders',
                   "navigate": CompletedWorkOrders()
                 },
-                // {
-                //   'title': 'Reopen Work Orders',
-                //   'subtitle': 'Work orders on hold with future reopen dates',
-                //   "navigate": ReopenWorkorder()
-                // },
+                {
+                  'title': 'Reopen Work Orders',
+                  'subtitle': 'Work orders on hold with future reopen dates',
+                  "navigate": ReopenWorkorder()
+                },
                 {
                   'title': 'Home System Report',
                   'subtitle': 'Home system report',
@@ -893,6 +894,22 @@ class ReportScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
+          // reportSection(
+          //     'assets/images/fontisto_person.svg',
+          //     'Custom Reports',
+          //     [
+          //       {
+          //         'title': 'Custom Report Builder',
+          //         'subtitle':
+          //             'Choose columns, historic values, and filters to build a custom lease report',
+          //         "navigate": CustomReportBuilder()
+          //       },
+          //     ],
+          //     "",
+          //     context),
+          //     SizedBox(
+          //   height: 10,
+          // ),
         ],
       ),
     );

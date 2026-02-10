@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/CompletedWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ConvenienceFee.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/CustomReportBuilder.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Expiring_Insurance.dart';
@@ -13,6 +14,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/PropertyRevenueReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/ReopenWorkorder.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/dailytransaction.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/rentalownerreport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/LeaseRenewalReport.dart';
@@ -827,6 +829,11 @@ class ReportScreen extends StatelessWidget {
                   "navigate": CompletedWorkOrders()
                 },
                 {
+                  'title': 'Reopen Work Orders',
+                  'subtitle': 'Work orders on hold with future reopen dates',
+                  "navigate": ReopenWorkorder(isStaffMode: true)
+                },
+                {
                   'title': 'Home System Report',
                   'subtitle': 'Home system report',
                   "navigate": HomeSystemReportScreen()
@@ -892,6 +899,21 @@ class ReportScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
+          // reportSection(
+          //     'assets/images/fontisto_person.svg',
+          //     'Custom Reports',
+          //     [
+          //       {
+          //         'title': 'Custom Report Builder',
+          //         'subtitle': 'Choose columns, historic values, and filters to build a custom lease report',
+          //         "navigate": CustomReportBuilder()
+          //       },
+          //     ],
+          //     "",
+          //     context),
+          //     SizedBox(
+          //   height: 10,
+          // ),
         ],
       ),
     );
