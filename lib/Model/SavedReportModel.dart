@@ -41,6 +41,7 @@ class SavedReport {
   final bool isDelete;
   final String? createdAt;
   final String? updatedAt;
+  final Map<String, dynamic>? dynamicFieldConfigs;
 
   SavedReport({
     required this.id,
@@ -56,12 +57,17 @@ class SavedReport {
     required this.isDelete,
     this.createdAt,
     this.updatedAt,
+    this.dynamicFieldConfigs,
   });
 
   factory SavedReport.fromJson(Map<String, dynamic> json) {
     List<String> cols = [];
     if (json['selectedColumns'] != null && json['selectedColumns'] is List) {
       cols = (json['selectedColumns'] as List).map((e) => e.toString()).toList();
+    }
+    Map<String, dynamic>? dynamicFieldConfigs;
+    if (json['dynamicFieldConfigs'] != null && json['dynamicFieldConfigs'] is Map) {
+      dynamicFieldConfigs = Map<String, dynamic>.from(json['dynamicFieldConfigs'] as Map);
     }
     return SavedReport(
       id: json['_id']?.toString() ?? '',
@@ -77,6 +83,7 @@ class SavedReport {
       isDelete: json['is_delete'] == true,
       createdAt: json['createdAt']?.toString(),
       updatedAt: json['updatedAt']?.toString(),
+      dynamicFieldConfigs: dynamicFieldConfigs,
     );
   }
 

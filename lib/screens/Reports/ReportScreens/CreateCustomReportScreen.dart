@@ -1,5 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -57,7 +59,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
       _endDateApi = r.selectedEndDate ?? '';
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       if (_startDateApi.isNotEmpty) {
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
       }
       if (_endDateApi.isNotEmpty) {
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
@@ -113,7 +116,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final start = now.subtract(const Duration(days: 6));
         _startDateApi = DateFormat('yyyy-MM-dd').format(start);
         _endDateApi = DateFormat('yyyy-MM-dd').format(now);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -121,7 +125,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final start = now.subtract(const Duration(days: 13));
         _startDateApi = DateFormat('yyyy-MM-dd').format(start);
         _endDateApi = DateFormat('yyyy-MM-dd').format(now);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -129,7 +134,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final start = now.subtract(const Duration(days: 29));
         _startDateApi = DateFormat('yyyy-MM-dd').format(start);
         _endDateApi = DateFormat('yyyy-MM-dd').format(now);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -138,7 +144,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final weekStart = now.subtract(Duration(days: weekday - 1));
         _startDateApi = DateFormat('yyyy-MM-dd').format(weekStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(now);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -148,7 +155,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final weekEnd = now.subtract(Duration(days: weekday));
         _startDateApi = DateFormat('yyyy-MM-dd').format(weekStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(weekEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -157,7 +165,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final monthEnd = DateTime(now.year, now.month + 1, 0);
         _startDateApi = DateFormat('yyyy-MM-dd').format(monthStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(monthEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -166,7 +175,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final lastMonthEnd = DateTime(now.year, now.month, 0);
         _startDateApi = DateFormat('yyyy-MM-dd').format(lastMonthStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(lastMonthEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -176,7 +186,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final quarterEnd = DateTime(now.year, q * 3 + 1, 0);
         _startDateApi = DateFormat('yyyy-MM-dd').format(quarterStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(quarterEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -184,12 +195,12 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final q = (now.month - 1) ~/ 3 + 1;
         final lastQ = q == 1 ? 4 : q - 1;
         final lastQYear = q == 1 ? now.year - 1 : now.year;
-        final quarterStart =
-            DateTime(lastQYear, (lastQ - 1) * 3 + 1, 1);
+        final quarterStart = DateTime(lastQYear, (lastQ - 1) * 3 + 1, 1);
         final quarterEnd = DateTime(lastQYear, lastQ * 3 + 1, 0);
         _startDateApi = DateFormat('yyyy-MM-dd').format(quarterStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(quarterEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -197,7 +208,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final yearStart = DateTime(now.year, 1, 1);
         _startDateApi = DateFormat('yyyy-MM-dd').format(yearStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(now);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -206,7 +218,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final lastYearEnd = DateTime(now.year - 1, 12, 31);
         _startDateApi = DateFormat('yyyy-MM-dd').format(lastYearStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(lastYearEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -215,7 +228,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         final yearEnd = DateTime(now.year, 12, 31);
         _startDateApi = DateFormat('yyyy-MM-dd').format(yearStart);
         _endDateApi = DateFormat('yyyy-MM-dd').format(yearEnd);
-        _fromDateController.text = dateProvider.formatCurrentDate(_startDateApi);
+        _fromDateController.text =
+            dateProvider.formatCurrentDate(_startDateApi);
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
         return;
       }
@@ -251,9 +265,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     );
     final picked = await showDatePicker(
       context: context,
-      initialDate: _endDateApi.isNotEmpty
-          ? DateTime.tryParse(_endDateApi) ?? now
-          : now,
+      initialDate:
+          _endDateApi.isNotEmpty ? DateTime.tryParse(_endDateApi) ?? now : now,
       firstDate: DateTime(now.year - 10),
       lastDate: DateTime(now.year + 1),
       builder: (context, child) => Theme(data: theme, child: child!),
@@ -270,15 +283,15 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
 
   Future<void> _saveReport() async {
     setState(() {
-      _columnError = _selectedColumns.isEmpty
-          ? 'Please select at least one column'
-          : null;
+      _columnError =
+          _selectedColumns.isEmpty ? 'Please select at least one column' : null;
     });
     if (!_formKey.currentState!.validate()) return;
     if (_selectedColumns.isEmpty) return;
     setState(() => _saving = true);
     final service = CustomReportService();
-    final isEdit = widget.existingReport != null && widget.existingReport!.reportId.isNotEmpty;
+    final isEdit = widget.existingReport != null &&
+        widget.existingReport!.reportId.isNotEmpty;
     final SaveReportResponse result = isEdit
         ? await service.updateReport(
             adminId: widget.adminId,
@@ -306,13 +319,21 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     if (!mounted) return;
     if (result.statusCode == 200) {
       Fluttertoast.showToast(
-        msg: result.message ?? (isEdit ? 'Report updated successfully.' : 'Report saved successfully.'),
+        msg: result.message ??
+            (isEdit
+                ? 'Report updated successfully.'
+                : 'Report saved successfully.'),
         toastLength: Toast.LENGTH_SHORT,
       );
-      Navigator.pop(context, true);
+      final popValue = isEdit ? true : (result.data ?? true);
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.pop(context, popValue);
+      });
     } else {
       Fluttertoast.showToast(
-        msg: result.message ?? (isEdit ? 'Failed to update report' : 'Failed to save report'),
+        msg: result.message ??
+            (isEdit ? 'Failed to update report' : 'Failed to save report'),
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -342,213 +363,214 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: Form(
-          key: _formKey,
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: blueColor.withOpacity(0.2)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLabel('Report Name *'),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter report name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: blueColor),
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'Report name is required';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Description'),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter description',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: blueColor),
-                    ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Date Range'),
-                const SizedBox(height: 8),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: Theme.of(context).colorScheme.copyWith(
-                      primary: Colors.black87,
-                      onSurface: Colors.black87,
-                    ),
-                  ),
+                  key: _formKey,
                   child: Container(
-                    height: 42,
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade400),
+                      border: Border.all(color: blueColor.withOpacity(0.2)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            'Select Date Range',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF8A95A8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('Report Name *'),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter report name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: blueColor),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'Report name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        _buildLabel('Description'),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter description',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: blueColor),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
                           ),
                         ),
-                        items: customReportDateRangeOptions
-                            .map((e) => DropdownMenuItem<String>(
-                                  value: e,
+                        const SizedBox(height: 20),
+                        _buildLabel('Date Range'),
+                        const SizedBox(height: 8),
+                        Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: Theme.of(context).colorScheme.copyWith(
+                                  primary: Colors.black87,
+                                  onSurface: Colors.black87,
+                                ),
+                          ),
+                          child: Container(
+                            height: 42,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade400),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
-                                    e,
-                                    style: const TextStyle(
+                                    'Select Date Range',
+                                    style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.black87,
+                                      color: Color(0xFF8A95A8),
                                     ),
                                   ),
-                                ))
-                            .toList(),
-                        value: _dateRange,
-                        onChanged: (value) => _applyDateRangePreset(value),
-                        buttonStyleData: const ButtonStyleData(
-                          height: 42,
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 300,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                                ),
+                                items: customReportDateRangeOptions
+                                    .map((e) => DropdownMenuItem<String>(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                value: _dateRange,
+                                onChanged: (value) =>
+                                    _applyDateRangePreset(value),
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 42,
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 300,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildDateField(
-                        label: 'From',
-                        controller: _fromDateController,
-                        onTap: _customDateRange ? _pickFromDate : null,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildDateField(
-                        label: 'To',
-                        controller: _toDateController,
-                        onTap: _customDateRange ? _pickToDate : null,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Columns *'),
-                const SizedBox(height: 8),
-                _buildColumnsDropdown(context),
-                if (_columnError != null) ...[
-                  const SizedBox(height: 6),
-                  Text(
-                    _columnError!,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    _buildLabel('Include Historic Values'),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      height: 28,
-                      child: Switch(
-                        value: _includeHistory,
-                        onChanged: (v) =>
-                            setState(() => _includeHistory = v),
-                        activeColor: blueColor,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _includeHistory ? 'Yes' : 'No',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _saving ? null : _saveReport,
-                    icon: _saving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildDateField(
+                                label: 'From',
+                                controller: _fromDateController,
+                                onTap: _customDateRange ? _pickFromDate : null,
+                              ),
                             ),
-                          )
-                        : const Icon(Icons.save, size: 20),
-                    label: Text(_saving ? 'Saving...' : 'Save Report'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isFormValid
-                          ? blueColor
-                          : (Colors.grey[400] ?? Colors.grey),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _buildDateField(
+                                label: 'To',
+                                controller: _toDateController,
+                                onTap: _customDateRange ? _pickToDate : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        _buildLabel('Columns *'),
+                        const SizedBox(height: 8),
+                        _buildColumnsDropdown(context),
+                        if (_columnError != null) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            _columnError!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            _buildLabel('Include Historic Values'),
+                            const SizedBox(width: 12),
+                            SizedBox(
+                              height: 28,
+                              child: Switch(
+                                value: _includeHistory,
+                                onChanged: (v) =>
+                                    setState(() => _includeHistory = v),
+                                activeColor: blueColor,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _includeHistory ? 'Yes' : 'No',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _saving ? null : _saveReport,
+                            icon: _saving
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  )
+                                : const Icon(Icons.save, size: 20),
+                            label: Text(_saving ? 'Saving...' : 'Save Report'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _isFormValid
+                                  ? blueColor
+                                  : (Colors.grey[400] ?? Colors.grey),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
             ),
           ],
         ),
@@ -559,10 +581,10 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
   Widget _buildLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: blueColor,
       ),
     );
   }
@@ -580,7 +602,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
+            color: blueColor,
           ),
         ),
         const SizedBox(height: 5),
@@ -589,11 +611,11 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
           child: Container(
             height: 42,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(8),
-            color: onTap != null ? Colors.white : Colors.grey.shade100,
-          ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(8),
+              color: onTap != null ? Colors.white : Colors.grey.shade100,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -627,6 +649,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     void removeOverlay() {
       entry.remove();
     }
+
     entry = OverlayEntry(
       builder: (ctx) => _ColumnsDropdownOverlay(
         columnsKey: _columnsKey,
@@ -694,7 +717,8 @@ class _ColumnsDropdownOverlay extends StatefulWidget {
   });
 
   @override
-  State<_ColumnsDropdownOverlay> createState() => _ColumnsDropdownOverlayState();
+  State<_ColumnsDropdownOverlay> createState() =>
+      _ColumnsDropdownOverlayState();
 }
 
 class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
@@ -707,7 +731,8 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
     super.initState();
     _selected = List.from(widget.initialSelected);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final box = widget.columnsKey.currentContext?.findRenderObject() as RenderBox?;
+      final box =
+          widget.columnsKey.currentContext?.findRenderObject() as RenderBox?;
       if (box != null && mounted) {
         final pos = box.localToGlobal(Offset.zero);
         setState(() {
@@ -747,11 +772,8 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
     }
     final screenHeight = MediaQuery.of(context).size.height;
     final top = _position!.dy + 44;
-    final maxH = (screenHeight - top - 12).clamp(180.0, 320.0);
+    final maxH = (screenHeight - top - 12).clamp(220.0, 400.0);
     final keys = customReportColumnKeys;
-    final half = (keys.length / 2).ceil();
-    final leftKeys = keys.take(half).toList();
-    final rightKeys = keys.skip(half).toList();
 
     return Stack(
       children: [
@@ -778,75 +800,50 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Select columns',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: blueColor,
-                          ),
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                          icon: const Icon(Icons.close, size: 18),
-                          onPressed: widget.onDismiss,
-                          color: Colors.grey[700],
-                        ),
-                      ],
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Text(
+                      'Select columns',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: blueColor,
+                      ),
                     ),
                   ),
                   Flexible(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding:
+                          const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: leftKeys.map((key) => _buildColumnChip(key)).toList(),
+                          InkWell(
+                            onTap: () => _selectAll(_selected.length !=
+                                customReportColumnKeys.length),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  Checkbox(
+                                    value: _selected.length ==
+                                        customReportColumnKeys.length,
+                                    tristate: true,
+                                    onChanged: (v) => _selectAll(v == true),
+                                    activeColor: blueColor,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  const Text('Select All',
+                                      style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: rightKeys.map((key) => _buildColumnChip(key)).toList(),
-                            ),
-                          ),
+                          ...keys.map((key) => _buildColumnChip(key)),
                         ],
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 8, bottom: 6),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () => _selectAll(_selected.length != customReportColumnKeys.length),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Checkbox(
-                                  value: _selected.length == customReportColumnKeys.length,
-                                  tristate: true,
-                                  onChanged: (v) => _selectAll(v == true),
-                                  activeColor: blueColor,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                const Text('Select All', style: TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ],

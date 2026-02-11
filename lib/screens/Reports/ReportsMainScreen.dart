@@ -894,22 +894,22 @@ class ReportScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          // reportSection(
-          //     'assets/images/fontisto_person.svg',
-          //     'Custom Reports',
-          //     [
-          //       {
-          //         'title': 'Custom Report Builder',
-          //         'subtitle':
-          //             'Choose columns, historic values, and filters to build a custom lease report',
-          //         "navigate": CustomReportBuilder()
-          //       },
-          //     ],
-          //     "",
-          //     context),
-          //     SizedBox(
-          //   height: 10,
-          // ),
+          reportSection(
+              'assets/images/graph - Copy.svg',
+              'Custom Reports',
+              [
+                {
+                  'title': 'Custom Report Builder',
+                  'subtitle':
+                      'Choose columns, historic values, and filters to build a custom lease report',
+                  "navigate": CustomReportBuilder()
+                },
+              ],
+              "",
+              context),
+              SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );

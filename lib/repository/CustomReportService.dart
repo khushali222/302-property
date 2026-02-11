@@ -67,10 +67,23 @@ class CustomReportService {
         "id": "CRM $adminId",
         "Content-Type": "application/json",
       });
-      print(" saved fetch report by id   $response.body");
+      // --- GET /api/reports/saved/:reportId - full response log (compare with web) ---
+      print('[CustomReport GET] GET $Api_url/api/reports/saved/$reportId?admin_id=$adminId');
+      print('[CustomReport GET] statusCode=${response.statusCode} bodyLength=${response.body.length}');
+      print('[CustomReport GET] response.body: ${response.body}');
       if (response.statusCode == 200) {
         final parsed = jsonDecode(response.body) as Map<String, dynamic>;
-        return SavedReportSingleModel.fromJson(parsed);
+        final model = SavedReportSingleModel.fromJson(parsed);
+        if (model.data != null) {
+          final r = model.data!;
+          print('[CustomReport GET] parsed: report_id=${r.reportId} name=${r.name} dateRange=${r.dateRange}');
+          print('[CustomReport GET] selectedStartDate=${r.selectedStartDate} selectedEndDate=${r.selectedEndDate} includeHistory=${r.includeHistory}');
+          print('[CustomReport GET] selectedColumns(${r.selectedColumns.length}): ${r.selectedColumns}');
+          print('[CustomReport GET] dynamicFieldConfigs=${r.dynamicFieldConfigs}');
+        } else {
+          print('[CustomReport GET] data=null');
+        }
+        return model;
       }
       if (response.statusCode == 401) {
         return SavedReportSingleModel(
@@ -90,20 +103,31 @@ class CustomReportService {
     }
   }
 
-  /// POST /api/reports/custom - body: { admin_id, report_id }
+  /// POST /api/reports/custom - body same as web: admin_id, selectedStartDate, selectedEndDate, includeHistory, selectedColumns, dynamicFieldConfigs (and report_id)
   Future<CustomReportDataModel> fetchCustomReportData({
     required String adminId,
     required String reportId,
+    SavedReport? reportConfig,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
     try {
       final uri = Uri.parse('$Api_url/api/reports/custom');
-      final body = jsonEncode({
+      final Map<String, dynamic> bodyMap = {
         'admin_id': adminId,
         'report_id': reportId,
-      });
+      };
+      if (reportConfig != null) {
+        bodyMap['selectedStartDate'] = reportConfig.selectedStartDate ?? '';
+        bodyMap['selectedEndDate'] = reportConfig.selectedEndDate ?? '';
+        bodyMap['includeHistory'] = reportConfig.includeHistory;
+        bodyMap['selectedColumns'] = reportConfig.selectedColumns;
+        bodyMap['dynamicFieldConfigs'] = reportConfig.dynamicFieldConfigs ?? {};
+      }
+      final body = jsonEncode(bodyMap);
+
+      print('[CustomReport POST] request body (same as web): $body');
 
       final response = await http.post(
         uri,
@@ -114,11 +138,19 @@ class CustomReportService {
         },
         body: body,
       );
-      print("custom report data ${response.body}");
-      print("custom report length ${response.body.length}");
+      // --- POST /api/reports/custom - full response log (compare with web) ---
+      print('[CustomReport POST] POST $Api_url/api/reports/custom');
+      print('[CustomReport POST] statusCode=${response.statusCode} bodyLength=${response.body.length}');
+      print('[CustomReport POST] response.body: ${response.body}');
       if (response.statusCode == 200) {
         final parsed = jsonDecode(response.body) as Map<String, dynamic>;
-        return CustomReportDataModel.fromJson(parsed);
+        final model = CustomReportDataModel.fromJson(parsed);
+        print('[CustomReport POST] parsed: data.length=${model.data.length} count=${model.count}');
+        for (int i = 0; i < model.data.length; i++) {
+          final r = model.data[i];
+          print('[CustomReport POST]   row $i: ${r['rental_adress']} | ${r['rental_unit']}');
+        }
+        return model;
       }
       if (response.statusCode == 401) {
         return CustomReportDataModel(
@@ -199,6 +231,49 @@ class CustomReportService {
       return SaveReportResponse(
         statusCode: response.statusCode,
         message: parsed['message'] as String? ?? 'Failed to save report',
+        data: null,
+      );
+    } catch (e) {
+      return SaveReportResponse(
+        statusCode: 0,
+        message: 'Error: $e',
+        data: null,
+      );
+    }
+  }
+
+  /// DELETE /api/reports/saved/:reportId
+  Future<SaveReportResponse> deleteReport({
+    required String adminId,
+    required String reportId,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    try {
+      final uri = Uri.parse('$Api_url/api/reports/saved/$reportId').replace(
+        queryParameters: {'admin_id': adminId},
+      );
+
+      final response = await http.delete(
+        uri,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $adminId",
+          "Content-Type": "application/json",
+        },
+      );
+      final parsed = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        return SaveReportResponse(
+          statusCode: parsed['statusCode'] as int? ?? 200,
+          message: parsed['message'] as String? ?? 'Report deleted successfully.',
+          data: null,
+        );
+      }
+      return SaveReportResponse(
+        statusCode: response.statusCode,
+        message: parsed['message'] as String? ?? 'Failed to delete report',
         data: null,
       );
     } catch (e) {
