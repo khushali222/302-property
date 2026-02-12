@@ -61,11 +61,11 @@ Widget buildListTile(
             (context) => ReportsMainScreen(),
             "Reports",
           );
-        } else if (title == "Work Order" && active != true) {
+        } else if (title == "Work Orders" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
             (context) => Workorder_table(),
-            "Work Order",
+            "Work Orders",
           );
         } else if (title == "Properties" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -123,7 +123,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
     // "Vendor": (context) => Vendor_table(), // Vendor moved to Settings
-    "Work Order": (context) => Workorder_table(),
+    "Work Orders": (context) => Workorder_table(),
     "Bid Room": (context) => BidRoomTable(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
@@ -134,7 +134,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
     // "Mortgage": (context) => MortgageTable() // Commented out - not deleted
-    // "Work Order": (context) => Cardpayment(leaseId: '',),
+    // "Work Orders": (context) => Cardpayment(leaseId: '',),
   };
 
   // Handle Property Owners and Property Type navigation to Settings

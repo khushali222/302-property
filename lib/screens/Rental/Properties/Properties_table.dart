@@ -219,7 +219,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             style: TextStyle(
                                 color: blueColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14))
+                                fontSize: 14
+                            ))
                         : Text("Property",
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),

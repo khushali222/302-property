@@ -42,7 +42,7 @@ class _Workorder_tableState extends State<Workorder_table> {
     50,
     100,
   ]; // Options for items per page
-  List<String> selectedStatuses = ['New', 'In Progress']; // Default selected
+  List<String> selectedStatuses = ['All']; // Default: all statuses selected
 
   void sortData(List<Data> data) {
     if (sorting1) {
@@ -258,6 +258,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         sortOrder: 'desc',
         status: selectedStatuses.contains('All') ? null : selectedStatuses,
         search: searchvalue.isEmpty ? null : searchvalue,
+        billable: isChecked ? true : null,
       );
     });
     final result = await futureworkorders;
@@ -622,15 +623,16 @@ class _Workorder_tableState extends State<Workorder_table> {
             children: [
               Expanded(
                 child: Text(
-                  selectedStatuses.isEmpty || selectedStatuses.contains('All')
+                  selectedStatuses.isEmpty
                       ? 'Status'
-                      : selectedStatuses.length == 1
-                          ? selectedStatuses.first
-                          : '${selectedStatuses.length} Selected',
+                      : selectedStatuses.contains('All')
+                          ? 'All'
+                          : selectedStatuses.length == 1
+                              ? selectedStatuses.first
+                              : '${selectedStatuses.length} Selected',
                   style: TextStyle(
                     fontSize: 14,
-                    color: selectedStatuses.isEmpty ||
-                            selectedStatuses.contains('All')
+                    color: selectedStatuses.isEmpty
                         ? const Color(0xFF8A95A8)
                         : Colors.black,
                   ),
@@ -731,7 +733,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Work Order",
+        currentpage: "Work Orders",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
@@ -920,7 +922,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 onChanged: (value) {
                                   setState(() {
                                     isChecked = value ?? false;
+                                    currentPage = 0;
                                   });
+                                  _loadWorkOrders();
                                 },
                                 activeColor:
                                     isChecked ? blueColor : Colors.black,
@@ -999,14 +1003,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                             }).toList();
                           }
 
-                          // Filter by billable if checked
-                          final List<Data> filteredData = isChecked
-                              ? searchFilteredData
-                                  .where((workorder) =>
-                                      workorder.workOrderData!.isBillable ==
-                                      true)
-                                  .toList()
-                              : searchFilteredData;
+                          // Billable filter is applied via API (billable=true param)
+                          final List<Data> filteredData = searchFilteredData;
 
                           final currentPageData = filteredData;
                           final totalPages = paginationInfo != null

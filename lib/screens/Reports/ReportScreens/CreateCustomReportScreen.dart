@@ -361,7 +361,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
             const ReportHeader(title: "Create Custom Report"),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding:  EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 20),
                 child: Form(
                   key: _formKey,
                   child: Container(
@@ -570,6 +571,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
                     ),
                   ),
                 ),
+              
               ),
             ),
           ],

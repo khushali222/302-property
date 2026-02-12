@@ -912,7 +912,7 @@ class ReportScreen extends StatelessWidget {
               "",
               context),
               SizedBox(
-            height: 10,
+            height: 20,
           ),
         ],
       ),

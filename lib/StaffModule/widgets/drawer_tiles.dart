@@ -55,11 +55,11 @@ Widget buildListTile(
             (context) => ReportsMainScreen(),
             "Reports",
           );
-        } else if (title == "Work Order" && active != true) {
+        } else if (title == "Work Orders" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
             (context) => Workorder_table(),
-            "Work Order",
+            "Work Orders",
           );
         } else if (title == "Properties" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -101,7 +101,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
     "Vendor": (context) =>
         Vendor_table(), // Vendor accessible through Settings, not sidebar
-    "Work Order": (context) => Workorder_table(),
+    "Work Orders": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),

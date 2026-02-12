@@ -15125,12 +15125,9 @@ class _LeasesTableState extends State<LeasesTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -15167,29 +15164,34 @@ class _LeasesTableState extends State<LeasesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Status",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Status",
-                            style: TextStyle(color: Colors.white)),
+                        ?  Text("Status",
+                            style: TextStyle(color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14))
+                        :  Text("Status",
+                            style: TextStyle(color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 3),
-                    ascending1
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 5),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // const SizedBox(width: 3),
+                    // ascending1
+                    //     ?  Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color:blueColor,
+                    //         ),
+                    //       )
+                    //     :  Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 5),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
+                  
                   ],
                 ),
               ),
@@ -15218,26 +15220,28 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Tenants",
-                        style: TextStyle(color: Colors.white)),
+                     Text(" Tenants",
+                        style: TextStyle(color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
                     const SizedBox(width: 5),
-                    ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending2
+                    //     ?  Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       )
+                    //     :  Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -15267,26 +15271,28 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("   Type",
-                        style: TextStyle(color: Colors.white)),
+                     Text("   Type",
+                        style: TextStyle(color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
                     const SizedBox(width: 5),
-                    ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending3
+                    //     ?  Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color:blueColor,
+                    //         ),
+                    //       )
+                    //     :  Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -15346,9 +15352,21 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text(
-                            'You don\'t have any lease for this unit right now ..'));
+                    return  Center(
+                        child: Column(
+                          children: [
+                             SizedBox(height: 10),
+                          _buildHeaders(),
+                        SizedBox(height: 10),
+                          Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                          ),
+                          SizedBox(height: 10),
+                        ],
+                      ),
+                    );
                   } else {
                     var data = snapshot.data!;
                     // if (searchValue == null || searchValue!.isEmpty) {
@@ -15378,12 +15396,12 @@ class _LeasesTableState extends State<LeasesTable> {
                         children: [
                           const SizedBox(height: 10),
                           _buildHeaders(),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: const Color.fromRGBO(
-                                        152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(
+                            //         color: const Color.fromRGBO(
+                            //             152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -15394,17 +15412,21 @@ class _LeasesTableState extends State<LeasesTable> {
                                 unit_lease rentals = entry.value;
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 != 0
-                                        ? Colors.white
-                                        : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
+                                 margin: const EdgeInsets.symmetric(
+                                                vertical: 6),
+                                            // decoration: BoxDecoration(
+                                            //   border: Border.all(color: blueColor),
+                                            // ),
+                                            decoration: BoxDecoration(
+                                              color: index % 2 != 0
+                                                  ? const Color(0xFFF4F8FF)
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFDBE0E5)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(

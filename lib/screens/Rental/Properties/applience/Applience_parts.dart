@@ -20,6 +20,7 @@ import 'ApplianceSummary.dart';
 import 'edit_appliences.dart';
 import '../summery_page.dart';
 
+
 class AppliancesPart extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
@@ -662,7 +663,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       width: 20,
                     ),
                   Text(
-                    'Appliances',
+                    'Unit Infrastructure',
                     style: TextStyle(
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 17 : 20,
@@ -1668,9 +1669,20 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text(
-                              'You don\'t have any applience for this unit right now ..'));
+                      return  Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              _buildHeaders(),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ));
                     } else {
                       var data = snapshot.data!;
                       if (searchValue == null || searchValue!.isEmpty) {
@@ -1718,13 +1730,14 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   unit_appliance rentals = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 6),
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
                                           ? const Color(0xFFF4F8FF)
                                           : Colors.white,
-                                      border:
-                                          Border.all(color: const Color(0xFFDBE0E5)),
+                                      border: Border.all(
+                                          color: const Color(0xFFDBE0E5)),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     // decoration: BoxDecoration(
@@ -1767,8 +1780,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: const EdgeInsets.only(
-                                                        left: 5),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -1839,7 +1853,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
-                                            margin: const EdgeInsets.only(bottom: 20),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 20),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1949,7 +1964,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                         color: Colors
                                                                             .red
                                                                             .shade50),
-                                                                    child: const Row(
+                                                                    child:
+                                                                        const Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .center,
@@ -2003,7 +2019,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                         color: Colors
                                                                             .green
                                                                             .shade50), // color:Colors.grey[100],
-                                                                    child: const Row(
+                                                                    child:
+                                                                        const Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .center,
@@ -2068,7 +2085,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                           BorderRadius.circular(
                                                                               8),
                                                                     ),
-                                                                    child: const Row(
+                                                                    child:
+                                                                        const Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .center,
@@ -2230,9 +2248,20 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text(
-                              'You don\'t have any applience for this unit right now ..'));
+                      return  Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              _buildHeaders(),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ));
                     } else {
                       List<unit_appliance>? filteredData = [];
                       _tableData = snapshot.data!;
@@ -2263,7 +2292,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * .91,
                                 child: Table(
-                                  defaultColumnWidth: const IntrinsicColumnWidth(),
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
                                   children: [
                                     TableRow(
                                       decoration:

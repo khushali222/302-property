@@ -48,6 +48,7 @@ import '../../../repository/unit_data.dart';
 import 'Additional Stats/Additional_Stats_table.dart';
 import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
+import 'applience/Applience_parts.dart' as applience_parts;
 import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../Maintenance/Workorder/Edit_workorders.dart';
@@ -9226,8 +9227,9 @@ class _Summery_pageState extends State<Summery_page>
                         // AppliancesPart(
                         //   unit: widget.unit,
                         // ),
-                        AppliancesPart(
+                        applience_parts.AppliancesPart(
                           unit: data.first,
+                          isStaffModule: true,
                         ),
                       ],
                     ),
@@ -16272,8 +16274,9 @@ class _Summery_pageState extends State<Summery_page>
           ),
           // LeasesTable1(context,unit!),
           // LeasesTable(context),
-          AppliancesPart(
+          applience_parts.AppliancesPart(
             unit: unit,
+            isStaffModule: true,
           ),
         ],
       ),
@@ -16863,50 +16866,55 @@ class _Summery_pageState extends State<Summery_page>
                                                     ),
                                                     const SizedBox(width: 35),
                                                     Expanded(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 18),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text('Status:',
-                                                          style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13)),
-                                                      SizedBox(height: 2),
-                                                      Text(
-                                                            workOrder.status ??
- "N/A",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 18),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text('Status:',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        13)),
+                                                            SizedBox(height: 2),
+                                                            Text(
+                                                              workOrder
+                                                                      .status ??
+                                                                  "N/A",
+                                                              style: TextStyle(
+                                                                  fontSize: 12),
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Text('Billable:',
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        13)),
+                                                            SizedBox(height: 2),
+                                                            Text(
+                                                              workOrder.isBillable ==
+                                                                      true
+                                                                  ? "Yes"
+                                                                  : "No",
+                                                              style: TextStyle(
+                                                                  fontSize: 12),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                      SizedBox(height: 8),
-                                                      Text('Billable:',
-                                                          style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13)),
-                                                      SizedBox(height: 2),
-                                                      Text(
-                                                        workOrder.isBillable ==
-                                                                true
-                                                            ? "Yes"
-                                                            : "No",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
+                                                    ),
                                                     const SizedBox(width: 4),
                                                   ],
                                                 ),
@@ -17799,12 +17807,9 @@ class _LeasesTableState extends State<LeasesTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -17841,29 +17846,35 @@ class _LeasesTableState extends State<LeasesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Status",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Status",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Status",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14))
+                        : Text("Status",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 3),
-                    ascending1
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 5),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // const SizedBox(width: 3),
+                    // ascending1
+                    //     ? Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 5),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -17892,26 +17903,29 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("Tenants",
-                        style: TextStyle(color: Colors.white)),
+                    Text("  Tenants",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
                     const SizedBox(width: 5),
-                    ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending2
+                    //     ? Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -17941,26 +17955,29 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    const Text("   Type",
-                        style: TextStyle(color: Colors.white)),
+                    Text("   Type",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
                     const SizedBox(width: 5),
-                    ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: blueColor,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),
@@ -18019,9 +18036,20 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text(
-                            'You don\'t have any lease for this unit right now ..'));
+                    return  Center(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10),
+                            _buildHeaders(),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ));
                   } else {
                     var data = snapshot.data!;
                     // if (searchValue == null || searchValue!.isEmpty) {
@@ -18051,10 +18079,10 @@ class _LeasesTableState extends State<LeasesTable> {
                         children: [
                           const SizedBox(height: 10),
                           _buildHeaders(),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: blueColor)),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: blueColor)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -18065,15 +18093,19 @@ class _LeasesTableState extends State<LeasesTable> {
                                 unit_lease rentals = entry.value;
                                 //return CustomExpansionTile(data: Propertytype, index: index);
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 != 0
-                                        ? Colors.white
-                                        : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: blueColor),
-                                  ),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 6),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
                                   // ),
+                                  decoration: BoxDecoration(
+                                    color: index % 2 != 0
+                                        ? const Color(0xFFF4F8FF)
+                                        : Colors.white,
+                                    border: Border.all(
+                                        color: const Color(0xFFDBE0E5)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -18561,10 +18593,13 @@ List<Lease> leases = [
 class AppliancesPart extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
+  /// When true (StaffModule), Add button and Edit/Delete actions are hidden.
+  final bool isStaffModule;
 
   AppliancesPart({
     this.unit,
     this.properties,
+    this.isStaffModule = true,
   });
   @override
   _AppliancesPartState createState() => _AppliancesPartState();
@@ -18970,12 +19005,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -19012,10 +19044,16 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Name",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Name",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Name",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                   ],
@@ -19044,9 +19082,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Text("Description", style: TextStyle(color: Colors.white)),
+                    Text("Description",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -19075,9 +19117,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Text("   Action", style: TextStyle(color: Colors.white)),
+                    Text("   Action",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -19122,23 +19168,24 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   const SizedBox(
                     width: 10,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        _name.clear();
-                        _description.clear();
-                        _installedDate.clear();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(
-                              builder:
-                                  (BuildContext context, StateSetter setState) {
-                                return AlertDialog(
-                                  backgroundColor: Colors.white,
-                                  surfaceTintColor: Colors.white,
-                                  title: const Text('Add Appliances'),
+                  if (!widget.isStaffModule)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          _name.clear();
+                          _description.clear();
+                          _installedDate.clear();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                builder:
+                                    (BuildContext context, StateSetter setState) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    title: const Text('Add Appliances'),
                                   content: Form(
                                     key: _formKey,
                                     child: Column(
@@ -19484,10 +19531,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                           children: [
                             const SizedBox(height: 5),
                             _buildHeaders(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -19500,15 +19547,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   unit_appliance rentals = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: blueColor),
-                                    ),
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 6),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
                                     // ),
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? const Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -19576,7 +19627,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       //               rentalOwnersid: rentals.rentalownerId!,)));
                                                     },
                                                     child: Text(
-                                                      '   ${rentals.applianceName}',
+                                                      ' ${rentals.applianceName}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -20114,7 +20165,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 rental.applianceDescription!),
                                         _buildHeader('InstalledDate', 2,
                                             (rental) => rental.installedDate!),
-                                        _buildHeader('Actions', 3, null),
+                                        if (!widget.isStaffModule)
+                                          _buildHeader('Actions', 3, null),
                                       ],
                                     ),
                                     TableRow(
@@ -20123,7 +20175,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                             horizontal: BorderSide.none),
                                       ),
                                       children: List.generate(
-                                          4,
+                                          widget.isStaffModule ? 3 : 4,
                                           (index) => TableCell(
                                               child: Container(height: 20))),
                                     ),
@@ -20147,24 +20199,25 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               .applianceDescription!),
                                           _buildDataCell(
                                               _pagedData[i].installedDate!),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(
-                                                height: 14,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  const SizedBox(
-                                                    width: 25,
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      _name.text = _tableData
-                                                          .first.applianceName!;
+                                          if (!widget.isStaffModule)
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                const SizedBox(
+                                                  height: 14,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(
+                                                      width: 25,
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        _name.text = _tableData
+                                                            .first.applianceName!;
                                                       _description.text = _tableData
                                                           .first
                                                           .applianceDescription!;

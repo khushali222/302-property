@@ -1433,7 +1433,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Work Order",
+        currentpage: "Work Orders",
         dropdown: true,
       ),
       body: Form(
@@ -4793,7 +4793,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
         drawer: CustomDrawer(
-          currentpage: "Dashboard",
+          currentpage: "Work Orders",
           dropdown: false,
         ),
         body: Form(
