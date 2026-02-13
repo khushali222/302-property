@@ -42,6 +42,16 @@ import 'package:http/http.dart' as http;
 import 'newAddLease.dart';
 import '../../../widgets/custom_drawer.dart';
 
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:io';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/Model/profile.dart';
+
 class Lease_table extends StatefulWidget {
   // RentalOwner? rentalownersummery;
   // Lease_table({super.key,this.rentalownersummery});
@@ -171,10 +181,10 @@ class _Lease_tableState extends State<Lease_table> {
                     width < 400
                         ? Text("Lease",
                             style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold))
+                                color: blueColor, fontWeight: FontWeight.bold,fontSize: 14.0,))
                         : Text("Lease",
                             style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold)),
+                                color: blueColor, fontWeight: FontWeight.bold,fontSize: 14.0,)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending1
@@ -198,8 +208,9 @@ class _Lease_tableState extends State<Lease_table> {
                 ),
               ),
             ),
+            // const SizedBox(width: 16),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -223,15 +234,13 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("       Rent Cycle",
+                    Text(" Rent Cycle",
                         style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width < 350
-                              ? 12.0
-                              : 14.0,
+                          fontSize:14.0,
                         )),
-                    const SizedBox(width: 5),
+                    // const SizedBox(width: 5),
                     /*  ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -253,8 +262,9 @@ class _Lease_tableState extends State<Lease_table> {
                 ),
               ),
             ),
+            // const SizedBox(width: 16),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -279,15 +289,13 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("    Lease End",
+                    Text("Lease End",
                         style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width < 350
-                              ? 12.0
-                              : 14.0,
+                          fontSize:14.0,
                         )),
-                    const SizedBox(width: 5),
+                    // const SizedBox(width: 5),
                     /*  ascending3
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -308,7 +316,8 @@ class _Lease_tableState extends State<Lease_table> {
                   ],
                 ),
               ),
-            ),
+           
+           ),
           ],
         ),
       ),
@@ -321,7 +330,7 @@ class _Lease_tableState extends State<Lease_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
+        // result used for refresh
         _connectivityResult = result;
       });
     });
@@ -386,7 +395,7 @@ class _Lease_tableState extends State<Lease_table> {
 
   void handleEdit(Lease1 lease) async {
     // Handle edit action
-    print('Edit ${lease.leaseId}');
+    // Edit lease
     Provider.of<SelectedCosignersProvider>(context, listen: false)
         .clearCosigner();
     Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
@@ -491,7 +500,7 @@ class _Lease_tableState extends State<Lease_table> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
+        // Failed to fetch company name
         // Handle error state, e.g., show error message to user
       }
     }
@@ -501,13 +510,13 @@ class _Lease_tableState extends State<Lease_table> {
     _attemptDeleteLease(context, lease);
     //  _showDeleteAlert(context, lease.leaseId!);
     // Handle delete action
-    print('Delete ${lease.leaseId}');
+    // Delete lease
   }
 
   final _scrollController = ScrollController();
   void handleTap(RentalOwnerSummey rentalownersummery) async {
     // Handle edit action
-    print('Edit ${rentalownersummery.rentalownerId}');
+    // Edit rental owner
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -525,7 +534,7 @@ class _Lease_tableState extends State<Lease_table> {
   int leaseCount = 0;
   int leaseCountLimit = 0;
   Future<void> fetchLeaseadded() async {
-    print("calling");
+    // calling
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -535,15 +544,12 @@ class _Lease_tableState extends State<Lease_table> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
+    // jsonData
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(leaseCount);
-      print(leaseCountLimit);
+      // leaseCount / leaseCountLimit
       setState(() {
         leaseCount = jsonData['leaseCount'];
-        print(leaseCount);
         //leaseCountLimit = jsonData['leaseCountLimit'];
-        print(leaseCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -646,6 +652,8 @@ class _Lease_tableState extends State<Lease_table> {
   List<String> availableRentalOwners = [];
   final ValueNotifier<List<String>> _selectedRentalOwnersNotifier =
       ValueNotifier<List<String>>([]);
+  List<Lease1>? _leasesForExport;
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -894,7 +902,7 @@ class _Lease_tableState extends State<Lease_table> {
                               const SizedBox(width: 25),
                           ],
                         ),
-                        // Second row: Rental Owner dropdown (half screen width)
+                        // Second row: Rental Owner dropdown + Export button
                         const SizedBox(height: 10),
                         Row(
                           children: [
@@ -914,7 +922,82 @@ class _Lease_tableState extends State<Lease_table> {
                                 ),
                               ),
                             ),
-                            const Spacer(),
+                            const SizedBox(width: 10),
+                            // Export button - blue style, aligned next to dropdown
+                            Expanded(
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 45
+                                        : 50,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: PopupMenuButton<String>(
+                                  onSelected: (value) async {
+                                    if (_leasesForExport == null ||
+                                        _leasesForExport!.isEmpty) {
+                                      Fluttertoast.showToast(
+                                        msg: 'No data to export',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                      );
+                                      return;
+                                    }
+                                    final dateProvider =
+                                        Provider.of<DateProvider>(context,
+                                            listen: false);
+                                    if (value == 'pdf') {
+                                      await _generatePdf(
+                                          _leasesForExport!, dateProvider);
+                                    } else if (value == 'excel') {
+                                      await _generateExcel(
+                                          _leasesForExport!, dateProvider);
+                                    } else if (value == 'csv') {
+                                      await _generateCsv(
+                                          _leasesForExport!, dateProvider);
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                        value: 'pdf',
+                                        child: Text('Export as PDF')),
+                                    const PopupMenuItem<String>(
+                                        value: 'excel',
+                                        child: Text('Export as Excel')),
+                                    const PopupMenuItem<String>(
+                                        value: 'csv',
+                                        child: Text('Export as CSV')),
+                                  ],
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.download,
+                                            size: 20, color: Colors.white),
+                                        const SizedBox(width: 8),
+                                        Text('Export',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14)),
+                                        const SizedBox(width: 4),
+                                        const Icon(Icons.keyboard_arrow_down,
+                                            size: 20, color: Colors.white),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          
+                            if (MediaQuery.of(context).size.width < 500)
+                              const SizedBox(width: 8),
+                            if (MediaQuery.of(context).size.width > 500)
+                              const SizedBox(width: 25),
                           ],
                         ),
                       ],
@@ -990,13 +1073,6 @@ class _Lease_tableState extends State<Lease_table> {
                                 });
                               });
                             }
-                          }
-
-                          // Debug logging to see raw data
-                          print("DEBUG: Raw lease data from API:");
-                          for (int i = 0; i < data.length && i < 3; i++) {
-                            print(
-                                "DEBUG: Lease $i - Address: ${data[i].rentalAddress}, remainingDays: '${data[i].remainingDays}'");
                           }
 
 // Apply the search filter first
@@ -1101,6 +1177,13 @@ class _Lease_tableState extends State<Lease_table> {
                           // data = data.reversed.toList();
 
                           sortData(data);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              setState(() {
+                                _leasesForExport = List.from(data);
+                              });
+                            }
+                          });
                           final totalPages =
                               (data.length / itemsPerPage).ceil();
                           final currentPageData = data
@@ -1262,12 +1345,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
+                                                      const SizedBox(width: 16),
                                                       Expanded(
                                                         flex:
                                                             2, // Smaller size for the second field
@@ -1281,12 +1359,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .03),
+                                                      const SizedBox(width: 8),
                                                       Expanded(
                                                         flex:
                                                             2, // Smaller size for the third field
@@ -1302,12 +1375,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
+                                                      const SizedBox(width: 4),
                                                     ],
                                                   ),
                                                 ),
@@ -1346,10 +1414,11 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   _buildTableRow(
                                                                     'Current Balance:',
                                                                     _getDisplayValue(
-                                                                        "${formattedBalance}"),
+                                                                        formattedBalance),
                                                                     'Rent :',
                                                                     _getDisplayValue(
-                                                                        "\$${lease.amount!.toStringAsFixed(2).toString()}"),
+                                                                        _formatCurrencyForExport(
+                                                                            lease.amount)),
                                                                   ),
                                                                   _buildTableRow(
                                                                       'Remaining Days:',
@@ -1639,8 +1708,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   });
                                                                 }
                                                               },
-                                                              child: 
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1670,7 +1738,6 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                           
                                                             ),
                                                             const SizedBox(
                                                               width: 5,
@@ -2094,8 +2161,9 @@ class _Lease_tableState extends State<Lease_table> {
     );
   }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
-      String rightValue) {
+  TableRow _buildTableRow(
+      String leftLabel, String leftValue, String rightLabel, String rightValue,
+      {bool rightAlignValues = false}) {
     return TableRow(
       children: [
         TableCell(
@@ -2109,11 +2177,19 @@ class _Lease_tableState extends State<Lease_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  leftValue,
-                  style: TextStyle(color: grey),
-                ),
+                const SizedBox(height: 2.0),
+                rightAlignValues
+                    ? Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          leftValue,
+                          style: TextStyle(color: grey),
+                        ),
+                      )
+                    : Text(
+                        leftValue,
+                        style: TextStyle(color: grey),
+                      ),
               ],
             ),
           ),
@@ -2129,11 +2205,19 @@ class _Lease_tableState extends State<Lease_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
+                const SizedBox(height: 2.0),
+                rightAlignValues
+                    ? Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          rightValue,
+                          style: TextStyle(color: grey),
+                        ),
+                      )
+                    : Text(
+                        rightValue,
+                        style: TextStyle(color: grey),
+                      ),
               ],
             ),
           ),
@@ -2501,5 +2585,275 @@ class _Lease_tableState extends State<Lease_table> {
         ),
       ],
     );
+  }
+
+  /// Format as -$X.XX for negative, $X.XX for positive.
+  String _formatCurrencyForExport(double? value) {
+    if (value == null) return '-';
+    if (value < 0) return '-\$${value.abs().toStringAsFixed(2)}';
+    return '\$${value.toStringAsFixed(2)}';
+  }
+
+  Future<void> _generatePdf(
+      List<Lease1> leases, DateProvider dateProvider) async {
+    try {
+      profile? profileData;
+      try {
+        final service = GetAddressAdminPdfService();
+        profileData = await service.fetchAdminAddress();
+      } catch (_) {}
+
+      final pdf = pw.Document();
+      final image = pw.MemoryImage(
+          (await rootBundle.load('assets/images/newlogo.png'))
+              .buffer
+              .asUint8List());
+
+      pdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4.landscape,
+          header: (pw.Context context) => pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Image(image, width: 50, height: 50),
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text('Leases Report',
+                      style: pw.TextStyle(
+                          fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                      'Active Leases as of ${dateProvider.formatCurrentDateTime(DateTime.now().toIso8601String())}',
+                      style: pw.TextStyle(fontSize: 12)),
+                ],
+              ),
+              pw.Text(
+                  profileData?.companyName?.isNotEmpty == true
+                      ? profileData!.companyName!
+                      : '',
+                  style: pw.TextStyle(
+                      fontSize: 12, fontWeight: pw.FontWeight.bold)),
+            ],
+          ),
+          build: (pw.Context context) {
+            final headers = [
+              'Rental Address',
+              'Rental Owner',
+              'Tenant Names',
+              'End Date',
+              'Rent Cycle',
+              'Remaining Days',
+              'Current Balance',
+              'Rent',
+            ];
+            return [
+              pw.SizedBox(height: 20),
+              pw.Table(
+                border: null,
+                columnWidths: {
+                  0: pw.FlexColumnWidth(1.5),
+                  1: pw.FlexColumnWidth(1.0),
+                  2: pw.FlexColumnWidth(1.5),
+                  3: pw.FlexColumnWidth(0.8),
+                  4: pw.FlexColumnWidth(0.8),
+                  5: pw.FlexColumnWidth(0.8),
+                  6: pw.FlexColumnWidth(1.0),
+                  7: pw.FlexColumnWidth(0.6),
+                },
+                children: [
+                  pw.TableRow(
+                    decoration:
+                        pw.BoxDecoration(color: PdfColor.fromHex('#5A86D5')),
+                    children: headers
+                        .asMap()
+                        .entries
+                        .map((e) => pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(e.value,
+                                style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: PdfColors.white,
+                                    fontSize: 10),
+                                textAlign: (e.key == 6 || e.key == 7)
+                                    ? pw.TextAlign.right
+                                    : pw.TextAlign.left)))
+                        .toList(),
+                  ),
+                  ...leases.map((lease) {
+                    final balance = lease.totalBalance ?? 0.0;
+                    final isNegative = balance < 0;
+                    final balanceStr =
+                        '${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}';
+                    final rentStr = _formatCurrencyForExport(lease.amount);
+                    final endDateStr =
+                        _formatDateSafely(lease.endDate, dateProvider);
+                    return pw.TableRow(
+                      children: [
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(lease.rentalAddress ?? 'N/A',
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(lease.rentalOwnerName ?? 'N/A',
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(lease.tenantNames ?? 'N/A',
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(endDateStr,
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(lease.rentCycle ?? 'N/A',
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(lease.remainingDays ?? 'N/A',
+                                style: pw.TextStyle(fontSize: 9))),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(balanceStr,
+                                style: pw.TextStyle(fontSize: 9),
+                                textAlign: pw.TextAlign.right)),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(6),
+                            child: pw.Text(rentStr,
+                                style: pw.TextStyle(fontSize: 9),
+                                textAlign: pw.TextAlign.right)),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ];
+          },
+        ),
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+      );
+      // Fluttertoast.showToast(msg: 'PDF exported successfully');
+      print('PDF exported successfully');
+    } catch (e) {
+      // Fluttertoast.showToast(msg: 'Error generating PDF: $e');
+      print('Error generating PDF: $e');
+    }
+  }
+
+  Future<void> _generateExcel(
+      List<Lease1> leases, DateProvider dateProvider) async {
+    try {
+      final workbook = syncXlsx.Workbook();
+      final worksheet = workbook.worksheets[0];
+      worksheet.name = 'Leases Report';
+
+      final headers = [
+        'Rental Address',
+        'Rental Owner',
+        'Tenant Names',
+        'End Date',
+        'Rent Cycle',
+        'Remaining Days',
+        'Current Balance',
+        'Rent',
+      ];
+      for (int i = 0; i < headers.length; i++) {
+        worksheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+        worksheet.getRangeByIndex(1, i + 1).cellStyle.bold = true;
+        if (i == 6 || i == 7) {
+          worksheet.getRangeByIndex(1, i + 1).cellStyle.hAlign =
+              syncXlsx.HAlignType.right;
+        }
+      }
+
+      for (int i = 0; i < leases.length; i++) {
+        final lease = leases[i];
+        final balance = lease.totalBalance ?? 0.0;
+        final balanceStr = _formatCurrencyForExport(balance);
+        final endDateStr = _formatDateSafely(lease.endDate, dateProvider);
+        worksheet.getRangeByIndex(i + 2, 1).setText(lease.rentalAddress ?? '');
+        worksheet
+            .getRangeByIndex(i + 2, 2)
+            .setText(lease.rentalOwnerName ?? '');
+        worksheet.getRangeByIndex(i + 2, 3).setText(lease.tenantNames ?? '');
+        worksheet.getRangeByIndex(i + 2, 4).setText(endDateStr);
+        worksheet.getRangeByIndex(i + 2, 5).setText(lease.rentCycle ?? '');
+        worksheet.getRangeByIndex(i + 2, 6).setText(lease.remainingDays ?? '');
+        worksheet.getRangeByIndex(i + 2, 7).setText(balanceStr);
+        worksheet
+            .getRangeByIndex(i + 2, 8)
+            .setText(_formatCurrencyForExport(lease.amount));
+        worksheet.getRangeByIndex(i + 2, 7).cellStyle.hAlign =
+            syncXlsx.HAlignType.right;
+        worksheet.getRangeByIndex(i + 2, 8).cellStyle.hAlign =
+            syncXlsx.HAlignType.right;
+      }
+
+      for (int i = 1; i <= headers.length; i++) {
+        worksheet.autoFitColumn(i);
+      }
+
+      final List<int> bytes = workbook.saveAsStream();
+      workbook.dispose();
+
+      final directory = await getApplicationDocumentsDirectory();
+      final path =
+          '${directory.path}/Leases_Report_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.xlsx';
+      final file = File(path);
+      await file.writeAsBytes(bytes);
+
+      Fluttertoast.showToast(msg: 'Excel file saved');
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error generating Excel: $e');
+    }
+  }
+
+  Future<void> _generateCsv(
+      List<Lease1> leases, DateProvider dateProvider) async {
+    try {
+      final headers = [
+        'Rental Address',
+        'Rental Owner',
+        'Tenant Names',
+        'End Date',
+        'Rent Cycle',
+        'Remaining Days',
+        'Current Balance',
+        'Rent',
+      ];
+      final csvBuffer = StringBuffer();
+      csvBuffer.writeln(headers.join(','));
+
+      for (final lease in leases) {
+        final balanceStr = _formatCurrencyForExport(lease.totalBalance);
+        final rentStr = _formatCurrencyForExport(lease.amount);
+        final endDateStr = _formatDateSafely(lease.endDate, dateProvider);
+        final row = [
+          '"${(lease.rentalAddress ?? '').replaceAll('"', '""')}"',
+          '"${(lease.rentalOwnerName ?? '').replaceAll('"', '""')}"',
+          '"${(lease.tenantNames ?? '').replaceAll('"', '""')}"',
+          '"${endDateStr.replaceAll('"', '""')}"',
+          lease.rentCycle ?? '',
+          lease.remainingDays ?? '',
+          balanceStr,
+          rentStr,
+        ];
+        csvBuffer.writeln(row.join(','));
+      }
+
+      final directory = await getApplicationDocumentsDirectory();
+      final path =
+          '${directory.path}/Leases_Report_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.csv';
+      final file = File(path);
+      await file.writeAsString(csvBuffer.toString(), flush: true);
+
+      Fluttertoast.showToast(msg: 'CSV file saved');
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error generating CSV: $e');
+    }
   }
 }
