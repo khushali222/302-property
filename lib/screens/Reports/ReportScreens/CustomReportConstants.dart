@@ -23,6 +23,7 @@ const Map<String, String> customReportColumnLabels = {
   'rental_adress': 'Property',
   'rental_unit': 'Unit',
   'tenant': 'Tenant',
+  'lease': 'Lease',
   'start_date': 'Lease Start',
   'end_date': 'Lease End',
   'lease_amount': 'Monthly Rent',
@@ -54,3 +55,28 @@ const Map<String, String> customReportColumnLabels = {
 
 List<String> get customReportColumnKeys =>
     customReportColumnLabels.keys.toList();
+
+/// Columns that require lease type selection (dialog then confirm → checkbox)
+const String customReportLeaseTypeColumnKey = 'lease';
+
+/// Columns that require date range (from/to) - show Enter Date dialog
+const List<String> customReportDateRangeColumnKeys = ['start_date', 'end_date'];
+
+/// Columns that require single date - show Enter Date dialog
+const List<String> customReportSingleDateColumnKeys = ['lease_amount'];
+
+/// Columns that require year(s) selection - show Select Years dialog
+const List<String> customReportYearsColumnKeys = [
+  'insured_value',
+  'insurance_premium',
+  'tax_amount',
+  'zillow_value',
+];
+
+/// Lease type options for the Lease column
+const List<String> customReportLeaseTypeOptions = [
+  'All',
+  'Active',
+  'Expired',
+  'Future',
+];

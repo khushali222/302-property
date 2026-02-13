@@ -38,9 +38,11 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
   final TextEditingController _toDateController = TextEditingController();
 
   String? _dateRange;
+  // ignore: unused_field - used when date range UI is uncommented
   bool _customDateRange = false;
   bool _includeHistory = false;
   List<String> _selectedColumns = [];
+  Map<String, dynamic> _dynamicFieldConfigs = {};
   String _startDateApi = '';
   String _endDateApi = '';
   String? _columnError;
@@ -55,6 +57,10 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
       _dateRange = r.dateRange.isEmpty ? null : r.dateRange;
       _includeHistory = r.includeHistory;
       _selectedColumns = List.from(r.selectedColumns);
+      _dynamicFieldConfigs =
+          r.dynamicFieldConfigs != null
+              ? Map<String, dynamic>.from(r.dynamicFieldConfigs!)
+              : {};
       _startDateApi = r.selectedStartDate ?? '';
       _endDateApi = r.selectedEndDate ?? '';
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -236,6 +242,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     });
   }
 
+  // ignore: unused_element - used when date range UI is uncommented
   Future<void> _pickFromDate() async {
     final now = DateTime.now();
     final theme = Theme.of(context).copyWith(
@@ -258,6 +265,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     }
   }
 
+  // ignore: unused_element - used when date range UI is uncommented
   Future<void> _pickToDate() async {
     final now = DateTime.now();
     final theme = Theme.of(context).copyWith(
@@ -299,20 +307,22 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
             name: _nameController.text.trim(),
             description: _descriptionController.text.trim(),
             selectedColumns: _selectedColumns,
-            dateRange: _dateRange ?? 'None',
-            selectedStartDate: _startDateApi,
-            selectedEndDate: _endDateApi,
+            dateRange: _dateRange,
+            selectedStartDate: _startDateApi.isEmpty ? null : _startDateApi,
+            selectedEndDate: _endDateApi.isEmpty ? null : _endDateApi,
             includeHistory: _includeHistory,
+            dynamicFieldConfigs: _dynamicFieldConfigs.isEmpty ? null : _dynamicFieldConfigs,
           )
         : await service.saveReport(
             adminId: widget.adminId,
             name: _nameController.text.trim(),
             description: _descriptionController.text.trim(),
             selectedColumns: _selectedColumns,
-            dateRange: _dateRange ?? 'None',
-            selectedStartDate: _startDateApi,
-            selectedEndDate: _endDateApi,
+            dateRange: _dateRange,
+            selectedStartDate: _startDateApi.isEmpty ? null : _startDateApi,
+            selectedEndDate: _endDateApi.isEmpty ? null : _endDateApi,
             includeHistory: _includeHistory,
+            dynamicFieldConfigs: _dynamicFieldConfigs.isEmpty ? null : _dynamicFieldConfigs,
             reportId: null,
           );
     setState(() => _saving = false);
@@ -423,84 +433,85 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
                                 horizontal: 16, vertical: 12),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        _buildLabel('Date Range'),
-                        const SizedBox(height: 8),
-                        Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: Theme.of(context).colorScheme.copyWith(
-                                  primary: Colors.black87,
-                                  onSurface: Colors.black87,
-                                ),
-                          ),
-                          child: Container(
-                            height: 42,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.grey.shade400),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Text(
-                                    'Select Date Range',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFF8A95A8),
-                                    ),
-                                  ),
-                                ),
-                                items: customReportDateRangeOptions
-                                    .map((e) => DropdownMenuItem<String>(
-                                          value: e,
-                                          child: Text(
-                                            e,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                value: _dateRange,
-                                onChanged: (value) =>
-                                    _applyDateRangePreset(value),
-                                buttonStyleData: const ButtonStyleData(
-                                  height: 42,
-                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 300,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDateField(
-                                label: 'From',
-                                controller: _fromDateController,
-                                onTap: _customDateRange ? _pickFromDate : null,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _buildDateField(
-                                label: 'To',
-                                controller: _toDateController,
-                                onTap: _customDateRange ? _pickToDate : null,
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Date range UI commented for now; values still passed in save/update API
+                        // const SizedBox(height: 20),
+                        // _buildLabel('Date Range'),
+                        // const SizedBox(height: 8),
+                        // Theme(
+                        //   data: Theme.of(context).copyWith(
+                        //     colorScheme: Theme.of(context).colorScheme.copyWith(
+                        //           primary: Colors.black87,
+                        //           onSurface: Colors.black87,
+                        //         ),
+                        //   ),
+                        //   child: Container(
+                        //     height: 42,
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       border: Border.all(color: Colors.grey.shade400),
+                        //     ),
+                        //     child: DropdownButtonHideUnderline(
+                        //       child: DropdownButton2<String>(
+                        //         isExpanded: true,
+                        //         hint: const Padding(
+                        //           padding: EdgeInsets.symmetric(horizontal: 8),
+                        //           child: Text(
+                        //             'Select Date Range',
+                        //             style: TextStyle(
+                        //               fontSize: 14,
+                        //               color: Color(0xFF8A95A8),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //         items: customReportDateRangeOptions
+                        //             .map((e) => DropdownMenuItem<String>(
+                        //                   value: e,
+                        //                   child: Text(
+                        //                     e,
+                        //                     style: const TextStyle(
+                        //                       fontSize: 14,
+                        //                       color: Colors.black87,
+                        //                     ),
+                        //                   ),
+                        //                 ))
+                        //             .toList(),
+                        //         value: _dateRange,
+                        //         onChanged: (value) =>
+                        //             _applyDateRangePreset(value),
+                        //         buttonStyleData: const ButtonStyleData(
+                        //           height: 42,
+                        //           padding: EdgeInsets.symmetric(horizontal: 12),
+                        //         ),
+                        //         dropdownStyleData: DropdownStyleData(
+                        //           maxHeight: 300,
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(8),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 16),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: _buildDateField(
+                        //         label: 'From',
+                        //         controller: _fromDateController,
+                        //         onTap: _customDateRange ? _pickFromDate : null,
+                        //       ),
+                        //     ),
+                        //     const SizedBox(width: 16),
+                        //     Expanded(
+                        //       child: _buildDateField(
+                        //         label: 'To',
+                        //         controller: _toDateController,
+                        //         onTap: _customDateRange ? _pickToDate : null,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         const SizedBox(height: 20),
                         _buildLabel('Columns *'),
                         const SizedBox(height: 8),
@@ -591,6 +602,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     );
   }
 
+  // ignore: unused_element - used when date range UI is uncommented
   Widget _buildDateField({
     required String label,
     required TextEditingController controller,
@@ -644,6 +656,64 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     );
   }
 
+  Future<void> _openConfigDialogForColumn(String key) async {
+    if (key == customReportLeaseTypeColumnKey) {
+      final leaseType = await _ColumnsDropdownOverlayState.showSelectLeaseType(context);
+      if (leaseType != null && mounted) {
+        setState(() {
+          if (!_selectedColumns.contains(key)) {
+            _selectedColumns = List.from(_selectedColumns)..add(key);
+            _dynamicFieldConfigs = Map.from(_dynamicFieldConfigs)
+              ..[key] = {'leaseType': leaseType};
+          }
+        });
+      }
+      return;
+    }
+    if (customReportDateRangeColumnKeys.contains(key) ||
+        customReportSingleDateColumnKeys.contains(key)) {
+      final isDateRange = customReportDateRangeColumnKeys.contains(key);
+      final label = customReportColumnLabels[key] ?? key;
+      final result = await _ColumnsDropdownOverlayState.showEnterDate(
+        context,
+        fieldLabel: label,
+        isDateRange: isDateRange,
+        existingConfig: _dynamicFieldConfigs[key],
+      );
+      if (result != null && mounted) {
+        setState(() {
+          if (!_selectedColumns.contains(key)) {
+            _selectedColumns = List.from(_selectedColumns)..add(key);
+            _dynamicFieldConfigs = Map.from(_dynamicFieldConfigs)..[key] = result;
+          }
+        });
+      }
+      return;
+    }
+    if (customReportYearsColumnKeys.contains(key)) {
+      final label = customReportColumnLabels[key] ?? key;
+      final existing = _dynamicFieldConfigs[key];
+      List<int>? initialYears;
+      if (existing is Map && existing['years'] is List) {
+        initialYears = (existing['years'] as List)
+            .map((e) => (e is int) ? e : int.tryParse(e.toString()))
+            .whereType<int>()
+            .toList();
+      }
+      final years = await _ColumnsDropdownOverlayState.showSelectYears(context,
+          fieldLabel: label, initialYears: initialYears);
+      if (years != null && years.isNotEmpty && mounted) {
+        setState(() {
+          if (!_selectedColumns.contains(key)) {
+            _selectedColumns = List.from(_selectedColumns)..add(key);
+            _dynamicFieldConfigs = Map.from(_dynamicFieldConfigs)
+              ..[key] = {'years': years};
+          }
+        });
+      }
+    }
+  }
+
   void _showColumnsPicker() {
     setState(() => _columnError = null);
     final overlay = Overlay.of(context);
@@ -656,13 +726,19 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
       builder: (ctx) => _ColumnsDropdownOverlay(
         columnsKey: _columnsKey,
         initialSelected: List.from(_selectedColumns),
-        onApply: (selected) {
+        initialDynamicConfigs: Map.from(_dynamicFieldConfigs),
+        onApply: (selected, dynamicConfigs) {
           setState(() {
             _selectedColumns = selected;
+            _dynamicFieldConfigs = dynamicConfigs;
             _columnError = null;
           });
         },
         onDismiss: removeOverlay,
+        onOpenConfigForColumn: (key) {
+          if (!mounted) return;
+          _openConfigDialogForColumn(key);
+        },
       ),
     );
     overlay.insert(entry);
@@ -708,14 +784,18 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
 class _ColumnsDropdownOverlay extends StatefulWidget {
   final GlobalKey columnsKey;
   final List<String> initialSelected;
-  final void Function(List<String>) onApply;
+  final Map<String, dynamic> initialDynamicConfigs;
+  final void Function(List<String>, Map<String, dynamic>) onApply;
   final VoidCallback onDismiss;
+  final void Function(String key) onOpenConfigForColumn;
 
   const _ColumnsDropdownOverlay({
     required this.columnsKey,
     required this.initialSelected,
+    required this.initialDynamicConfigs,
     required this.onApply,
     required this.onDismiss,
+    required this.onOpenConfigForColumn,
   });
 
   @override
@@ -725,6 +805,7 @@ class _ColumnsDropdownOverlay extends StatefulWidget {
 
 class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
   late List<String> _selected;
+  late Map<String, dynamic> _dynamicConfigs;
   Offset? _position;
   double? _width;
 
@@ -732,6 +813,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
   void initState() {
     super.initState();
     _selected = List.from(widget.initialSelected);
+    _dynamicConfigs = Map.from(widget.initialDynamicConfigs);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box =
           widget.columnsKey.currentContext?.findRenderObject() as RenderBox?;
@@ -745,26 +827,449 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
     });
   }
 
+  void _notifyApply() {
+    widget.onApply(List.from(_selected), Map.from(_dynamicConfigs));
+  }
+
   void _toggle(String key) {
     setState(() {
       if (_selected.contains(key)) {
         _selected.remove(key);
+        _dynamicConfigs.remove(key);
       } else {
         _selected.add(key);
       }
     });
-    widget.onApply(List.from(_selected));
+    _notifyApply();
+  }
+
+  void _toggleOrShowConfig(String key) {
+    if (_selected.contains(key)) {
+      setState(() {
+        _selected.remove(key);
+        _dynamicConfigs.remove(key);
+      });
+      _notifyApply();
+      return;
+    }
+    // Column needs config: close dropdown first, then parent shows dialog
+    if (key == customReportLeaseTypeColumnKey ||
+        customReportDateRangeColumnKeys.contains(key) ||
+        customReportSingleDateColumnKeys.contains(key) ||
+        customReportYearsColumnKeys.contains(key)) {
+      widget.onDismiss();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onOpenConfigForColumn(key);
+      });
+      return;
+    }
+    _toggle(key);
+  }
+
+  static Future<String?> showSelectLeaseType(BuildContext context) async {
+    String? chosen = customReportLeaseTypeOptions.first;
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx2, setDialogState) {
+            return AlertDialog(
+              title: const Text('Select Lease Type'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Please select a lease type for the field: Lease.',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        value: chosen,
+                        items: customReportLeaseTypeOptions
+                            .map((e) => DropdownMenuItem<String>(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setDialogState(() => chosen = v);
+                        },
+                        buttonStyleData: const ButtonStyleData(
+                          height: 42,
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 220,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, null),
+                  child: Text('Cancel', style: TextStyle(color: blueColor)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, chosen),
+                  style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  static Future<Map<String, dynamic>?> showEnterDate(
+    BuildContext context, {
+    required String fieldLabel,
+    required bool isDateRange,
+    dynamic existingConfig,
+  }) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String fromStr = '';
+    String toStr = '';
+    String singleDateStr = '';
+    if (existingConfig is Map) {
+      if (existingConfig['dateRange'] is Map) {
+        fromStr = (existingConfig['dateRange']['from'] ?? '').toString();
+        toStr = (existingConfig['dateRange']['to'] ?? '').toString();
+      }
+      if (existingConfig['date'] != null) {
+        singleDateStr = existingConfig['date'].toString();
+      }
+    }
+    DateTime fromDate = DateTime.now();
+    DateTime toDate = DateTime.now();
+    DateTime singleDate = DateTime.now();
+    if (fromStr.isNotEmpty) fromDate = DateTime.tryParse(fromStr) ?? fromDate;
+    if (toStr.isNotEmpty) toDate = DateTime.tryParse(toStr) ?? toDate;
+    if (singleDateStr.isNotEmpty) {
+      singleDate = DateTime.tryParse(singleDateStr) ?? singleDate;
+    }
+
+    final theme = Theme.of(context).copyWith(
+      colorScheme: Theme.of(context).colorScheme.copyWith(primary: blueColor),
+    );
+
+    if (isDateRange) {
+      final fromTo = [fromDate, toDate];
+      return showDialog<Map<String, dynamic>>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          return Theme(
+            data: theme,
+            child: StatefulBuilder(
+              builder: (ctx2, setDialogState) {
+                final isStart = fieldLabel.toLowerCase().contains('start');
+                return AlertDialog(
+                  title: const Text('Enter Date'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isStart
+                              ? 'Please enter the start date. Leases starting from this date onward will be included in the report.'
+                              : 'Please enter the end date. Leases ending on or before this date will be included in the report.',
+                          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        ),
+                        const SizedBox(height: 12),
+                        ListTile(
+                          title: Text(dateProvider.formatCurrentDate(
+                              DateFormat('yyyy-MM-dd').format(fromTo[0]))),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: () async {
+                            final p = await showDatePicker(
+                              context: ctx,
+                              initialDate: fromTo[0],
+                              firstDate: DateTime(DateTime.now().year - 10),
+                              lastDate: DateTime(DateTime.now().year + 10),
+                            );
+                            if (p != null) {
+                              fromTo[0] = p;
+                              setDialogState(() {});
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        ListTile(
+                          title: Text(dateProvider.formatCurrentDate(
+                              DateFormat('yyyy-MM-dd').format(fromTo[1]))),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: () async {
+                            final p = await showDatePicker(
+                              context: ctx,
+                              initialDate: fromTo[1],
+                              firstDate: DateTime(DateTime.now().year - 10),
+                              lastDate: DateTime(DateTime.now().year + 10),
+                            );
+                            if (p != null) {
+                              fromTo[1] = p;
+                              setDialogState(() {});
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx, null),
+                        child: Text('Cancel', style: TextStyle(color: blueColor))),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx, {
+                          'dateRange': {
+                            'from': DateFormat('yyyy-MM-dd').format(fromTo[0]),
+                            'to': DateFormat('yyyy-MM-dd').format(fromTo[1]),
+                          },
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                      child: const Text('Confirm'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        },
+      );
+    }
+
+    // Single date (lease_amount / Monthly Rent)
+    final picked = [singleDate];
+    return showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Theme(
+          data: theme,
+          child: StatefulBuilder(
+            builder: (ctx2, setDialogState) {
+              return AlertDialog(
+                title: const Text('Enter Date'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Please enter the date for the field: $fieldLabel.',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 12),
+                    ListTile(
+                      title: Text(dateProvider.formatCurrentDate(
+                          DateFormat('yyyy-MM-dd').format(picked[0]))),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () async {
+                        final p = await showDatePicker(
+                          context: ctx,
+                          initialDate: picked[0],
+                          firstDate: DateTime(DateTime.now().year - 10),
+                          lastDate: DateTime(DateTime.now().year + 10),
+                        );
+                        if (p != null) {
+                          picked[0] = p;
+                          setDialogState(() {});
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(ctx, null),
+                      child: Text('Cancel', style: TextStyle(color: blueColor))),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx, {
+                        'date': DateFormat('yyyy-MM-dd').format(picked[0]),
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                    child: const Text('Confirm'),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<List<int>?> showSelectYears(
+    BuildContext context, {
+    required String fieldLabel,
+    List<int>? initialYears,
+  }) async {
+    final years = <int>[...?initialYears];
+    final yearController = TextEditingController(
+      text: DateTime.now().year.toString(),
+    );
+    return showDialog<List<int>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx2, setDialogState) {
+            return AlertDialog(
+              title: const Text('Select Years'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: 'Please select years for the field: ',
+                        style: const TextStyle(fontSize: 14),
+                        children: [
+                          TextSpan(
+                            text: fieldLabel,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
+                          const TextSpan(
+                            text:
+                                '. You can add multiple years. Each year will appear as a separate column in the report.',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (years.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const Text('Selected Years:',
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: years.map((y) {
+                          return Chip(
+                            label: Text('$y'),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () {
+                              setDialogState(() => years.remove(y));
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    const Text('Year',
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: yearController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () {
+                            final y = int.tryParse(yearController.text);
+                            if (y != null && !years.contains(y)) {
+                              setDialogState(() => years.add(y));
+                            }
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: blueColor,
+                            side: BorderSide(color: blueColor),
+                          ),
+                          child: const Text('Add'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx, null),
+                    child: Text('Cancel', style: TextStyle(color: blueColor))),
+                ElevatedButton(
+                  onPressed: years.isEmpty
+                      ? null
+                      : () => Navigator.pop(ctx, List.from(years)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: years.isEmpty ? Colors.grey : blueColor,
+                  ),
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ).then((v) {
+      yearController.dispose();
+      return v;
+    });
   }
 
   void _selectAll(bool value) {
     setState(() {
       if (value) {
         _selected = List.from(customReportColumnKeys);
+        _dynamicConfigs.clear();
+        final now = DateTime.now();
+        for (final k in customReportColumnKeys) {
+          if (k == customReportLeaseTypeColumnKey) {
+            _dynamicConfigs[k] = {'leaseType': 'All'};
+          } else if (customReportDateRangeColumnKeys.contains(k)) {
+            _dynamicConfigs[k] = {
+              'dateRange': {
+                'from': DateFormat('yyyy-MM-dd').format(DateTime(now.year, 1, 1)),
+                'to': DateFormat('yyyy-MM-dd').format(DateTime(now.year, 12, 31)),
+              },
+            };
+          } else if (customReportSingleDateColumnKeys.contains(k)) {
+            _dynamicConfigs[k] = {
+              'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            };
+          } else if (customReportYearsColumnKeys.contains(k)) {
+            _dynamicConfigs[k] = {'years': [DateTime.now().year]};
+          }
+        }
       } else {
         _selected = [];
+        _dynamicConfigs.clear();
       }
     });
-    widget.onApply(List.from(_selected));
+    _notifyApply();
   }
 
   @override
@@ -796,7 +1301,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: Colors.grey.shade400),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -814,38 +1319,34 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                     ),
                   ),
                   Flexible(
-                    child: SingleChildScrollView(
-                      padding:
-                          const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          InkWell(
-                            onTap: () => _selectAll(_selected.length !=
-                                customReportColumnKeys.length),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: _selected.length ==
-                                        customReportColumnKeys.length,
-                                    tristate: true,
-                                    onChanged: (v) => _selectAll(v == true),
-                                    activeColor: blueColor,
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  const Text('Select All',
-                                      style: TextStyle(fontSize: 13)),
-                                ],
-                              ),
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                      children: [
+                        InkWell(
+                          onTap: () => _selectAll(_selected.length !=
+                              customReportColumnKeys.length),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                  value: _selected.length ==
+                                      customReportColumnKeys.length,
+                                  tristate: true,
+                                  onChanged: (v) => _selectAll(v == true),
+                                  activeColor: blueColor,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                const Text('Select All',
+                                    style: TextStyle(fontSize: 13)),
+                              ],
                             ),
                           ),
-                          ...keys.map((key) => _buildColumnChip(key)),
-                        ],
-                      ),
+                        ),
+                        ...keys.map((key) => _buildColumnChip(key)),
+                      ],
                     ),
                   ),
                 ],
@@ -861,7 +1362,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
     final selected = _selected.contains(key);
     final label = customReportColumnLabels[key] ?? key;
     return InkWell(
-      onTap: () => _toggle(key),
+      onTap: () => _toggleOrShowConfig(key),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: Row(
@@ -869,7 +1370,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
           children: [
             Checkbox(
               value: selected,
-              onChanged: (_) => _toggle(key),
+              onChanged: (_) => _toggleOrShowConfig(key),
               activeColor: blueColor,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),

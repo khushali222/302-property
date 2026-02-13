@@ -178,16 +178,17 @@ class CustomReportService {
 
   /// POST /api/reports/save - create or update report
   /// Body: admin_id, name, description, selectedColumns, dateRange,
-  ///       selectedStartDate, selectedEndDate, includeHistory [, report_id for update]
+  ///       selectedStartDate, selectedEndDate, includeHistory, dynamicFieldConfigs [, report_id for update]
   Future<SaveReportResponse> saveReport({
     required String adminId,
     required String name,
     required String description,
     required List<String> selectedColumns,
-    required String dateRange,
-    required String selectedStartDate,
-    required String selectedEndDate,
+    String? dateRange,
+    String? selectedStartDate,
+    String? selectedEndDate,
     required bool includeHistory,
+    Map<String, dynamic>? dynamicFieldConfigs,
     String? reportId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -204,6 +205,7 @@ class CustomReportService {
         'selectedStartDate': selectedStartDate,
         'selectedEndDate': selectedEndDate,
         'includeHistory': includeHistory,
+        'dynamicFieldConfigs': dynamicFieldConfigs ?? {},
       };
       if (reportId != null && reportId.isNotEmpty) {
         body['report_id'] = reportId;
@@ -292,17 +294,18 @@ class CustomReportService {
     required String name,
     required String description,
     required List<String> selectedColumns,
-    required String dateRange,
-    required String selectedStartDate,
-    required String selectedEndDate,
+    String? dateRange,
+    String? selectedStartDate,
+    String? selectedEndDate,
     required bool includeHistory,
+    Map<String, dynamic>? dynamicFieldConfigs,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
     try {
       final uri = Uri.parse('$Api_url/api/reports/saved/$reportId');
-      final body = {
+      final body = <String, dynamic>{
         'admin_id': adminId,
         'name': name,
         'description': description,
@@ -311,6 +314,7 @@ class CustomReportService {
         'selectedStartDate': selectedStartDate,
         'selectedEndDate': selectedEndDate,
         'includeHistory': includeHistory,
+        'dynamicFieldConfigs': dynamicFieldConfigs ?? {},
       };
 
       final response = await http.put(
