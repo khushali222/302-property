@@ -57,10 +57,13 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
       _dateRange = r.dateRange.isEmpty ? null : r.dateRange;
       _includeHistory = r.includeHistory;
       _selectedColumns = List.from(r.selectedColumns);
-      _dynamicFieldConfigs =
-          r.dynamicFieldConfigs != null
-              ? Map<String, dynamic>.from(r.dynamicFieldConfigs!)
-              : {};
+      // Lease start/end live in selectedStartDate/selectedEndDate only, not in dynamicFieldConfigs (like web)
+      final raw = r.dynamicFieldConfigs != null
+          ? Map<String, dynamic>.from(r.dynamicFieldConfigs!)
+          : <String, dynamic>{};
+      raw.remove('start_date');
+      raw.remove('end_date');
+      _dynamicFieldConfigs = raw;
       _startDateApi = r.selectedStartDate ?? '';
       _endDateApi = r.selectedEndDate ?? '';
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -72,8 +75,10 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
         _toDateController.text = dateProvider.formatCurrentDate(_endDateApi);
       }
     } else {
-      _dateRange = 'This Month';
-      _applyDateRangePreset('This Month');
+      // New report: no date filter so "Select All" returns whole data (date range UI is commented out)
+      _dateRange = null;
+      _startDateApi = '';
+      _endDateApi = '';
     }
   }
 
@@ -86,6 +91,7 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     super.dispose();
   }
 
+  // ignore: unused_element - used when date range UI is uncommented
   void _applyDateRangePreset(String? value) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final now = DateTime.now();
@@ -300,6 +306,10 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
     final service = CustomReportService();
     final isEdit = widget.existingReport != null &&
         widget.existingReport!.reportId.isNotEmpty;
+    // Lease start/end are in selectedStartDate/selectedEndDate only; never in dynamicFieldConfigs (like web)
+    final configsToSend = Map<String, dynamic>.from(_dynamicFieldConfigs)
+      ..remove('start_date')
+      ..remove('end_date');
     final SaveReportResponse result = isEdit
         ? await service.updateReport(
             adminId: widget.adminId,
@@ -311,7 +321,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
             selectedStartDate: _startDateApi.isEmpty ? null : _startDateApi,
             selectedEndDate: _endDateApi.isEmpty ? null : _endDateApi,
             includeHistory: _includeHistory,
-            dynamicFieldConfigs: _dynamicFieldConfigs.isEmpty ? null : _dynamicFieldConfigs,
+            dynamicFieldConfigs:
+                configsToSend.isEmpty ? null : configsToSend,
           )
         : await service.saveReport(
             adminId: widget.adminId,
@@ -322,7 +333,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
             selectedStartDate: _startDateApi.isEmpty ? null : _startDateApi,
             selectedEndDate: _endDateApi.isEmpty ? null : _endDateApi,
             includeHistory: _includeHistory,
-            dynamicFieldConfigs: _dynamicFieldConfigs.isEmpty ? null : _dynamicFieldConfigs,
+            dynamicFieldConfigs:
+                configsToSend.isEmpty ? null : configsToSend,
             reportId: null,
           );
     setState(() => _saving = false);
@@ -371,8 +383,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
             const ReportHeader(title: "Create Custom Report"),
             Expanded(
               child: SingleChildScrollView(
-                padding:  EdgeInsets.only(
-                    left: 24, right: 24, top: 8, bottom: 20),
+                padding:
+                    EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 20),
                 child: Form(
                   key: _formKey,
                   child: Container(
@@ -582,7 +594,6 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
                     ),
                   ),
                 ),
-              
               ),
             ),
           ],
@@ -658,7 +669,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
 
   Future<void> _openConfigDialogForColumn(String key) async {
     if (key == customReportLeaseTypeColumnKey) {
-      final leaseType = await _ColumnsDropdownOverlayState.showSelectLeaseType(context);
+      final leaseType =
+          await _ColumnsDropdownOverlayState.showSelectLeaseType(context);
       if (leaseType != null && mounted) {
         setState(() {
           if (!_selectedColumns.contains(key)) {
@@ -670,14 +682,46 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
       }
       return;
     }
-    if (customReportDateRangeColumnKeys.contains(key) ||
-        customReportSingleDateColumnKeys.contains(key)) {
-      final isDateRange = customReportDateRangeColumnKeys.contains(key);
+    // Lease Start / Lease End: set report-level selectedStartDate/selectedEndDate only (not in dynamicFieldConfigs, like web)
+    if (customReportDateRangeColumnKeys.contains(key)) {
+      final isStart = key == 'start_date';
+      final label = customReportColumnLabels[key] ?? key;
+      final existingConfig = isStart
+          ? (_startDateApi.isNotEmpty
+              ? {'dateRange': {'from': _startDateApi, 'to': _startDateApi}}
+              : null)
+          : (_endDateApi.isNotEmpty
+              ? {'dateRange': {'from': _endDateApi, 'to': _endDateApi}}
+              : null);
+      final result = await _ColumnsDropdownOverlayState.showEnterDate(
+        context,
+        fieldLabel: label,
+        isDateRange: true,
+        existingConfig: existingConfig,
+      );
+      if (result != null && mounted) {
+        setState(() {
+          if (!_selectedColumns.contains(key)) {
+            _selectedColumns = List.from(_selectedColumns)..add(key);
+          }
+          final d = result['dateRange'] is Map
+              ? ((result['dateRange'] as Map)['from'] ?? (result['dateRange'] as Map)['to'])?.toString()
+              : null;
+          if (d != null && d.isNotEmpty) {
+            if (isStart) _startDateApi = d;
+            else _endDateApi = d;
+          }
+          // Do not add start_date/end_date to _dynamicFieldConfigs
+        });
+      }
+      return;
+    }
+    if (customReportSingleDateColumnKeys.contains(key)) {
       final label = customReportColumnLabels[key] ?? key;
       final result = await _ColumnsDropdownOverlayState.showEnterDate(
         context,
         fieldLabel: label,
-        isDateRange: isDateRange,
+        isDateRange: false,
         existingConfig: _dynamicFieldConfigs[key],
       );
       if (result != null && mounted) {
@@ -731,6 +775,8 @@ class _CreateCustomReportScreenState extends State<CreateCustomReportScreen> {
           setState(() {
             _selectedColumns = selected;
             _dynamicFieldConfigs = dynamicConfigs;
+            if (!selected.contains('start_date')) _startDateApi = '';
+            if (!selected.contains('end_date')) _endDateApi = '';
             _columnError = null;
           });
         },
@@ -926,7 +972,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, chosen),
                   style: ElevatedButton.styleFrom(backgroundColor: blueColor),
-                  child: const Text('Confirm'),
+                  child: const Text('Confirm',style: TextStyle(color: Colors.white),),
                 ),
               ],
             );
@@ -964,88 +1010,77 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
       singleDate = DateTime.tryParse(singleDateStr) ?? singleDate;
     }
 
-    final theme = Theme.of(context).copyWith(
-      colorScheme: Theme.of(context).colorScheme.copyWith(primary: blueColor),
+    // Match theme used in other date pickers (PropertyRevenueReport, CustomDateField)
+    final datePickerTheme = ThemeData.light().copyWith(
+      primaryColor: blueColor,
+      colorScheme: ColorScheme.light(primary: blueColor),
+      buttonTheme: const ButtonThemeData(
+        textTheme: ButtonTextTheme.primary,
+      ),
     );
 
+    // Lease Start / Lease End: single date only (like web). API still expects dateRange with from/to.
     if (isDateRange) {
-      final fromTo = [fromDate, toDate];
+      final isStart = fieldLabel.toLowerCase().contains('start');
+      final singlePicked = [isStart ? fromDate : toDate];
       return showDialog<Map<String, dynamic>>(
         context: context,
         barrierDismissible: false,
         builder: (ctx) {
           return Theme(
-            data: theme,
+            data: datePickerTheme,
             child: StatefulBuilder(
               builder: (ctx2, setDialogState) {
-                final isStart = fieldLabel.toLowerCase().contains('start');
                 return AlertDialog(
                   title: const Text('Enter Date'),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isStart
-                              ? 'Please enter the start date. Leases starting from this date onward will be included in the report.'
-                              : 'Please enter the end date. Leases ending on or before this date will be included in the report.',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        ),
-                        const SizedBox(height: 12),
-                        ListTile(
-                          title: Text(dateProvider.formatCurrentDate(
-                              DateFormat('yyyy-MM-dd').format(fromTo[0]))),
-                          trailing: const Icon(Icons.calendar_today),
-                          onTap: () async {
-                            final p = await showDatePicker(
-                              context: ctx,
-                              initialDate: fromTo[0],
-                              firstDate: DateTime(DateTime.now().year - 10),
-                              lastDate: DateTime(DateTime.now().year + 10),
-                            );
-                            if (p != null) {
-                              fromTo[0] = p;
-                              setDialogState(() {});
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        ListTile(
-                          title: Text(dateProvider.formatCurrentDate(
-                              DateFormat('yyyy-MM-dd').format(fromTo[1]))),
-                          trailing: const Icon(Icons.calendar_today),
-                          onTap: () async {
-                            final p = await showDatePicker(
-                              context: ctx,
-                              initialDate: fromTo[1],
-                              firstDate: DateTime(DateTime.now().year - 10),
-                              lastDate: DateTime(DateTime.now().year + 10),
-                            );
-                            if (p != null) {
-                              fromTo[1] = p;
-                              setDialogState(() {});
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isStart
+                            ? 'Please enter the start date. Leases starting from this date onward will be included in the report.'
+                            : 'Please enter the end date. Leases ending on or before this date will be included in the report.',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 12),
+                      ListTile(
+                        title: Text(dateProvider.formatCurrentDate(
+                            DateFormat('yyyy-MM-dd').format(singlePicked[0]))),
+                        trailing: const Icon(Icons.calendar_today),
+                        onTap: () async {
+                          final p = await showDatePicker(
+                            context: ctx,
+                            initialDate: singlePicked[0],
+                            firstDate: DateTime(DateTime.now().year - 10),
+                            lastDate: DateTime(DateTime.now().year + 10),
+                            builder: (_, child) =>
+                                Theme(data: datePickerTheme, child: child!),
+                          );
+                          if (p != null) {
+                            singlePicked[0] = p;
+                            setDialogState(() {});
+                          }
+                        },
+                      ),
+                    ],
                   ),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(ctx, null),
-                        child: Text('Cancel', style: TextStyle(color: blueColor))),
+                        child:
+                            Text('Cancel', style: TextStyle(color: blueColor))),
                     ElevatedButton(
                       onPressed: () {
+                        final d =
+                            DateFormat('yyyy-MM-dd').format(singlePicked[0]);
                         Navigator.pop(ctx, {
-                          'dateRange': {
-                            'from': DateFormat('yyyy-MM-dd').format(fromTo[0]),
-                            'to': DateFormat('yyyy-MM-dd').format(fromTo[1]),
-                          },
+                          'dateRange': {'from': d, 'to': d},
                         });
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: blueColor),
-                      child: const Text('Confirm'),
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: blueColor),
+                      child: const Text('Confirm',style: TextStyle(color: Colors.white),),
                     ),
                   ],
                 );
@@ -1063,7 +1098,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
       barrierDismissible: false,
       builder: (ctx) {
         return Theme(
-          data: theme,
+          data: datePickerTheme,
           child: StatefulBuilder(
             builder: (ctx2, setDialogState) {
               return AlertDialog(
@@ -1087,6 +1122,8 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                           initialDate: picked[0],
                           firstDate: DateTime(DateTime.now().year - 10),
                           lastDate: DateTime(DateTime.now().year + 10),
+                          builder: (_, child) =>
+                              Theme(data: datePickerTheme, child: child!),
                         );
                         if (p != null) {
                           picked[0] = p;
@@ -1099,7 +1136,8 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(ctx, null),
-                      child: Text('Cancel', style: TextStyle(color: blueColor))),
+                      child:
+                          Text('Cancel', style: TextStyle(color: blueColor))),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(ctx, {
@@ -1107,7 +1145,7 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                       });
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: blueColor),
-                    child: const Text('Confirm'),
+                    child: const Text('Confirm',style: TextStyle(color: Colors.white),),
                   ),
                 ],
               );
@@ -1223,11 +1261,11 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                 ElevatedButton(
                   onPressed: years.isEmpty
                       ? null
-                      : () => Navigator.pop(ctx, List.from(years)),
+                      : () => Navigator.pop(ctx, List<int>.from(years)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: years.isEmpty ? Colors.grey : blueColor,
                   ),
-                  child: const Text('Confirm'),
+                  child: const Text('Confirm',style: TextStyle(color: Colors.white),),
                 ),
               ],
             );
@@ -1235,7 +1273,10 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
         );
       },
     ).then((v) {
-      yearController.dispose();
+      // Dispose after the dialog is fully removed so TextField doesn't use it after dispose
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        yearController.dispose();
+      });
       return v;
     });
   }
@@ -1244,26 +1285,10 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
     setState(() {
       if (value) {
         _selected = List.from(customReportColumnKeys);
+        // Do not set any default dynamicFieldConfigs: API returns whole data
+        // for all columns when dynamicFieldConfigs is empty. User can manually
+        // open dialogs (lease type, dates, years) for specific columns to filter.
         _dynamicConfigs.clear();
-        final now = DateTime.now();
-        for (final k in customReportColumnKeys) {
-          if (k == customReportLeaseTypeColumnKey) {
-            _dynamicConfigs[k] = {'leaseType': 'All'};
-          } else if (customReportDateRangeColumnKeys.contains(k)) {
-            _dynamicConfigs[k] = {
-              'dateRange': {
-                'from': DateFormat('yyyy-MM-dd').format(DateTime(now.year, 1, 1)),
-                'to': DateFormat('yyyy-MM-dd').format(DateTime(now.year, 12, 31)),
-              },
-            };
-          } else if (customReportSingleDateColumnKeys.contains(k)) {
-            _dynamicConfigs[k] = {
-              'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            };
-          } else if (customReportYearsColumnKeys.contains(k)) {
-            _dynamicConfigs[k] = {'years': [DateTime.now().year]};
-          }
-        }
       } else {
         _selected = [];
         _dynamicConfigs.clear();
@@ -1321,7 +1346,8 @@ class _ColumnsDropdownOverlayState extends State<_ColumnsDropdownOverlay> {
                   Flexible(
                     child: ListView(
                       shrinkWrap: true,
-                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                      padding:
+                          const EdgeInsets.only(left: 8, right: 8, bottom: 8),
                       children: [
                         InkWell(
                           onTap: () => _selectAll(_selected.length !=

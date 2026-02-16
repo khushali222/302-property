@@ -68,18 +68,24 @@ class CustomReportService {
         "Content-Type": "application/json",
       });
       // --- GET /api/reports/saved/:reportId - full response log (compare with web) ---
-      print('[CustomReport GET] GET $Api_url/api/reports/saved/$reportId?admin_id=$adminId');
-      print('[CustomReport GET] statusCode=${response.statusCode} bodyLength=${response.body.length}');
+      print(
+          '[CustomReport GET] GET $Api_url/api/reports/saved/$reportId?admin_id=$adminId');
+      print(
+          '[CustomReport GET] statusCode=${response.statusCode} bodyLength=${response.body.length}');
       print('[CustomReport GET] response.body: ${response.body}');
       if (response.statusCode == 200) {
         final parsed = jsonDecode(response.body) as Map<String, dynamic>;
         final model = SavedReportSingleModel.fromJson(parsed);
         if (model.data != null) {
           final r = model.data!;
-          print('[CustomReport GET] parsed: report_id=${r.reportId} name=${r.name} dateRange=${r.dateRange}');
-          print('[CustomReport GET] selectedStartDate=${r.selectedStartDate} selectedEndDate=${r.selectedEndDate} includeHistory=${r.includeHistory}');
-          print('[CustomReport GET] selectedColumns(${r.selectedColumns.length}): ${r.selectedColumns}');
-          print('[CustomReport GET] dynamicFieldConfigs=${r.dynamicFieldConfigs}');
+          print(
+              '[CustomReport GET] parsed: report_id=${r.reportId} name=${r.name} dateRange=${r.dateRange}');
+          print(
+              '[CustomReport GET] selectedStartDate=${r.selectedStartDate} selectedEndDate=${r.selectedEndDate} includeHistory=${r.includeHistory}');
+          print(
+              '[CustomReport GET] selectedColumns(${r.selectedColumns.length}): ${r.selectedColumns}');
+          print(
+              '[CustomReport GET] dynamicFieldConfigs=${r.dynamicFieldConfigs}');
         } else {
           print('[CustomReport GET] data=null');
         }
@@ -103,7 +109,7 @@ class CustomReportService {
     }
   }
 
-  /// POST /api/reports/custom - body same as web: admin_id, selectedStartDate, selectedEndDate, includeHistory, selectedColumns, dynamicFieldConfigs (and report_id)
+  /// POST /api/reports/custom - body same as web for whole data: pass null dates and empty dynamicFieldConfigs when no filters
   Future<CustomReportDataModel> fetchCustomReportData({
     required String adminId,
     required String reportId,
@@ -119,15 +125,27 @@ class CustomReportService {
         'report_id': reportId,
       };
       if (reportConfig != null) {
-        bodyMap['selectedStartDate'] = reportConfig.selectedStartDate ?? '';
-        bodyMap['selectedEndDate'] = reportConfig.selectedEndDate ?? '';
+        // Send null for dates when not set so backend returns whole data (same as web)
+        bodyMap['dateRange'] = reportConfig.dateRange.isEmpty ? null : reportConfig.dateRange;
+        bodyMap['selectedStartDate'] = reportConfig.selectedStartDate;
+        bodyMap['selectedEndDate'] = reportConfig.selectedEndDate;
         bodyMap['includeHistory'] = reportConfig.includeHistory;
         bodyMap['selectedColumns'] = reportConfig.selectedColumns;
         bodyMap['dynamicFieldConfigs'] = reportConfig.dynamicFieldConfigs ?? {};
       }
       final body = jsonEncode(bodyMap);
 
-      print('[CustomReport POST] request body (same as web): $body');
+      // Readable log for debugging: show key fields like selectedColumns
+      print('[CustomReport POST] --- request body ---');
+      print('[CustomReport POST] report_id: $reportId');
+      print('[CustomReport POST] dateRange: ${bodyMap['dateRange']}');
+      print('[CustomReport POST] selectedStartDate: ${bodyMap['selectedStartDate']}');
+      print('[CustomReport POST] selectedEndDate: ${bodyMap['selectedEndDate']}');
+      print('[CustomReport POST] includeHistory: ${bodyMap['includeHistory']}');
+      final cols = bodyMap['selectedColumns'] as List?;
+      print('[CustomReport POST] selectedColumns: [${(cols ?? []).map((e) => '"$e"').join(', ')}]');
+      print('[CustomReport POST] dynamicFieldConfigs: ${bodyMap['dynamicFieldConfigs']}');
+      print('[CustomReport POST] full body: $body');
 
       final response = await http.post(
         uri,
@@ -140,15 +158,18 @@ class CustomReportService {
       );
       // --- POST /api/reports/custom - full response log (compare with web) ---
       print('[CustomReport POST] POST $Api_url/api/reports/custom');
-      print('[CustomReport POST] statusCode=${response.statusCode} bodyLength=${response.body.length}');
+      print(
+          '[CustomReport POST] statusCode=${response.statusCode} bodyLength=${response.body.length}');
       print('[CustomReport POST] response.body: ${response.body}');
       if (response.statusCode == 200) {
         final parsed = jsonDecode(response.body) as Map<String, dynamic>;
         final model = CustomReportDataModel.fromJson(parsed);
-        print('[CustomReport POST] parsed: data.length=${model.data.length} count=${model.count}');
+        print(
+            '[CustomReport POST] parsed: data.length=${model.data.length} count=${model.count}');
         for (int i = 0; i < model.data.length; i++) {
           final r = model.data[i];
-          print('[CustomReport POST]   row $i: ${r['rental_adress']} | ${r['rental_unit']}');
+          print(
+              '[CustomReport POST]   row $i: ${r['rental_adress']} | ${r['rental_unit']}');
         }
         return model;
       }
@@ -269,7 +290,8 @@ class CustomReportService {
       if (response.statusCode == 200) {
         return SaveReportResponse(
           statusCode: parsed['statusCode'] as int? ?? 200,
-          message: parsed['message'] as String? ?? 'Report deleted successfully.',
+          message:
+              parsed['message'] as String? ?? 'Report deleted successfully.',
           data: null,
         );
       }
@@ -287,7 +309,7 @@ class CustomReportService {
     }
   }
 
-  /// PUT /api/reports/saved/:reportId - update existing report
+  /// PUT /api/reports/saved/:reportId - update existing report (called when editing from Saved Reports)
   Future<SaveReportResponse> updateReport({
     required String adminId,
     required String reportId,
@@ -304,7 +326,9 @@ class CustomReportService {
     String? token = prefs.getString('token');
 
     try {
-      final uri = Uri.parse('$Api_url/api/reports/saved/$reportId');
+      final uri = Uri.parse('$Api_url/api/reports/saved/$reportId').replace(
+        queryParameters: {'admin_id': adminId},
+      );
       final body = <String, dynamic>{
         'admin_id': adminId,
         'name': name,
@@ -330,7 +354,8 @@ class CustomReportService {
       if (response.statusCode == 200) {
         return SaveReportResponse(
           statusCode: parsed['statusCode'] as int? ?? 200,
-          message: parsed['message'] as String? ?? 'Report updated successfully.',
+          message:
+              parsed['message'] as String? ?? 'Report updated successfully.',
           data: parsed['data'] != null && parsed['data'] is Map
               ? SavedReport.fromJson(parsed['data'] as Map<String, dynamic>)
               : null,
