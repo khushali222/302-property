@@ -3535,6 +3535,7 @@ class _Edit_leaseState extends State<Edit_lease>
                       const SizedBox(
                         height: 10,
                       ),
+                      //lease payment setting
                       // Container(
                       //   width: double.infinity,
                       //   decoration: BoxDecoration(
@@ -3564,7 +3565,7 @@ class _Edit_leaseState extends State<Edit_lease>
                       //                 fontSize: 16,
                       //                 fontWeight: FontWeight.w300,
                       //                 color: Colors.grey)),
-                      //
+                      
                       //         const SizedBox(
                       //           height: 10,
                       //         ),
@@ -3636,9 +3637,7 @@ class _Edit_leaseState extends State<Edit_lease>
                       //     ),
                       //   ),
                       // ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
+                     
 
                       Container(
                         width: double.infinity,

@@ -2031,7 +2031,7 @@ class _Lease_tableState extends State<Lease_table> {
                 Text(
                   leftLabel,
                   style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 12),
                 ),
                 const SizedBox(height: 2.0),
                 rightAlignValues
@@ -2039,12 +2039,12 @@ class _Lease_tableState extends State<Lease_table> {
                         alignment: Alignment.centerRight,
                         child: Text(
                           leftValue,
-                          style: TextStyle(color: grey),
+                          style: TextStyle(color: grey, fontSize: 13,fontWeight: FontWeight.bold),
                         ),
                       )
                     : Text(
                         leftValue,
-                        style: TextStyle(color: grey),
+                        style: TextStyle(color: grey, fontSize: 13,fontWeight: FontWeight.bold),
                       ),
               ],
             ),
@@ -2059,7 +2059,7 @@ class _Lease_tableState extends State<Lease_table> {
                 Text(
                   rightLabel,
                   style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 12),
                 ),
                 const SizedBox(height: 2.0),
                 rightAlignValues
@@ -2067,12 +2067,12 @@ class _Lease_tableState extends State<Lease_table> {
                         alignment: Alignment.centerRight,
                         child: Text(
                           rightValue,
-                          style: TextStyle(color: grey),
+                          style: TextStyle(color: grey, fontSize: 13,fontWeight: FontWeight.bold),
                         ),
                       )
                     : Text(
                         rightValue,
-                        style: TextStyle(color: grey),
+                        style: TextStyle(color: grey, fontSize: 13,fontWeight: FontWeight.bold),
                       ),
               ],
             ),

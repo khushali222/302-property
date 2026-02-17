@@ -435,6 +435,8 @@ class _MakePaymentState extends State<MakePayment> {
 
   // Initialize payment methods
   void _initializePaymentMethods({bool isExternal = false}) {
+    print("payment methods calling ${_paymentMethods}");
+    print("achaccepted ${achaccepted}");
     if (isExternal) {
       _paymentMethods = ['Cash', 'Money Order', 'Manual'];
     } else {
@@ -472,6 +474,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   // Helper function to check if a card type is accepted
   bool isCardTypeAccepted(String cardType) {
+    print("cardType ${cardType}");
     cardType = cardType.toUpperCase();
     if (cardType == 'CREDIT') {
       return creditcard;
@@ -515,6 +518,8 @@ class _MakePaymentState extends State<MakePayment> {
           ' rental url ${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}');
       print("lease id ${widget.leaseId}");
       print("tenant id $selectedTenantId");
+      print("jsonData ${jsonData}");
+      print("achaccepted ${achaccepted}");
 
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {

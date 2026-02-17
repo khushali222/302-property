@@ -1685,7 +1685,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
 
                       // Enter Charge button
-                      if (widget.status == 'Active')
+                      // if (widget.status == 'Active')
                         Expanded(
                           child: Container(
                             height: MediaQuery.of(context).size.width < 500
@@ -1939,15 +1939,56 @@ class _FinancialTableState extends State<FinancialTable> {
                           searchvalue!.isNotEmpty &&
                           searchvalue != "All") {
                         print("Applying search filter: $searchvalue");
-                        data = data
-                            .where((lease) =>
-                                lease.type!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                lease.createdAt!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
-                            .toList();
+                        String searchLower = searchvalue!.toLowerCase();
+                        data = data.where((lease) {
+                          // Check Type
+                          bool typeMatch = (lease.type?.toLowerCase() ?? "")
+                              .contains(searchLower);
+
+                          // Check CreatedAt
+                          bool dateMatch = (lease.createdAt?.toLowerCase() ?? "")
+                              .contains(searchLower);
+
+                          // Check Balance
+                          bool balanceMatch =
+                              (lease.balance?.toString() ?? "").contains(searchLower);
+
+                          // Check Total Amount
+                          bool amountMatch =
+                              (lease.totalAmount?.toString() ?? "").contains(searchLower);
+
+                          // Check Tenant Name
+                          String tenantName = "";
+                          if (lease.tenantData != null) {
+                            tenantName =
+                                "${lease.tenantData['tenant_firstName'] ?? ''} ${lease.tenantData['tenant_lastName'] ?? ''}"
+                                    .toLowerCase();
+                          }
+                          bool tenantMatch = tenantName.contains(searchLower);
+
+                          // Check Entry details (Memo, Amount, Account)
+                          bool entryMatch = false;
+                          if (lease.entry != null) {
+                            for (var entry in lease.entry!) {
+                              if ((entry.memo?.toLowerCase() ?? "")
+                                      .contains(searchLower) ||
+                                  (entry.amount?.toString() ?? "")
+                                      .contains(searchLower) ||
+                                  (entry.account?.toLowerCase() ?? "")
+                                      .contains(searchLower)) {
+                                entryMatch = true;
+                                break;
+                              }
+                            }
+                          }
+
+                          return typeMatch ||
+                              dateMatch ||
+                              balanceMatch ||
+                              amountMatch ||
+                              tenantMatch ||
+                              entryMatch;
+                        }).toList();
                         print("Records after search filter: ${data.length}");
                       }
 

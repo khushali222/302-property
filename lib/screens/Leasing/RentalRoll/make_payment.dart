@@ -156,7 +156,8 @@ class _MakePaymentState extends State<MakePayment> {
           ' rental url ${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}');
       print("lease id ${widget.leaseId}");
       print("tenant id $selectedTenantId");
-
+      print("jsonData ${jsonData}");
+      print("achaccepted ${achaccepted}");
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {
           achaccepted = jsonData['data']['achAccepted'];
@@ -500,6 +501,8 @@ class _MakePaymentState extends State<MakePayment> {
       'Money Order',
       'Manual'
     ];
+    print("payment methods calling ${_paymentMethods}");
+    print("achaccepted ${achaccepted}");
     // Clear selected method if it's not in the new list (avoids RangeError)
     if (_selectedPaymentMethod != null && !_paymentMethods.contains(_selectedPaymentMethod)) {
       _selectedPaymentMethod = null;
@@ -525,6 +528,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   // Function to check if a card type is accepted
   bool isCardTypeAccepted(String cardType) {
+    print("cardType ${cardType}");
     cardType = cardType.toLowerCase();
     if (cardType == 'credit') {
       return creditcard;
