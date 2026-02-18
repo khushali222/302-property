@@ -252,8 +252,10 @@ class BillingData {
 
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
-        email: json["email"].runtimeType == Map ? null : json["email"],
-        address_1: json["address_1"].runtimeType == Map ? null : json["address_1"],
+        // NMI sometimes returns {} (Map) for empty fields. `runtimeType == Map` fails for _Map,
+        // and then we accidentally assign a Map into a String? which crashes the app.
+        email: json["email"] is Map ? null : json["email"]?.toString(),
+        address_1: json["address_1"] is Map ? null : json["address_1"]?.toString(),
         company: companyName
 
     );
@@ -262,6 +264,7 @@ class BillingData {
 }
 
 class CustomerData {
+
   final List<BillingData> billing;
 
   CustomerData({required this.billing});

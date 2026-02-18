@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # of the product and file versions while build-number is used as the build suffix.
 
-version: 1.0.76+79
+version: 1.0.77+80
 
 
 environment:

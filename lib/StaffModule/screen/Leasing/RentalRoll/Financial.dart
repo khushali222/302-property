@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1629,6 +1630,8 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   final List<String> downloadOptions = ['PDF', 'Excel', 'CSV'];
+  String? selectedTransactionType = 'All';
+  List<String> transactionTypeOptions = ['All', 'Payment', 'Charge'];
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1844,8 +1847,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       // ),
 
                       // Add Cards button
-                      Spacer(),
-                      if (!isFreePlan &&
+                   if (!isFreePlan &&
                           (widget.status == 'Active' ||
                               widget.status == 'Future'))
                         Expanded(
@@ -1853,6 +1855,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             height: MediaQuery.of(context).size.width < 500
                                 ? 45
                                 : 50,
+                            margin: const EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
@@ -1903,7 +1906,57 @@ class _FinancialTableState extends State<FinancialTable> {
                               ),
                             ),
                           ),
+                        )
+                      else
+                        Spacer(),
+                 
+                    
+                    Expanded(
+                       child: 
+                     DropdownButtonHideUnderline(
+                      child: Material(
+                        elevation: 0,
+                        borderRadius: BorderRadius.circular(8),
+                        child: DropdownButton2<String>(
+                          value: selectedTransactionType,
+                          isExpanded: true,
+                          
+                          hint: Text('Select',style: TextStyle(fontSize: 14,color:blueColor,),),
+                          items: transactionTypeOptions.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item,style: TextStyle(fontSize: 14,color: blueColor,fontWeight: FontWeight.bold),),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedTransactionType = value;
+                            });
+                          },
+                        buttonStyleData: ButtonStyleData(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                        height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                          width: 110,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFF8A95A8)),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),    
+                        dropdownStyleData: DropdownStyleData(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFF8A95A8)),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),  
                         ),
+                      ),
+                    ),
+                     ),
+                 
+                  
                     ],
                   ),
                 ],
@@ -2000,6 +2053,16 @@ class _FinancialTableState extends State<FinancialTable> {
                               entryMatch;
                         }).toList();
                         print("Records after search filter: ${data.length}");
+                      }
+
+                      // Filter by Transaction Type
+                      if (selectedTransactionType != null &&
+                          selectedTransactionType != "All") {
+                        print("Applying transaction type filter: $selectedTransactionType");
+                        data = data.where((lease) {
+                          return lease.type == selectedTransactionType;
+                        }).toList();
+                        print("Records after transaction type filter: ${data.length}");
                       }
                       // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
                       //   try {
@@ -2330,7 +2393,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 // generateRentersInsuranceCSV(snapshot.data!);
                                               },
                                               child:
-                                                  Text("Download as $option"),
+                                                  Text("Download as $option",style: TextStyle(fontSize: 14,color: blueColor),),
                                             );
                                           }).toList();
                                         },
