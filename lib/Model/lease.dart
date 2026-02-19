@@ -217,6 +217,7 @@ class LeaseData {
   List<String>? uploadedFile;
   bool? creditCardAccepted;
   bool? debitCardAccepted;
+  bool? achAccepted;
   bool? leasePaymentSettings;
 
   LeaseData({
@@ -238,6 +239,7 @@ class LeaseData {
     this.isProRent,
     this.creditCardAccepted,
     this.debitCardAccepted,
+    this.achAccepted,
     this.leasePaymentSettings,
   });
 
@@ -261,6 +263,7 @@ class LeaseData {
       uploadedFile: List<String>.from(json['uploaded_file']),
       creditCardAccepted: json['creditCardAccepted'],
       debitCardAccepted: json['debitCardAccepted'],
+      achAccepted: json['achAccepted'],
       leasePaymentSettings: json['leasePaymentSettings'],
     );
   }
@@ -286,6 +289,7 @@ class LeaseData {
       'uploaded_file': uploadedFile,
       'creditCardAccepted': creditCardAccepted,
       'debitCardAccepted': debitCardAccepted,
+      'achAccepted': achAccepted,
       'leasePaymentSettings': leasePaymentSettings,
     };
   }

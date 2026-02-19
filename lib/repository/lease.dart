@@ -161,7 +161,7 @@ class LeaseRepository {
     }
   }
 
-  Future<bool> updateLease(Lease lease) async {
+  Future<bool> updateLease(Lease lease, {bool? achAccepted}) async {
     print("calling navigate main");
     print(lease);
     print('entry');
@@ -169,11 +169,20 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
+    final payload = lease.toJson();
+    if (achAccepted != null) {
+      final leaseData = payload['leaseData'];
+      if (leaseData is Map<String, dynamic>) {
+        leaseData['achAccepted'] = achAccepted;
+      }
+    }
+    final encodedBody = json.encode(payload);
+
     print('Lease ID: ${lease.leaseData.leaseId}');
     print('Token: $token');
     print('Admin ID: $id');
     print('API URL: $Api_url/api/leases/leases/${lease.leaseData.leaseId}');
-    print('Lease Data: ${json.encode(lease)}');
+    print('Lease Data: $encodedBody');
 
     try {
       print('Entering the try block');
@@ -184,7 +193,7 @@ class LeaseRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json'
         },
-        body: json.encode(lease),
+        body: encodedBody,
       );
       print('Request complete');
       print('Response status code: ${response.statusCode}');

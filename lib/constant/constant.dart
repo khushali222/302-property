@@ -61,6 +61,7 @@ String image_upload_url = "https://staging.cloudrentalmanager.com";
 //   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);0
 //   return DateFormat('dd-MM-yyyy').format(parsedDate);
 // }
+
 formatDate(String dateTime) {
   print("formatDate input: '$dateTime'");
 

@@ -142,6 +142,7 @@ void main() {
     );
   }, (error, stackTrace) {
     // Handle uncaught errors here if needed
+
   }, zoneSpecification: ZoneSpecification(
     print: (self, parent, zone, line) {
       if (kDebugMode) {

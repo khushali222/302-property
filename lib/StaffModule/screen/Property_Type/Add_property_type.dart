@@ -13,12 +13,14 @@ import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 
+
 class Add_property extends StatefulWidget {
   const Add_property({super.key});
 
   @override
   State<Add_property> createState() => _Add_propertyState();
 }
+
 
 class _Add_propertyState extends State<Add_property> {
   List<String> months = ['Residential', "Commercial"];

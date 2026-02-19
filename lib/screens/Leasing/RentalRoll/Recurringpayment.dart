@@ -312,33 +312,39 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: blueColor,
-                            size: 20,
-                          ),
+                        Material(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 18),
+                            ),
+
+                        ),    
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    Row(
-                      children: [
-                        Text(
+                      const SizedBox(width: 16),
+                      Text(
                           "Configure Recurring Payment",
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: blueColor),
                         ),
-                      ],
+                    ],  
                     ),
-                    const SizedBox(height: 7),
-                    Row(
+                    const SizedBox(height: 17),
+                 
+                
+                  Row(
                       children: [
+                        SizedBox(width: 8),
                         Text(
                           "Total Rent Amount : \$${widget.leaseData.amount}",
                           style: TextStyle(
@@ -348,7 +354,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 17),
+                    const SizedBox(height: 10),
                     isLoading
                         ? Center(
                       child: SpinKitFadingCircle(
@@ -507,7 +513,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -736,8 +742,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       fontSize: 14,
                                                       fontWeight:
                                                       FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
+                                                      color:
+                                                          Colors.grey.shade700,
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -750,7 +756,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -802,7 +808,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                               value: day
                                                                   .toString(),
                                                               child: Text(
-                                                                  '$day'),
+                                                                  '$day', style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
                                                             ))
                                                             .toList(),
                                                         onChanged:
@@ -881,7 +887,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -926,7 +932,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 value:
                                                                 uniqueKey,
                                                                 child: Text(
-                                                                    "${card.account}"),
+                                                                    "${card.account}", style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
                                                               );
                                                             }).toList()
                                                             : [
@@ -1036,6 +1042,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       style:
                                                       const TextStyle(
                                                         fontSize: 14,
+                                                        color: Colors.black,
                                                         fontWeight:
                                                         FontWeight
                                                             .w500,
@@ -1053,7 +1060,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         contentPadding:
                                                         EdgeInsets
                                                             .symmetric(
-                                                          vertical: 12,
+                                                          vertical: 15,
                                                           horizontal: 12,
                                                         ),
                                                         border:
@@ -1341,6 +1348,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),

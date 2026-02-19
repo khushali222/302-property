@@ -28,7 +28,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   List<int> customervaultid = [];
   List<BillingData> cardDetails = [];
   Map<int, List<Map<String?, dynamic?>>> tenantDropdowns =
-  {}; // Stores dropdown values per tenant
+      {}; // Stores dropdown values per tenant
   double totalAmount = 0.0; // Store total amount
   List<Setting4> accounts = [];
   @override
@@ -210,9 +210,10 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
         tenantDropdowns[index] = [
           {
-            "selectedCard": (fetchedBillingId != null && fetchedCardType != null)
-                ? "${fetchedBillingId}_${fetchedCardType}"
-                : null,
+            "selectedCard":
+                (fetchedBillingId != null && fetchedCardType != null)
+                    ? "${fetchedBillingId}_${fetchedCardType}"
+                    : null,
             "selectedDay": recurring['date'],
             "selectedAccount": fetchaccount != null
                 ? "${fetchaccount.account}_${fetchaccount.createdAt}"
@@ -238,7 +239,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   bool isloading = false;
   String? messageCardAvailable;
   List<List<ScrollController>> rowControllers =
-  []; // List of List for ScrollControllers
+      []; // List of List for ScrollControllers
   List<bool> isScrollLeft = [];
   // Function to scroll all rows
   void scrollAllRows(int index) {
@@ -247,7 +248,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
     for (int i = 0; i < rowscroll.length; i++) {
       ScrollController controller =
-      tenantDropdowns[index]?[i]["scrollController"];
+          tenantDropdowns[index]?[i]["scrollController"];
 
       if (isScrollLeft[index]) {
         controller.jumpTo(controller.offset - offsetChange); // Scroll left
@@ -310,21 +311,24 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: blueColor,
-                            size: 20,
+                        Material(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.arrow_back_ios_new,
+                                  color: Colors.black87, size: 18),
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    Row(
-                      children: [
+                        const SizedBox(width: 16),
                         Text(
                           "Configure Recurring Payment",
                           style: TextStyle(
@@ -334,9 +338,11 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 17),
+
                     Row(
                       children: [
+                        SizedBox(width: 8),
                         Text(
                           "Total Rent Amount : \$${widget.leaseData.amount}",
                           style: TextStyle(
@@ -346,820 +352,820 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 17),
+                    const SizedBox(height: 10),
                     isLoading
                         ? Center(
-                      child: SpinKitFadingCircle(
-                        color: blueColor,
-                        size: 40.0,
-                      ),
-                    )
-                        : Column(
-                      children: widget.leaseData.tenantData!
-                          .asMap()
-                          .entries
-                          .map((entry) {
-                        int index = entry.key;
-                        var tenant = widget.leaseData.tenantData![index];
-                        int? vaultId = customervaultid.length > index
-                            ? customervaultid[index]
-                            : null;
-                        final tenantCards = cardDetails
-                            .where((card) =>
-                                card.customerVaultId ==
-                                (vaultId == null ? null : vaultId.toString()))
-                            .where((card) =>
-                                (card.ccType ?? '').trim().isNotEmpty &&
-                                (card.ccNumber ?? '').trim().isNotEmpty)
-                            .toList();
-
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1,
+                            child: SpinKitFadingCircle(
+                              color: blueColor,
+                              size: 40.0,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Tenant Name Header
-                              Text(
-                                '${tenant.tenantFirstName ?? 'N/A'} ${tenant.tenantLastName ?? 'N/A'}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
+                          )
+                        : Column(
+                            children: widget.leaseData.tenantData!
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              var tenant = widget.leaseData.tenantData![index];
+                              int? vaultId = customervaultid.length > index
+                                  ? customervaultid[index]
+                                  : null;
+                              final tenantCards = cardDetails
+                                  .where((card) =>
+                                      card.customerVaultId ==
+                                      (vaultId == null
+                                          ? null
+                                          : vaultId.toString()))
+                                  .where((card) =>
+                                      (card.ccType ?? '').trim().isNotEmpty &&
+                                      (card.ccNumber ?? '').trim().isNotEmpty)
+                                  .toList();
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                height: 1,
-                                color: Colors.grey.shade300,
-                              ),
-                              const SizedBox(height: 16),
-
-                              // Payment Rows
-                              Column(
-                                children: List.generate(
-                                  tenantDropdowns[index]!.length,
-                                      (rowIndex) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                          bottom: 16),
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade50,
-                                        borderRadius:
-                                        BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.grey.shade200,
-                                          width: 1,
-                                        ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Tenant Name Header
+                                    Text(
+                                      '${tenant.tenantFirstName ?? 'N/A'} ${tenant.tenantLastName ?? 'N/A'}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          // Payment Title Row
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceBetween,
-                                            children: [
-                                              Text(
-                                                "Payment ${rowIndex + 1}",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  color: blueColor,
-                                                ),
-                                              ),
-                                              if (tenantDropdowns[index]!
-                                                  .length >
-                                                  1)
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    calculateTotal();
-                                                    setState(() {
-                                                      tenantDropdowns[
-                                                      index]!
-                                                          .removeAt(
-                                                          rowIndex);
-                                                      checkFieldsFilled();
-                                                    });
-                                                  },
-                                                  child: const FaIcon(
-                                                    FontAwesomeIcons
-                                                        .trashCan,
-                                                    size: 16,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      height: 1,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    const SizedBox(height: 16),
 
-                                          // Form Fields in Column Layout
-                                          Column(
-                                            children: [
-                                              // Choose Card Field
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    "Choose Card *",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8),
-                                                  Container(
-                                                    width:
-                                                    double.infinity,
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                        12,
-                                                        vertical: 4),
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          6),
-                                                      border: Border.all(
-                                                        color: Colors.grey
-                                                            .shade300,
-                                                        width: 1,
+                                    // Payment Rows
+                                    Column(
+                                      children: List.generate(
+                                        tenantDropdowns[index]!.length,
+                                        (rowIndex) {
+                                          return Container(
+                                            margin: const EdgeInsets.only(
+                                                bottom: 16),
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: Colors.grey.shade200,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Payment Title Row
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Payment ${rowIndex + 1}",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
                                                       ),
                                                     ),
-                                                    child:
-                                                    DropdownButtonHideUnderline(
-                                                      child:
-                                                      DropdownButton2<
-                                                          String>(
-                                                        hint: const Text(
-                                                          'Select card',
-                                                          style:
-                                                          TextStyle(
+                                                    if (tenantDropdowns[index]!
+                                                            .length >
+                                                        1)
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          calculateTotal();
+                                                          setState(() {
+                                                            tenantDropdowns[
+                                                                    index]!
+                                                                .removeAt(
+                                                                    rowIndex);
+                                                            checkFieldsFilled();
+                                                          });
+                                                        },
+                                                        child: const FaIcon(
+                                                          FontAwesomeIcons
+                                                              .trashCan,
+                                                          size: 16,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 16),
+
+                                                // Form Fields in Column Layout
+                                                Column(
+                                                  children: [
+                                                    // Choose Card Field
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Choose Card *",
+                                                          style: TextStyle(
                                                             fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                             color: Colors
-                                                                .grey,
+                                                                .grey.shade700,
                                                           ),
                                                         ),
-                                                        isExpanded: true,
-                                                        value: tenantDropdowns[
-                                                        index]![
-                                                        rowIndex][
-                                                        "selectedCard"],
-                                                        items: [
-                                                          if (tenantCards
-                                                              .isNotEmpty)
-                                                            ...tenantCards
-                                                                .map(
-                                                                    (card) {
-                                                                  String
-                                                                  uniqueKey =
-                                                                      "${card.billingId}_${card.binResult}";
-                                                                  return DropdownMenuItem<
-                                                                      String>(
-                                                                    value:
-                                                                    uniqueKey,
-                                                                    child:
-                                                                    Row(
-                                                                      children: [
-                                                                        Container(
-                                                                          height:
-                                                                          24,
-                                                                          width:
-                                                                          24,
-                                                                          child:
-                                                                          Image.network(
-                                                                            "https://logo.clearbit.com/${(card.ccType ?? '').replaceAll(RegExp(r'[-\s]'), '').toLowerCase()}.com",
-                                                                            errorBuilder: (context, error, stackTrace) {
-                                                                              return const Icon(Icons.credit_card, size: 20, color: Colors.grey);
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                        const SizedBox(
-                                                                            width: 8),
-                                                                        Expanded(
-                                                                          child:
-                                                                          Column(
-                                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Text(
-                                                                                "${card.ccNumber ?? ''}",
-                                                                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                                                              ),
-                                                                              Text(
-                                                                                "${(card.binResult == null || card.binResult == "Unknown") ? (card.ccType ?? "N/A") : card.binResult} • ${card.ccExp ?? ''}",
-                                                                                style: const TextStyle(fontSize: 10, color: Colors.grey),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  );
-                                                                }).toList()
-                                                          else
-                                                            const DropdownMenuItem<
-                                                                String>(
-                                                              value: '',
-                                                              child: Text(
-                                                                  'No cards available'),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 1),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade300,
+                                                              width: 1,
                                                             ),
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: 'Add',
+                                                          ),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
                                                             child:
-                                                            GestureDetector(
-                                                              onTap:
-                                                                  () async {
-                                                                Navigator
-                                                                    .push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        AddCard(
-                                                                          leaseId:
-                                                                          widget.leaseData.leaseId ?? "",
-                                                                        ),
+                                                                DropdownButton2<
+                                                                    String>(
+                                                              hint: const Text(
+                                                                'Select card',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                              isExpanded: true,
+                                                              value: tenantDropdowns[
+                                                                          index]![
+                                                                      rowIndex][
+                                                                  "selectedCard"],
+                                                              items: [
+                                                                if (tenantCards
+                                                                    .isNotEmpty)
+                                                                  ...tenantCards
+                                                                      .map(
+                                                                          (card) {
+                                                                    String
+                                                                        uniqueKey =
+                                                                        "${card.billingId}_${card.binResult}";
+                                                                    return DropdownMenuItem<
+                                                                        String>(
+                                                                      value:
+                                                                          uniqueKey,
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Container(
+                                                                            height:
+                                                                                24,
+                                                                            width:
+                                                                                24,
+                                                                            child:
+                                                                                Image.network(
+                                                                              "https://logo.clearbit.com/${(card.ccType ?? '').replaceAll(RegExp(r'[-\s]'), '').toLowerCase()}.com",
+                                                                              errorBuilder: (context, error, stackTrace) {
+                                                                                return const Icon(Icons.credit_card, size: 20, color: Colors.grey);
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              width: 8),
+                                                                          Expanded(
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text(
+                                                                                  "${card.ccNumber ?? ''}",
+                                                                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                                                                ),
+                                                                                Text(
+                                                                                  "${(card.binResult == null || card.binResult == "Unknown") ? (card.ccType ?? "N/A") : card.binResult} • ${card.ccExp ?? ''}",
+                                                                                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                  }).toList()
+                                                                else
+                                                                  const DropdownMenuItem<
+                                                                      String>(
+                                                                    value: '',
+                                                                    child: Text(
+                                                                        'No cards available'),
                                                                   ),
-                                                                );
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                height:
-                                                                40,
-                                                                color:
-                                                                blueColor,
-                                                                child:
-                                                                const Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment.start,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                        width: 10),
-                                                                    Text(
-                                                                      'Add Card',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        fontSize: 14,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: Colors.white,
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value: 'Add',
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              AddCard(
+                                                                            leaseId:
+                                                                                widget.leaseData.leaseId ?? "",
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          40,
+                                                                      color:
+                                                                          blueColor,
+                                                                      child:
+                                                                          const Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          SizedBox(
+                                                                              width: 10),
+                                                                          Text(
+                                                                            'Add Card',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 14,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
-                                                                  ],
+                                                                  ),
                                                                 ),
+                                                              ],
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  tenantDropdowns[
+                                                                              index]![
+                                                                          rowIndex]
+                                                                      [
+                                                                      "selectedCard"] = value;
+                                                                });
+                                                              },
+                                                              selectedItemBuilder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return tenantCards
+                                                                    .map(
+                                                                        (card) {
+                                                                  return Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                    child: Text(
+                                                                      card.ccNumber ??
+                                                                          '',
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                }).toList();
+                                                              },
+                                                              menuItemStyleData:
+                                                                  const MenuItemStyleData(
+                                                                height: 40,
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                              ),
+                                                              buttonStyleData:
+                                                                  const ButtonStyleData(
+                                                                height: 50,
+                                                              ),
+                                                              iconStyleData:
+                                                                  const IconStyleData(
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .keyboard_arrow_down,
+                                                                ),
+                                                                iconSize: 20,
+                                                                iconEnabledColor:
+                                                                    Colors.grey,
+                                                                iconDisabledColor:
+                                                                    Colors.grey,
+                                                              ),
+                                                              dropdownStyleData:
+                                                                  DropdownStyleData(
+                                                                maxHeight: 200,
+                                                                width: 300,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              6),
+                                                                ),
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, -5),
                                                               ),
                                                             ),
                                                           ),
-                                                        ],
-                                                        onChanged:
-                                                            (value) {
-                                                          setState(() {
-                                                            tenantDropdowns[
-                                                            index]![
-                                                            rowIndex]
-                                                            [
-                                                            "selectedCard"] = value;
-                                                          });
-                                                        },
-                                                        selectedItemBuilder:
-                                                            (BuildContext
-                                                        context) {
-                                                          return tenantCards
-                                                              .map(
-                                                                  (card) {
-                                                                return Align(
-                                                                  alignment:
-                                                                  Alignment
-                                                                      .centerLeft,
-                                                                  child: Text(
-                                                                    card.ccNumber ?? '',
-                                                                    style:
-                                                                    const TextStyle(
-                                                                      fontSize:
-                                                                      14,
-                                                                      fontWeight:
-                                                                      FontWeight.bold,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }).toList();
-                                                        },
-                                                        menuItemStyleData:
-                                                        const MenuItemStyleData(
-                                                          height: 40,
+                                                        ),
+                                                      ],
+                                                    ),
+
+                                                    const SizedBox(height: 16),
+
+                                                    // Choose Day of Month Field
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Choose Day of Month *",
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors
+                                                                .grey.shade700,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
                                                           padding:
-                                                          EdgeInsets
-                                                              .zero,
-                                                        ),
-                                                        buttonStyleData:
-                                                        const ButtonStyleData(
-                                                          height: 50,
-                                                        ),
-                                                        iconStyleData:
-                                                        const IconStyleData(
-                                                          icon: Icon(
-                                                            Icons
-                                                                .keyboard_arrow_down,
-                                                          ),
-                                                          iconSize: 20,
-                                                          iconEnabledColor:
-                                                          Colors.grey,
-                                                          iconDisabledColor:
-                                                          Colors.grey,
-                                                        ),
-                                                        dropdownStyleData:
-                                                        DropdownStyleData(
-                                                          maxHeight: 200,
-                                                          width: 300,
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 1),
                                                           decoration:
-                                                          BoxDecoration(
+                                                              BoxDecoration(
+                                                            color: Colors.white,
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                6),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade300,
+                                                              width: 1,
+                                                            ),
                                                           ),
-                                                          offset:
-                                                          const Offset(
-                                                              0, -5),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
+                                                            child:
+                                                                DropdownButton2<
+                                                                    String>(
+                                                              hint: const Text(
+                                                                'Select Day of Month',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                              isExpanded: true,
+                                                              value: tenantDropdowns[index]![
+                                                                              rowIndex]
+                                                                          [
+                                                                          "selectedDay"] !=
+                                                                      null
+                                                                  ? tenantDropdowns[
+                                                                              index]![rowIndex]
+                                                                          [
+                                                                          "selectedDay"]
+                                                                      .toString()
+                                                                  : null,
+                                                              items: List
+                                                                      .generate(
+                                                                          28,
+                                                                          (i) =>
+                                                                              i +
+                                                                              1)
+                                                                  .map((day) =>
+                                                                      DropdownMenuItem<
+                                                                          String>(
+                                                                        value: day
+                                                                            .toString(),
+                                                                        child: Text(
+                                                                            '$day', style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
+                                                                      ))
+                                                                  .toList(),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  tenantDropdowns[
+                                                                              index]![
+                                                                          rowIndex]
+                                                                      [
+                                                                      "selectedDay"] = value;
+                                                                  checkFieldsFilled();
+                                                                });
+                                                              },
+                                                              buttonStyleData:
+                                                                  const ButtonStyleData(
+                                                                height: 50,
+                                                              ),
+                                                              iconStyleData:
+                                                                  const IconStyleData(
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .keyboard_arrow_down,
+                                                                ),
+                                                                iconSize: 20,
+                                                                iconEnabledColor:
+                                                                    Colors.grey,
+                                                                iconDisabledColor:
+                                                                    Colors.grey,
+                                                              ),
+                                                              dropdownStyleData:
+                                                                  DropdownStyleData(
+                                                                maxHeight: 200,
+                                                                width: 150,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              6),
+                                                                ),
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, -5),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
 
-                                              const SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
 
-                                              // Choose Day of Month Field
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    "Choose Day of Month *",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8),
-                                                  Container(
-                                                    width:
-                                                    double.infinity,
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                        12,
-                                                        vertical: 4),
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          6),
-                                                      border: Border.all(
-                                                        color: Colors.grey
-                                                            .shade300,
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    child:
-                                                    DropdownButtonHideUnderline(
-                                                      child:
-                                                      DropdownButton2<
-                                                          String>(
-                                                        hint: const Text(
-                                                          'Select Day of Month',
-                                                          style:
-                                                          TextStyle(
+                                                    // Account Field
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Account *",
+                                                          style: TextStyle(
                                                             fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                             color: Colors
-                                                                .grey,
+                                                                .grey.shade700,
                                                           ),
                                                         ),
-                                                        isExpanded: true,
-                                                        value: tenantDropdowns[index]![
-                                                        rowIndex]
-                                                        [
-                                                        "selectedDay"] !=
-                                                            null
-                                                            ? tenantDropdowns[
-                                                        index]![rowIndex]
-                                                        [
-                                                        "selectedDay"]
-                                                            .toString()
-                                                            : null,
-                                                        items: List
-                                                            .generate(
-                                                            28,
-                                                                (i) =>
-                                                            i +
-                                                                1)
-                                                            .map((day) =>
-                                                            DropdownMenuItem<
-                                                                String>(
-                                                              value: day
-                                                                  .toString(),
-                                                              child: Text(
-                                                                  '$day'),
-                                                            ))
-                                                            .toList(),
-                                                        onChanged:
-                                                            (value) {
-                                                          setState(() {
-                                                            tenantDropdowns[
-                                                            index]![
-                                                            rowIndex]
-                                                            [
-                                                            "selectedDay"] = value;
-                                                            checkFieldsFilled();
-                                                          });
-                                                        },
-                                                        buttonStyleData:
-                                                        const ButtonStyleData(
-                                                          height: 50,
-                                                        ),
-                                                        iconStyleData:
-                                                        const IconStyleData(
-                                                          icon: Icon(
-                                                            Icons
-                                                                .keyboard_arrow_down,
-                                                          ),
-                                                          iconSize: 20,
-                                                          iconEnabledColor:
-                                                          Colors.grey,
-                                                          iconDisabledColor:
-                                                          Colors.grey,
-                                                        ),
-                                                        dropdownStyleData:
-                                                        DropdownStyleData(
-                                                          maxHeight: 200,
-                                                          width: 150,
-                                                          decoration:
-                                                          BoxDecoration(
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+                                                        
+                                                        decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                6),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade300,
+                                                              width: 1,
+                                                            ),
                                                           ),
-                                                          offset:
-                                                          const Offset(
-                                                              0, -5),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
+                                                            child:
+                                                                DropdownButton2<
+                                                                    String>(
+                                                              hint: const Text(
+                                                                'Rent Income',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                              isExpanded: true,
+                                                              value: tenantDropdowns[
+                                                                          index]![
+                                                                      rowIndex][
+                                                                  "selectedAccount"],
+                                                              items: accounts
+                                                                      .isNotEmpty
+                                                                  ? accounts.map(
+                                                                      (card) {
+                                                                      String
+                                                                          uniqueKey =
+                                                                          "${card.account}_${card.createdAt}";
+                                                                      return DropdownMenuItem<
+                                                                          String>(
+                                                                        value:
+                                                                            uniqueKey,
+                                                                        child: Text(
+                                                                            "${card.account}", style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
+                                                                      );
+                                                                    }).toList()
+                                                                  : [
+                                                                      const DropdownMenuItem<
+                                                                          String>(
+                                                                        value:
+                                                                            '',
+                                                                        child: Text(
+                                                                            'No accounts available'),
+                                                                      ),
+                                                                    ],
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  tenantDropdowns[
+                                                                              index]![
+                                                                          rowIndex]
+                                                                      [
+                                                                      "selectedAccount"] = value;
+                                                                  checkFieldsFilled();
+                                                                });
+                                                              },
+                                                              buttonStyleData:
+                                                                  const ButtonStyleData(
+                                                                height: 50,
+                                                              ),
+                                                              iconStyleData:
+                                                                  const IconStyleData(
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .keyboard_arrow_down,
+                                                                ),
+                                                                iconSize: 20,
+                                                                iconEnabledColor:
+                                                                    Colors.grey,
+                                                                iconDisabledColor:
+                                                                    Colors.grey,
+                                                              ),
+                                                              dropdownStyleData:
+                                                                  DropdownStyleData(
+                                                                maxHeight: 200,
+                                                                width: 200,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              6),
+                                                                ),
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, -5),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
 
-                                              const SizedBox(height: 16),
+                                                    const SizedBox(height: 16),
 
-                                              // Account Field
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    "Account *",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8),
-                                                  Container(
-                                                    width:
-                                                    double.infinity,
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                        12,
-                                                        vertical: 4),
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          6),
-                                                      border: Border.all(
-                                                        color: Colors.grey
-                                                            .shade300,
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    child:
-                                                    DropdownButtonHideUnderline(
-                                                      child:
-                                                      DropdownButton2<
-                                                          String>(
-                                                        hint: const Text(
-                                                          'Rent Income',
-                                                          style:
-                                                          TextStyle(
+                                                    // Amount Field
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Amount *",
+                                                          style: TextStyle(
                                                             fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                             color: Colors
-                                                                .grey,
+                                                                .grey.shade700,
                                                           ),
                                                         ),
-                                                        isExpanded: true,
-                                                        value: tenantDropdowns[
-                                                        index]![
-                                                        rowIndex][
-                                                        "selectedAccount"],
-                                                        items: accounts
-                                                            .isNotEmpty
-                                                            ? accounts.map(
-                                                                (card) {
-                                                              String
-                                                              uniqueKey =
-                                                                  "${card.account}_${card.createdAt}";
-                                                              return DropdownMenuItem<
-                                                                  String>(
-                                                                value:
-                                                                uniqueKey,
-                                                                child: Text(
-                                                                    "${card.account}"),
-                                                              );
-                                                            }).toList()
-                                                            : [
-                                                          const DropdownMenuItem<
-                                                              String>(
-                                                            value:
-                                                            '',
-                                                            child: Text(
-                                                                'No accounts available'),
-                                                          ),
-                                                        ],
-                                                        onChanged:
-                                                            (value) {
-                                                          setState(() {
-                                                            tenantDropdowns[
-                                                            index]![
-                                                            rowIndex]
-                                                            [
-                                                            "selectedAccount"] = value;
-                                                            checkFieldsFilled();
-                                                          });
-                                                        },
-                                                        buttonStyleData:
-                                                        const ButtonStyleData(
-                                                          height: 50,
-                                                        ),
-                                                        iconStyleData:
-                                                        const IconStyleData(
-                                                          icon: Icon(
-                                                            Icons
-                                                                .keyboard_arrow_down,
-                                                          ),
-                                                          iconSize: 20,
-                                                          iconEnabledColor:
-                                                          Colors.grey,
-                                                          iconDisabledColor:
-                                                          Colors.grey,
-                                                        ),
-                                                        dropdownStyleData:
-                                                        DropdownStyleData(
-                                                          maxHeight: 200,
-                                                          width: 200,
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Container(
                                                           decoration:
-                                                          BoxDecoration(
+                                                              BoxDecoration(
+                                                            color: Colors.white,
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                6),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade300,
+                                                              width: 1,
+                                                            ),
                                                           ),
-                                                          offset:
-                                                          const Offset(
-                                                              0, -5),
+                                                          child: TextField(
+                                                            controller:
+                                                                tenantDropdowns[
+                                                                            index]![
+                                                                        rowIndex]
+                                                                    ["amount"],
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            onChanged: (value) {
+                                                              calculateTotal();
+                                                              checkFieldsFilled();
+                                                            },
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              hintText:
+                                                                  "\$0.00",
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 14,
+                                                              ),
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                vertical: 15,
+                                                                horizontal: 12,
+                                                              ),
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            6)),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none,
+                                                              ),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            6)),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none,
+                                                              ),
+                                                              enabledBorder:
+                                                                  OutlineInputBorder(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            6)),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none,
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              const SizedBox(height: 16),
-
-                                              // Amount Field
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    "Amount *",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8),
-                                                  Container(
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          6),
-                                                      border: Border.all(
-                                                        color: Colors.grey
-                                                            .shade300,
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    child: TextField(
-                                                      controller:
-                                                      tenantDropdowns[
-                                                      index]![
-                                                      rowIndex]
-                                                      ["amount"],
-                                                      keyboardType:
-                                                      TextInputType
-                                                          .number,
-                                                      onChanged: (value) {
-                                                        calculateTotal();
-                                                        checkFieldsFilled();
-                                                      },
-                                                      style:
-                                                      const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w500,
-                                                      ),
-                                                      decoration:
-                                                      const InputDecoration(
-                                                        hintText:
-                                                        "\$0.00",
-                                                        hintStyle:
-                                                        TextStyle(
-                                                          color:
-                                                          Colors.grey,
-                                                          fontSize: 14,
-                                                        ),
-                                                        contentPadding:
-                                                        EdgeInsets
-                                                            .symmetric(
-                                                          vertical: 12,
-                                                          horizontal: 12,
-                                                        ),
-                                                        border:
-                                                        OutlineInputBorder(
-                                                          borderRadius: BorderRadius
-                                                              .all(Radius
-                                                              .circular(
-                                                              6)),
-                                                          borderSide:
-                                                          BorderSide
-                                                              .none,
-                                                        ),
-                                                        focusedBorder:
-                                                        OutlineInputBorder(
-                                                          borderRadius: BorderRadius
-                                                              .all(Radius
-                                                              .circular(
-                                                              6)),
-                                                          borderSide:
-                                                          BorderSide
-                                                              .none,
-                                                        ),
-                                                        enabledBorder:
-                                                        OutlineInputBorder(
-                                                          borderRadius: BorderRadius
-                                                              .all(Radius
-                                                              .circular(
-                                                              6)),
-                                                          borderSide:
-                                                          BorderSide
-                                                              .none,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              // Add Row Button
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    tenantDropdowns[index]!.add({
-                                      "selectedCard": null,
-                                      "selectedDay": null,
-                                      "selectedAccount": null,
-                                      "amount": TextEditingController(),
-                                      "scrollController":
-                                      ScrollController(),
-                                    });
-                                    checkFieldsFilled();
-                                  });
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.circular(6),
-                                    border: Border.all(
-                                      color: const Color(
-                                          0xFF0078D4), // Azure blue
-                                      width: 1,
                                     ),
-                                  ),
-                                  child: const Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add,
-                                        color: Color(
-                                            0xFF0078D4), // Azure blue
-                                        size: 18,
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        "Add Row",
-                                        style: TextStyle(
-                                          color: Color(
-                                              0xFF0078D4), // Azure blue
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
+
+                                    // Add Row Button
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          tenantDropdowns[index]!.add({
+                                            "selectedCard": null,
+                                            "selectedDay": null,
+                                            "selectedAccount": null,
+                                            "amount": TextEditingController(),
+                                            "scrollController":
+                                                ScrollController(),
+                                          });
+                                          checkFieldsFilled();
+                                        });
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          border: Border.all(
+                                            color: const Color(
+                                                0xFF0078D4), // Azure blue
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.add,
+                                              color: Color(
+                                                  0xFF0078D4), // Azure blue
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              "Add Row",
+                                              style: TextStyle(
+                                                color: Color(
+                                                    0xFF0078D4), // Azure blue
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                              );
+                            }).toList(),
                           ),
-                        );
-                      }).toList(),
-                    ),
                     Center(
                         child: Text(
-                          "Total Amount : \$${totalAmount}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontSize: 14.5),
-                        )),
+                      "Total Amount : \$${totalAmount}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 14.5),
+                    )),
                     const SizedBox(height: 10),
                     // Azure-style Action Buttons
                     Column(
@@ -1208,18 +1214,18 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                   });
 
                                   List<Map<String, dynamic>>
-                                  selectedTenantsData = [];
+                                      selectedTenantsData = [];
 
                                   for (int i = 0;
-                                  i < widget.leaseData.tenantData!.length;
-                                  i++) {
+                                      i < widget.leaseData.tenantData!.length;
+                                      i++) {
                                     var tenant =
-                                    widget.leaseData.tenantData![i];
+                                        widget.leaseData.tenantData![i];
                                     int? vaultId = customervaultid.length > i
                                         ? customervaultid[i]
                                         : null;
                                     List<Map<String, dynamic>> recurringsList =
-                                    [];
+                                        [];
 
                                     for (var row in tenantDropdowns[i]!) {
                                       if (row['selectedCard'] != null &&
@@ -1227,7 +1233,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                           row['amount'].text.isNotEmpty &&
                                           row['selectedDay'] != null) {
                                         var cardData =
-                                        row['selectedCard']!.split('_');
+                                            row['selectedCard']!.split('_');
                                         String billingId = cardData.length > 1
                                             ? cardData[0]
                                             : "";
@@ -1235,11 +1241,11 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                             ? cardData[1]
                                             : "";
                                         var rec_accounts =
-                                        row['selectedAccount']!.split('_');
+                                            row['selectedAccount']!.split('_');
                                         String selectedacc =
-                                        rec_accounts.length > 1
-                                            ? rec_accounts[0]
-                                            : '';
+                                            rec_accounts.length > 1
+                                                ? rec_accounts[0]
+                                                : '';
                                         String amount = row['amount'].text;
 
                                         recurringsList.add({
@@ -1248,8 +1254,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                           "card_type": cardtype,
                                           "account": selectedacc,
                                           "date":
-                                          row['selectedDay']?.toString() ??
-                                              "",
+                                              row['selectedDay']?.toString() ??
+                                                  "",
                                         });
                                       }
                                     }
@@ -1259,7 +1265,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                         "tenant_id": tenant.tenantId,
                                         "lease_id": widget.leaseData.leaseId!,
                                         "customer_vault_id":
-                                        vaultId?.toString() ?? "",
+                                            vaultId?.toString() ?? "",
                                         "recurrings": recurringsList,
                                       });
                                     }
@@ -1283,27 +1289,27 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                   decoration: BoxDecoration(
                                     color: isButtonEnabled
                                         ? const Color(
-                                        0xFF6C757D) // Azure grey for disabled
+                                            0xFF6C757D) // Azure grey for disabled
                                         : const Color(0xFF6C757D),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: isloading
                                       ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 20.0,
-                                    ),
-                                  )
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 20.0,
+                                          ),
+                                        )
                                       : const Center(
-                                    child: Text(
-                                      "Save",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                                          child: Text(
+                                            "Save",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),
@@ -1336,6 +1342,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -1541,7 +1548,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
   disablecards(String leaseid) async {
     final url =
-    Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
+        Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
     print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
