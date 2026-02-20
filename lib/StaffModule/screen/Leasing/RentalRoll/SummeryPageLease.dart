@@ -1039,6 +1039,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           left: 15, right: 15, top: 15, bottom: 20),
                       child: Column(
                         children: [
+                          //Tenant Details
                           Row(
                             children: [
                               const SizedBox(width: 8),
@@ -1120,73 +1121,57 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     /// Rental Owner
-                                    Flexible(
-                                      flex: 2,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Rental Owner",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Rental Owner",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${snapshot.data!.data!.rentalOwnerName ?? 'N/A'}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade600,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${snapshot.data!.data!.rentalOwnerName ?? 'N/A'}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade600,
                                           ),
-                                        ],
-                                      ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                      ],
                                     ),
 
-                                    const SizedBox(width: 30),
+                                 
 
-                                    /// Tenants
-                                    Flexible(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Tenants",
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            snapshot.data!.data!.tenantData!
-                                                .map((tenant) =>
-                                                    '${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}')
-                                                .join(', '),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade600,
-                                            ),
-                                            softWrap: true,
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
+                                    ],
+                                ),
+                              //Tenants
+                              const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Tenants',style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),),
+                                        Text(snapshot.data!.data!.tenantData!.map((tenant) => '${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}').join(', '),style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade600,
+                                        ),),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -1203,6 +1188,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               const SizedBox(
                 height: 10,
               ),
+              //Rent Details
               if (determineStatus(snapshot.data?.data?.startDate,
                       snapshot.data?.data?.endDate) !=
                   'Expired')
@@ -1764,7 +1750,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
-                                                                  'Configure Recurring',
+                                                                  'Configure Autopay',
                                                                   style:
                                                                       TextStyle(
                                                                     color:

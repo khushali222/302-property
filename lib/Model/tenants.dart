@@ -55,6 +55,8 @@ class Tenant {
   dynamic? rentshare;
   bool? enableoverrideFee;
   double? overRideFee;
+  bool? allowAch;
+  bool? allowCard;
 
   Tenant({
     this.id,
@@ -85,6 +87,8 @@ class Tenant {
     this.leaseData,
     this.enableoverrideFee,
     this.overRideFee,
+    this.allowAch,
+    this.allowCard,
   }); // Added leaseData
 
   Tenant.fromJson(Map<String, dynamic> json) {
@@ -116,6 +120,8 @@ class Tenant {
         ? double.tryParse(json['override_fee'].toString())
         : null;
     enableoverrideFee = json['enable_override_fee'];
+    allowAch = json['allow_ach'];
+    allowCard = json['allow_card'];
     if (json['leaseData'] != null) {
       // Fixed the field name
       leaseData = <TenantLeaseData>[];
@@ -150,6 +156,8 @@ class Tenant {
     data['rental_adress'] = rentalAddress;
     data['override_fee'] = overRideFee;
     data['enable_override_fee'] = enableoverrideFee;
+    data['allow_ach'] = allowAch;
+    data['allow_card'] = allowCard;
     data['rental_unit'] = rentalUnit;
     if (leaseData != null) {
       data['leaseData'] =

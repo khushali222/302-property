@@ -306,6 +306,8 @@ class TenantsRepository {
     required String companyName,
     required String overRideFee,
     required String enableOverRideFee,
+    required bool allowAch,
+    required bool allowCard,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -328,6 +330,8 @@ class TenantsRepository {
       },
       'override_fee': overRideFee,
       'enable_override_fee': enableOverRideFee,
+      'allow_ach': allowAch,
+      'allow_card': allowCard,
     };
     print('Data is :$data');
 

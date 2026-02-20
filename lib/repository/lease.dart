@@ -239,6 +239,124 @@ class LeaseRepository {
     }
   }
 
+  Future<bool> updateLeasePaymentSettings({
+    required String leaseId,
+    required bool leasePaymentSettings,
+    required bool achAccepted,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    final String companyName = prefs.getString('companyName') ?? '';
+
+    // Backend expects the full lease payload shape (chargeData/cosignerData/leaseData/tenantData).
+    // Build it from the latest saved lease details to avoid pushing unsaved UI edits.
+    final details = await fetchLeaseDetails(leaseId);
+
+    dynamic stripMongoKeys(dynamic value) {
+      if (value is List) {
+        return value.map(stripMongoKeys).toList();
+      }
+      if (value is Map) {
+        final out = <String, dynamic>{};
+        value.forEach((k, v) {
+          final key = k.toString();
+          if (key == '_id' || key == '__v') return;
+          out[key] = stripMongoKeys(v);
+        });
+        return out;
+      }
+      return value;
+    }
+
+    // Use parsed `details.lease.entry` so `_id` from backend isn't re-sent.
+    final List<dynamic> allEntries =
+        details.lease.entry.map((e) => e.toJson()).toList();
+
+    final cosigner = (details.cosigner != null && details.cosigner!.isNotEmpty)
+        ? details.cosigner!.first
+        : null;
+
+    final payload = {
+      'chargeData': {
+        'admin_id': details.lease.adminId,
+        'entry': allEntries,
+        'is_leaseAdded': true,
+      },
+      'cosignerData': {
+        'admin_id': details.lease.adminId,
+        'cosigner_address': cosigner?.streetAddress ?? '',
+        'cosigner_alternativeEmail': cosigner?.alterEmail ?? '',
+        'cosigner_alternativeNumber': cosigner?.workNumber ?? '',
+        'cosigner_city': cosigner?.city ?? '',
+        'cosigner_country': cosigner?.country ?? '',
+        'cosigner_email': cosigner?.email ?? '',
+        'cosigner_firstName': cosigner?.firstName ?? '',
+        // Some payload builders use Mongo _id here; keep fallback for compatibility.
+        'cosigner_id': cosigner?.c_id ?? cosigner?.cosignerId ?? '',
+        'cosigner_lastName': cosigner?.lastName ?? '',
+        'cosigner_phoneNumber': cosigner?.phoneNumber ?? '',
+        'cosigner_postalcode': cosigner?.postalCode ?? '',
+      },
+      'leaseData': {
+        'lease_id': details.lease.leaseId,
+        'admin_id': details.lease.adminId,
+        'company_name': companyName,
+        'end_date': details.lease.endDate,
+        'entry': allEntries,
+        'lease_amount': details.lease.leaseAmount.toString(),
+        'lease_type': details.lease.leaseType,
+        'rental_id': details.lease.rentalId,
+        'start_date': details.lease.startDate,
+        'tenant_id': details.lease.tenantId,
+        'tenant_residentStatus': false,
+        'unit_id': details.lease.unitId,
+        'uploaded_file': details.lease.uploadedFile,
+        'creditCardAccepted': details.lease.creditCardAccepted,
+        'debitCardAccepted': details.lease.debitCardAccepted,
+        'achAccepted': achAccepted,
+        'leasePaymentSettings': leasePaymentSettings,
+      },
+      'tenantData': details.tenant
+              ?.map((t) => stripMongoKeys((t as dynamic).toJson()))
+              .toList() ??
+          [],
+    };
+
+    try {
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/leases/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(payload),
+      );
+
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Lease payment settings updated');
+          return true;
+        } else {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to update lease');
+          return false;
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to update lease');
+        return false;
+      }
+    } catch (error) {
+      Fluttertoast.showToast(msg: 'An error occurred: $error');
+      return false;
+    }
+  }
+
   // Future<List<Lease1>> fetchLease(String? adminId) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   adminId = prefs.getString("adminId");

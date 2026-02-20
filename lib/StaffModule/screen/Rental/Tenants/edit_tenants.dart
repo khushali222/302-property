@@ -187,6 +187,11 @@ class _EditTenantsState extends State<EditTenants> {
   String? initialRelationToTenant;
   String? initialEmergencyEmail;
   String? initialEmergencyPhoneNumber;
+  bool initialEnableOverrideFee = false;
+  String initialOverrideFee = '';
+  bool initialEnableACH = true;
+  bool initialEnableCard = false;
+
   @override
   void initState() {
     overrideFee.addListener(_validateInput);
@@ -202,6 +207,8 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "";
     passWord.text = widget.tenants.tenantPassword ?? "";
+    enableACH = widget.tenants.allowAch ?? true;
+    enableCard = widget.tenants.allowCard ?? false;
     // Get dateProvider to format the date according to user's preference
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     String birthDate = widget.tenants.tenantBirthDate ?? "";
@@ -269,6 +276,8 @@ class _EditTenantsState extends State<EditTenants> {
   }
 
   bool enableOverrideFee = false;
+  bool enableACH = true;
+  bool enableCard = false;
   final TextEditingController overrideFee = TextEditingController();
   String overRideFeeError = '';
   void _validateInput() {
@@ -284,6 +293,19 @@ class _EditTenantsState extends State<EditTenants> {
         overRideFeeError = '';
       }
     });
+  }
+
+  /// Parse bool from API (handles bool, string "true"/"false", 0/1, or null).
+  bool _parseBoolFromApi(dynamic value, {bool defaultValue = false}) {
+    if (value == null) return defaultValue;
+    if (value is bool) return value;
+    if (value is String) {
+      final lower = value.toLowerCase();
+      if (lower == 'true' || lower == '1') return true;
+      if (lower == 'false' || lower == '0') return false;
+    }
+    if (value is int) return value == 1;
+    return defaultValue;
   }
 
   // Helper function to convert display format back to API format (yyyy-MM-dd)
@@ -332,23 +354,36 @@ class _EditTenantsState extends State<EditTenants> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
+    // get_tenant returns allow_ach, allow_card, enable_override_fee, override_fee in data object
     final response = await http.get(
-      Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
+      Uri.parse('$Api_url/api/tenant/get_tenant/$tenantId'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
-    print('reponse ${response.body}');
+    print('get_tenant response ${response.body}');
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      final tenantData = jsonResponse['data'][0];
+      // get_tenant returns { "data": { ...tenant object } }, not an array
+      final tenantData = jsonResponse['data'];
+      if (tenantData == null || tenantData is! Map) {
+        setState(() => isInitialLoading = false);
+        return;
+      }
 
       setState(() {
-        enableOverrideFee = tenantData['enable_override_fee'] ?? false;
+        enableOverrideFee = _parseBoolFromApi(tenantData['enable_override_fee'], defaultValue: false);
         overrideFee.text = tenantData['override_fee'] != null
             ? tenantData['override_fee'].toString()
             : '';
+        // Parse allow_ach / allow_card (API may send bool, string "true"/"false", or camelCase)
+        enableACH = _parseBoolFromApi(tenantData['allow_ach'] ?? tenantData['allowAch'], defaultValue: true);
+        enableCard = _parseBoolFromApi(tenantData['allow_card'] ?? tenantData['allowCard'], defaultValue: false);
+        initialEnableOverrideFee = enableOverrideFee;
+        initialOverrideFee = overrideFee.text;
+        initialEnableACH = enableACH;
+        initialEnableCard = enableCard;
         passWord.text = tenantData['tenant_password'] ?? '';
 
         // Handle null values for phone numbers and other fields
@@ -1200,10 +1235,59 @@ class _EditTenantsState extends State<EditTenants> {
                                             ),
                                           )
                                         : Container(),
-                                  ],
-                                ),
+                                  const SizedBox(height: 10),
+                                  Text('Allowed Payment Methods',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF152B51),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableCard,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableCard = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('Card',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableACH,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableACH = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('ACH',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
+                          ),
                           ),
                           const SizedBox(
                             height: 20,
@@ -1278,6 +1362,8 @@ class _EditTenantsState extends State<EditTenants> {
                                               overRideFee: overrideFee.text,
                                               enableOverRideFee:
                                                   enableOverrideFee.toString(),
+                                              allowAch: enableACH,
+                                              allowCard: enableCard,
                                             );
                                             Fluttertoast.showToast(
                                                 msg:
@@ -2279,6 +2365,55 @@ class _EditTenantsState extends State<EditTenants> {
                                               ),
                                             )
                                           : Container(),
+                                  const SizedBox(height: 10),
+                                  Text('Allowed Payment Methods',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF152B51),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableCard,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableCard = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('Card',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableACH,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableACH = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('ACH',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                     ],
                                   ),
                                 ],
@@ -2450,6 +2585,8 @@ class _EditTenantsState extends State<EditTenants> {
                                                 overrideFee.text.trim(),
                                             enableOverRideFee:
                                                 enableOverrideFee.toString(),
+                                            allowAch: enableACH,
+                                            allowCard: enableCard,
                                           );
                                           Fluttertoast.showToast(
                                               msg:

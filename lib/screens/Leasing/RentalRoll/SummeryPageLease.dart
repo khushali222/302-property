@@ -2005,7 +2005,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       const SizedBox(width: 12),
                                                       Expanded(
                                                         child: Text(
-                                                          'Configure Recurring',
+                                                          'Configure Autopay',
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:

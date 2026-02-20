@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -19,6 +20,7 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
 import 'package:three_zero_two_property/StaffModule/repository/properties.dart';
 
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 
@@ -100,11 +102,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
     LeaseDetails fetchedDetails =
         await LeaseRepository().fetchLeaseDetails(leaseId);
-    // print();
-
-    // print(fetchedDetails.re);
-
-    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
       initialRentAmount = fetchedDetails.rentCharges!.first.amount.toString();
@@ -207,6 +205,7 @@ class _Edit_leaseState extends State<Edit_lease>
       _debitCardAccepted = fetchedDetails.lease.debitCardAccepted ?? false;
       _achAccepted = fetchedDetails.lease.achAccepted ?? false;
       _achAcceptedDirty = false;
+      _paymentSettingsLoaded = true;
     });
 
     _loadUnits(renderId);
@@ -437,6 +436,84 @@ class _Edit_leaseState extends State<Edit_lease>
   bool _debitCardAccepted = false;
   bool _achAccepted = false; // Debit card checkbox
   bool _achAcceptedDirty = false;
+  bool _isUpdatingAchSetting = false;
+  bool _paymentSettingsLoaded = false; // true after fetchDetails sets ACH state
+
+  Future<bool> _confirmReenableAch() async {
+    final completer = Completer<bool>();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Re-enable ACH?",
+      desc: "Are you sure you want to re-enable ACH for this lease?",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () {
+            completer.complete(true);
+            Navigator.pop(context);
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {
+            completer.complete(false);
+            Navigator.pop(context);
+          },
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+      ],
+    ).show();
+    return completer.future;
+  }
+
+  Future<void> _updateAchSetting({required bool achAccepted}) async {
+    if (_isUpdatingAchSetting) return;
+
+    final prevAchAccepted = _achAccepted;
+    final prevLeasePaymentSettings = _leasePaymentSettings;
+
+    setState(() {
+      _isUpdatingAchSetting = true;
+      _achAccepted = achAccepted;
+      _leasePaymentSettings = true;
+    });
+
+    final success = await LeaseRepository().updateLeasePaymentSettings(
+      leaseId: widget.leaseId,
+      leasePaymentSettings: _leasePaymentSettings,
+      achAccepted: _achAccepted,
+    );
+
+    if (!mounted) return;
+
+    if (!success) {
+      setState(() {
+        _achAccepted = prevAchAccepted;
+        _leasePaymentSettings = prevLeasePaymentSettings;
+        _isUpdatingAchSetting = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _achAcceptedDirty = false;
+      _isUpdatingAchSetting = false;
+    });
+  }
   Widget _buildDataCell(String text) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -3569,34 +3646,55 @@ class _Edit_leaseState extends State<Edit_lease>
                     //                   fontSize: 16,
                     //                   fontWeight: FontWeight.w300,
                     //                   color: Colors.grey)),
-
+                    //
                     //           const SizedBox(
                     //             height: 10,
                     //           ),
-                    //           Row(
-                    //             children: [
-                    //               Checkbox(
-                    //                 activeColor: blueColor,
-                    //                 value: !_achAccepted, // UI is "Disable ACH"
-                    //                 onChanged: (newValue) {
-                    //                   setState(() {
-                    //                     final disableAch = newValue ?? false;
-                    //                     _achAccepted = !disableAch;
-                    //                     _achAcceptedDirty = true;
-                    //                     // Once ACH is manually overridden for this lease,
-                    //                     // keep payment settings enabled going forward.
-                    //                     _leasePaymentSettings = true;
-                    //                   });
-                    //                 },
+                    //           if (!_paymentSettingsLoaded)
+                    //             const Padding(
+                    //               padding: EdgeInsets.symmetric(vertical: 8.0),
+                    //               child: SizedBox(
+                    //                 height: 24,
+                    //                 width: 24,
+                    //                 child: CircularProgressIndicator(strokeWidth: 2),
                     //               ),
-                    //               Text('Disable ACH',
-                    //                   style: TextStyle(
-                    //                       fontSize: 14,
-                    //                       fontWeight: FontWeight.w500,
-                    //                       color: blueColor)),
-                    //             ],
-                    //           ),
-
+                    //             )
+                    //           else
+                    //             Row(
+                    //               children: [
+                    //                 Checkbox(
+                    //                   activeColor: blueColor,
+                    //                   value: !_achAccepted, // UI is "Disable ACH"
+                    //                   onChanged: _isUpdatingAchSetting
+                    //                       ? null
+                    //                       : (newValue) async {
+                    //                           final disableAch =
+                    //                               newValue ?? false;
+                    //                           final nextAchAccepted = !disableAch;
+                    //
+                    //                           // If currently disabled and user wants to re-enable, confirm first.
+                    //                           if (_achAccepted == false &&
+                    //                               nextAchAccepted == true) {
+                    //                             final ok =
+                    //                                 await _confirmReenableAch();
+                    //                             if (!ok) return;
+                    //                           }
+                    //
+                    //                           setState(() {
+                    //                             _achAcceptedDirty = true;
+                    //                           });
+                    //                           await _updateAchSetting(
+                    //                               achAccepted: nextAchAccepted);
+                    //                         },
+                    //                 ),
+                    //                 Text('Disable ACH',
+                    //                     style: TextStyle(
+                    //                         fontSize: 14,
+                    //                         fontWeight: FontWeight.bold,
+                    //                         color: blueColor)),
+                    //               ],
+                    //             ),
+                    //
                     //           // Row(
                     //           //   children: [
                     //           //     Checkbox(
@@ -3661,13 +3759,13 @@ class _Edit_leaseState extends State<Edit_lease>
                     //           //     ],
                     //           //   ),
                     //           // ],
-                            
-                            
+                    //
+                    //
                     //         ],
                     //       ),
                     //     ),
                     //   ),
-                    
+                    // const SizedBox(height: 10),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -4545,9 +4643,7 @@ class _Edit_leaseState extends State<Edit_lease>
   }
 
   Future<void> updateLeaseAndNavigate(Lease lease) async {
-    bool success =
-        await LeaseRepository().updateLease(lease,
-            achAccepted: _achAcceptedDirty ? _achAccepted : null);
+    bool success = await LeaseRepository().updateLease(lease);
 
     if (success) {
       Navigator.pop(context, true); // Replace with the actual navigation logic

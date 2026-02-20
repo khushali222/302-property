@@ -33,6 +33,7 @@ import '../AddCard/CardModel.dart';
 import 'charge_responce.dart';
 import 'fetch_payment_table.dart';
 import '../AddCard/AddCard.dart';
+import '../AddAchAccount/AddAchAccount.dart';
 import '../../Payment/checkout_screen.dart';
 
 class MakePayment extends StatefulWidget {
@@ -136,11 +137,17 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   String? leaseid;
+
+  /// From get_tenant API: tenant-level allow_ach / allow_card. Merged with lease flags for dropdown.
+  bool? tenantAllowAch;
+  bool? tenantAllowCard;
+
   @override
   void initState() {
     super.initState();
     checkTokenTenant();
     fetchTenants();
+    fetchTenantPaymentOptions(widget.tenantId);
     // fetchCompany();
     fetchDropdownData();
     // WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -171,7 +178,7 @@ class _MakePaymentState extends State<MakePayment> {
     });
   }
 
-  List<Map<String, String>> tenants = [];
+  List<Map<String, dynamic>> tenants = [];
   String? selectedTenantId;
   double selectedTenantRent = 0.0;
 
@@ -195,17 +202,17 @@ class _MakePaymentState extends State<MakePayment> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       print(data);
-      final List<Map<String, String>> fetchedTenants = [];
+      final List<Map<String, dynamic>> fetchedTenants = [];
 
       for (var tenant in data['data']['leases']) {
         fetchedTenants.add({
           'tenant_id': tenant['lease_id'],
           'tenant_name': '${tenant['rental_adress']}',
           'status': '${tenant['status']}',
-          'rent': '${tenant['rent']}'
-          /*  'first_name': '${tenant['tenant_firstName']}',
-          'last_name': '${tenant['tenant_lastName']}',
-          'email': '${tenant['tenant_email']}'*/
+          'rent': '${tenant['rent']}',
+          'creditCardAccepted': tenant['creditCardAccepted'] == true,
+          'debitCardAccepted': tenant['debitCardAccepted'] == true,
+          'achAccepted': tenant['achAccepted'] == true,
         });
       }
       setState(() {
@@ -224,6 +231,7 @@ class _MakePaymentState extends State<MakePayment> {
             selectedTenantId = leaseid;
             fetchTotal_due_amountTenant(selectedTenantId!);
             fetchPaymentSettings(id!, selectedTenantId!);
+            // ACH list loaded in fetchcreditcard via fetchAchFromBillingVault
             //fetchChargesForSelectedTenant(selectedTenantId!);
             // if (id != null) {
             //   //fetchPaymentSettings(id, leaseid ?? "");
@@ -447,6 +455,17 @@ class _MakePaymentState extends State<MakePayment> {
   int? customervaultid;
   TextEditingController reference = TextEditingController();
 
+  // ACH: list of saved ACH accounts and selected index
+  List<Map<String, dynamic>> achAccounts = [];
+  int? selectedAchIndex;
+  bool isLoadingAch = false;
+
+  /// Card-only list: excludes ACH entries (getCreditCards returns card_detail with ACH billing_id;
+  /// postBillingCustomerVault then includes that entry, which has null ccExp and crashes). Use this for Card UI and payment.
+  List<BillingData> get _cardOnlyList => cardDetails
+      .where((b) => b.ccExp != null && b.ccExp!.trim().isNotEmpty)
+      .toList();
+
   void AddFields() {
     setState(() {
       showCardNumberField = _selectedPaymentMethod == 'Card';
@@ -456,6 +475,147 @@ class _MakePaymentState extends State<MakePayment> {
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
     });
+  }
+
+  /// Fetches get_tenant to get allow_ach and allow_card (merged with lease flags for dropdown).
+  Future<void> fetchTenantPaymentOptions(String tenantId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('tenant_id');
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        Uri.parse('$Api_url/api/tenant/get_tenant/$tenantId'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      );
+      if (response.statusCode == 200 && mounted) {
+        final data = json.decode(response.body);
+        final d = data is Map ? data['data'] : null;
+        if (d is Map<String, dynamic>) {
+          setState(() {
+            tenantAllowAch = d['allow_ach'] == true;
+            tenantAllowCard = d['allow_card'] == true;
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
+  /// Payment method options: merged get_tenant (allow_ach, allow_card) + selected lease (achAccepted, creditCardAccepted, debitCardAccepted).
+  /// A method shows only if both tenant and lease allow it.
+  List<String> get _availablePaymentMethods {
+    List<String> methods = [];
+    final tenantAch = tenantAllowAch == true;
+    final tenantCard = tenantAllowCard == true;
+    if (selectedTenantId != null && tenants.isNotEmpty) {
+      final list = tenants.cast<Map<String, dynamic>>().where((t) => t['tenant_id'] == selectedTenantId).toList();
+      if (list.isNotEmpty) {
+        final lease = list.first;
+        final creditCardAccepted = lease['creditCardAccepted'] == true;
+        final debitCardAccepted = lease['debitCardAccepted'] == true;
+        final achAccepted = lease['achAccepted'] == true;
+        if (tenantCard && (creditCardAccepted || debitCardAccepted)) methods.add('Card');
+        if (tenantAch && achAccepted) methods.add('ACH');
+      }
+    } else {
+      if (tenantCard) methods.add('Card');
+      if (tenantAch) methods.add('ACH');
+    }
+    return methods.isEmpty ? ['Card', 'ACH'] : methods;
+  }
+
+  /// Fetches ACH accounts from get-billing-customer-vault (POST).
+  /// Uses customervaultid and admin_id; parses data.customer.billing and
+  /// keeps only entries that have check_account / check_name (ACH).
+  Future<void> fetchAchFromBillingVault() async {
+    if (customervaultid == null) {
+      setState(() {
+        achAccounts = [];
+        isLoadingAch = false;
+      });
+      return;
+    }
+    setState(() => isLoadingAch = true);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('tenant_id');
+      String? adminId = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+        headers: {
+          'Content-Type': 'application/json',
+          'id': 'CRM $id',
+          'authorization': 'CRM $token',
+        },
+        body: json.encode({
+          'customer_vault_id': customervaultid.toString(),
+          'admin_id': adminId ?? '',
+        }),
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        List<Map<String, dynamic>> list = [];
+        var data = jsonResponse is Map ? jsonResponse['data'] : null;
+        var customer = data is Map ? data['customer'] : null;
+        var billing = customer is Map ? customer['billing'] : null;
+        if (billing is List) {
+          for (var item in billing) {
+            if (item is! Map) continue;
+            // ACH entries have check_account or check_name (non-empty)
+            String? checkAccount = _extractString(item['check_account']);
+            String? checkName = _extractString(item['check_name']);
+            if ((checkAccount != null && checkAccount.isNotEmpty) ||
+                (checkName != null && checkName.isNotEmpty)) {
+              var attrs = item['@attributes'];
+              String? billingId =
+                  attrs is Map ? _extractString(attrs['id']) : null;
+              list.add({
+                'account_name': checkName ?? '',
+                'account_holder_name': checkName ?? '',
+                'account_number': checkAccount ?? '',
+                'routing_number': _extractString(item['check_aba']) ?? '',
+                'account_type': _extractString(item['account_type']) ?? '',
+                'account_holder_type':
+                    _extractString(item['account_holder_type']) ?? '',
+                'billing_id': billingId ?? '',
+              });
+            }
+          }
+        }
+        setState(() {
+          achAccounts = list;
+          if (selectedAchIndex != null && selectedAchIndex! >= list.length) {
+            selectedAchIndex = list.isEmpty ? null : 0;
+          }
+          isLoadingAch = false;
+        });
+      } else {
+        setState(() {
+          achAccounts = [];
+          selectedAchIndex = null;
+          isLoadingAch = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        achAccounts = [];
+        selectedAchIndex = null;
+        isLoadingAch = false;
+      });
+    }
+  }
+
+  /// Extract string from API value (may be string, number, or empty object {}).
+  static String? _extractString(dynamic v) {
+    if (v == null) return null;
+    if (v is String) return v.isEmpty ? null : v;
+    if (v is num) return v.toString();
+    if (v is Map && v.isEmpty) return null;
+    if (v is Map) return null;
+    return v.toString();
   }
 
   Map<String, dynamic>? lease_data;
@@ -628,6 +788,12 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         lease_data = charges;
         override_fee = charges!["override_fee"].toString();
+        // ACH surcharge from tenant_due_amount API (surcharge.surcharge_percent_ACH, surcharge_flat_ACH)
+        if (charges["surcharge"] != null && charges["surcharge"] is Map) {
+          final sur = charges["surcharge"] as Map<String, dynamic>;
+          surChargeAchper = sur["surcharge_percent_ACH"];
+          surChargeAchflat = sur["surcharge_flat_ACH"];
+        }
 
         if (selected_account == "full") {
           totalamount = double.parse(
@@ -639,7 +805,12 @@ class _MakePaymentState extends State<MakePayment> {
           totalrent = double.parse(
               double.parse(lease_data!["total_due_amount"].toString())
                   .toStringAsFixed(2));
-          if (surCharge != null) {
+          if (_selectedPaymentMethod == 'ACH') {
+            final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+            final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+            surchargeamount = totalamount * achPct / 100 + achFlat;
+            totalpayamount = totalamount + surchargeamount;
+          } else if (surCharge != null) {
             surchargeamount = totalamount * surCharge! / 100;
             totalpayamount = totalamount + surchargeamount;
           }
@@ -647,8 +818,12 @@ class _MakePaymentState extends State<MakePayment> {
           totalamount = selectedTenantRent;
           totalpayamount = selectedTenantRent;
           totalrent = selectedTenantRent;
-          // Calculate surcharge and total pay amount for rent
-          if (surCharge != null) {
+          if (_selectedPaymentMethod == 'ACH') {
+            final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+            final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+            surchargeamount = totalamount * achPct / 100 + achFlat;
+            totalpayamount = totalamount + surchargeamount;
+          } else if (surCharge != null) {
             surchargeamount = totalamount * surCharge! / 100;
             totalpayamount = totalamount + surchargeamount;
           } else {
@@ -821,6 +996,11 @@ class _MakePaymentState extends State<MakePayment> {
               print("WARNING: 'customer_vault_id' key not found");
             }
 
+            // Load ACH accounts from billing vault when we have vault id (even if no cards)
+            if (customervaultid != null) {
+              await fetchAchFromBillingVault();
+            }
+
             // Check card_detail
             if (jsonResponse.containsKey('card_detail')) {
               var cardDetail = jsonResponse['card_detail'];
@@ -851,20 +1031,26 @@ class _MakePaymentState extends State<MakePayment> {
 
                     setState(() {
                       cardDetails = customerData.billing;
+                      // Only consider real cards (exclude ACH entries that have null ccExp)
+                      final cardOnly = customerData.billing
+                          .where((b) =>
+                              b.ccExp != null && b.ccExp!.trim().isNotEmpty)
+                          .toList();
+                      if (cardOnly.length == 1) {
+                        if (debitCardAccepted && creditCardAccepted) {
+                          selectedcardindex = 0;
+                          print("Auto-selected card index 0");
+                          fetchSurcharge();
+                        } else {
+                          print(
+                              "Card not auto-selected. debitCardAccepted: $debitCardAccepted, creditCardAccepted: $creditCardAccepted");
+                        }
+                      } else {
+                        selectedcardindex = null;
+                      }
                     });
 
                     print("cardDetails set. Count: ${cardDetails.length}");
-
-                    if (cardDetails.length == 1) {
-                      if (debitCardAccepted && creditCardAccepted) {
-                        selectedcardindex = 0;
-                        print("Auto-selected card index 0");
-                        fetchSurcharge();
-                      } else {
-                        print(
-                            "Card not auto-selected. debitCardAccepted: $debitCardAccepted, creditCardAccepted: $creditCardAccepted");
-                      }
-                    }
                   } else {
                     print("ERROR: postBillingCustomerVault returned null");
                   }
@@ -1145,7 +1331,9 @@ class _MakePaymentState extends State<MakePayment> {
       var surchargeData = jsonResponse['data'][0];
       print(surchargeData);
       //  if (_selectedPaymentMethod == "Card") {
-      if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
+      if (selectedcardindex != null &&
+          selectedcardindex! < _cardOnlyList.length &&
+          _cardOnlyList[selectedcardindex!].binResult == "CREDIT") {
         setState(() {
           print("Override_fee === $override_fee");
           if (override_fee == null) {
@@ -1361,8 +1549,23 @@ class _MakePaymentState extends State<MakePayment> {
                     padding:
                         EdgeInsets.only(left: 18, top: 8, right: 8, bottom: 8),
                     child: FormField<String>(validator: (value) {
-                      if (selectedcardindex == null) {
+                      if (_selectedPaymentMethod == null &&
+                          _availablePaymentMethods.isNotEmpty) {
+                        return 'Please select a payment method';
+                      }
+                      if (_selectedPaymentMethod == 'Card' &&
+                          _cardOnlyList.isNotEmpty &&
+                          selectedcardindex == null) {
                         return 'Please select a card';
+                      }
+                      if (_selectedPaymentMethod == 'ACH' &&
+                          selectedAchIndex == null &&
+                          achAccounts.isNotEmpty) {
+                        return 'Please select an ACH account';
+                      }
+                      if (_selectedPaymentMethod == 'ACH' &&
+                          achAccounts.isEmpty) {
+                        return 'Please add an ACH account first';
                       }
                       return null;
                     }, builder: (FormFieldState<String> state) {
@@ -1423,6 +1626,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         onChanged: (value) async {
                                           setState(() {
                                             selectedTenantId = value;
+                                            leaseid = value;
                                             fetchTotal_due_amountTenant(value!);
                                             fetchChargesForSelectedTenant(
                                                 value!);
@@ -1431,7 +1635,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 tenants.firstWhere(
                                               (tenant) =>
                                                   tenant['tenant_id'] == value,
-                                              orElse: () => {},
+                                              orElse: () => <String, dynamic>{},
                                             );
 
                                             // Update rent amount if the tenant is found
@@ -1442,16 +1646,16 @@ class _MakePaymentState extends State<MakePayment> {
                                                             '0.0') ??
                                                     0.0;
 
+                                            _selectedPaymentMethod = null;
+                                            selectedAchIndex = null;
                                             state.didChange(
                                                 value); // Notify FormField of change
                                           });
-                                          // fetchcreditcard(widget.tenantId);
-
-                                          fetchPaymentSettings(
-                                              widget.tenantId, leaseid ?? "");
-                                          print('leaseid by ${leaseid ?? ""}');
+                                          await fetchPaymentSettings(
+                                              widget.tenantId, value ?? "");
+                                          // ACH list is loaded in fetchcreditcard via fetchAchFromBillingVault
+                                          print('leaseid by ${value ?? ""}');
                                           state.reset();
-                                          //   print('Selected tenant_id: $selectedTenantId');
                                         },
                                         buttonStyleData: ButtonStyleData(
                                           height: 50,
@@ -1590,362 +1794,450 @@ class _MakePaymentState extends State<MakePayment> {
                             hintText: 'dd-mm-yyyy',
                             controller: _startDate,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
                           Text(
-                            "Payment Card Details",
+                            "Payment Method *",
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: blueColor),
                           ),
-                          SizedBox(
-                            height: 10,
+                          SizedBox(height: 10),
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Text('Select Payment Method'),
+                              value: _availablePaymentMethods
+                                      .contains(_selectedPaymentMethod)
+                                  ? _selectedPaymentMethod
+                                  : null,
+                              items: _availablePaymentMethods
+                                  .map((String method) =>
+                                      DropdownMenuItem<String>(
+                                        value: method,
+                                        child: Text(method),
+                                      ))
+                                  .toList(),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: blueColor.withOpacity(.8)),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedPaymentMethod = value;
+                                  AddFields();
+                                  if (value == 'ACH') {
+                                    selectedcardindex = null;
+                                    // Recalc ACH surcharge for current amount
+                                    if (totalamount > 0) {
+                                      final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+                                      final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+                                      surchargeamount = totalamount * achPct / 100 + achFlat;
+                                      totalpayamount = totalamount + surchargeamount;
+                                    }
+                                  } else if (value == 'Card') {
+                                    selectedAchIndex = null;
+                                    // Recalc card surcharge for current amount
+                                    if (totalamount > 0 && surCharge != null) {
+                                      surchargeamount = totalamount * surCharge! / 100;
+                                      totalpayamount = totalamount + surchargeamount;
+                                    }
+                                  }
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: 250,
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                      color: blueColor.withOpacity(.6)),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 45,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
                           ),
-                          cardDetails == null
-                              ? Container()
-                              : Padding(
-                                  padding: EdgeInsets.only(left: 0, right: 10),
-                                  child: isloading
-                                      ? Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .2,
-                                          child: Center(
-                                            child: SpinKitFadingCircle(
-                                              color: blueColor,
-                                              size: 45.0,
+                     
+                          if (_selectedPaymentMethod == 'Card') ...[
+                            SizedBox(height: 10),
+                            Text(
+                              "Payment Card Details",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                          if (_selectedPaymentMethod == 'Card')
+                            cardDetails == null
+                                ? Container()
+                                : Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 0, right: 10),
+                                    child: isloading
+                                        ? Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .2,
+                                            child: Center(
+                                              child: SpinKitFadingCircle(
+                                                color: blueColor,
+                                                size: 45.0,
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      : cardDetails.isEmpty &&
-                                              selectedTenantId == null
-                                          ? Container(
-                                              height: 50,
-                                              child: Center(
-                                                  child: Text(
-                                                'No Card Found. If you have not selected any lease, please select it first.',
-                                                style: TextStyle(
-                                                    fontSize: 15, color: grey),
-                                              )),
-                                            )
-                                          : cardDetails.isEmpty
-                                              ? Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .2,
-                                                  child: Center(
-                                                      child: Text(
-                                                    'No Cards Available',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  )),
-                                                )
-                                              : Column(
-                                                  children: [
-                                                    Table(
-                                                      columnWidths: {
-                                                        0: FlexColumnWidth(
-                                                            .5), // Date
-                                                        1: FlexColumnWidth(
-                                                            1.3), // Address
-                                                        2: FlexColumnWidth(
-                                                            1), // Work
-                                                        3: FlexColumnWidth(
-                                                            .5), // Performed
-                                                        // Performed
-                                                      },
-                                                      defaultVerticalAlignment:
-                                                          TableCellVerticalAlignment
-                                                              .middle,
-                                                      children: [
-                                                        ...cardDetails
-                                                            .asMap()
-                                                            .entries
-                                                            .map((entry) {
-                                                          int index = entry.key;
-                                                          BillingData item =
-                                                              entry.value;
-                                                          String month = item
-                                                              .ccExp!
-                                                              .substring(0, 2);
-                                                          String year = item
-                                                              .ccExp!
-                                                              .substring(2, 4);
-                                                          String currentMonth =
-                                                              DateTime.now()
-                                                                  .month
-                                                                  .toString()
-                                                                  .padLeft(
-                                                                      2, '0');
-                                                          String currentYear =
-                                                              DateTime.now()
-                                                                  .year
-                                                                  .toString()
-                                                                  .substring(2);
-                                                          String
-                                                              currentMonthYear =
-                                                              currentMonth +
-                                                                  currentYear;
-                                                          String expMonthYear =
-                                                              item.ccExp!;
-                                                          String expMonth =
-                                                              expMonthYear
-                                                                  .substring(
-                                                                      0, 2);
-                                                          String expYear =
-                                                              expMonthYear
-                                                                  .substring(
-                                                                      2, 4);
-                                                          bool isExpired = int
-                                                                      .parse(
-                                                                          expYear) <
-                                                                  int.parse(
-                                                                      currentYear) ||
-                                                              (int.parse(expYear) ==
-                                                                      int.parse(
-                                                                          currentYear) &&
-                                                                  int.parse(
-                                                                          expMonth) <
-                                                                      int.parse(
-                                                                          currentMonth));
-                                                          bool isCardAccepted = (item
-                                                                          .binResult ==
-                                                                      "CREDIT" &&
-                                                                  creditCardAccepted) ||
-                                                              (item.binResult ==
-                                                                      "DEBIT" &&
-                                                                  debitCardAccepted);
-                                                          print(
-                                                              'abc check ${isCardAccepted}');
-                                                          return TableRow(
-                                                            decoration: BoxDecoration(
-                                                                color: isExpired
-                                                                    ? Colors
-                                                                        .redAccent
-                                                                        .shade100
-                                                                    : Color
-                                                                        .fromRGBO(
-                                                                            240,
-                                                                            243,
-                                                                            248,
-                                                                            1),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Column(
+                                          )
+                                        : _cardOnlyList.isEmpty &&
+                                                selectedTenantId == null
+                                            ? Container(
+                                                height: 50,
+                                                child: Center(
+                                                    child: Text(
+                                                  'No Card Found. If you have not selected any lease, please select it first.',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: grey),
+                                                )),
+                                              )
+                                            : _cardOnlyList.isEmpty
+                                                ? Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .2,
+                                                    child: Center(
+                                                        child: Text(
+                                                      'No Cards Available',
+                                                      style: TextStyle(
+                                                          fontSize: 15),
+                                                    )),
+                                                  )
+                                                : Column(
+                                                    children: [
+                                                      Table(
+                                                        columnWidths: {
+                                                          0: FlexColumnWidth(
+                                                              .5), // Date
+                                                          1: FlexColumnWidth(
+                                                              1.3), // Address
+                                                          2: FlexColumnWidth(
+                                                              1), // Work
+                                                          3: FlexColumnWidth(
+                                                              .5), // Performed
+                                                          // Performed
+                                                        },
+                                                        defaultVerticalAlignment:
+                                                            TableCellVerticalAlignment
+                                                                .middle,
+                                                        children: [
+                                                          ..._cardOnlyList
+                                                              .asMap()
+                                                              .entries
+                                                              .map((entry) {
+                                                            int index =
+                                                                entry.key;
+                                                            BillingData item =
+                                                                entry.value;
+                                                            String month = item
+                                                                .ccExp!
+                                                                .substring(
+                                                                    0, 2);
+                                                            String year = item
+                                                                .ccExp!
+                                                                .substring(
+                                                                    2, 4);
+                                                            String
+                                                                currentMonth =
+                                                                DateTime.now()
+                                                                    .month
+                                                                    .toString()
+                                                                    .padLeft(
+                                                                        2, '0');
+                                                            String currentYear =
+                                                                DateTime.now()
+                                                                    .year
+                                                                    .toString()
+                                                                    .substring(
+                                                                        2);
+                                                            String
+                                                                currentMonthYear =
+                                                                currentMonth +
+                                                                    currentYear;
+                                                            String
+                                                                expMonthYear =
+                                                                item.ccExp!;
+                                                            String expMonth =
+                                                                expMonthYear
+                                                                    .substring(
+                                                                        0, 2);
+                                                            String expYear =
+                                                                expMonthYear
+                                                                    .substring(
+                                                                        2, 4);
+                                                            bool isExpired = int
+                                                                        .parse(
+                                                                            expYear) <
+                                                                    int.parse(
+                                                                        currentYear) ||
+                                                                (int.parse(expYear) ==
+                                                                        int.parse(
+                                                                            currentYear) &&
+                                                                    int.parse(
+                                                                            expMonth) <
+                                                                        int.parse(
+                                                                            currentMonth));
+                                                            bool isCardAccepted = (item
+                                                                            .binResult ==
+                                                                        "CREDIT" &&
+                                                                    creditCardAccepted) ||
+                                                                (item.binResult ==
+                                                                        "DEBIT" &&
+                                                                    debitCardAccepted);
+                                                            print(
+                                                                'abc check ${isCardAccepted}');
+                                                            return TableRow(
+                                                              decoration: BoxDecoration(
+                                                                  color: isExpired
+                                                                      ? Colors
+                                                                          .redAccent
+                                                                          .shade100
+                                                                      : Color.fromRGBO(
+                                                                          240,
+                                                                          243,
+                                                                          248,
+                                                                          1),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      // isExpired ==
+                                                                      //         true
+                                                                      //     ? Text(
+                                                                      //         'Expired',
+                                                                      //         style: TextStyle(
+                                                                      //             color:
+                                                                      //                 Colors.red),
+                                                                      //       )
+                                                                      //     : Checkbox(
+                                                                      //         activeColor:
+                                                                      //             blueColor,
+                                                                      //         // Color of your check mark
+                                                                      //         checkColor:
+                                                                      //             Colors.white,
+                                                                      //         shape:
+                                                                      //             RoundedRectangleBorder(
+                                                                      //           borderRadius:
+                                                                      //               BorderRadius.circular(2),
+                                                                      //         ),
+                                                                      //         side:
+                                                                      //             BorderSide(
+                                                                      //           // ======> CHANGE THE BORDER COLOR HERE <======
+                                                                      //           color:
+                                                                      //               blueColor,
+                                                                      //           // Give your checkbox border a custom width
+                                                                      //           width:
+                                                                      //               1.5,
+                                                                      //         ),
+                                                                      //         value: selectedcardindex ==
+                                                                      //                 index
+                                                                      //             ? true
+                                                                      //             : false,
+                                                                      //         onChanged:
+                                                                      //             (bool?
+                                                                      //                 value) async {
+                                                                      //           setState(
+                                                                      //               () {
+                                                                      //             selectedcardindex =
+                                                                      //                 index;
+                                                                      //           });
+                                                                      //           await fetchSurcharge();
+                                                                      //         },
+                                                                      //       ),
+                                                                      isExpired
+                                                                          ? IconButton(
+                                                                              icon: Icon(Icons.close),
+                                                                              onPressed: () {},
+                                                                            )
+                                                                          : Checkbox(
+                                                                              activeColor: blueColor,
+                                                                              checkColor: Colors.white,
+
+                                                                              shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(2),
+                                                                              ),
+
+                                                                              side: BorderSide(
+                                                                                color: isCardAccepted ? blueColor : Colors.grey,
+                                                                                width: 1.5,
+                                                                              ),
+                                                                              value: selectedcardindex == index,
+                                                                              onChanged: isCardAccepted
+                                                                                  ? (bool? value) async {
+                                                                                      setState(() {
+                                                                                        selectedcardindex = index;
+                                                                                      });
+                                                                                      await fetchSurcharge();
+                                                                                    }
+                                                                                  : null, // Disable the checkbox if card is not accepted
+                                                                            ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                    // isExpired ==
-                                                                    //         true
-                                                                    //     ? Text(
-                                                                    //         'Expired',
-                                                                    //         style: TextStyle(
-                                                                    //             color:
-                                                                    //                 Colors.red),
-                                                                    //       )
-                                                                    //     : Checkbox(
-                                                                    //         activeColor:
-                                                                    //             blueColor,
-                                                                    //         // Color of your check mark
-                                                                    //         checkColor:
-                                                                    //             Colors.white,
-                                                                    //         shape:
-                                                                    //             RoundedRectangleBorder(
-                                                                    //           borderRadius:
-                                                                    //               BorderRadius.circular(2),
-                                                                    //         ),
-                                                                    //         side:
-                                                                    //             BorderSide(
-                                                                    //           // ======> CHANGE THE BORDER COLOR HERE <======
-                                                                    //           color:
-                                                                    //               blueColor,
-                                                                    //           // Give your checkbox border a custom width
-                                                                    //           width:
-                                                                    //               1.5,
-                                                                    //         ),
-                                                                    //         value: selectedcardindex ==
-                                                                    //                 index
-                                                                    //             ? true
-                                                                    //             : false,
-                                                                    //         onChanged:
-                                                                    //             (bool?
-                                                                    //                 value) async {
-                                                                    //           setState(
-                                                                    //               () {
-                                                                    //             selectedcardindex =
-                                                                    //                 index;
-                                                                    //           });
-                                                                    //           await fetchSurcharge();
-                                                                    //         },
-                                                                    //       ),
-                                                                    isExpired
-                                                                        ? IconButton(
-                                                                            icon:
-                                                                                Icon(Icons.close),
-                                                                            onPressed:
-                                                                                () {},
-                                                                          )
-                                                                        : Checkbox(
-                                                                            activeColor:
-                                                                                blueColor,
-                                                                            checkColor:
-                                                                                Colors.white,
-
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(2),
-                                                                            ),
-
-                                                                            side:
-                                                                                BorderSide(
-                                                                              color: isCardAccepted ? blueColor : Colors.grey,
-                                                                              width: 1.5,
-                                                                            ),
-                                                                            value:
-                                                                                selectedcardindex == index,
-                                                                            onChanged: isCardAccepted
-                                                                                ? (bool? value) async {
-                                                                                    setState(() {
-                                                                                      selectedcardindex = index;
-                                                                                    });
-                                                                                    await fetchSurcharge();
-                                                                                  }
-                                                                                : null, // Disable the checkbox if card is not accepted
-                                                                          ),
+                                                                    Text(
+                                                                      "Card Number",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                    Text(
+                                                                      item.ccNumber!,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14),
+                                                                    ),
                                                                   ],
                                                                 ),
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    "Card Number",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Text(
-                                                                    item.ccNumber!,
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            14),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    "Card Type",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Text(
-                                                                    '${item.binResult}',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            14),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                children: [
-                                                                  _buildLogosBlocktablet(
-                                                                      item.ccType!),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          );
-                                                        }).expand((row) {
-                                                          // Add space between rows
-                                                          return [
-                                                            row,
-                                                            TableRow(
-                                                              children: [
-                                                                SizedBox(
-                                                                    height:
-                                                                        8), // Add spacing between rows
-                                                                SizedBox(
-                                                                    height: 8),
-                                                                SizedBox(
-                                                                    height: 8),
-                                                                SizedBox(
-                                                                    height: 8),
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      "Card Type",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                    Text(
+                                                                      '${item.binResult}',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Column(
+                                                                  children: [
+                                                                    _buildLogosBlocktablet(
+                                                                        item.ccType!),
+                                                                  ],
+                                                                ),
                                                               ],
-                                                            ),
-                                                          ];
-                                                        }).toList(),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    if (!debitCardAccepted &&
-                                                        cardDetails.any((item) =>
-                                                            item.binResult ==
-                                                            "DEBIT"))
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Text(
-                                                            '*DEBIT card is not accepted by Rental Owner',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red,
-                                                                fontSize: 14),
-                                                          ),
+                                                            );
+                                                          }).expand((row) {
+                                                            // Add space between rows
+                                                            return [
+                                                              row,
+                                                              TableRow(
+                                                                children: [
+                                                                  SizedBox(
+                                                                      height:
+                                                                          8), // Add spacing between rows
+                                                                  SizedBox(
+                                                                      height:
+                                                                          8),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          8),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          8),
+                                                                ],
+                                                              ),
+                                                            ];
+                                                          }).toList(),
                                                         ],
                                                       ),
-                                                    if (!creditCardAccepted &&
-                                                        cardDetails.any((item) =>
-                                                            item.binResult ==
-                                                            "CREDIT"))
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Text(
-                                                              'CREDIT card types not accepted by rentl owner',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .justify,
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      if (!debitCardAccepted &&
+                                                          _cardOnlyList.any(
+                                                              (item) =>
+                                                                  item.binResult ==
+                                                                  "DEBIT"))
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text(
+                                                              '*DEBIT card is not accepted by Rental Owner',
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .red,
                                                                   fontSize: 14),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
-                                ),
+                                                          ],
+                                                        ),
+                                                      if (!creditCardAccepted &&
+                                                          _cardOnlyList.any(
+                                                              (item) =>
+                                                                  item.binResult ==
+                                                                  "CREDIT"))
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                'CREDIT card types not accepted by rentl owner',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .justify,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        14),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                    ],
+                                                  ),
+                                  ),
 
                           /* const SizedBox(
                             height: 10,
@@ -1986,42 +2278,287 @@ class _MakePaymentState extends State<MakePayment> {
                           ),
 
                           //Text("Note* if Getting Card is Red Background then it is Expired",style: TextStyle(color: blueColor,fontSize: 14,fontWeight: FontWeight.bold),),
-                          GestureDetector(
-                            onTap: () async {
-                              final newCard = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AddCard()),
-                              );
+                          if (_selectedPaymentMethod == 'Card') ...[
+                            GestureDetector(
+                              onTap: () async {
+                                final newCard = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddCard()),
+                                );
 
-                              if (newCard != null) {
-                                setState(() {
-                                  fetchPaymentSettings(
-                                      widget.tenantId,
-                                      leaseid ??
-                                          ""); // Only add BillingData objects
-                                });
-                              }
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => AddCard()));
-                            },
-                            child: Container(
-                              height: 45,
-                              width: 140,
-                              margin: EdgeInsets.only(left: 0, bottom: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: blueColor),
-                              child: Center(
-                                  child: Text(
-                                "Add New Card",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
-                              )),
+                                if (newCard != null) {
+                                  setState(() {
+                                    fetchPaymentSettings(
+                                        widget.tenantId, leaseid ?? "");
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height: 45,
+                                width: 140,
+                                margin: EdgeInsets.only(left: 0, bottom: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: blueColor),
+                                child: Center(
+                                    child: Text(
+                                  "Add New Card",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.white),
+                                )),
+                              ),
+                            )
+                          ],
+                          if (_selectedPaymentMethod == 'ACH') ...[
+                            Container(
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(
+                              //     color: Color.fromRGBO(115, 119, 145, 1),
+                              //     width: 1,
+                              //   ),
+                              //   borderRadius: BorderRadius.circular(6),
+                              // ),
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, bottom: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ACH Account Details",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  SizedBox(height: 10),
+                                  isLoadingAch
+                                      ? Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: SpinKitFadingCircle(
+                                                color: blueColor, size: 45.0),
+                                          ),
+                                        )
+                                      : achAccounts.isEmpty
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: Text(
+                                                'No ACH accounts',
+                                                style: TextStyle(
+                                                    fontSize: 15, color: grey),
+                                              ),
+                                            )
+                                          : Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                border: Border.all(
+                                                    color: Colors.grey.shade300,
+                                                    width: 1),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  ...achAccounts
+                                                      .asMap()
+                                                      .entries
+                                                      .map((e) {
+                                                    int idx = e.key;
+                                                    var acc = e.value;
+                                                    String accountName = acc[
+                                                                'account_name']
+                                                            ?.toString() ??
+                                                        acc['account_holder_name']
+                                                            ?.toString() ??
+                                                        '—';
+                                                    String accountNumber =
+                                                        acc['account_number']
+                                                                ?.toString() ??
+                                                            '';
+                                                    if (accountNumber.length >
+                                                        4) {
+                                                      accountNumber = '****' +
+                                                          accountNumber.substring(
+                                                              accountNumber
+                                                                      .length -
+                                                                  4);
+                                                    } else if (accountNumber
+                                                        .isNotEmpty) {
+                                                      accountNumber =
+                                                          accountNumber
+                                                              .replaceAll(
+                                                                  RegExp(r'\d'),
+                                                                  '*');
+                                                    }
+                                                    return Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(height: 10),
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Checkbox(
+                                                              value:
+                                                                  selectedAchIndex ==
+                                                                      idx,
+                                                              onChanged: (v) {
+                                                                setState(() =>
+                                                                    selectedAchIndex = v ==
+                                                                            true
+                                                                        ? idx
+                                                                        : null);
+                                                              },
+                                                              activeColor:
+                                                                  blueColor,
+                                                              materialTapTargetSize:
+                                                                  MaterialTapTargetSize
+                                                                      .shrinkWrap,
+                                                            ),
+                                                            Expanded(
+                                                              child: Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Text(
+                                                                          'Account Holder Name',
+                                                                          style: TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: grey,
+                                                                              fontWeight: FontWeight.w500),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
+                                                                        Text(
+                                                                          accountName,
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              color: Colors.black87),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 2),
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Text(
+                                                                          'Account Number',
+                                                                          style: TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: grey,
+                                                                              fontWeight: FontWeight.w500),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
+                                                                        Text(
+                                                                          accountNumber,
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              color: Colors.black87),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        if (idx <
+                                                            achAccounts.length -
+                                                                1)
+                                                          Divider(
+                                                            height: 1,
+                                                            thickness: 1,
+                                                            color: Colors
+                                                                .grey.shade300,
+                                                          ),
+                                                      ],
+                                                    );
+                                                  }),
+                                                ],
+                                              ),
+                                            ),
+                                  SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          final added = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddAchAccount(
+                                                      tenantId: widget.tenantId,
+                                                      customerVaultId:
+                                                          customervaultid
+                                                              ?.toString(),
+                                                    )),
+                                          );
+                                          if (added == true && mounted) {
+                                            setState(() {
+                                              fetchAchFromBillingVault();
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          height: 45,
+                                          width: 200,
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                                color: blueColor, width: 1.5),
+                                            color: blueColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Add a New ACH Account",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          )
+                           
+                          ],
                         ],
                       );
                     }),
@@ -2280,9 +2817,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                 lease_data!["total_due_amount"]
                                                     .toString())
                                             .toStringAsFixed(2));
-                                        // totalAmount = double.tryParse(lease_data?["total_due_amount"]) ?? 0.0;
-
-                                        if (surCharge != null) {
+                                        if (_selectedPaymentMethod == 'ACH') {
+                                          final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+                                          final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+                                          surchargeamount = totalamount * achPct / 100 + achFlat;
+                                        } else if (surCharge != null) {
                                           surchargeamount =
                                               totalamount * surCharge! / 100;
                                         }
@@ -2290,8 +2829,6 @@ class _MakePaymentState extends State<MakePayment> {
                                             totalamount + surchargeamount;
                                         iserror = false;
                                       }
-
-                                      //_site = value;
                                     });
                                   },
                                 ),
@@ -2327,8 +2864,11 @@ class _MakePaymentState extends State<MakePayment> {
                                       if (amountController.text.isNotEmpty) {
                                         totalamount =
                                             double.parse(amountController.text);
-
-                                        if (surCharge != null) {
+                                        if (_selectedPaymentMethod == 'ACH') {
+                                          final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+                                          final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+                                          surchargeamount = totalamount * achPct / 100 + achFlat;
+                                        } else if (surCharge != null) {
                                           surchargeamount =
                                               totalamount * surCharge! / 100;
                                         } else {
@@ -2345,8 +2885,6 @@ class _MakePaymentState extends State<MakePayment> {
                                         partialamount = true;
                                         iserror = true;
                                       }
-
-                                      //_site = value;
                                     });
                                   },
                                 ),
@@ -2404,8 +2942,12 @@ class _MakePaymentState extends State<MakePayment> {
                                     // Update amounts and calculate surcharge
                                     totalamount = inputAmount;
                                     totalpayamount = inputAmount;
-
-                                    if (surCharge != null) {
+                                    if (_selectedPaymentMethod == 'ACH') {
+                                      final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+                                      final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+                                      surchargeamount = totalamount * achPct / 100 + achFlat;
+                                      totalpayamount += surchargeamount;
+                                    } else if (surCharge != null) {
                                       surchargeamount =
                                           totalamount * surCharge! / 100;
                                       totalpayamount += surchargeamount;
@@ -2448,8 +2990,11 @@ class _MakePaymentState extends State<MakePayment> {
                                       partialamount = false;
                                       if (lease_data != null) {
                                         totalamount = selectedTenantRent;
-
-                                        if (surCharge != null) {
+                                        if (_selectedPaymentMethod == 'ACH') {
+                                          final achPct = surChargeAchper != null ? (double.tryParse(surChargeAchper.toString()) ?? 0.0) : 0.0;
+                                          final achFlat = surChargeAchflat != null ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0) : 0.0;
+                                          surchargeamount = totalamount * achPct / 100 + achFlat;
+                                        } else if (surCharge != null) {
                                           surchargeamount =
                                               totalamount * surCharge! / 100;
                                         }
@@ -2457,7 +3002,6 @@ class _MakePaymentState extends State<MakePayment> {
                                             totalamount + surchargeamount;
                                       }
                                       iserror = false;
-                                      //_site = value;
                                     });
                                   },
                                 ),
@@ -2638,12 +3182,12 @@ class _MakePaymentState extends State<MakePayment> {
                                   String? last_name =
                                       prefs.getString("last_name");
                                   String? email = prefs.getString("email");
-                                  List<Map<String, String>> filteredTenants =
+                                  List<Map<String, dynamic>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
                                         selectedTenantId;
                                   }).toList();
-                                  Map<String, String> selectedTenant =
+                                  Map<String, dynamic> selectedTenant =
                                       filteredTenants.first;
                                   final DateFormat formatter =
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -2667,6 +3211,85 @@ class _MakePaymentState extends State<MakePayment> {
                                   print('abc entries ${manualEntries}');
                                   print('abc id ${selectedTenantId!}');
                                   print('start date ${_startDate.text}');
+                                  if (_selectedPaymentMethod == 'ACH' &&
+                                      selectedAchIndex != null &&
+                                      selectedAchIndex! < achAccounts.length) {
+                                    final ach = achAccounts[selectedAchIndex!];
+                                    final String checkname =
+                                        ach['account_name']?.toString() ??
+                                            ach['account_holder_name']
+                                                ?.toString() ??
+                                            '';
+                                    final String accountType =
+                                        ach['account_type']?.toString() ??
+                                            'Checking';
+                                    final String holderType =
+                                        ach['account_holder_type']
+                                                ?.toString() ??
+                                            'Personal';
+                                    final String checkaccount =
+                                        ach['account_number']?.toString() ?? '';
+                                    final String checkaba =
+                                        ach['routing_number']?.toString() ?? '';
+                                    final String? billingId = ach['billing_id']?.toString();
+                                    final String? customerVaultId = customervaultid?.toString();
+                                    final String processorId = lease_data?['processorId']?.toString() ?? '';
+                                    await PaymentService()
+                                        .makePaymentforach(
+                                      adminId: id ?? "",
+                                      firstName: first_name!,
+                                      lastName: last_name!,
+                                      emailName: email!,
+                                      surcharge: "${surchargeamount}",
+                                      amount: "${totalamount}",
+                                      tenantId: widget.tenantId,
+                                      date: _startDate.text.trim(),
+                                      address1: checkname,
+                                      processorId: processorId,
+                                      leaseid: selectedTenantId!,
+                                      company_name: companyName,
+                                      account_type: accountType,
+                                      account_holder_type: holderType,
+                                      checkaccount: checkaccount,
+                                      checkaba: checkaba,
+                                      checkname: checkname,
+                                      future_Date: futuredate!,
+                                      entries: manualEntries,
+                                      billingId: billingId,
+                                      customerVaultId: customerVaultId,
+                                      paymentAmountType: selected_account ?? 'full',
+                                    )
+                                        .then((value) {
+                                      Fluttertoast.showToast(msg: "$value");
+                                      setState(() => IsLoading = false);
+                                      Navigator.pop(context, true);
+                                    }).catchError((e) {
+                                      setState(() => IsLoading = false);
+                                      Alert(
+                                        context: context,
+                                        type: AlertType.warning,
+                                        title: "Payment Failed!",
+                                        desc:
+                                            "${e.toString().split('Exception:').length > 1 ? e.toString().split('Exception:')[1].toString().trimLeft() : e.toString()}",
+                                        style: AlertStyle(
+                                            backgroundColor: Colors.white),
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text("Ok",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18)),
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            color: blueColor,
+                                          ),
+                                        ],
+                                      ).show();
+                                      Fluttertoast.showToast(
+                                          msg: "Payment failed $e");
+                                    });
+                                    return;
+                                  }
                                   await PaymentService()
                                       .makePaymentforcard(
                                     scheduledPayment: scheduledPayment ?? false,
@@ -2677,15 +3300,15 @@ class _MakePaymentState extends State<MakePayment> {
                                     lastName: last_name!,
                                     emailName: email!,
                                     customerVaultId:
-                                        cardDetails[selectedcardindex!]
+                                        _cardOnlyList[selectedcardindex!]
                                             .customerVaultId!,
-                                    billingId: cardDetails[selectedcardindex!]
+                                    billingId: _cardOnlyList[selectedcardindex!]
                                         .billingId!,
                                     surcharge: "${surchargeamount}",
                                     amount: "${totalamount}",
                                     tenantId: widget.tenantId,
                                     date: _startDate.text.trim(),
-                                    address1: cardDetails[selectedcardindex!]
+                                    address1: _cardOnlyList[selectedcardindex!]
                                         .address_1!,
                                     processorId: "",
                                     leaseid: selectedTenantId!,

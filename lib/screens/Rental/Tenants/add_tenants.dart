@@ -45,6 +45,8 @@ class _AddTenantState extends State<AddTenant> {
   final TextEditingController emergencyEmail = TextEditingController();
   final TextEditingController emergencyPhoneNumber = TextEditingController();
   bool enableOverrideFee = false;
+  bool enableACH = true;
+  bool enableCard = true;
   final TextEditingController overrideFee = TextEditingController();
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -963,6 +965,55 @@ class _AddTenantState extends State<AddTenant> {
                                           ),
                                         )
                                       : Container(),
+                                  const SizedBox(height: 10),
+                                  Text('Allowed Payment Methods',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF152B51),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableCard,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableCard = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('Card',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableACH,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableACH = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('ACH',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -1666,6 +1717,55 @@ class _AddTenantState extends State<AddTenant> {
                                           ),
                                         )
                                       : Container(),
+                                  const SizedBox(height: 10),
+                                  Text('Allowed Payment Methods',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF152B51),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableCard,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableCard = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('Card',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        activeColor: blueColor,
+                                        value: enableACH,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableACH = value!;
+                                          });
+                                        },
+                                      ),
+                                      Text('ACH',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF101828),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -2597,6 +2697,63 @@ class _AddTenantState extends State<AddTenant> {
                                         ),
                                       )
                                     : Container(),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(' Allowed Payment Methods',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF152B51),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: enableCard,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          enableCard = value!;
+                                        });
+                                      },
+                                    ),
+                                    Text('Card',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF101828),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: enableACH,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          enableACH = value!;
+                                        });
+                                      },
+                                    ),
+                                    Text('ACH',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF101828),
+                                      ),
+                                    ),
+                                  ],  
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
                               ],
                             ),
                           ],
@@ -2755,6 +2912,8 @@ class _AddTenantState extends State<AddTenant> {
       emergencyContact: emergencyContact,
       enableoverrideFee: enableOverrideFee,
       overRideFee: overRideFee,
+      allowAch: enableACH,
+      allowCard: enableCard,
     );
 
     bool success = await TenantsRepository().addTenant(tenant);
