@@ -46,6 +46,13 @@ class MakePayment extends StatefulWidget {
   State<MakePayment> createState() => _MakePaymentState();
 }
 
+/// Make Payment flow (Tenant):
+/// - APIs: get_tenant (allow_card, allow_ach), get_leases (lease list + per-lease creditCardAccepted, debitCardAccepted, achAccepted),
+///   tenant_due_amount (charges + surcharge ACH), payment_settings (creditCardAccepted, debitCardAccepted for card section),
+///   get-billing-customer-vault (saved cards + ACH), ACH_sale, tenant-payment.
+/// - Payment method dropdown: Card always shown when get_tenant allow_card==true. ACH shown when allow_ach==true AND (no lease OR lease achAccepted).
+/// - Card section visibility/disable: from payment_settings API (tenant); rental owner messages from same. Card list from get-billing-customer-vault.
+/// - ACH surcharge from tenant_due_amount (surcharge_percent_ACH, surcharge_flat_ACH). Card surcharge from fetchSurcharge (getadmin).
 class _MakePaymentState extends State<MakePayment> {
   late Future<List<ChargeResponses>> futurectablecharge;
   bool _isLoading = false;
@@ -503,25 +510,22 @@ class _MakePaymentState extends State<MakePayment> {
     } catch (_) {}
   }
 
-  /// Payment method options: merged get_tenant (allow_ach, allow_card) + selected lease (achAccepted, creditCardAccepted, debitCardAccepted).
-  /// A method shows only if both tenant and lease allow it.
+  /// Payment method dropdown: Card is always shown when tenant allows (get_tenant allow_card).
+  /// ACH is shown only when tenant allows (get_tenant allow_ach) AND (no lease selected OR selected lease has achAccepted from get_leases).
   List<String> get _availablePaymentMethods {
     List<String> methods = [];
-    final tenantAch = tenantAllowAch == true;
     final tenantCard = tenantAllowCard == true;
-    if (selectedTenantId != null && tenants.isNotEmpty) {
-      final list = tenants.cast<Map<String, dynamic>>().where((t) => t['tenant_id'] == selectedTenantId).toList();
-      if (list.isNotEmpty) {
-        final lease = list.first;
-        final creditCardAccepted = lease['creditCardAccepted'] == true;
-        final debitCardAccepted = lease['debitCardAccepted'] == true;
-        final achAccepted = lease['achAccepted'] == true;
-        if (tenantCard && (creditCardAccepted || debitCardAccepted)) methods.add('Card');
-        if (tenantAch && achAccepted) methods.add('ACH');
+    final tenantAch = tenantAllowAch == true;
+    // Card: always visible in dropdown when tenant allows (no lease condition)
+    if (tenantCard) methods.add('Card');
+    // ACH: only when tenant allows AND (no lease selected OR selected lease accepts ACH)
+    if (tenantAch) {
+      if (selectedTenantId == null || tenants.isEmpty) {
+        methods.add('ACH');
+      } else {
+        final list = tenants.cast<Map<String, dynamic>>().where((t) => t['tenant_id'] == selectedTenantId).toList();
+        if (list.isNotEmpty && list.first['achAccepted'] == true) methods.add('ACH');
       }
-    } else {
-      if (tenantCard) methods.add('Card');
-      if (tenantAch) methods.add('ACH');
     }
     return methods.isEmpty ? ['Card', 'ACH'] : methods;
   }
@@ -2006,18 +2010,16 @@ class _MakePaymentState extends State<MakePayment> {
                                                                             expMonth) <
                                                                         int.parse(
                                                                             currentMonth));
-                                                            bool isCardAccepted = (item
-                                                                            .binResult ==
-                                                                        "CREDIT" &&
-                                                                    creditCardAccepted) ||
-                                                                (item.binResult ==
-                                                                        "DEBIT" &&
-                                                                    debitCardAccepted);
+                                                            // Only CREDIT cards are disabled when not accepted by rental owner; DEBIT cards stay selectable (only disabled when expired)
+                                                            bool isCardAccepted = item.binResult == "DEBIT"
+                                                                ? true
+                                                                : (item.binResult == "CREDIT" && creditCardAccepted);
+                                                            bool isDisabled = isExpired || (item.binResult == "CREDIT" && !creditCardAccepted);
                                                             print(
                                                                 'abc check ${isCardAccepted}');
                                                             return TableRow(
                                                               decoration: BoxDecoration(
-                                                                  color: isExpired
+                                                                  color: isDisabled
                                                                       ? Colors
                                                                           .redAccent
                                                                           .shade100
@@ -2038,50 +2040,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                           8.0),
                                                                   child: Column(
                                                                     children: [
-                                                                      // isExpired ==
-                                                                      //         true
-                                                                      //     ? Text(
-                                                                      //         'Expired',
-                                                                      //         style: TextStyle(
-                                                                      //             color:
-                                                                      //                 Colors.red),
-                                                                      //       )
-                                                                      //     : Checkbox(
-                                                                      //         activeColor:
-                                                                      //             blueColor,
-                                                                      //         // Color of your check mark
-                                                                      //         checkColor:
-                                                                      //             Colors.white,
-                                                                      //         shape:
-                                                                      //             RoundedRectangleBorder(
-                                                                      //           borderRadius:
-                                                                      //               BorderRadius.circular(2),
-                                                                      //         ),
-                                                                      //         side:
-                                                                      //             BorderSide(
-                                                                      //           // ======> CHANGE THE BORDER COLOR HERE <======
-                                                                      //           color:
-                                                                      //               blueColor,
-                                                                      //           // Give your checkbox border a custom width
-                                                                      //           width:
-                                                                      //               1.5,
-                                                                      //         ),
-                                                                      //         value: selectedcardindex ==
-                                                                      //                 index
-                                                                      //             ? true
-                                                                      //             : false,
-                                                                      //         onChanged:
-                                                                      //             (bool?
-                                                                      //                 value) async {
-                                                                      //           setState(
-                                                                      //               () {
-                                                                      //             selectedcardindex =
-                                                                      //                 index;
-                                                                      //           });
-                                                                      //           await fetchSurcharge();
-                                                                      //         },
-                                                                      //       ),
-                                                                      isExpired
+                                                                      isDisabled
                                                                           ? IconButton(
                                                                               icon: Icon(Icons.close),
                                                                               onPressed: () {},
@@ -2222,7 +2181,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                           children: [
                                                             Expanded(
                                                               child: Text(
-                                                                'CREDIT card types not accepted by rentl owner',
+                                                                'CREDIT card types not accepted by rental owner',
                                                                 textAlign:
                                                                     TextAlign
                                                                         .justify,
