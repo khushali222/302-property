@@ -3247,6 +3247,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
+                      
                       borderRadius: BorderRadius.circular(8.0),
                       // Custom border implementation
                       border: widget.customBorder ??

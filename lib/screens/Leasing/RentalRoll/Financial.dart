@@ -2785,7 +2785,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            8.0),
+                                                            5.0),
                                                     child: Text(
                                                       dateProvider.formatCurrentDate(data
                                                                       .entry !=
