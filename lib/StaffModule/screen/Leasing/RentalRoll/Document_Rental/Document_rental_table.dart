@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,12 +8,16 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../../../constant/constant.dart';
 import '../../../../../widgets/CustomTableShimmer.dart';
 import '../../../../../widgets/file_viewer.dart';
 import 'Add_DocumentRental.dart';
+import 'Edit_DocumentRental.dart';
 
 class DocumentRentalTable extends StatefulWidget {
   String leaseId;
@@ -42,6 +47,10 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   int itemsPerPage = 10;
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
   List<Map<String, dynamic>> rentersInsuranceModel = [];
+  
+  // Signature tracking data
+  List<Map<String, dynamic>> signatureTrackingData = [];
+  
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
@@ -59,6 +68,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         isLoading = false;
         errorMessage = null; // Reset error message on successful data fetch
       });
+      // Fetch signature tracking after documents are loaded
+      fetchSignatureTracking();
       return data;
     } catch (e) {
       setState(() {
@@ -116,6 +127,418 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     ).show();
   }
 
+  Future<void> downloadDocument(
+      String documentId, String fileName, String mimeType) async {
+    try {
+      if (!mounted) return; // Check if widget is still mounted
+      
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? staffId = prefs.getString("staff_id");
+      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+      String? token = prefs.getString('token');
+
+      if (token == null || id == null) {
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: "Authentication error",
+            backgroundColor: Colors.red,
+          );
+        }
+        return;
+      }
+
+      // Show loading toast
+      if (mounted) {
+        Fluttertoast.showToast(
+          msg: "Downloading document...",
+          backgroundColor: Colors.blue,
+        );
+      }
+
+      // Download the file with authentication headers
+      final response = await http.get(
+        Uri.parse('$Api_url/api/lease-document/download-document/$documentId'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(
+        Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Download timeout - please try again');
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Determine file extension from mime type or Content-Type header
+        String extension = 'pdf'; // default
+
+        // Check Content-Type header first (most reliable)
+        String? contentTypeHeader = response.headers['content-type'];
+        if (contentTypeHeader != null && contentTypeHeader.isNotEmpty) {
+          mimeType = contentTypeHeader.split(';')[0].trim();
+        }
+
+        // Map mime types to extensions
+        if (mimeType.contains('image/jpeg') || mimeType.contains('image/jpg')) {
+          extension = 'jpg';
+        } else if (mimeType.contains('image/png')) {
+          extension = 'png';
+        } else if (mimeType.contains('image/gif')) {
+          extension = 'gif';
+        } else if (mimeType.contains('image/bmp')) {
+          extension = 'bmp';
+        } else if (mimeType.contains('image/tiff') ||
+            mimeType.contains('image/tif')) {
+          extension = 'tiff';
+        } else if (mimeType.contains('image/webp')) {
+          extension = 'webp';
+        } else if (mimeType.contains('application/pdf')) {
+          extension = 'pdf';
+        } else if (mimeType.contains('image/')) {
+          // Generic image type - extract from mime type
+          extension = mimeType.split('/')[1].split(';')[0].trim();
+        }
+
+        // Clean filename and ensure it has proper extension
+        String cleanFileName =
+            fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+
+        // Check if filename already has extension
+        if (cleanFileName.contains('.')) {
+          String existingExt = cleanFileName.split('.').last.toLowerCase();
+          // If existing extension is valid, keep it; otherwise replace with detected extension
+          List<String> validExtensions = [
+            'pdf',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'tiff',
+            'tif',
+            'webp'
+          ];
+          if (!validExtensions.contains(existingExt)) {
+            cleanFileName = '${cleanFileName.split('.').first}.$extension';
+          }
+        } else {
+          cleanFileName = '$cleanFileName.$extension';
+        }
+
+        // Get appropriate directory based on platform
+        Directory directory;
+        if (Platform.isAndroid) {
+          // For Android 10+ (API 29+), use app's external storage directory
+          // This doesn't require special permissions
+          directory = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
+          
+          // Try to create Downloads subdirectory in app's external storage
+          final downloadsDir = Directory('${directory.path}/Download');
+          if (!await downloadsDir.exists()) {
+            try {
+              await downloadsDir.create(recursive: true);
+              directory = downloadsDir;
+            } catch (e) {
+              // If creating Downloads folder fails, use the main directory
+              print('Could not create Downloads folder: $e');
+            }
+          } else {
+            directory = downloadsDir;
+          }
+        } else {
+          // For iOS, use temporary directory (better for sharing)
+          directory = await getTemporaryDirectory();
+        }
+
+        // Create directory if it doesn't exist
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+        }
+
+        // Generate unique filename with timestamp to avoid conflicts
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        String finalFileName;
+        if (cleanFileName.contains('.')) {
+          final parts = cleanFileName.split('.');
+          final nameWithoutExt = parts.sublist(0, parts.length - 1).join('.');
+          final ext = parts.last;
+          finalFileName = '${nameWithoutExt}_$timestamp.$ext';
+        } else {
+          finalFileName = '${cleanFileName}_$timestamp.$extension';
+        }
+
+        // Save file
+        final file = File('${directory.path}/$finalFileName');
+        await file.writeAsBytes(response.bodyBytes);
+
+        // Show success message and share file
+        if (mounted) {
+          String saveLocation = Platform.isAndroid 
+              ? "saved in app storage"
+              : "ready to share";
+          
+          Fluttertoast.showToast(
+            msg: "Document $saveLocation",
+            backgroundColor: Colors.green,
+          );
+
+          // Share the file (works on both iOS and Android)
+          // This allows user to save to Downloads or share via other apps
+          try {
+            await Share.shareXFiles(
+              [XFile(file.path)],
+              text: 'Document: $fileName',
+              subject: fileName,
+            );
+          } catch (shareError) {
+            print('Share error: $shareError');
+            // If share fails, file is still saved - show message
+            if (mounted) {
+              Fluttertoast.showToast(
+                msg: Platform.isAndroid 
+                    ? "File saved. Use file manager to access: ${directory.path}"
+                    : "File saved successfully",
+                backgroundColor: Colors.blue,
+              );
+            }
+          }
+        }
+      } else {
+        if (mounted) {
+          Fluttertoast.showToast(
+            msg: "Failed to download document",
+            backgroundColor: Colors.red,
+          );
+        }
+      }
+    } catch (e) {
+      print('Download error: $e');
+      if (mounted) {
+        String errorMsg = "Error downloading document";
+        if (e.toString().contains('timeout')) {
+          errorMsg = "Download timeout - please try again";
+        } else if (e.toString().length > 50) {
+          errorMsg = "Download failed - please try again";
+        } else {
+          errorMsg = "Error: ${e.toString()}";
+        }
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          backgroundColor: Colors.red,
+        );
+      }
+    }
+  }
+
+  // Fetch signature tracking data
+  Future<void> fetchSignatureTracking() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? staffId = prefs.getString("staff_id");
+      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+      String? token = prefs.getString('token');
+
+      if (token == null || id == null) {
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('$Api_url/api/lease-document/signature-tracking/${widget.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        if (parsedJson['success'] == true && parsedJson['data'] != null) {
+          final trackingRecords = parsedJson['data']['tracking_records'] ?? [];
+          setState(() {
+            signatureTrackingData = List<Map<String, dynamic>>.from(trackingRecords);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching signature tracking: $e');
+    }
+  }
+
+  // Get signature status for a document
+  String? getSignatureStatus(String documentId) {
+    // First check signature tracking data (webhook data - primary source)
+    try {
+      final trackingRecord = signatureTrackingData.firstWhere(
+        (record) => record['document_id'] == documentId || 
+                    record['signature_request_id'] == documentId,
+      );
+
+      if (trackingRecord['status'] != null) {
+        return trackingRecord['status'].toString();
+      }
+    } catch (e) {
+      // No tracking record found, continue to next check
+    }
+
+    // Then check document list (database fallback)
+    try {
+      final document = rentersInsuranceModel.firstWhere(
+        (doc) => doc['document_id'] == documentId,
+      );
+
+      // Check signatureTracking field first
+      if (document['signatureTracking'] != null && 
+          document['signatureTracking']['status'] != null) {
+        return document['signatureTracking']['status'].toString();
+      }
+      
+      // Fallback to signing_status (but ignore 'pending')
+      if (document['signing_status'] != null && 
+          document['signing_status'].toString().toLowerCase() != 'pending') {
+        return document['signing_status'].toString();
+      }
+    } catch (e) {
+      // Document not found, return null
+    }
+
+    return null;
+  }
+
+  // Get formatted status with display info
+  Map<String, dynamic>? getFormattedStatus(String documentId) {
+    final signatureStatus = getSignatureStatus(documentId);
+    
+    if (signatureStatus == null) {
+      return null;
+    }
+
+    // Normalize status
+    String normalizedStatus = signatureStatus;
+    String displayStatus = normalizedStatus.toLowerCase();
+
+    // Map database statuses to webhook statuses for consistency
+    if (normalizedStatus.toLowerCase() == 'signed') {
+      displayStatus = 'signed';
+    } else if (normalizedStatus.toLowerCase() == 'pending') {
+      displayStatus = 'sent'; // Show pending as "sent"
+    }
+
+    // Check if signed document path exists for "ready to download"
+    try {
+      final trackingRecord = signatureTrackingData.firstWhere(
+        (record) => (record['document_id'] == documentId || 
+                     record['signature_request_id'] == documentId) &&
+                    record['signed_document_path'] != null,
+      );
+
+      if (normalizedStatus.toLowerCase() == 'signed') {
+        displayStatus = 'ready to download';
+      }
+    } catch (e) {
+      // No tracking record with signed document path found
+    }
+
+    return {
+      'displayStatus': displayStatus,
+      'originalStatus': normalizedStatus,
+    };
+  }
+
+  // Get status display widget
+  Widget _buildStatusWidget(Map<String, dynamic> item) {
+    final documentId = item['document_id']?.toString() ?? '';
+    
+    // Step 1: Check if regular document (is_from_lease === true)
+    if (item['is_from_lease'] == true) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        constraints: BoxConstraints(minHeight: 28),
+        decoration: BoxDecoration(
+          color: Color(0xFFCCE5FF), // Blue background
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Center(
+          child: Text(
+            'Regular Document',
+            style: TextStyle(
+              color: Color(0xFF004085), // Blue text
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Step 2: Check signature status
+    final formattedStatus = getFormattedStatus(documentId);
+    if (formattedStatus != null) {
+      final displayStatus = formattedStatus['displayStatus']?.toString().toLowerCase() ?? '';
+      final originalStatus = formattedStatus['originalStatus']?.toString() ?? '';
+      
+      // Map status to colors
+      Map<String, Map<String, Color>> statusColors = {
+        'unsigned': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'sent': {'bg': Color(0xFFFFF3CD), 'text': Color(0xFF856404)},
+        'opened': {'bg': Color(0xFFCCE5FF), 'text': Color(0xFF004085)},
+        'signed': {'bg': Color(0xFFD4EDDA), 'text': Color(0xFF155724)},
+        'ready to download': {'bg': Color(0xFF28A745), 'text': Colors.white},
+        'declined': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'canceled': {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)},
+        'cancelled': {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)},
+        'error': {'bg': Color(0xFFF8D7DA), 'text': Color(0xFF721C24)},
+        'pending': {'bg': Color(0xFFFFF3CD), 'text': Color(0xFF856404)},
+      };
+
+      // Capitalize first letter for display
+      String statusText = displayStatus.split(' ').map((word) {
+        return word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1);
+      }).join(' ');
+
+      final colors = statusColors[displayStatus] ?? 
+                     {'bg': Color(0xFFE2E3E5), 'text': Color(0xFF6C757D)};
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        constraints: BoxConstraints(minHeight: 28),
+        decoration: BoxDecoration(
+          color: colors['bg'],
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Center(
+          child: Text(
+            statusText,
+            style: TextStyle(
+              color: colors['text'],
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Step 3: No status - show "Not Sent"
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      constraints: BoxConstraints(minHeight: 28),
+      child: Center(
+        child: Text(
+          'Not Sent',
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<Map<String, dynamic>> deleteNote({
     required String noteid,
   }) async {
@@ -158,6 +581,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     // TODO: implement initState
     super.initState();
     _futureRentersInsurance = fetchRentersInsuranceData();
+    fetchSignatureTracking(); // Fetch signature tracking data
   }
 
   Widget _buildHeaders() {
@@ -181,8 +605,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
             Expanded(
               child: Row(
                 children: [
-                  Text(" Document\nType",
-                      textAlign: TextAlign.center,
+                  Text(" Document\n Title",
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
@@ -191,19 +615,20 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                 ],
               ),
             ),
-            Expanded(
-              child: Row(
-                children: [
-                  Text("    Document\n    Name",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                  SizedBox(width: 5),
-                ],
-              ),
-            ),
+            // Expanded(
+            //   child: Row(
+            //     children: [
+            //       Text("    Document\n    Name",
+            //           textAlign: TextAlign.center,
+            //           style: TextStyle(
+            //               color: blueColor,
+            //               fontWeight: FontWeight.bold,
+            //               fontSize: 15)),
+            //       SizedBox(width: 5),
+            //     ],
+            //   ),
+            // ),
+
             Expanded(
               child: InkWell(
                 child: Padding(
@@ -211,12 +636,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                   child: Row(
                     children: [
                       width < 400
-                          ? Text("           Date ",
+                          ? Text("             Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          : Text("           Date ",
+                          : Text("             Status ",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -269,6 +694,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                       isLoading = true; // Show loading state
                       _futureRentersInsurance = fetchRentersInsuranceData();
                     });
+                    fetchSignatureTracking(); // Refresh signature tracking
                   }
                 },
                 child: Container(
@@ -443,7 +869,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     children: [
                                                       TextSpan(
                                                         text:
-                                                            '${item["file_type"] ?? '-'}',
+                                                            '${item["file_name"] ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -460,28 +886,22 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                           SizedBox(width: 30),
                                           Expanded(
                                             flex: 2,
-                                            child: Text(
-                                              "${item["file_name"]}",
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
+                                            child: _buildStatusWidget(item),
                                           ),
-                                          SizedBox(width: 20),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                              "${dateProvider.formatCurrentDate(item["date_created"])}",
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
+                                          // SizedBox(width: 20),
+                                          // Expanded(
+                                          //   flex: 0,
+                                          //   child: Text(
+                                          //     "${dateProvider.formatCurrentDate(item["date_created"])}",
+                                          //     style: TextStyle(
+                                          //       color: blueColor,
+                                          //       fontWeight: FontWeight.bold,
+                                          //       fontSize: 14,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          
+                                        SizedBox(width: 10),
                                         ],
                                       ),
                                     ),
@@ -515,7 +935,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                'Created By : ',
+                                                                'Tenant Name : ',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -524,8 +944,61 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                                     grey), // Bold and black
                                                           ),
                                                           TextSpan(
+                                                            text: (item["tenantDetails"] !=
+                                                                        null &&
+                                                                    item["tenantDetails"]
+                                                                        is List &&
+                                                                    (item["tenantDetails"]
+                                                                            as List)
+                                                                        .isNotEmpty)
+                                                                ? '${item["tenantDetails"][0]["tenant_firstName"]} ${item["tenantDetails"][0]["tenant_lastName"]}'
+                                                                : 'N/A',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    blueColor), // Bold and black
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              // SizedBox(height: 5),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  FaIcon(
+                                                    isRowExpanded
+                                                        ? FontAwesomeIcons
+                                                            .sortUp
+                                                        : FontAwesomeIcons
+                                                            .sortDown,
+                                                    size: 40,
+                                                    color: Colors.transparent,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text.rich(
+                                                      TextSpan(
+                                                        children: [
+                                                          TextSpan(
                                                             text:
-                                                                '${item["adminDetails"]["first_name"]} ${item["adminDetails"]["last_name"]}',
+                                                                'Created On : ',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    grey), // Bold and black
+                                                          ),
+                                                          TextSpan(
+                                                            text: dateProvider
+                                                                .formatCurrentDate(
+                                                                    item[
+                                                                        "date_created"]),
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
@@ -546,16 +1019,54 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (item["document_name"] !=
+                                                      if (item["document_id"] !=
                                                               null &&
-                                                          item["document_name"]
+                                                          item["document_id"]
                                                               .toString()
                                                               .isNotEmpty) {
+                                                        // Use document_id to construct lease document preview URL
+                                                        final documentId =
+                                                            item["document_id"]
+                                                                .toString();
+                                                        final documentName = item[
+                                                                "file_name"] ??
+                                                            item[
+                                                                "document_name"] ??
+                                                            "Document";
+                                                        // Use mime_type first (actual MIME type), fallback to document_type
+                                                        String? mimeType;
+                                                        if (item["mime_type"] !=
+                                                                null &&
+                                                            item["mime_type"]
+                                                                .toString()
+                                                                .isNotEmpty) {
+                                                          mimeType =
+                                                              item["mime_type"]
+                                                                  .toString();
+                                                        } else if (item[
+                                                                "document_type"] !=
+                                                            null) {
+                                                          final docType = item[
+                                                                  "document_type"]
+                                                              .toString();
+                                                          // Only use document_type if it looks like a MIME type (contains '/')
+                                                          if (docType
+                                                              .contains('/')) {
+                                                            mimeType = docType;
+                                                          }
+                                                        }
+                                                        final previewUrl =
+                                                            '$Api_url/api/lease-document/preview-document/$documentId';
+
+                                                        print(
+                                                            "Opening document preview: $previewUrl");
                                                         FileViewer
                                                             .showReceiptDialog(
-                                                                context,
-                                                                item[
-                                                                    "document_name"]);
+                                                          context,
+                                                          documentName,
+                                                          fileUrl: previewUrl,
+                                                          mimeType: mimeType,
+                                                        );
                                                       } else {
                                                         Fluttertoast.showToast(
                                                           msg:
@@ -597,6 +1108,101 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                   SizedBox(width: 10),
                                                   GestureDetector(
                                                     onTap: () {
+                                                      // Navigate to edit screen
+                                                      Navigator.of(context)
+                                                          .push(
+                                                              MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditDocument(
+                                                          leaseId:
+                                                              widget.leaseId,
+                                                          documentData: item,
+                                                        ),
+                                                      ))
+                                                          .then((result) {
+                                                        if (result == true) {
+                                                          // Refresh the table
+                                                          setState(() {
+                                                            isLoading = true;
+                                                            _futureRentersInsurance =
+                                                                fetchRentersInsuranceData();
+                                                          });
+                                                          fetchSignatureTracking(); // Refresh signature tracking
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .edit,
+                                                            size: 15,
+                                                            color: Colors.green,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  // GestureDetector(
+                                                  //   onTap: () {
+                                                  //     downloadDocument(
+                                                  //         item["document_id"],
+                                                  //         item["file_name"] ??
+                                                  //             item[
+                                                  //                 "document_name"] ??
+                                                  //             "document",
+                                                  //         item["mime_type"] ??
+                                                  //             item[
+                                                  //                 "document_type"] ??
+                                                  //             "application/octet-stream");
+                                                  //   },
+                                                  //   child: Container(
+                                                  //     height: 35,
+                                                  //     width: 35,
+                                                  //     decoration: BoxDecoration(
+                                                  //         borderRadius:
+                                                  //             BorderRadius
+                                                  //                 .circular(8),
+                                                  //         color: Colors
+                                                  //             .blue.shade50),
+                                                  //     child:  Row(
+                                                  //       mainAxisAlignment:
+                                                  //           MainAxisAlignment
+                                                  //               .center,
+                                                  //       crossAxisAlignment:
+                                                  //           CrossAxisAlignment
+                                                  //               .center,
+                                                  //       children: [
+                                                  //         FaIcon(
+                                                  //           FontAwesomeIcons
+                                                  //               .download,
+                                                  //           size: 15,
+                                                  //           color: blueColor,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
+                                                  // SizedBox(width: 15),
+                                                  GestureDetector(
+                                                    onTap: () {
                                                       // print("calling");
                                                       // print( "${image_url}${item["document_name"]}");
                                                       // const PDF().fromUrl(
@@ -636,6 +1242,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 15),
+                                               
                                                 ],
                                               ),
                                               SizedBox(

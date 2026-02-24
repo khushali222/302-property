@@ -4,10 +4,8 @@ import 'dart:core';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../../../Model/tenants.dart';
 import '../../../constant/constant.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart' as http;
 
 class TenantsRepository {
@@ -40,9 +38,13 @@ class TenantsRepository {
       final jsonResponse = json.decode(response.body);
 
       // Access the 'data' object and then the 'tenants' list
-      if (jsonResponse['data'] != null && jsonResponse['data']['tenants'] != null) {
-        List tenantsJson = jsonResponse['data']['tenants']; // Access the tenants list
-        return tenantsJson.map((data) => Tenant.fromJson(data)).toList(); // Map to Tenant objects
+      if (jsonResponse['data'] != null &&
+          jsonResponse['data']['tenants'] != null) {
+        List tenantsJson =
+            jsonResponse['data']['tenants']; // Access the tenants list
+        return tenantsJson
+            .map((data) => Tenant.fromJson(data))
+            .toList(); // Map to Tenant objects
       } else {
         print('No tenants found in the response.');
         return [];
@@ -50,6 +52,75 @@ class TenantsRepository {
     } else {
       print('Failed to fetch tenants: ${response.body}');
       return [];
+    }
+  }
+
+  // New method to fetch categorized tenants (current, former, applicants)
+  Future<Map<String, List<Tenant>>> fetchTenantsV2() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/tenants/v2/$adminid'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print('get tenant v2 ${response.body}');
+    print('${Api_url}/api/tenant/tenants/v2/$adminid');
+    if (response.statusCode == 200) {
+      // Decode the JSON response
+      final jsonResponse = json.decode(response.body);
+
+      // Access the 'data' object
+      if (jsonResponse['data'] != null) {
+        Map<String, List<Tenant>> categorizedTenants = {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
+
+        // Add currentTenants if they exist
+        if (jsonResponse['data']['currentTenants'] != null) {
+          List currentTenantsJson = jsonResponse['data']['currentTenants'];
+          categorizedTenants['currentTenants'] =
+              currentTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add formerTenants if they exist
+        if (jsonResponse['data']['formerTenants'] != null) {
+          List formerTenantsJson = jsonResponse['data']['formerTenants'];
+          categorizedTenants['formerTenants'] =
+              formerTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add currentApplicants if they exist
+        if (jsonResponse['data']['currentApplicants'] != null) {
+          List currentApplicantsJson =
+              jsonResponse['data']['currentApplicants'];
+          categorizedTenants['currentApplicants'] = currentApplicantsJson
+              .map((data) => Tenant.fromJson(data))
+              .toList();
+        }
+
+        return categorizedTenants;
+      } else {
+        print('No data found in the response.');
+        return {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
+      }
+    } else {
+      print('Failed to fetch tenants: ${response.body}');
+      return {
+        'currentTenants': [],
+        'formerTenants': [],
+        'currentApplicants': [],
+      };
     }
   }
 
@@ -272,7 +343,7 @@ class TenantsRepository {
     required String tenantEmail,
     required String tenantAlternativeEmail,
     required String tenantPassword,
-     String? tenantBirthDate,
+    String? tenantBirthDate,
     required String taxPayerId,
     required String comments,
     required String emergencyContactName,
@@ -282,6 +353,8 @@ class TenantsRepository {
     required String companyName,
     required String overRideFee,
     required String enableOverRideFee,
+    required bool allowAch,
+    required bool allowCard,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -304,6 +377,8 @@ class TenantsRepository {
       },
       'override_fee': overRideFee,
       'enable_override_fee': enableOverRideFee,
+      'allow_ach': allowAch,
+      'allow_card': allowCard,
     };
     print('Data is :$data');
 
@@ -336,12 +411,11 @@ class TenantsRepository {
     }
   }
 
-  Future<Map<String, dynamic>> deleteTenant({
-    required String tenantId,
-    required String companyName,
-    required String tenantEmail,
-    String? reason
-  }) async {
+  Future<Map<String, dynamic>> deleteTenant(
+      {required String tenantId,
+      required String companyName,
+      required String tenantEmail,
+      String? reason}) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/tenant/tenant/$tenantId')
           .replace(queryParameters: {
@@ -352,17 +426,13 @@ class TenantsRepository {
       String? token = prefs.getString('token');
       String? adminid = prefs.getString("adminId");
       String? id = prefs.getString("staff_id");
-      final http.Response response = await http.delete(
-        uri,
-        headers: <String, String>{
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-          body: jsonEncode({
-            "reason":reason
-          })
-      );
+      final http.Response response = await http.delete(uri,
+          headers: <String, String>{
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({"reason": reason}));
 
       var responseData = json.decode(response.body);
       print(response.body);

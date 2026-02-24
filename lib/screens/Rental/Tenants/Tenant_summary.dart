@@ -29,6 +29,8 @@ import '../../../model/rentalOwner.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/custom_history_table.dart';
+import '../../../enums/history_type.dart';
 import '../../Communications/Send E-mail/send_mail.dart';
 import '../../Leasing/RentalRoll/Commnunication/communication.dart';
 import 'Commnunication/communication.dart';
@@ -2429,6 +2431,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                           'No data available')));
                                             } else {
                                               var data = snapshot.data!;
+
                                               if (selectedValueTenantLease ==
                                                       null &&
                                                   searchvalueTenantLease!
@@ -2443,8 +2446,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     .where((property) => property
                                                         .startDate!
                                                         .toLowerCase()
-                                                        .contains(searchvalue!
-                                                            .toLowerCase()))
+                                                        .contains(
+                                                            searchvalueTenantLease!
+                                                                .toLowerCase()))
                                                     .toList();
                                               }
                                               if (data.length == 0) {
@@ -2624,7 +2628,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                         Expanded(
                                                                           child:
                                                                               Text(
-                                                                            dateProvider.formatCurrentDate('${Propertytype.startDate}'),
+                                                                            dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.startDate)),
                                                                             style:
                                                                                 TextStyle(
                                                                               color: blueColor,
@@ -2641,7 +2645,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               Text(
                                                                             // '${widget.data.createdAt}',
 
-                                                                            dateProvider.formatCurrentDate('${Propertytype.endDate}'),
+                                                                            dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.endDate)),
 
                                                                             style:
                                                                                 TextStyle(
@@ -2760,6 +2764,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 20),
+                                  child: CustomHistoryTable(
+                                    historyType: HistoryType.tenant,
+                                    entityId: widget.tenantId,
+                                    title: 'History',
+                                    blueColor: blueColor,
+                                    itemsPerPage: 10,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -2773,7 +2789,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   if (_selectedIndex == 2)
                     FinancialTable(
                       leaseId: widget.tenantId,
-                    )
+                    ),
                 ],
               ),
             )
@@ -2872,7 +2888,16 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
           }
         }
       }
-      return allLeaseData;
+
+      // Filter out entries with invalid dates
+      List<TenantLeaseData> validLeaseData = allLeaseData.where((lease) {
+        // Check if both startDate and endDate can be parsed
+        DateTime? start = parseDateRobust(lease.startDate);
+        DateTime? end = parseDateRobust(lease.endDate);
+        return start != null && end != null;
+      }).toList();
+
+      return validLeaseData;
     } else {
       throw Exception('Failed to load lease data');
     }
@@ -4268,6 +4293,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                       );
                                     } else {
                                       var data = snapshot.data!;
+
                                       return SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: DataTable(
@@ -4329,7 +4355,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                         fontWeight:
                                                             FontWeight.w500))),
                                                 DataCell(Text(
-                                                    '${lease.startDate} to ${lease.endDate}',
+                                                    '${dateProvider.formatCurrentDate(normalizeDateForDisplay(lease.startDate))} to ${dateProvider.formatCurrentDate(normalizeDateForDisplay(lease.endDate))}',
                                                     style: const TextStyle(
                                                         fontSize: 16,
                                                         color:
@@ -4414,11 +4440,74 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
   }
 }
 
+/// Robust date parser that handles multiple date formats and malformed strings
+DateTime? parseDateRobust(String? dateString) {
+  if (dateString == null || dateString.isEmpty) return null;
+
+  // Clean the date string - remove extra text that might be present
+  String cleaned = dateString.trim();
+
+  // Try to extract date from malformed strings like "Trying to read - from 08/01/2026 at 3"
+  // Look for common date patterns
+  RegExp datePattern =
+      RegExp(r'(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})|(\d{4}-\d{1,2}-\d{1,2})');
+  Match? match = datePattern.firstMatch(cleaned);
+  if (match != null) {
+    cleaned = match.group(0) ?? cleaned;
+  }
+
+  // List of date formats to try
+  List<String> dateFormats = [
+    'yyyy-MM-dd', // Standard format: 2028-01-01
+    'yyyy-M-d', // Without leading zeros: 2028-1-1
+    'MM/dd/yyyy', // US format: 08/01/2026
+    'M/d/yyyy', // US format without leading zeros: 8/1/2026
+    'dd-MM-yyyy', // European format: 01-08-2026
+    'd-M-yyyy', // European format without leading zeros: 1-8-2026
+    'MM-dd-yyyy', // US format with dashes: 08-01-2026
+    'M-d-yyyy', // US format with dashes without leading zeros: 8-1-2026
+  ];
+
+  // Try each format
+  for (String format in dateFormats) {
+    try {
+      return DateFormat(format).parse(cleaned);
+    } catch (e) {
+      continue;
+    }
+  }
+
+  // If all formats fail, return null
+  return null;
+}
+
+/// Normalizes a date string to yyyy-MM-dd format for display
+/// Extracts date from malformed strings and converts to proper format
+String normalizeDateForDisplay(String? dateString) {
+  if (dateString == null || dateString.isEmpty) return '';
+
+  // Try to parse the date
+  DateTime? parsedDate = parseDateRobust(dateString);
+
+  if (parsedDate != null) {
+    // Convert to yyyy-MM-dd format so DateProvider can format it properly
+    return DateFormat('yyyy-MM-dd').format(parsedDate);
+  }
+
+  // If parsing fails, return original string (will be handled by DateProvider)
+  return dateString;
+}
+
 String determineStatus(String? startDate, String? endDate) {
   if (startDate == null || endDate == null) return 'UNKNOWN';
 
-  DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
-  DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
+  // Use robust date parser
+  DateTime? start = parseDateRobust(startDate);
+  DateTime? end = parseDateRobust(endDate);
+
+  // If parsing fails, return UNKNOWN
+  if (start == null || end == null) return 'UNKNOWN';
+
   // Set today to start of day to ensure accurate comparison
   DateTime today =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);

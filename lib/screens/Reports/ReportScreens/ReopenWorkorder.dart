@@ -8,8 +8,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/ReopenWorkOrderModel.dart';
 import 'package:three_zero_two_property/repository/ReopenWorkOrderRepo.dart';
+import 'package:three_zero_two_property/StaffModule/repository/ReopenWorkOrderRepo.dart'
+    as staff_repo;
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as staff_appbar;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
+    as staff_drawer;
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -20,9 +27,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 class ReopenWorkorder extends StatefulWidget {
-  const ReopenWorkorder({super.key});
+  /// When true, uses staff repository (staff_id, content type) and staff UI (app bar, drawer, header).
+  final bool isStaffMode;
+
+  const ReopenWorkorder({super.key, this.isStaffMode = false});
 
   @override
   State<ReopenWorkorder> createState() => _ReopenWorkorderState();
@@ -95,8 +107,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
-
-      if (adminId == null) {
+      if (!widget.isStaffMode && adminId == null) {
         setState(() {
           errorMessage = "Admin ID not found";
           isLoading = false;
@@ -105,9 +116,14 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
       }
 
       selectedAdminId = adminId;
-      ReopenWorkOrderRepository repository = ReopenWorkOrderRepository();
-      ReopenWorkOrderResponse response =
-          await repository.fetchReopenWorkOrders(adminId);
+      ReopenWorkOrderResponse response;
+      if (widget.isStaffMode) {
+        response = await staff_repo.ReopenWorkOrderStaffRepository()
+            .fetchReopenWorkOrders();
+      } else {
+        response =
+            await ReopenWorkOrderRepository().fetchReopenWorkOrders(adminId!);
+      }
 
       if (response.statusCode == 200 && response.data != null) {
         setState(() {
@@ -206,54 +222,60 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
 
   Widget _buildHeaders() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFFF7F9FC),
         border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!, width: 1),
+          top: BorderSide(color: Colors.grey[300]!),
+          bottom: BorderSide(color: Colors.grey[300]!),
         ),
       ),
       child: Row(
         children: [
           Expanded(
-            flex: 2,
-            child: Text("Date",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.grey[800])),
+            flex: 4,
+            child: Text(
+              ' Property',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: blueColor,
+              ),
+            ),
           ),
           Expanded(
             flex: 3,
-            child: Text("Address",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.grey[800])),
+            child: Text(
+              '#',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: blueColor,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
+  String _formatDateWithProvider(DateProvider dateProvider, String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+    final formatted = dateProvider.formatCurrentDate(dateStr);
+    return formatted.isEmpty ? 'N/A' : formatted;
+  }
+
   Widget _buildDataRow(ReopenWorkOrderData order, int index) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     bool isExpanded = expandedRowIndex == index;
+    final rowColor = index % 2 == 0 ? const Color(0xFFF4F8FF) : Colors.white;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 1),
-          ),
-        ],
+        color: rowColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
       ),
       child: Column(
         children: [
@@ -267,46 +289,56 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Date with expand icon
-                  Row(
-                    children: [
-                      Text(
-                        order.date ?? 'N/A',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(
-                        isExpanded
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Colors.grey[600],
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                  // Address
-                  // address is larger in length so we need to wrap it
+                  const SizedBox(width: 5),
                   Expanded(
+                    flex: 4,
                     child: Text(
-                      "${order.rentalAddress}" ?? 'N/A',
+                      order.rentalAddress ?? 'N/A',
                       style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey[800],
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
                       ),
-                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      order.ticketNumber ?? 'N/A',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (expandedRowIndex == index) {
+                          expandedRowIndex = null;
+                        } else {
+                          expandedRowIndex = index;
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      child: Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: blueColor,
+                      ),
                     ),
                   ),
                 ],
@@ -314,49 +346,64 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
             ),
           ),
           if (isExpanded)
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 12),
-                  // Two column layout for main details
-                  Row(
+            Column(
+              children: [
+                const Divider(thickness: 2),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const SizedBox(width: 5),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildDetailRow(
-                                'Work', order.workSubject ?? 'No work subject'),
-                            SizedBox(height: 12),
-                            _buildDetailRow('Notes',
-                                order.vendorNotes ?? 'No vendor notes'),
+                                'Subject', order.workSubject ?? 'N/A'),
+                            const SizedBox(height: 8),
+                            _buildDetailRow(
+                                'Category', order.workCategory ?? 'N/A'),
+                            const SizedBox(height: 8),
+                            _buildDetailRow(
+                                'Priority', order.priority ?? 'N/A'),
+                            const SizedBox(height: 8),
+                            _buildDetailRow(
+                                'Assigned To', order.staffmemberName ?? 'N/A'),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 35),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildDetailRow('Description',
-                                order.workPerformed ?? 'No work performed yet'),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDetailRow(
+                                  'Due Date',
+                                  _formatDateWithProvider(
+                                      dateProvider, order.date)),
+                              const SizedBox(height: 8),
+                              _buildDetailRow(
+                                  'Reopen Date',
+                                  _formatDateWithProvider(
+                                      dateProvider, order.reopenDate)),
+                              const SizedBox(height: 8),
+                              _buildDetailRow(
+                                  'Created Date',
+                                  _formatDateWithProvider(
+                                      dateProvider, order.createdAt)),
+                            ],
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 4),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
         ],
       ),
@@ -368,110 +415,115 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          label + ' :',
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
+            color: blueColor,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 10,
+          style: const TextStyle(
+            fontSize: 12,
             fontWeight: FontWeight.normal,
-            color: Colors.grey[800],
+            color: Colors.black87,
           ),
         ),
       ],
     );
   }
 
+  static const double _filterRadius = 14.0;
+  static const Color _filterBorderColor = Color(0xFFCED4DA);
+  static const Color _filterHintColor = Color(0xFF8A95A8);
+
   Widget filters({List<ReopenWorkOrderData>? data}) {
     return Column(
       children: [
-        SizedBox(height: 10),
+        const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Search Bar
+              // Search Bar - rounded, light border, white (like image)
               Expanded(
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF8A95A8)),
+                child: Container(
+                  height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(_filterRadius),
+                    border: Border.all(color: _filterBorderColor, width: 1),
+                  ),
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        searchvalue = value;
+                        currentPage = 1;
+                      });
+                    },
+                    style: TextStyle(
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 13 : 14,
+                      color: Colors.grey[800],
                     ),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchvalue = value;
-                          currentPage = 1;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Search here...",
-                        hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                        contentPadding: EdgeInsets.all(11),
-                        suffixIcon:
-                            Icon(Icons.search, color: Color(0xFF8A95A8)),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Search here ...",
+                      hintStyle: const TextStyle(color: _filterHintColor),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      suffixIcon: const Icon(
+                        Icons.search,
+                        color: _filterHintColor,
+                        size: 22,
                       ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 16),
-              // Export Button
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF8A95A8)),
-                  ),
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      if (value == 'PDF' && data != null) {
-                        _exportToPDF();
-                      } else if (value == 'XLSX' && data != null) {
-                        _exportToExcel();
-                      } else if (value == 'CSV' && data != null) {
-                        _shareReport();
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                          value: 'PDF', child: Text('PDF')),
-                      const PopupMenuItem<String>(
-                          value: 'XLSX', child: Text('XLSX')),
-                      const PopupMenuItem<String>(
-                          value: 'CSV', child: Text('CSV')),
-                    ],
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.download,
-                              color: Colors.grey[600], size: 20),
-                          SizedBox(width: 8),
-                          Icon(Icons.keyboard_arrow_down,
-                              color: Colors.grey[600], size: 16),
-                        ],
-                      ),
+              const SizedBox(width: 16),
+              // Export Button - rounded, light border, download + chevron
+              Container(
+                height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(_filterRadius),
+                  border: Border.all(color: _filterBorderColor, width: 1),
+                ),
+                child: PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    if (value == 'PDF' && data != null) {
+                      _exportToPDF(context);
+                    } else if (value == 'XLSX' && data != null) {
+                      _exportToExcel(context);
+                    } else if (value == 'CSV' && data != null) {
+                      _shareReport(context);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                        value: 'PDF', child: Text('PDF')),
+                    const PopupMenuItem<String>(
+                        value: 'XLSX', child: Text('XLSX')),
+                    const PopupMenuItem<String>(
+                        value: 'CSV', child: Text('CSV')),
+                  ],
+                  padding: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.download_outlined,
+                            color: _filterHintColor, size: 22),
+                        const SizedBox(width: 8),
+                        Icon(Icons.keyboard_arrow_down,
+                            color: _filterHintColor, size: 20),
+                      ],
                     ),
                   ),
                 ),
@@ -535,11 +587,18 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
     );
   }
 
-  void _exportToPDF() async {
+  void _exportToPDF(BuildContext context) async {
     try {
       setState(() {
         isDataLoading = true;
       });
+
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String fmt(String? d) {
+        if (d == null || d.isEmpty) return 'N/A';
+        final f = dateProvider.formatCurrentDate(d);
+        return f.isEmpty ? 'N/A' : f;
+      }
 
       final pdf = pw.Document();
 
@@ -561,7 +620,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
                       style: pw.TextStyle(
                           fontSize: 18, fontWeight: pw.FontWeight.bold)),
                   pw.Text(
-                      'Generated on: ${DateFormat('yyyy-MMM-dd').format(DateTime.now())}',
+                      'Generated on: ${dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()))}',
                       style: pw.TextStyle(fontSize: 12)),
                 ],
               ),
@@ -652,7 +711,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
                                   color: PdfColors.white))),
                     ],
                   ),
-                  // Data rows
+                  // Data rows - dates via DateProvider
                   ...filteredData.map((order) => pw.TableRow(
                         children: [
                           pw.Padding(
@@ -681,15 +740,15 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
                                   style: pw.TextStyle(fontSize: 10))),
                           pw.Padding(
                               padding: pw.EdgeInsets.all(8),
-                              child: pw.Text(order.date ?? 'N/A',
+                              child: pw.Text(fmt(order.date),
                                   style: pw.TextStyle(fontSize: 10))),
                           pw.Padding(
                               padding: pw.EdgeInsets.all(8),
-                              child: pw.Text(order.reopenDate ?? 'N/A',
+                              child: pw.Text(fmt(order.reopenDate),
                                   style: pw.TextStyle(fontSize: 10))),
                           pw.Padding(
                               padding: pw.EdgeInsets.all(8),
-                              child: pw.Text(order.createdAt ?? 'N/A',
+                              child: pw.Text(fmt(order.createdAt),
                                   style: pw.TextStyle(fontSize: 10))),
                         ],
                       )),
@@ -708,20 +767,29 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         isDataLoading = false;
       });
 
-      Fluttertoast.showToast(msg: 'PDF exported successfully');
+      // Fluttertoast.showToast(msg: 'PDF exported successfully');
+      print('PDF exported successfully');
     } catch (e) {
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error exporting PDF: $e');
+      // Fluttertoast.showToast(msg: 'Error exporting PDF: $e');
+      print('Error exporting PDF: $e');
     }
   }
 
-  void _exportToExcel() async {
+  void _exportToExcel(BuildContext context) async {
     try {
       setState(() {
         isDataLoading = true;
       });
+
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String fmt(String? d) {
+        if (d == null || d.isEmpty) return '';
+        final f = dateProvider.formatCurrentDate(d);
+        return f;
+      }
 
       final workbook = syncXlsx.Workbook();
       final worksheet = workbook.worksheets[0];
@@ -736,8 +804,9 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         'Status',
         'Address',
         'Staff',
-        'Date',
+        'Due Date',
         'Reopen Date',
+        'Created Date',
         'Work Performed',
         'Vendor Notes'
       ];
@@ -746,7 +815,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         worksheet.getRangeByIndex(1, i + 1).cellStyle.bold = true;
       }
 
-      // Add data
+      // Add data - dates via DateProvider
       for (int i = 0; i < filteredData.length; i++) {
         var order = filteredData[i];
         worksheet.getRangeByIndex(i + 2, 1).setText(order.ticketNumber ?? '');
@@ -758,10 +827,11 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         worksheet
             .getRangeByIndex(i + 2, 7)
             .setText(order.staffmemberName ?? '');
-        worksheet.getRangeByIndex(i + 2, 8).setText(order.date ?? '');
-        worksheet.getRangeByIndex(i + 2, 9).setText(order.reopenDate ?? '');
-        worksheet.getRangeByIndex(i + 2, 10).setText(order.workPerformed ?? '');
-        worksheet.getRangeByIndex(i + 2, 11).setText(order.vendorNotes ?? '');
+        worksheet.getRangeByIndex(i + 2, 8).setText(fmt(order.date));
+        worksheet.getRangeByIndex(i + 2, 9).setText(fmt(order.reopenDate));
+        worksheet.getRangeByIndex(i + 2, 10).setText(fmt(order.createdAt));
+        worksheet.getRangeByIndex(i + 2, 11).setText(order.workPerformed ?? '');
+        worksheet.getRangeByIndex(i + 2, 12).setText(order.vendorNotes ?? '');
       }
 
       // Auto-fit columns
@@ -790,18 +860,25 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
     }
   }
 
-  void _shareReport() async {
+  void _shareReport(BuildContext context) async {
     try {
       setState(() {
         isDataLoading = true;
       });
+
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String fmt(String? d) {
+        if (d == null || d.isEmpty) return 'N/A';
+        final f = dateProvider.formatCurrentDate(d);
+        return f.isEmpty ? 'N/A' : f;
+      }
 
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/reopen_work_orders_report.txt');
 
       String reportContent = 'REOPEN WORK ORDERS REPORT\n';
       reportContent +=
-          'Generated on: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}\n\n';
+          'Generated on: ${dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()))}\n\n';
 
       for (var order in filteredData) {
         reportContent += 'Ticket: ${order.ticketNumber}\n';
@@ -811,8 +888,9 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         reportContent += 'Status: ${order.status}\n';
         reportContent += 'Address: ${order.rentalAddress}\n';
         reportContent += 'Staff: ${order.staffmemberName}\n';
-        reportContent += 'Date: ${order.date}\n';
-        reportContent += 'Reopen Date: ${order.reopenDate}\n';
+        reportContent += 'Due Date: ${fmt(order.date)}\n';
+        reportContent += 'Reopen Date: ${fmt(order.reopenDate)}\n';
+        reportContent += 'Created Date: ${fmt(order.createdAt)}\n';
         reportContent += 'Work Performed: ${order.workPerformed}\n';
         reportContent += 'Vendor Notes: ${order.vendorNotes}\n';
         reportContent += '---\n\n';
@@ -836,85 +914,103 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
-        currentpage: "Report",
-        dropdown: false,
-      ),
+      appBar: widget.isStaffMode
+          ? staff_appbar.widget_302_Staff.App_Bar(context: context)
+          : widget_302.App_Bar(context: context),
+      drawer: widget.isStaffMode
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Report",
+              dropdown: false,
+            )
+          : CustomDrawer(
+              currentpage: "Report",
+              dropdown: false,
+            ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Reopen Work Orders Report',
-                    width: MediaQuery.of(context).size.width * .91,
-                  ),
-                  const SizedBox(height: 16),
-                  if (isLoading)
-                    Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 50),
-                          SpinKitFadingCircle(color: Colors.blue),
-                          SizedBox(height: 16),
-                          Text('Loading reopen work orders...'),
-                        ],
-                      ),
-                    )
-                  else if (errorMessage != null)
-                    Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 50),
-                          Icon(Icons.error, size: 64, color: Colors.red),
-                          SizedBox(height: 16),
-                          Text(errorMessage!,
-                              style: TextStyle(color: Colors.red)),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: fetchReport,
-                            child: Text('Retry'),
+          ? Column(
+              children: [
+                widget.isStaffMode
+                    ? const StaffReportHeader(
+                        title: 'Work Orders Scheduled to Reopen Report')
+                    : const ReportHeader(title: 'Work Orders Scheduled to Reopen Report'),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (isLoading)
+                          Center(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 100),
+                                SpinKitFadingCircle(color:blueColor,size: 50.0,),
+                              
+                            ],
+                            ),
+                          )
+                        else if (errorMessage != null)
+                          Center(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 50),
+                                Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Text("No Work Orders on Hold Found",
+                                    style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold)),
+                             
+                              ],
+                            ),
+                          )
+                        else if (reopenWorkOrders.isEmpty)
+                          Center(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 50),
+                              Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
+                                ),
+                                SizedBox(height: 16),
+                                Text('No reopen work orders found',style: TextStyle(color: blueColor,fontSize: 16,fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          )
+                        else
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 5),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 5),
+                                filters(data: filteredData),
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Column(
+                                  children: currentPageData
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    int rowIndex = entry.key;
+                                    var order = entry.value;
+                                    return _buildDataRow(order, rowIndex);
+                                  }).toList(),
+                                ),
+                                _buildPagination(),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    )
-                  else if (reopenWorkOrders.isEmpty)
-                    Center(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 50),
-                          Icon(Icons.inbox, size: 64, color: Colors.grey),
-                          SizedBox(height: 16),
-                          Text('No reopen work orders found'),
-                        ],
-                      ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 5),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 5),
-                          filters(data: filteredData),
-                          const SizedBox(height: 10),
-                          _buildHeaders(),
-                          const SizedBox(height: 10),
-                          Column(
-                            children:
-                                currentPageData.asMap().entries.map((entry) {
-                              int rowIndex = entry.key;
-                              var order = entry.value;
-                              return _buildDataRow(order, rowIndex);
-                            }).toList(),
-                          ),
-                          _buildPagination(),
-                        ],
-                      ),
+                      ],
                     ),
-                ],
-              ),
+                  ),
+                ),
+              ],
             )
           : Center(
               child: Column(

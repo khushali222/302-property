@@ -31,67 +31,65 @@ class RentalOwnerData {
 
   RentalOwnerData(
       {this.sId,
-        this.rentalownerId,
-        this.adminId,
-        this.rentalOwnerFirstName,
-        this.rentalOwnerLastName,
-        this.rentalOwnername,
-        this.rentalOwnerCompanyName,
-        this.rentalOwnerPrimaryEmail,
-        this.rentalOwnerAlternateEmail,
-        this.rentalOwnerPhoneNumber,
-        this.rentalOwnerHomeNumber,
-        this.rentalOwnerBusinessNumber,
-        this.birthDate,
-        this.startDate,
-        this.endDate,
-        this.texpayerId,
-        this.textIdentityType,
-        this.streetAddress,
-        this.city,
-        this.state,
-        this.country,
-        this.postalCode,
-        this.processorList,
-        this.achProcessorId,
-        this.createdAt,
-        this.updatedAt,
-        this.isDelete,
-        this.iV,
-        this.processorLists
-      });
+      this.rentalownerId,
+      this.adminId,
+      this.rentalOwnerFirstName,
+      this.rentalOwnerLastName,
+      this.rentalOwnername,
+      this.rentalOwnerCompanyName,
+      this.rentalOwnerPrimaryEmail,
+      this.rentalOwnerAlternateEmail,
+      this.rentalOwnerPhoneNumber,
+      this.rentalOwnerHomeNumber,
+      this.rentalOwnerBusinessNumber,
+      this.birthDate,
+      this.startDate,
+      this.endDate,
+      this.texpayerId,
+      this.textIdentityType,
+      this.streetAddress,
+      this.city,
+      this.state,
+      this.country,
+      this.postalCode,
+      this.processorList,
+      this.achProcessorId,
+      this.createdAt,
+      this.updatedAt,
+      this.isDelete,
+      this.iV,
+      this.processorLists});
 
   RentalOwnerData.fromJson(Map<String, dynamic> json) {
-    sId = json['_id']??"";
-    rentalownerId = json['rentalowner_id']??"";
-    adminId = json['admin_id']??"";
-    rentalOwnerFirstName = json['rentalOwner_firstName']??"";
-    rentalOwnerLastName = json['rentalOwner_lastName']??"";
-    rentalOwnername = json['rentalOwner_name']??"";
-    rentalOwnerCompanyName = json['rentalOwner_companyName']??"";
-    rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail']??"";
-    rentalOwnerAlternateEmail = json['rentalOwner_alternateEmail']??"";
-    rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber']??"";
-    rentalOwnerHomeNumber = json['rentalOwner_homeNumber']??"";
-    rentalOwnerBusinessNumber = json['rentalOwner_businessNumber']??"";
-    birthDate = json['birth_date']??"";
-    startDate = json['start_date']??"";
-    endDate = json['end_date']??"";
-    texpayerId = json['texpayer_id']??"";
-    textIdentityType = json['text_identityType']??"";
-    streetAddress = json['street_address']??"";
-    city = json['city']??"";
-    state = json['state']??"";
-    country = json['country']??"";
-    postalCode = json['postal_code']??"";
-    achProcessorId = json['ach_processor_id']??"";
+    sId = json['_id'] ?? "";
+    rentalownerId = json['rentalowner_id'] ?? "";
+    adminId = json['admin_id'] ?? "";
+    rentalOwnerFirstName = json['rentalOwner_firstName'] ?? "";
+    rentalOwnerLastName = json['rentalOwner_lastName'] ?? "";
+    rentalOwnername = json['rentalOwner_name'] ?? "";
+    rentalOwnerCompanyName = json['rentalOwner_companyName'] ?? "";
+    rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail'] ?? "";
+    rentalOwnerAlternateEmail = json['rentalOwner_alternateEmail'] ?? "";
+    rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'] ?? "";
+    rentalOwnerHomeNumber = json['rentalOwner_homeNumber'] ?? "";
+    rentalOwnerBusinessNumber = json['rentalOwner_businessNumber'] ?? "";
+    birthDate = json['birth_date'] ?? "";
+    startDate = json['start_date'] ?? "";
+    endDate = json['end_date'] ?? "";
+    texpayerId = json['texpayer_id'] ?? "";
+    textIdentityType = json['text_identityType'] ?? "";
+    streetAddress = json['street_address'] ?? "";
+    city = json['city'] ?? "";
+    state = json['state'] ?? "";
+    country = json['country'] ?? "";
+    postalCode = json['postal_code'] ?? "";
+    achProcessorId = json['ach_processor_id'] ?? "";
     if (json['processor_list'] != null) {
       processorList = <ProcessorList>[];
       json['processor_list'].forEach((v) {
         processorList!.add(new ProcessorList.fromJson(v));
       });
     }
-
   }
 
   Map<String, dynamic> toJson() {
@@ -150,5 +148,3 @@ class ProcessorList {
     return data;
   }
 }
-
-

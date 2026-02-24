@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:csv/csv.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -1595,6 +1596,9 @@ class _FinancialTableState extends State<FinancialTable> {
     setState(() {});
   }
 
+  String? selectedTransactionType = 'All';
+  List<String> transactionTypeOptions = ['All', 'Payment', 'Charge'];
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1685,73 +1689,69 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
 
                       // Enter Charge button
-                      if (widget.status == 'Active')
-                        Expanded(
-                          child: Container(
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
+                      // if (widget.status == 'Active')
+                      Expanded(
+                        child: Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: const Color(0xFF8A95A8)),
+                          ),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
                             ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                            onPressed: () async {
+                              final value = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => enterCharge(
+                                    leaseId: widget.leaseId,
+                                  ),
                                 ),
-                                elevation: 0,
-                                backgroundColor: Colors.transparent,
-                              ),
-                              onPressed: () async {
-                                final value = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => enterCharge(
-                                      leaseId: widget.leaseId,
-                                    ),
-                                  ),
-                                );
-                                if (value == true) {
-                                  setState(() {
-                                    _leaseLedgerFuture = LeaseRepository()
-                                        .fetchLeaseLedger(
-                                            leaseId: widget.leaseId);
-                                  });
-                                }
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  SizedBox(
-                                    width: 1,
-                                  ),
-                                  Icon(
-                                    Icons.attach_money,
-                                    size: 18,
+                              );
+                              if (value == true) {
+                                setState(() {
+                                  _leaseLedgerFuture = LeaseRepository()
+                                      .fetchLeaseLedger(
+                                          leaseId: widget.leaseId);
+                                });
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                  width: 1,
+                                ),
+                                Icon(
+                                  Icons.attach_money,
+                                  size: 18,
+                                  color: blueColor,
+                                ),
+                                // const SizedBox(width: 10),
+                                Text(
+                                  ' Enter Charge',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width <= 360
+                                            ? 11
+                                            : 14,
                                     color: blueColor,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  // const SizedBox(width: 10),
-                                  Text(
-                                    ' Enter Charge',
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <=
-                                                  360
-                                              ? 11
-                                              : 14,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                      ),
                     ],
                   ),
 
@@ -1809,7 +1809,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       // ),
 
                       // Add Cards button
-                      Spacer(),
+
                       if (!isFreePlan &&
                           (widget.status == 'Active' ||
                               widget.status == 'Future'))
@@ -1818,6 +1818,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             height: MediaQuery.of(context).size.width < 500
                                 ? 45
                                 : 50,
+                            margin: const EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
@@ -1868,7 +1869,71 @@ class _FinancialTableState extends State<FinancialTable> {
                               ),
                             ),
                           ),
+                        )
+                      else
+                        Spacer(),
+
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: Material(
+                            elevation: 0,
+                            borderRadius: BorderRadius.circular(8),
+                            child: DropdownButton2<String>(
+                              value: selectedTransactionType,
+                              isExpanded: true,
+                              hint: Text(
+                                'Select',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: blueColor,
+                                ),
+                              ),
+                              items: transactionTypeOptions.map((String item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTransactionType = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                height: MediaQuery.of(context).size.width < 500
+                                    ? 45
+                                    : 50,
+                                width: 110,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: const Color(0xFF8A95A8)),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: const Color(0xFF8A95A8)),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
+                      ),
                     ],
                   ),
                 ],
@@ -1939,16 +2004,71 @@ class _FinancialTableState extends State<FinancialTable> {
                           searchvalue!.isNotEmpty &&
                           searchvalue != "All") {
                         print("Applying search filter: $searchvalue");
-                        data = data
-                            .where((lease) =>
-                                lease.type!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                lease.createdAt!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
-                            .toList();
+                        String searchLower = searchvalue!.toLowerCase();
+                        data = data.where((lease) {
+                          // Check Type
+                          bool typeMatch = (lease.type?.toLowerCase() ?? "")
+                              .contains(searchLower);
+
+                          // Check CreatedAt
+                          bool dateMatch =
+                              (lease.createdAt?.toLowerCase() ?? "")
+                                  .contains(searchLower);
+
+                          // Check Balance
+                          bool balanceMatch = (lease.balance?.toString() ?? "")
+                              .contains(searchLower);
+
+                          // Check Total Amount
+                          bool amountMatch =
+                              (lease.totalAmount?.toString() ?? "")
+                                  .contains(searchLower);
+
+                          // Check Tenant Name
+                          String tenantName = "";
+                          if (lease.tenantData != null) {
+                            tenantName =
+                                "${lease.tenantData['tenant_firstName'] ?? ''} ${lease.tenantData['tenant_lastName'] ?? ''}"
+                                    .toLowerCase();
+                          }
+                          bool tenantMatch = tenantName.contains(searchLower);
+
+                          // Check Entry details (Memo, Amount, Account)
+                          bool entryMatch = false;
+                          if (lease.entry != null) {
+                            for (var entry in lease.entry!) {
+                              if ((entry.memo?.toLowerCase() ?? "")
+                                      .contains(searchLower) ||
+                                  (entry.amount?.toString() ?? "")
+                                      .contains(searchLower) ||
+                                  (entry.account?.toLowerCase() ?? "")
+                                      .contains(searchLower)) {
+                                entryMatch = true;
+                                break;
+                              }
+                            }
+                          }
+
+                          return typeMatch ||
+                              dateMatch ||
+                              balanceMatch ||
+                              amountMatch ||
+                              tenantMatch ||
+                              entryMatch;
+                        }).toList();
                         print("Records after search filter: ${data.length}");
+                      }
+
+                      // Filter by Transaction Type
+                      if (selectedTransactionType != null &&
+                          selectedTransactionType != "All") {
+                        print(
+                            "Applying transaction type filter: $selectedTransactionType");
+                        data = data.where((lease) {
+                          return lease.type == selectedTransactionType;
+                        }).toList();
+                        print(
+                            "Records after transaction type filter: ${data.length}");
                       }
 
                       // Handle date filtering - show all data from fromDate onwards (inclusive)
@@ -2258,7 +2378,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 // generateRentersInsuranceCSV(snapshot.data!);
                                               },
                                               child:
-                                                  Text("Download as $option"),
+                                                  Text("Download as $option",style: TextStyle(fontSize: 14,color: blueColor),),
                                             );
                                           }).toList();
                                         },
@@ -2665,7 +2785,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            8.0),
+                                                            5.0),
                                                     child: Text(
                                                       dateProvider.formatCurrentDate(data
                                                                       .entry !=

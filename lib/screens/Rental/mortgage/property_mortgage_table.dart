@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import '../../../provider/dateProvider.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -243,7 +245,9 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const AddMortgageScreen(),
+        builder: (context) => AddMortgageScreen(
+          propertyId: widget.propertyId,
+        ),
       ),
     ).then((_) {
       // Refresh the mortgage list when returning from the form
@@ -396,6 +400,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
   }
 
   Widget _buildContent() {
+    final dateProvider = Provider.of<DateProvider>(context);
     final totalPages = (_filteredMortgages.length / itemsPerPage).ceil();
     final currentPageData = _filteredMortgages
         .skip(currentPage * itemsPerPage)
@@ -546,7 +551,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                     int index = entry.key;
                     bool isExpanded = expandedIndex == index;
                     Map<String, dynamic> mortgage = entry.value;
-
+print("mortgage call");
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
@@ -833,6 +838,13 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                                 _getDisplayValue(
                                                     mortgage[
                                                     'mortgage_no']),
+                                                'Start Date',
+                                                _getDisplayValue(dateProvider.formatCurrentDate(mortgage['start_date'])),
+                                              ),
+                                              _buildTableRow(
+                                                'End Date',
+                                                _getDisplayValue(dateProvider.formatCurrentDate(mortgage[
+                                                'end_date'])),
                                                 '',
                                                 _getDisplayValue(''),
                                               ),

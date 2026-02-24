@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 
 import '../../../../Model/Rent_collection_model.dart';
 import '../../../../repository/Rent_colllection_repository.dart';
@@ -1174,12 +1175,14 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("   Entity",
-                              style: TextStyle( color: blueColor,
+                          ? Text("   Entity",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("   Entity",
-                              style: TextStyle( color: blueColor,
+                          : Text("   Entity",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -1228,10 +1231,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Text("Total Outstanding",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                   ],
@@ -1325,18 +1329,20 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text(" Address",
-                              style: TextStyle( color: blueColor,
+                          ? Text(" Address",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text(" Address",
-                              style: TextStyle( color: blueColor,
+                          : Text(" Address",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ?  Padding(
+                          ? Padding(
                               padding: EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
@@ -1344,7 +1350,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                 color: blueColor,
                               ),
                             )
-                          :  Padding(
+                          : Padding(
                               padding: EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
@@ -1379,10 +1385,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Text("        Entity",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                   ],
@@ -1414,21 +1421,22 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                     Text(" Balance",
-                        style: TextStyle( color: blueColor,
+                    Text(" Balance",
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     const SizedBox(width: 3),
                     ascending3
-                        ?  Padding(
+                        ? Padding(
                             padding: EdgeInsets.only(top: 10, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           )
-                        :  Padding(
+                        : Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
@@ -1525,822 +1533,849 @@ class _Rent_collectionState extends State<Rent_collection> {
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  // titleBar(
-                  //   title: 'Rent Collection Report',
-                  //   width: MediaQuery.of(context).size.width * .91,
-                  // ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Rent Collection Report",
-                      ),
-                    ),
-                  ),
-                  // if (MediaQuery.of(context).size.width > 500)
-                  //   const SizedBox(height: 16),
-                  // if (MediaQuery.of(context).size.width < 500)
-                  Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      // Always show filters
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              // Month Dropdown
-                              Container(
-                                width: 130,
-                                child: DropdownButtonHideUnderline(
-                                  child: Material(
-                                    elevation: 0,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Month',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      items: months.map((String month) {
-                                        return DropdownMenuItem<String>(
-                                          value: month,
-                                          child: Text(
-                                            month,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: selectedMonth.isNotEmpty
-                                          ? selectedMonth
-                                          : null,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedMonth = value!;
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: const Color(0xFF8A95A8),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        maxHeight: 250,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                        ),
-                                        offset: const Offset(0, 0),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(20),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Year Dropdown
-                              Container(
-                                width: 100,
-                                child: DropdownButtonHideUnderline(
-                                  child: Material(
-                                    elevation: 0,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        'Year',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      items: years.map((String year) {
-                                        return DropdownMenuItem<String>(
-                                          value: year,
-                                          child: Text(
-                                            year,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: selectedYear.isNotEmpty
-                                          ? selectedYear
-                                          : null,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedYear = value!;
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: const Color(0xFF8A95A8),
-                                          ),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        maxHeight: 250,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                        ),
-                                        offset: const Offset(0, 0),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(20),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Run Report Button
-                              Container(
-                                height: 45,
-                                width: 45,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: const Color.fromRGBO(
-                                          206, 212, 218, 1)),
-                                  borderRadius: BorderRadius.circular(0),
-                                  color: Colors.white,
-                                ),
-                                child: IconButton(
-                                  icon: const FaIcon(
-                                      FontAwesomeIcons.circlePlay,
-                                      size: 18),
-                                  onPressed: () {
-                                    setState(() {
-                                      isLoading = true;
-                                      int monthNumber =
-                                          months.indexOf(selectedMonth) + 1;
-                                      _futureRentcollection =
-                                          fetchDelinquentTenantsData(
-                                        monthNumber.toString(),
-                                        selectedYear,
-                                      );
-                                    });
-                                    print("Run Report");
-                                  },
-                                  tooltip: "Run Report",
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Download Button
-                              Container(
-                                height: 45,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: const Color.fromRGBO(
-                                          206, 212, 218, 1)),
-                                  borderRadius: BorderRadius.circular(0),
-                                  color: Colors.white,
-                                ),
-                                child: FutureBuilder<Rentcollection_model>(
-                                  future: _futureRentcollection,
-                                  builder: (context, snapshot) {
-                                    return PopupMenuButton<String>(
-                                      offset: const Offset(0, 45),
-                                      onSelected: handleDownload,
-                                      icon: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          FaIcon(FontAwesomeIcons.download,
-                                              size: 16),
-                                          SizedBox(width: 2),
-                                          Icon(Icons.arrow_drop_down, size: 16),
-                                        ],
-                                      ),
-                                      tooltip: "Download",
-                                      itemBuilder: (BuildContext context) {
-                                        if (!snapshot.hasData ||
-                                            snapshot.data!.summary!.isEmpty) {
-                                          return <PopupMenuEntry<String>>[];
-                                        }
-                                        return downloadOptions
-                                            .map((String option) {
-                                          return PopupMenuItem<String>(
-                                            value: option,
-                                            onTap: () async {
-                                              if (option == "PDF")
-                                                generateDelinquentTenantsPdf(
-                                                    [snapshot.data!],
-                                                    dateProvider);
-                                              if (option == "Excel")
-                                                generateDelinquentTenantsExcel(
-                                                    [snapshot.data!],
-                                                    dateProvider);
-                                              if (option == "CSV")
-                                                generateDelinquentTenantsCSV(
-                                                    [snapshot.data!],
-                                                    dateProvider);
-                                            },
-                                            child: Text("Download as $option"),
-                                          );
-                                        }).toList();
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Content based on state
-                      FutureBuilder<Rentcollection_model>(
-                        future: _futureRentcollection,
-                        builder: (context, snapshot) {
-                          if (isLoading) {
-                            return Padding(
+          ? Column(
+              children: [
+                ReportHeader(title: "Rent Collection Report"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // if (MediaQuery.of(context).size.width > 500)
+                        //   const SizedBox(height: 16),
+                        // if (MediaQuery.of(context).size.width < 500)
+                        Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            // Always show filters
+                            Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: ColabShimmerLoadingWidget(),
-                            );
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.summary!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
                                   children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
+                                    // Month Dropdown
+                                    Container(
+                                      width: 130,
+                                      child: DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 0,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: const Text(
+                                              'Month',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            items: months.map((String month) {
+                                              return DropdownMenuItem<String>(
+                                                value: month,
+                                                child: Text(
+                                                  month,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: selectedMonth.isNotEmpty
+                                                ? selectedMonth
+                                                : null,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selectedMonth = value!;
+                                              });
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 45,
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                              offset: const Offset(0, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(20),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
+                                    const SizedBox(width: 8),
+                                    // Year Dropdown
+                                    Container(
+                                      width: 100,
+                                      child: DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 0,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: const Text(
+                                              'Year',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            items: years.map((String year) {
+                                              return DropdownMenuItem<String>(
+                                                value: year,
+                                                child: Text(
+                                                  year,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: selectedYear.isNotEmpty
+                                                ? selectedYear
+                                                : null,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selectedYear = value!;
+                                              });
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 45,
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                              offset: const Offset(0, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(20),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      "Try selecting a different month or year",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14),
+                                    const SizedBox(width: 8),
+                                    // Run Report Button
+                                    Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color.fromRGBO(
+                                                206, 212, 218, 1)),
+                                        borderRadius: BorderRadius.circular(0),
+                                        color: Colors.white,
+                                      ),
+                                      child: IconButton(
+                                        icon: const FaIcon(
+                                            FontAwesomeIcons.circlePlay,
+                                            size: 18),
+                                        onPressed: () {
+                                          setState(() {
+                                            isLoading = true;
+                                            int monthNumber =
+                                                months.indexOf(selectedMonth) +
+                                                    1;
+                                            _futureRentcollection =
+                                                fetchDelinquentTenantsData(
+                                              monthNumber.toString(),
+                                              selectedYear,
+                                            );
+                                          });
+                                          print("Run Report");
+                                        },
+                                        tooltip: "Run Report",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // Download Button
+                                    Container(
+                                      height: 45,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color.fromRGBO(
+                                                206, 212, 218, 1)),
+                                        borderRadius: BorderRadius.circular(0),
+                                        color: Colors.white,
+                                      ),
+                                      child:
+                                          FutureBuilder<Rentcollection_model>(
+                                        future: _futureRentcollection,
+                                        builder: (context, snapshot) {
+                                          return PopupMenuButton<String>(
+                                            offset: const Offset(0, 45),
+                                            onSelected: handleDownload,
+                                            icon: const Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                FaIcon(
+                                                    FontAwesomeIcons.download,
+                                                    size: 16),
+                                                SizedBox(width: 2),
+                                                Icon(Icons.arrow_drop_down,
+                                                    size: 16),
+                                              ],
+                                            ),
+                                            tooltip: "Download",
+                                            itemBuilder:
+                                                (BuildContext context) {
+                                              if (!snapshot.hasData ||
+                                                  snapshot
+                                                      .data!.summary!.isEmpty) {
+                                                return <PopupMenuEntry<
+                                                    String>>[];
+                                              }
+                                              return downloadOptions
+                                                  .map((String option) {
+                                                return PopupMenuItem<String>(
+                                                  value: option,
+                                                  onTap: () async {
+                                                    if (option == "PDF")
+                                                      generateDelinquentTenantsPdf(
+                                                          [snapshot.data!],
+                                                          dateProvider);
+                                                    if (option == "Excel")
+                                                      generateDelinquentTenantsExcel(
+                                                          [snapshot.data!],
+                                                          dateProvider);
+                                                    if (option == "CSV")
+                                                      generateDelinquentTenantsCSV(
+                                                          [snapshot.data!],
+                                                          dateProvider);
+                                                  },
+                                                  child: Text(
+                                                      "Download as $option"),
+                                                );
+                                              }).toList();
+                                            },
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            );
-                          }
-
-                          var data = snapshot.data!.summary!;
-                          var dataall = snapshot.data!;
-                          // final currentPageData = data;
-                          var dataa = snapshot.data!.leases!;
-                          var totaldata = snapshot.data;
-                          var delinquentdata = snapshot.data?.deadBeats;
-
-                          return SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // // Search and Filter Controls
-                                // if (_selectedIndex ==
-                                //     1) // Show filters only for Details tab
-                                //   Padding(
-                                //     padding: const EdgeInsets.symmetric(
-                                //         horizontal: 16, vertical: 8),
-                                //     child: Column(
-                                //       children: [
-                                //         // Search Bar
-                                //         Container(
-                                //           height: 45,
-                                //           child: TextField(
-                                //             onChanged: (value) {
-                                //               setState(() {
-                                //                 searchvalue = value;
-                                //               });
-                                //             },
-                                //             decoration: InputDecoration(
-                                //               hintText:
-                                //                   'Search by address or company...',
-                                //               prefixIcon:
-                                //                   const Icon(Icons.search),
-                                //               border: OutlineInputBorder(
-                                //                 borderRadius:
-                                //                     BorderRadius.circular(8),
-                                //               ),
-                                //               contentPadding:
-                                //                   const EdgeInsets.symmetric(
-                                //                       horizontal: 16,
-                                //                       vertical: 12),
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         const SizedBox(height: 8),
-                                //         // Filter Row - Responsive Layout
-                                //         LayoutBuilder(
-                                //           builder: (context, constraints) {
-                                //             if (constraints.maxWidth < 600) {
-                                //               // Stack filters vertically on small screens
-                                //               return Column(
-                                //                 children: [
-                                //                   DropdownButtonHideUnderline(
-                                //                     child: Material(
-                                //                       elevation: 3,
-                                //                       borderRadius:
-                                //                           BorderRadius.circular(
-                                //                               8),
-                                //                       child: DropdownButton2<
-                                //                           String>(
-                                //                         isExpanded: true,
-                                //                         hint: const Row(
-                                //                           children: [
-                                //                             SizedBox(
-                                //                               width: 4,
-                                //                             ),
-                                //                             Expanded(
-                                //                               child: Text(
-                                //                                 'Rental Owner',
-                                //                                 style:
-                                //                                     TextStyle(
-                                //                                   fontSize: 14,
-                                //                                   color: Color(
-                                //                                       0xFF8A95A8),
-                                //                                 ),
-                                //                                 overflow:
-                                //                                     TextOverflow
-                                //                                         .ellipsis,
-                                //                               ),
-                                //                             ),
-                                //                           ],
-                                //                         ),
-                                //                         items: rentalOwners
-                                //                             .map((String
-                                //                                     item) =>
-                                //                                 DropdownMenuItem<
-                                //                                     String>(
-                                //                                   value: item,
-                                //                                   child: Text(
-                                //                                     item,
-                                //                                     style:
-                                //                                         const TextStyle(
-                                //                                       fontSize:
-                                //                                           14,
-                                //                                       fontWeight:
-                                //                                           FontWeight
-                                //                                               .bold,
-                                //                                       color: Colors
-                                //                                           .black,
-                                //                                     ),
-                                //                                     overflow:
-                                //                                         TextOverflow
-                                //                                             .ellipsis,
-                                //                                   ),
-                                //                                 ))
-                                //                             .toList(),
-                                //                         value:
-                                //                             selectedRentalOwner,
-                                //                         onChanged: (value) {
-                                //                           setState(() {
-                                //                             selectedRentalOwner =
-                                //                                 value;
-                                //                           });
-                                //                         },
-                                //                         buttonStyleData:
-                                //                             ButtonStyleData(
-                                //                           height: 45,
-                                //                           width:
-                                //                               double.infinity,
-                                //                           padding:
-                                //                               const EdgeInsets
-                                //                                   .only(
-                                //                                   left: 14,
-                                //                                   right: 14),
-                                //                           decoration:
-                                //                               BoxDecoration(
-                                //                             borderRadius:
-                                //                                 BorderRadius
-                                //                                     .circular(
-                                //                                         8),
-                                //                             border: Border.all(
-                                //                               color: const Color(
-                                //                                   0xFF8A95A8),
-                                //                             ),
-                                //                             color: Colors.white,
-                                //                           ),
-                                //                           elevation: 0,
-                                //                         ),
-                                //                         dropdownStyleData:
-                                //                             DropdownStyleData(
-                                //                           maxHeight: 250,
-                                //                           decoration:
-                                //                               BoxDecoration(
-                                //                             borderRadius:
-                                //                                 BorderRadius
-                                //                                     .circular(
-                                //                                         14),
-                                //                           ),
-                                //                           offset: const Offset(
-                                //                               -20, 0),
-                                //                           scrollbarTheme:
-                                //                               ScrollbarThemeData(
-                                //                             radius: const Radius
-                                //                                 .circular(40),
-                                //                             thickness:
-                                //                                 MaterialStateProperty
-                                //                                     .all(6),
-                                //                             thumbVisibility:
-                                //                                 MaterialStateProperty
-                                //                                     .all(true),
-                                //                           ),
-                                //                         ),
-                                //                         menuItemStyleData:
-                                //                             const MenuItemStyleData(
-                                //                           height: 40,
-                                //                           padding:
-                                //                               EdgeInsets.only(
-                                //                                   left: 14,
-                                //                                   right: 14),
-                                //                         ),
-                                //                       ),
-                                //                     ),
-                                //                   ),
-                                //                   const SizedBox(height: 10),
-                                //                   DropdownButtonFormField<
-                                //                       String>(
-                                //                     value:
-                                //                         selectedBalanceFilter,
-                                //                     decoration: InputDecoration(
-                                //                       labelText:
-                                //                           'Balance Filter',
-                                //                       border:
-                                //                           OutlineInputBorder(
-                                //                         borderRadius:
-                                //                             BorderRadius
-                                //                                 .circular(8),
-                                //                       ),
-                                //                       contentPadding:
-                                //                           const EdgeInsets
-                                //                               .symmetric(
-                                //                               horizontal: 12,
-                                //                               vertical: 8),
-                                //                     ),
-                                //                     items: balanceFilters
-                                //                         .map((filter) {
-                                //                       return DropdownMenuItem(
-                                //                         value: filter,
-                                //                         child: Text(
-                                //                           filter,
-                                //                           overflow: TextOverflow
-                                //                               .ellipsis,
-                                //                         ),
-                                //                       );
-                                //                     }).toList(),
-                                //                     onChanged: (value) {
-                                //                       setState(() {
-                                //                         selectedBalanceFilter =
-                                //                             value;
-                                //                       });
-                                //                     },
-                                //                   ),
-                                //                 ],
-                                //               );
-                                //             } else {
-                                //               // Keep horizontal layout for larger screens
-                                //               return Row(
-                                //                 children: [
-                                //                   Expanded(
-                                //                     child:
-                                //                         DropdownButtonHideUnderline(
-                                //                       child: Material(
-                                //                         elevation: 3,
-                                //                         borderRadius:
-                                //                             BorderRadius
-                                //                                 .circular(8),
-                                //                         child: DropdownButton2<
-                                //                             String>(
-                                //                           isExpanded: true,
-                                //                           hint: const Row(
-                                //                             children: [
-                                //                               SizedBox(
-                                //                                 width: 4,
-                                //                               ),
-                                //                               Expanded(
-                                //                                 child: Text(
-                                //                                   'Rental Owner',
-                                //                                   style:
-                                //                                       TextStyle(
-                                //                                     fontSize:
-                                //                                         14,
-                                //                                     color: Color(
-                                //                                         0xFF8A95A8),
-                                //                                   ),
-                                //                                   overflow:
-                                //                                       TextOverflow
-                                //                                           .ellipsis,
-                                //                                 ),
-                                //                               ),
-                                //                             ],
-                                //                           ),
-                                //                           items: rentalOwners
-                                //                               .map((String
-                                //                                       item) =>
-                                //                                   DropdownMenuItem<
-                                //                                       String>(
-                                //                                     value: item,
-                                //                                     child: Text(
-                                //                                       item,
-                                //                                       style:
-                                //                                           const TextStyle(
-                                //                                         fontSize:
-                                //                                             14,
-                                //                                         fontWeight:
-                                //                                             FontWeight.bold,
-                                //                                         color: Colors
-                                //                                             .black,
-                                //                                       ),
-                                //                                       overflow:
-                                //                                           TextOverflow
-                                //                                               .ellipsis,
-                                //                                     ),
-                                //                                   ))
-                                //                               .toList(),
-                                //                           value:
-                                //                               selectedRentalOwner,
-                                //                           onChanged: (value) {
-                                //                             setState(() {
-                                //                               selectedRentalOwner =
-                                //                                   value;
-                                //                             });
-                                //                           },
-                                //                           buttonStyleData:
-                                //                               ButtonStyleData(
-                                //                             height: 45,
-                                //                             width:
-                                //                                 double.infinity,
-                                //                             padding:
-                                //                                 const EdgeInsets
-                                //                                     .only(
-                                //                                     left: 14,
-                                //                                     right: 14),
-                                //                             decoration:
-                                //                                 BoxDecoration(
-                                //                               borderRadius:
-                                //                                   BorderRadius
-                                //                                       .circular(
-                                //                                           8),
-                                //                               border:
-                                //                                   Border.all(
-                                //                                 color: const Color(
-                                //                                     0xFF8A95A8),
-                                //                               ),
-                                //                               color:
-                                //                                   Colors.white,
-                                //                             ),
-                                //                             elevation: 0,
-                                //                           ),
-                                //                           dropdownStyleData:
-                                //                               DropdownStyleData(
-                                //                             maxHeight: 250,
-                                //                             decoration:
-                                //                                 BoxDecoration(
-                                //                               borderRadius:
-                                //                                   BorderRadius
-                                //                                       .circular(
-                                //                                           14),
-                                //                             ),
-                                //                             offset:
-                                //                                 const Offset(
-                                //                                     -20, 0),
-                                //                             scrollbarTheme:
-                                //                                 ScrollbarThemeData(
-                                //                               radius:
-                                //                                   const Radius
-                                //                                       .circular(
-                                //                                       40),
-                                //                               thickness:
-                                //                                   MaterialStateProperty
-                                //                                       .all(6),
-                                //                               thumbVisibility:
-                                //                                   MaterialStateProperty
-                                //                                       .all(
-                                //                                           true),
-                                //                             ),
-                                //                           ),
-                                //                           menuItemStyleData:
-                                //                               const MenuItemStyleData(
-                                //                             height: 40,
-                                //                             padding:
-                                //                                 EdgeInsets.only(
-                                //                                     left: 14,
-                                //                                     right: 14),
-                                //                           ),
-                                //                         ),
-                                //                       ),
-                                //                     ),
-                                //                   ),
-                                //                   const SizedBox(width: 10),
-                                //                   Expanded(
-                                //                     child:
-                                //                         DropdownButtonFormField<
-                                //                             String>(
-                                //                       value:
-                                //                           selectedBalanceFilter,
-                                //                       decoration:
-                                //                           InputDecoration(
-                                //                         labelText:
-                                //                             'Balance Filter',
-                                //                         border:
-                                //                             OutlineInputBorder(
-                                //                           borderRadius:
-                                //                               BorderRadius
-                                //                                   .circular(8),
-                                //                         ),
-                                //                         contentPadding:
-                                //                             const EdgeInsets
-                                //                                 .symmetric(
-                                //                                 horizontal: 12,
-                                //                                 vertical: 8),
-                                //                       ),
-                                //                       items: balanceFilters
-                                //                           .map((filter) {
-                                //                         return DropdownMenuItem(
-                                //                           value: filter,
-                                //                           child: Text(
-                                //                             filter,
-                                //                             overflow:
-                                //                                 TextOverflow
-                                //                                     .ellipsis,
-                                //                           ),
-                                //                         );
-                                //                       }).toList(),
-                                //                       onChanged: (value) {
-                                //                         setState(() {
-                                //                           selectedBalanceFilter =
-                                //                               value;
-                                //                         });
-                                //                       },
-                                //                     ),
-                                //                   ),
-                                //                 ],
-                                //               );
-                                //             }
-                                //           },
-                                //         ),
-                                //         const SizedBox(height: 8),
-                                //         // Clear Filters Button
-                                //         Row(
-                                //           children: [
-                                //             const Spacer(),
-                                //             TextButton.icon(
-                                //               onPressed: () {
-                                //                 setState(() {
-                                //                   searchvalue = '';
-                                //                   selectedRentalOwner = 'All';
-                                //                   selectedBalanceFilter = 'All';
-                                //                   currentPage = 0;
-                                //                 });
-                                //               },
-                                //               icon: const Icon(Icons.clear,
-                                //                   size: 16),
-                                //               label:
-                                //                   const Text('Clear Filters'),
-                                //               style: TextButton.styleFrom(
-                                //                 foregroundColor:
-                                //                     Colors.grey[600],
-                                //               ),
-                                //             ),
-                                //           ],
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // Tab Row
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFE0E0E0),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        _buildTabButton("Summary", 0),
-                                        _buildTabButton("Details", 1),
-                                        _buildTabButton(
-                                            "   Delinquent\n       Lease", 2),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                // Conditional Screens
-                                if (_selectedIndex == 0)
-                                  SummeryScreen(data, totaldata!),
-                                if (_selectedIndex == 1)
-                                  DetailScreen(dataa, dateProvider),
-                                if (_selectedIndex == 2)
-                                  DelinquentLease(delinquentdata!, totaldata!,
-                                      dateProvider),
-                              ],
                             ),
-                          );
-                        },
-                      ),
-                    ],
+                            const SizedBox(height: 10),
+                            // Content based on state
+                            FutureBuilder<Rentcollection_model>(
+                              future: _futureRentcollection,
+                              builder: (context, snapshot) {
+                                if (isLoading) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: ColabShimmerLoadingWidget(),
+                                  );
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.summary!.isEmpty) {
+                                  return Container(
+                                    height:
+                                        MediaQuery.of(context).size.height * .5,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/images/no_data.jpg",
+                                            height: 200,
+                                            width: 200,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            "No Data Available",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: blueColor,
+                                                fontSize: 16),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                            "Try selecting a different month or year",
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                var data = snapshot.data!.summary!;
+                                var dataall = snapshot.data!;
+                                // final currentPageData = data;
+                                var dataa = snapshot.data!.leases!;
+                                var totaldata = snapshot.data;
+                                var delinquentdata = snapshot.data?.deadBeats;
+
+                                return SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      // // Search and Filter Controls
+                                      // if (_selectedIndex ==
+                                      //     1) // Show filters only for Details tab
+                                      //   Padding(
+                                      //     padding: const EdgeInsets.symmetric(
+                                      //         horizontal: 16, vertical: 8),
+                                      //     child: Column(
+                                      //       children: [
+                                      //         // Search Bar
+                                      //         Container(
+                                      //           height: 45,
+                                      //           child: TextField(
+                                      //             onChanged: (value) {
+                                      //               setState(() {
+                                      //                 searchvalue = value;
+                                      //               });
+                                      //             },
+                                      //             decoration: InputDecoration(
+                                      //               hintText:
+                                      //                   'Search by address or company...',
+                                      //               prefixIcon:
+                                      //                   const Icon(Icons.search),
+                                      //               border: OutlineInputBorder(
+                                      //                 borderRadius:
+                                      //                     BorderRadius.circular(8),
+                                      //               ),
+                                      //               contentPadding:
+                                      //                   const EdgeInsets.symmetric(
+                                      //                       horizontal: 16,
+                                      //                       vertical: 12),
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //         const SizedBox(height: 8),
+                                      //         // Filter Row - Responsive Layout
+                                      //         LayoutBuilder(
+                                      //           builder: (context, constraints) {
+                                      //             if (constraints.maxWidth < 600) {
+                                      //               // Stack filters vertically on small screens
+                                      //               return Column(
+                                      //                 children: [
+                                      //                   DropdownButtonHideUnderline(
+                                      //                     child: Material(
+                                      //                       elevation: 3,
+                                      //                       borderRadius:
+                                      //                           BorderRadius.circular(
+                                      //                               8),
+                                      //                       child: DropdownButton2<
+                                      //                           String>(
+                                      //                         isExpanded: true,
+                                      //                         hint: const Row(
+                                      //                           children: [
+                                      //                             SizedBox(
+                                      //                               width: 4,
+                                      //                             ),
+                                      //                             Expanded(
+                                      //                               child: Text(
+                                      //                                 'Rental Owner',
+                                      //                                 style:
+                                      //                                     TextStyle(
+                                      //                                   fontSize: 14,
+                                      //                                   color: Color(
+                                      //                                       0xFF8A95A8),
+                                      //                                 ),
+                                      //                                 overflow:
+                                      //                                     TextOverflow
+                                      //                                         .ellipsis,
+                                      //                               ),
+                                      //                             ),
+                                      //                           ],
+                                      //                         ),
+                                      //                         items: rentalOwners
+                                      //                             .map((String
+                                      //                                     item) =>
+                                      //                                 DropdownMenuItem<
+                                      //                                     String>(
+                                      //                                   value: item,
+                                      //                                   child: Text(
+                                      //                                     item,
+                                      //                                     style:
+                                      //                                         const TextStyle(
+                                      //                                       fontSize:
+                                      //                                           14,
+                                      //                                       fontWeight:
+                                      //                                           FontWeight
+                                      //                                               .bold,
+                                      //                                       color: Colors
+                                      //                                           .black,
+                                      //                                     ),
+                                      //                                     overflow:
+                                      //                                         TextOverflow
+                                      //                                             .ellipsis,
+                                      //                                   ),
+                                      //                                 ))
+                                      //                             .toList(),
+                                      //                         value:
+                                      //                             selectedRentalOwner,
+                                      //                         onChanged: (value) {
+                                      //                           setState(() {
+                                      //                             selectedRentalOwner =
+                                      //                                 value;
+                                      //                           });
+                                      //                         },
+                                      //                         buttonStyleData:
+                                      //                             ButtonStyleData(
+                                      //                           height: 45,
+                                      //                           width:
+                                      //                               double.infinity,
+                                      //                           padding:
+                                      //                               const EdgeInsets
+                                      //                                   .only(
+                                      //                                   left: 14,
+                                      //                                   right: 14),
+                                      //                           decoration:
+                                      //                               BoxDecoration(
+                                      //                             borderRadius:
+                                      //                                 BorderRadius
+                                      //                                     .circular(
+                                      //                                         8),
+                                      //                             border: Border.all(
+                                      //                               color: const Color(
+                                      //                                   0xFF8A95A8),
+                                      //                             ),
+                                      //                             color: Colors.white,
+                                      //                           ),
+                                      //                           elevation: 0,
+                                      //                         ),
+                                      //                         dropdownStyleData:
+                                      //                             DropdownStyleData(
+                                      //                           maxHeight: 250,
+                                      //                           decoration:
+                                      //                               BoxDecoration(
+                                      //                             borderRadius:
+                                      //                                 BorderRadius
+                                      //                                     .circular(
+                                      //                                         14),
+                                      //                           ),
+                                      //                           offset: const Offset(
+                                      //                               -20, 0),
+                                      //                           scrollbarTheme:
+                                      //                               ScrollbarThemeData(
+                                      //                             radius: const Radius
+                                      //                                 .circular(40),
+                                      //                             thickness:
+                                      //                                 MaterialStateProperty
+                                      //                                     .all(6),
+                                      //                             thumbVisibility:
+                                      //                                 MaterialStateProperty
+                                      //                                     .all(true),
+                                      //                           ),
+                                      //                         ),
+                                      //                         menuItemStyleData:
+                                      //                             const MenuItemStyleData(
+                                      //                           height: 40,
+                                      //                           padding:
+                                      //                               EdgeInsets.only(
+                                      //                                   left: 14,
+                                      //                                   right: 14),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   ),
+                                      //                   const SizedBox(height: 10),
+                                      //                   DropdownButtonFormField<
+                                      //                       String>(
+                                      //                     value:
+                                      //                         selectedBalanceFilter,
+                                      //                     decoration: InputDecoration(
+                                      //                       labelText:
+                                      //                           'Balance Filter',
+                                      //                       border:
+                                      //                           OutlineInputBorder(
+                                      //                         borderRadius:
+                                      //                             BorderRadius
+                                      //                                 .circular(8),
+                                      //                       ),
+                                      //                       contentPadding:
+                                      //                           const EdgeInsets
+                                      //                               .symmetric(
+                                      //                               horizontal: 12,
+                                      //                               vertical: 8),
+                                      //                     ),
+                                      //                     items: balanceFilters
+                                      //                         .map((filter) {
+                                      //                       return DropdownMenuItem(
+                                      //                         value: filter,
+                                      //                         child: Text(
+                                      //                           filter,
+                                      //                           overflow: TextOverflow
+                                      //                               .ellipsis,
+                                      //                         ),
+                                      //                       );
+                                      //                     }).toList(),
+                                      //                     onChanged: (value) {
+                                      //                       setState(() {
+                                      //                         selectedBalanceFilter =
+                                      //                             value;
+                                      //                       });
+                                      //                     },
+                                      //                   ),
+                                      //                 ],
+                                      //               );
+                                      //             } else {
+                                      //               // Keep horizontal layout for larger screens
+                                      //               return Row(
+                                      //                 children: [
+                                      //                   Expanded(
+                                      //                     child:
+                                      //                         DropdownButtonHideUnderline(
+                                      //                       child: Material(
+                                      //                         elevation: 3,
+                                      //                         borderRadius:
+                                      //                             BorderRadius
+                                      //                                 .circular(8),
+                                      //                         child: DropdownButton2<
+                                      //                             String>(
+                                      //                           isExpanded: true,
+                                      //                           hint: const Row(
+                                      //                             children: [
+                                      //                               SizedBox(
+                                      //                                 width: 4,
+                                      //                               ),
+                                      //                               Expanded(
+                                      //                                 child: Text(
+                                      //                                   'Rental Owner',
+                                      //                                   style:
+                                      //                                       TextStyle(
+                                      //                                     fontSize:
+                                      //                                         14,
+                                      //                                     color: Color(
+                                      //                                         0xFF8A95A8),
+                                      //                                   ),
+                                      //                                   overflow:
+                                      //                                       TextOverflow
+                                      //                                           .ellipsis,
+                                      //                                 ),
+                                      //                               ),
+                                      //                             ],
+                                      //                           ),
+                                      //                           items: rentalOwners
+                                      //                               .map((String
+                                      //                                       item) =>
+                                      //                                   DropdownMenuItem<
+                                      //                                       String>(
+                                      //                                     value: item,
+                                      //                                     child: Text(
+                                      //                                       item,
+                                      //                                       style:
+                                      //                                           const TextStyle(
+                                      //                                         fontSize:
+                                      //                                             14,
+                                      //                                         fontWeight:
+                                      //                                             FontWeight.bold,
+                                      //                                         color: Colors
+                                      //                                             .black,
+                                      //                                       ),
+                                      //                                       overflow:
+                                      //                                           TextOverflow
+                                      //                                               .ellipsis,
+                                      //                                     ),
+                                      //                                   ))
+                                      //                               .toList(),
+                                      //                           value:
+                                      //                               selectedRentalOwner,
+                                      //                           onChanged: (value) {
+                                      //                             setState(() {
+                                      //                               selectedRentalOwner =
+                                      //                                   value;
+                                      //                             });
+                                      //                           },
+                                      //                           buttonStyleData:
+                                      //                               ButtonStyleData(
+                                      //                             height: 45,
+                                      //                             width:
+                                      //                                 double.infinity,
+                                      //                             padding:
+                                      //                                 const EdgeInsets
+                                      //                                     .only(
+                                      //                                     left: 14,
+                                      //                                     right: 14),
+                                      //                             decoration:
+                                      //                                 BoxDecoration(
+                                      //                               borderRadius:
+                                      //                                   BorderRadius
+                                      //                                       .circular(
+                                      //                                           8),
+                                      //                               border:
+                                      //                                   Border.all(
+                                      //                                 color: const Color(
+                                      //                                     0xFF8A95A8),
+                                      //                               ),
+                                      //                               color:
+                                      //                                   Colors.white,
+                                      //                             ),
+                                      //                             elevation: 0,
+                                      //                           ),
+                                      //                           dropdownStyleData:
+                                      //                               DropdownStyleData(
+                                      //                             maxHeight: 250,
+                                      //                             decoration:
+                                      //                                 BoxDecoration(
+                                      //                               borderRadius:
+                                      //                                   BorderRadius
+                                      //                                       .circular(
+                                      //                                           14),
+                                      //                             ),
+                                      //                             offset:
+                                      //                                 const Offset(
+                                      //                                     -20, 0),
+                                      //                             scrollbarTheme:
+                                      //                                 ScrollbarThemeData(
+                                      //                               radius:
+                                      //                                   const Radius
+                                      //                                       .circular(
+                                      //                                       40),
+                                      //                               thickness:
+                                      //                                   MaterialStateProperty
+                                      //                                       .all(6),
+                                      //                               thumbVisibility:
+                                      //                                   MaterialStateProperty
+                                      //                                       .all(
+                                      //                                           true),
+                                      //                             ),
+                                      //                           ),
+                                      //                           menuItemStyleData:
+                                      //                               const MenuItemStyleData(
+                                      //                             height: 40,
+                                      //                             padding:
+                                      //                                 EdgeInsets.only(
+                                      //                                     left: 14,
+                                      //                                     right: 14),
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   ),
+                                      //                   const SizedBox(width: 10),
+                                      //                   Expanded(
+                                      //                     child:
+                                      //                         DropdownButtonFormField<
+                                      //                             String>(
+                                      //                       value:
+                                      //                           selectedBalanceFilter,
+                                      //                       decoration:
+                                      //                           InputDecoration(
+                                      //                         labelText:
+                                      //                             'Balance Filter',
+                                      //                         border:
+                                      //                             OutlineInputBorder(
+                                      //                           borderRadius:
+                                      //                               BorderRadius
+                                      //                                   .circular(8),
+                                      //                         ),
+                                      //                         contentPadding:
+                                      //                             const EdgeInsets
+                                      //                                 .symmetric(
+                                      //                                 horizontal: 12,
+                                      //                                 vertical: 8),
+                                      //                       ),
+                                      //                       items: balanceFilters
+                                      //                           .map((filter) {
+                                      //                         return DropdownMenuItem(
+                                      //                           value: filter,
+                                      //                           child: Text(
+                                      //                             filter,
+                                      //                             overflow:
+                                      //                                 TextOverflow
+                                      //                                     .ellipsis,
+                                      //                           ),
+                                      //                         );
+                                      //                       }).toList(),
+                                      //                       onChanged: (value) {
+                                      //                         setState(() {
+                                      //                           selectedBalanceFilter =
+                                      //                               value;
+                                      //                         });
+                                      //                       },
+                                      //                     ),
+                                      //                   ),
+                                      //                 ],
+                                      //               );
+                                      //             }
+                                      //           },
+                                      //         ),
+                                      //         const SizedBox(height: 8),
+                                      //         // Clear Filters Button
+                                      //         Row(
+                                      //           children: [
+                                      //             const Spacer(),
+                                      //             TextButton.icon(
+                                      //               onPressed: () {
+                                      //                 setState(() {
+                                      //                   searchvalue = '';
+                                      //                   selectedRentalOwner = 'All';
+                                      //                   selectedBalanceFilter = 'All';
+                                      //                   currentPage = 0;
+                                      //                 });
+                                      //               },
+                                      //               icon: const Icon(Icons.clear,
+                                      //                   size: 16),
+                                      //               label:
+                                      //                   const Text('Clear Filters'),
+                                      //               style: TextButton.styleFrom(
+                                      //                 foregroundColor:
+                                      //                     Colors.grey[600],
+                                      //               ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // Tab Row
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE0E0E0),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              _buildTabButton("Summary", 0),
+                                              _buildTabButton("Details", 1),
+                                              _buildTabButton(
+                                                  "   Delinquent\n       Lease",
+                                                  2),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      // Conditional Screens
+                                      if (_selectedIndex == 0)
+                                        SummeryScreen(data, totaldata!),
+                                      if (_selectedIndex == 1)
+                                        DetailScreen(dataa, dateProvider),
+                                      if (_selectedIndex == 2)
+                                        DelinquentLease(delinquentdata!,
+                                            totaldata!, dateProvider),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
+          : Column(
+              children: [
+                ReportHeader(title: "Rent Collection Report"),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/no_internet.json',
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.fill,
+                        ),
+                        const Text(
+                          'No Internet',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          'Check your internet connection',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }
@@ -2485,16 +2520,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 6),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
                             ? const Color(0xFFF4F8FF)
                             : Colors.white,
-                        border: Border.all(
-                            color: const Color(0xFFDBE0E5)),
-                        borderRadius:
-                        BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3003,16 +3035,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 6),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
                             ? const Color(0xFFF4F8FF)
                             : Colors.white,
-                        border: Border.all(
-                            color: const Color(0xFFDBE0E5)),
-                        borderRadius:
-                        BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3530,16 +3559,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                       var item = entry.value;
                       bool isRowExpanded = expandedRowIndex == rowIndex;
                       return Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 6),
+                        margin: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
                               ? const Color(0xFFF4F8FF)
                               : Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFDBE0E5)),
-                          borderRadius:
-                          BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: <Widget>[

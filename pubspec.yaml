@@ -44,7 +44,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_stepindicator: ^0.1.7
   device_preview:
-  flutter_launcher_icons: ^0.13.1
+
   email_validator: ^3.0.0
   http:
   fluttertoast: ^8.2.5
@@ -104,6 +104,7 @@ dependencies:
   flutter_cached_pdfview: ^0.4.3
   camera:
   pay: ^3.2.1
+  uuid: ^4.5.1
 
 
   # pdf:

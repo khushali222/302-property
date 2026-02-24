@@ -11,6 +11,7 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
@@ -22,6 +23,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -1269,21 +1271,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Daily Transaction Report",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Daily Transaction Report",
                   ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
@@ -2900,16 +2889,16 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
                   child: DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
-                        hint: Row(
-                          children: [
-                            const SizedBox(width: 4),
-                            Expanded(
+                        hint: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: Text(
                                 daterange ?? "Date Range",
                                 style: TextStyle(
@@ -2920,8 +2909,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
                         ),
                         items: [
                           DropdownMenuItem<String>(
@@ -3290,10 +3277,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           height: 42,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF8A95A8),
-                            ),
+                            borderRadius: BorderRadius.circular(5),
                             color: Colors.white,
                           ),
                           elevation: 0,

@@ -270,7 +270,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               //     color: blueColor,
               //   ),
               //   "Maintenance",
-              //   ["Vendor", "Work Order"],
+              //   ["Vendor", "Work Orders"],
               //   [
               //     FaIcon(
               //       FontAwesomeIcons.solidCircleUser,
@@ -282,7 +282,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               //     FaIcon(
               //       FontAwesomeIcons.bookBookmark,
               //       size: 20,
-              //       color: widget.currentpage == "Work Order"
+              //       color: widget.currentpage == "Work Orders"
               //           ? Colors.white
               //           : blueColor,
               //     ), // Icon for RentalOwner
@@ -290,18 +290,31 @@ class _CustomDrawerState extends State<CustomDrawer> {
               //   ],
               //   selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               // ),
-              // Work Order as direct item (Vendor moved to Settings)
+              // Work Orders as direct item (Vendor moved to Settings)
               buildListTile(
                 context,
                 FaIcon(
                   FontAwesomeIcons.bookBookmark,
                   size: 20,
-                  color: widget.currentpage == "Work Order"
+                  color: widget.currentpage == "Work Orders"
                       ? Colors.white
                       : blueColor,
                 ),
-                "Work Order",
-                widget.currentpage == "Work Order",
+                "Work Orders",
+                widget.currentpage == "Work Orders",
+              ),
+              // Bid Room as direct item
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.fileLines,
+                  size: 20,
+                  color: widget.currentpage == "Bid Room"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Bid Room",
+                widget.currentpage == "Bid Room",
               ),
               buildDropdownListTile(
                 context,

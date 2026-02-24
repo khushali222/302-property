@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
@@ -120,12 +121,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Property",
-                              style: TextStyle( color: blueColor,
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("Property",
-                              style: TextStyle( color: blueColor,
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -142,12 +145,14 @@ class _Recurring_Payments_Configuration_ReportState
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Lease End Date",
-                              style: TextStyle( color: blueColor,
+                          ? Text("Lease End Date",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("Lease End Date",
-                              style: TextStyle( color: blueColor,
+                          : Text("Lease End Date",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -190,25 +195,8 @@ class _Recurring_Payments_Configuration_ReportState
                     : SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 16),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 8.0),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width > 500
-                                            ? 12
-                                            : 0,
-                                    right:
-                                        MediaQuery.of(context).size.width > 500
-                                            ? 12
-                                            : 0),
-                                child: titleBar(
-                                  width: double.infinity,
-                                  title: "Recurring Payments Configuration",
-                                ),
-                              ),
+                            StaffReportHeader(
+                              title: "Recurring Payments Configuration",
                             ),
                             const SizedBox(height: 10),
                             Padding(
@@ -227,54 +215,47 @@ class _Recurring_Payments_Configuration_ReportState
                                     flex: 4,
                                     child: Row(
                                       children: [
-                                        Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            // height: 40,
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 45
-                                                : 50,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .5
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .4,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  // searchvalue = value;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                                contentPadding:
-                                                    EdgeInsets.all(11),
-                                              ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 45
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .5
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .4,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                // searchvalue = value;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
+                                              contentPadding:
+                                                  EdgeInsets.all(11),
                                             ),
                                           ),
                                         ),
@@ -414,8 +395,7 @@ class _Recurring_Payments_Configuration_ReportState
                                             : Colors.white,
                                         border: Border.all(
                                             color: const Color(0xFFDBE0E5)),
-                                        borderRadius:
-                                        BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         children: [

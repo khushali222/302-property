@@ -132,11 +132,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
     });
     checkInternet();
     futureRentalOwners = PropertiesRepository().fetchProperties().then((data) {
-      // Sort by createdAt in descending order first
+      // Sort by createdAt in ascending order first (oldest first)
       data.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(b.createdAt!)
-            .compareTo(DateTime.parse(a.createdAt!));
+        return DateTime.parse(a.createdAt!)
+            .compareTo(DateTime.parse(b.createdAt!));
       });
       // Then sort by property name in ascending order
       data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
@@ -426,11 +426,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
             '  [$i] ${data[i].rentalAddress} - is_available: ${data[i].is_available}');
       }
     } else {
-      // Default sorting by createdAt in descending order (newest first)
+      // Default sorting by createdAt in ascending order (oldest first)
       data.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(b.createdAt!)
-            .compareTo(DateTime.parse(a.createdAt!));
+        return DateTime.parse(a.createdAt!)
+            .compareTo(DateTime.parse(b.createdAt!));
       });
       // Then sort by property name in ascending order
       data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));

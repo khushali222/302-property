@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/rentrollreportrepo.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -26,6 +27,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -318,12 +320,14 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("   Unit",
-                              style: TextStyle( color: blueColor,
+                          ? Text("   Unit",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("   Unit",
-                              style: TextStyle( color: blueColor,
+                          : Text("   Unit",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
@@ -372,11 +376,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("Lease Start", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Lease Start",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -422,11 +428,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("Lease End", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Lease End",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -2230,21 +2238,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Rent Roll Report",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Rent Roll Report",
                   ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
@@ -2737,16 +2732,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   bool isRowExpanded = expandedRowIndex == rowIndex;
 
                   return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 6),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
                       color: rowIndex % 2 != 0
                           ? const Color(0xFFF4F8FF)
                           : Colors.white,
-                      border: Border.all(
-                          color: const Color(0xFFDBE0E5)),
-                      borderRadius:
-                      BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFDBE0E5)),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       children: <Widget>[

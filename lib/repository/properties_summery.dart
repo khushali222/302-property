@@ -417,11 +417,14 @@ class Properies_summery_Repo {
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      if (jsonResponse['data'] is List) {
-        return Rentals.fromJson(jsonResponse['data'][0]);
-      } else {
-        return Rentals.fromJson(jsonResponse['data']);
+      final data = jsonResponse['data'];
+      if (data is List && data.isNotEmpty) {
+        return Rentals.fromJson(data[0]);
       }
+      if (data is Map && data.containsKey('rental')) {
+        return Rentals.fromJson(data['rental']);
+      }
+      return Rentals.fromJson(data);
     } else {
       print('Failed to load rental details: ${response.body}');
       throw Exception('Failed to load rental details');

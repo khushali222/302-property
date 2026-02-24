@@ -27,9 +27,9 @@ class PropertyRevenueReportService {
       };
 
       // Build the URL with query parameters
-      Uri uri = Uri.parse(
-              '$Api_url/api/rentals/property_revenue_report/$adminId')
-          .replace(queryParameters: queryParams);
+      Uri uri =
+          Uri.parse('$Api_url/api/rentals/property_revenue_report/$adminId')
+              .replace(queryParameters: queryParams);
 
       print('API URL: $uri');
 
@@ -72,4 +72,3 @@ class PropertyRevenueReportService {
     }
   }
 }
-

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -17,6 +18,7 @@ import '../../../repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -252,7 +254,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(4.0),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
@@ -908,21 +910,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Open Work Order",
-                      ),
-                    ),
+                  StaffReportHeader(
+                    title: "Open Work Order",
                   ),
                   // Filter Section
                   Padding(
@@ -938,28 +927,27 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: DropdownButtonHideUnderline(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  height: 42,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Colors.grey)),
+                                  child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      hint: Row(
-                                        children: [
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              daterange ?? "Date Range",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: daterange == null
-                                                    ? const Color(0xFF8A95A8)
-                                                    : Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
+                                      hint: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4),
+                                        child: Text(
+                                          daterange ?? "Date Range",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: daterange == null
+                                                ? const Color(0xFF8A95A8)
+                                                : Colors.black,
                                           ),
-                                        ],
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                       items: [
                                         DropdownMenuItem<String>(
@@ -1332,10 +1320,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: const Color(0xFF8A95A8),
-                                          ),
+                                              BorderRadius.circular(5),
                                           color: Colors.white,
                                         ),
                                         elevation: 0,
@@ -1378,9 +1363,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               Expanded(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
-                                      color: Color(0xFF8A95A8),
+                                      color: Colors.grey,
                                       width: 1,
                                     ),
                                   ),
@@ -1423,9 +1408,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               Expanded(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
-                                      color: Color(0xFF8A95A8),
+                                      color: Colors.grey,
                                       width: 1,
                                     ),
                                   ),
@@ -1474,9 +1459,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: Colors.grey),
+                                  ),
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
@@ -1525,9 +1512,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(0xFF8A95A8)),
+                                              BorderRadius.circular(5),
                                           color: Colors.white,
                                         ),
                                         elevation: 0,

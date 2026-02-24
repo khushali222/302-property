@@ -85,11 +85,22 @@ class _TabBarExampleState extends State<TabBarExample> {
   String selectedAccountId = "";
   String selectedAccountName = "";
   List<Setting4> accounts = [];
+  // Original values for Late Fee Charge change tracking
+  String _originalDuration = "";
+  String _originalLateFee = "";
+  String _originalGraceBalance = "";
+  String _originalCalculationType = "fixed";
+  String _originalDescription = "";
+  String _originalSelectedAccountName = "";
+  // Original values for Mail Service change tracking
+  String _originalReplyToEmail = "";
+  String _originalDurationMail = "";
+  bool _originalRentDueReminderEmail = false;
   bool isLoadingAccounts = false;
   bool mailupdate = false;
-  bool issurge = true;
+  bool issurge = false;
   bool ismail = false;
-  bool isaccounts = false;
+  bool isaccounts = true;
   bool islatefee = false;
   bool isLoading = false;
   bool isloading = false;
@@ -119,6 +130,21 @@ class _TabBarExampleState extends State<TabBarExample> {
   allcategories_model? _selectedDropdownCategory;
   bool _isLoadingCategories = false;
 
+  // Workorder notification settings state variables
+  bool createAdmin = false;
+  bool createAssignee = false;
+  bool createTenant = false;
+  bool updateAdmin = false;
+  bool updateAssignee = false;
+  bool updateTenant = false;
+  bool completeAdmin = false;
+  bool completeAssignee = false;
+  bool completeTenant = false;
+  bool isLoadingNotifications = false; // For fetching/loading data
+  bool isSavingNotifications = false; // For saving data
+  bool _hasLoadedNotifications =
+      false; // Track if notifications have been loaded
+
   @override
   void initState() {
     // TODO: implement initState
@@ -144,6 +170,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     _loadVendor();
     _loadStaff();
     fetchWorkData();
+    // fetchWorkOrderNotificationSettings(); // Removed - will be called when workorder tab is clicked
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       dateProvider.loadDateFormat();
@@ -359,11 +386,56 @@ class _TabBarExampleState extends State<TabBarExample> {
           selectedAccountName = latefee.chargeAccount.isNotEmpty
               ? latefee.chargeAccount
               : "Late Fee Income";
+
+          // Store original values for change tracking
+          _originalDuration = latefee.duration.toString();
+          _originalLateFee = latefee.late_fee;
+          _originalGraceBalance = latefee.graceBalance.toString();
+          _originalCalculationType = latefee.calculationType;
+          _originalDescription = latefee.description ?? "";
+          _originalSelectedAccountName = latefee.chargeAccount.isNotEmpty
+              ? latefee.chargeAccount
+              : "Late Fee Income";
         });
       }
     } catch (e) {
       print('Failed to load surcharge data: $e');
     }
+  }
+
+  // Check if Late Fee Charge fields have been modified
+  bool _hasLateFeeChanges() {
+    if (!islatefeeupdate) {
+      // For new entries, check if any field has a value
+      return duration.text.trim().isNotEmpty ||
+          late_fee.text.trim().isNotEmpty ||
+          grace_balance.text.trim().isNotEmpty ||
+          description.text.trim().isNotEmpty ||
+          selectedAccountName.isNotEmpty;
+    }
+
+    // For updates, compare current values with original values
+    return duration.text.trim() != _originalDuration ||
+        late_fee.text.trim() != _originalLateFee ||
+        grace_balance.text.trim() != _originalGraceBalance ||
+        calculationType != _originalCalculationType ||
+        description.text.trim() != _originalDescription ||
+        selectedAccountName != _originalSelectedAccountName;
+  }
+
+  // Check if Mail Service fields have been modified
+  bool _hasMailServiceChanges() {
+    if (!mailupdate) {
+      // For new entries, check if any field has a value
+      return replyToEmail.text.trim().isNotEmpty ||
+          durationmail.text.trim().isNotEmpty ||
+          rentDueReminderEmail;
+    }
+
+    // For updates, compare current values with original values
+    return replyToEmail.text.trim() != _originalReplyToEmail ||
+        durationmail.text.trim() != _originalDurationMail ||
+        rentDueReminderEmail != _originalRentDueReminderEmail;
   }
 
   Future<void> updateSurcharge() async {
@@ -455,6 +527,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateLatefee() async {
+    // Check if there are any changes before proceeding
+    if (!_hasLateFeeChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -482,6 +559,15 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.updateLatefeesData('$latefee_id', data);
 
       if (success) {
+        // Update original values after successful save
+        setState(() {
+          _originalDuration = duration.text.trim();
+          _originalLateFee = late_fee.text.trim();
+          _originalGraceBalance = grace_balance.text.trim();
+          _originalCalculationType = calculationType;
+          _originalDescription = description.text.trim();
+          _originalSelectedAccountName = selectedAccountName;
+        });
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('Latefee Updated Successfully')));
         Fluttertoast.showToast(msg: 'Late Fee Updated Successfully');
@@ -528,6 +614,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   }
   // }
   Future<void> AddLatefeedata() async {
+    // Check if there are any changes before proceeding
+    if (!_hasLateFeeChanges()) {
+      return; // No changes made, don't proceed with add
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -555,6 +646,8 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.AddLatefeesData('1714649182536', data);
 
       if (success) {
+        // After successful add, fetch the data to get the ID and update original values
+        await fetchlatefeeData();
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('late_fee Updated Successfully')));
         Fluttertoast.showToast(msg: 'Late Fee updated successfully');
@@ -590,6 +683,12 @@ class _TabBarExampleState extends State<TabBarExample> {
             rentDueReminderEmail = latefee.remindermail!;
           }
           print(rentDueReminderEmail);
+
+          // Store original values for change tracking
+          _originalDurationMail = latefee.duration?.toString() ?? "";
+          _originalRentDueReminderEmail = latefee.remindermail ?? false;
+          // Note: replyToEmail is not in Setting3 API response, track from current value
+          _originalReplyToEmail = replyToEmail.text.trim();
         });
       }
     } catch (e) {
@@ -646,6 +745,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateMail() async {
+    // Check if there are any changes before proceeding
+    if (!_hasMailServiceChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -662,6 +766,12 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.updateMailData(data);
 
       if (success) {
+        // Update original values after successful save
+        setState(() {
+          _originalReplyToEmail = replyToEmail.text.trim();
+          _originalDurationMail = durationmail.text.trim();
+          _originalRentDueReminderEmail = rentDueReminderEmail;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('mail Updated Successfully')));
       } else {
@@ -718,6 +828,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> Addmail() async {
+    // Check if there are any changes before proceeding
+    if (!_hasMailServiceChanges()) {
+      return; // No changes made, don't proceed with add
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -734,6 +849,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.AddMailData(id, data);
 
       if (success) {
+        // After successful add, fetch the data to get the updated values and update original values
+        await fetchMailData();
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('mail Updated Successfully')));
       } else {
@@ -1063,6 +1180,19 @@ class _TabBarExampleState extends State<TabBarExample> {
           // color: Colors.blue,
           child: Row(
             children: [
+              const SizedBox(
+                width: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  _showEditAccount(context, data);
+                },
+                child: const FaIcon(
+                  FontAwesomeIcons.edit,
+                  size: 30,
+                  color: Colors.green,
+                ),
+              ),
               const SizedBox(
                 width: 20,
               ),
@@ -1653,6 +1783,170 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+  // Fetch workorder notification settings
+  Future<void> fetchWorkOrderNotificationSettings() async {
+    // Don't set loading state - fetch in background
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    if (adminId == null || adminId.isEmpty) {
+      print('Admin ID is null or empty');
+      return;
+    }
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+
+    final url =
+        '${Api_url}/api/workorder-settings/workorder-notification/$adminId';
+    final headers = {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    print('Fetching notification settings from: $url');
+    print('Admin ID: $adminId');
+
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
+
+        if (responseData["statusCode"] == 200) {
+          // Check if data exists
+          if (responseData["data"] != null) {
+            var data = responseData["data"];
+            print('Notification settings data: $data');
+            setState(() {
+              createAdmin = data["create_admin"] ?? false;
+              createAssignee = data["create_assignee"] ?? false;
+              createTenant = data["create_tenant"] ?? false;
+              updateAdmin = data["update_admin"] ?? false;
+              updateAssignee = data["update_assignee"] ?? false;
+              updateTenant = data["update_tenant"] ?? false;
+              completeAdmin = data["complete_admin"] ?? false;
+              completeAssignee = data["complete_assignee"] ?? false;
+              completeTenant = data["complete_tenant"] ?? false;
+            });
+            print('Settings loaded successfully');
+            print(
+                'Create - Admin: $createAdmin, Assignee: $createAssignee, Tenant: $createTenant');
+            print(
+                'Update - Admin: $updateAdmin, Assignee: $updateAssignee, Tenant: $updateTenant');
+            print(
+                'Complete - Admin: $completeAdmin, Assignee: $completeAssignee, Tenant: $completeTenant');
+            setState(() {
+              _hasLoadedNotifications = true; // Mark as loaded
+            });
+          } else {
+            print('No data in response, using default values');
+            // Set default values if no data exists (first time setup)
+            setState(() {
+              createAdmin = false;
+              createAssignee = false;
+              createTenant = false;
+              updateAdmin = false;
+              updateAssignee = false;
+              updateTenant = false;
+              completeAdmin = false;
+              completeAssignee = false;
+              completeTenant = false;
+              _hasLoadedNotifications =
+                  true; // Mark as loaded even with defaults
+            });
+          }
+        } else {
+          print('API returned error statusCode: ${responseData["statusCode"]}');
+          print('Message: ${responseData["message"] ?? "No message"}');
+        }
+      } else if (response.statusCode == 404) {
+        print('Settings not found (404), using default values');
+        // First time - no settings exist yet, use defaults
+        setState(() {
+          createAdmin = false;
+          createAssignee = false;
+          createTenant = false;
+          updateAdmin = false;
+          updateAssignee = false;
+          updateTenant = false;
+          completeAdmin = false;
+          completeAssignee = false;
+          completeTenant = false;
+          _hasLoadedNotifications = true; // Mark as loaded even with defaults
+        });
+      } else {
+        print('API returned error status: ${response.statusCode}');
+        var errorBody = response.body;
+        print('Error response: $errorBody');
+        Fluttertoast.showToast(
+            msg:
+                'Failed to load notification settings: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Exception loading workorder notification settings: $e');
+      print('Stack trace: ${StackTrace.current}');
+      Fluttertoast.showToast(msg: 'Failed to load notification settings: $e');
+    }
+  }
+
+  // Save workorder notification settings
+  Future<void> saveWorkOrderNotificationSettings() async {
+    setState(() {
+      isSavingNotifications = true; // Use separate saving state
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminId = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
+
+    final url = '${Api_url}/api/workorder-settings/workorder-notification';
+    final headers = {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+    final body = json.encode({
+      "admin_id": adminId,
+      "create_admin": createAdmin,
+      "create_assignee": createAssignee,
+      "create_tenant": createTenant,
+      "update_admin": updateAdmin,
+      "update_assignee": updateAssignee,
+      "update_tenant": updateTenant,
+      "complete_admin": completeAdmin,
+      "complete_assignee": completeAssignee,
+      "complete_tenant": completeTenant,
+    });
+
+    try {
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+      var responseData = json.decode(response.body);
+
+      if (responseData["statusCode"] == 200) {
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Settings saved");
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Failed to save settings");
+      }
+    } catch (error) {
+      print('Error saving notification settings: $error');
+      Fluttertoast.showToast(msg: 'An error occurred while saving settings');
+    } finally {
+      setState(() {
+        isSavingNotifications = false; // Use separate saving state
+      });
+    }
+  }
+
   //for date formate
   Future<void> updateDateFormat(String format, String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1797,13 +2091,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      issurge = true;
+                                      issurge = false;
                                       ismail = false;
-                                      isaccounts = false;
+                                      isaccounts = true;
                                       islatefee = false;
                                       isdateformate = false;
-                                      isworkorder = false;
                                       ismanagetemplate = false;
+                                      isworkorder = false;
                                       ischargesetting = false;
                                       iscategories = false;
                                       isvendor = false;
@@ -1818,15 +2112,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             : 50,
                                     decoration: BoxDecoration(
                                       border: Border.all(color: blueColor),
-                                      color:
-                                          !issurge ? Colors.white : blueColor,
+                                      color: !isaccounts
+                                          ? Colors.white
+                                          : blueColor,
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Surcharge",
+                                        "Accounts",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: issurge
+                                            color: isaccounts
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
@@ -1845,44 +2140,46 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               Expanded(
                                 child: InkWell(
-                                  onTap: () async {
+                                  onTap: () {
                                     setState(() {
                                       issurge = false;
                                       ismail = false;
                                       isaccounts = false;
-                                      isdateformate = false;
-                                      islatefee = true;
                                       isworkorder = false;
-                                      ismanagetemplate = false;
+                                      iscategories = true;
+                                      islatefee = false;
+                                      isdateformate = false;
                                       ischargesetting = false;
-                                      iscategories = false;
+                                      ismanagetemplate = false;
                                       isvendor = false;
                                       ispropertyowner = false;
                                       ispropertytype = false;
                                     });
-                                    await fetchAccountsData();
-                                    await fetchlatefeeData();
                                   },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color:
-                                          !islatefee ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Late Fee Charge",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: islatefee
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
+                                  child: Visibility(
+                                    visible: true,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: blueColor),
+                                        color: !iscategories
+                                            ? Colors.white
+                                            : blueColor,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Categories",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: iscategories
+                                                  ? Colors.white
+                                                  : blueColor,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 20),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1933,109 +2230,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: ischargesetting
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      isaccounts = false;
-                                      ismail = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ismanagetemplate = false;
-                                      isworkorder = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ismail ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Mail Service",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ismail
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ismanagetemplate = false;
-                                      isworkorder = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !isaccounts
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Accounts",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isaccounts
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
@@ -2131,6 +2325,110 @@ class _TabBarExampleState extends State<TabBarExample> {
                             children: [
                               Expanded(
                                 child: InkWell(
+                                  onTap: () async {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isdateformate = false;
+                                      islatefee = true;
+                                      isworkorder = false;
+                                      ismanagetemplate = false;
+                                      ischargesetting = false;
+                                      iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                    });
+                                    await fetchAccountsData();
+                                    await fetchlatefeeData();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color:
+                                          !islatefee ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Late Fee Charge",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: islatefee
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      isaccounts = false;
+                                      ismail = true;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ismanagetemplate = false;
+                                      isworkorder = false;
+                                      ischargesetting = false;
+                                      iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ismail ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Mail Service",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ismail
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
                                   onTap: () {
                                     setState(() {
                                       issurge = false;
@@ -2179,6 +2477,216 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               Expanded(
                                 child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertytype = false;
+                                      ispropertyowner = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertyowner
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Owners",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertyowner
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ispropertytype
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Property Type",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ispropertytype
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = true;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      isworkorder = false;
+                                      ismanagetemplate = false;
+                                      ischargesetting = false;
+                                      iscategories = false;
+                                      isvendor = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color:
+                                          !issurge ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Surcharge",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: issurge
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 850
+                              : 900,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      ismail = false;
+                                      isaccounts = false;
+                                      isworkorder = false;
+                                      iscategories = false;
+                                      islatefee = false;
+                                      isdateformate = false;
+                                      ischargesetting = false;
+                                      ismanagetemplate = false;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                      isvendor = true;
+                                      ispropertyowner = false;
+                                      ispropertytype = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color:
+                                          !isvendor ? Colors.white : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Vendor",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: isvendor
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
                                   onTap: () async {
                                     setState(() {
                                       issurge = false;
@@ -2193,9 +2701,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       isvendor = false;
                                       ispropertyowner = false;
                                       ispropertytype = false;
+                                      // Don't set loading state - show table immediately
                                     });
                                     await _loadDropdownCategories(); // Always fetch latest categories from backend
                                     await fetchWorkData(); // Fetch work order settings after categories are loaded
+                                    // Fetch notification settings in background without showing loading
+                                    fetchWorkOrderNotificationSettings(); // Fetch in background
                                   },
                                   child: Visibility(
                                     visible: true,
@@ -2270,220 +2781,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // ),
 
                               // Spacer()
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Visibility(
-                                    visible: true,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor),
-                                        color: !iscategories
-                                            ? Colors.white
-                                            : blueColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Categories",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: iscategories
-                                                  ? Colors.white
-                                                  : blueColor,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                      isvendor = true;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color:
-                                          !isvendor ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Vendor",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isvendor
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertytype = false;
-                                      ispropertyowner = true;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ispropertyowner
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Property Owners",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ispropertyowner
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = true;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ispropertytype
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Property Type",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ispropertytype
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -3758,49 +4055,60 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   if (MediaQuery.of(context).size.width > 500)
                                     const SizedBox(width: 2),
                                   GestureDetector(
-                                    onTap: () async {
-                                      if (mailupdate)
-                                        await updateMail();
-                                      else
-                                        await Addmail();
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: blueColor,
-                                          boxShadow: [
-                                            const BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
+                                    onTap: _hasMailServiceChanges()
+                                        ? () async {
+                                            if (mailupdate)
+                                              await updateMail();
+                                            else
+                                              await Addmail();
+                                          }
+                                        : null,
+                                    child: Opacity(
+                                      opacity:
+                                          _hasMailServiceChanges() ? 1.0 : 0.5,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 35
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 100
+                                              : 150,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            color: blueColor,
+                                            boxShadow: [
+                                              const BoxShadow(
+                                                color: Colors.grey,
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
+                                                blurRadius: 6.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 16
+                                                          : 20),
                                             ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Save",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 16
-                                                    : 20),
                                           ),
                                         ),
                                       ),
@@ -4117,7 +4425,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         });
                                                       },
                                                       //  controller: password,
+                                                      textAlign:
+                                                          calculationType ==
+                                                                  "fixed"
+                                                              ? TextAlign.right
+                                                              : TextAlign.left,
                                                       cursorColor: blueColor,
+                                                      keyboardType: TextInputType
+                                                          .numberWithOptions(
+                                                              decimal: true),
                                                       decoration:
                                                           InputDecoration(
                                                         // hintText: "Enter password",
@@ -4142,8 +4458,55 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets
-                                                                .all(13),
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? const EdgeInsets
+                                                                    .only(
+                                                                    left: 8,
+                                                                    top: 13,
+                                                                    bottom: 13,
+                                                                    right: 13)
+                                                                : const EdgeInsets
+                                                                    .all(13),
+                                                        prefixIcon:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            12,
+                                                                        right:
+                                                                            8),
+                                                                    child:
+                                                                        Center(
+                                                                      widthFactor:
+                                                                          1.0,
+                                                                      child:
+                                                                          Text(
+                                                                        '\$',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : null,
+                                                        prefixIconConstraints:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? const BoxConstraints(
+                                                                    minWidth:
+                                                                        28,
+                                                                    maxWidth:
+                                                                        32)
+                                                                : null,
                                                         suffixIcon:
                                                             calculationType ==
                                                                     "percent"
@@ -4154,13 +4517,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                         blueColor,
                                                                     size: 18,
                                                                   )
-                                                                : Icon(
-                                                                    Icons
-                                                                        .attach_money,
-                                                                    color:
-                                                                        blueColor,
-                                                                    size: 18,
-                                                                  ),
+                                                                : null,
                                                       ),
                                                     ),
                                                   ),
@@ -4178,7 +4535,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Grace Balance (\$)",
+                                              "Grace Balance",
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -4214,6 +4571,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         });
                                                       },
                                                       //  controller: password,
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      keyboardType: TextInputType
+                                                          .numberWithOptions(
+                                                              decimal: true),
                                                       cursorColor: blueColor,
                                                       decoration:
                                                           InputDecoration(
@@ -4240,12 +4602,36 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             InputBorder.none,
                                                         contentPadding:
                                                             const EdgeInsets
-                                                                .all(13),
-                                                        // suffixIcon: Icon(
-                                                        //   Icons.percent,
-                                                        //   color: blueColor,
-                                                        //   size: 18,
-                                                        // ),
+                                                                .only(
+                                                                left: 8,
+                                                                top: 13,
+                                                                bottom: 13,
+                                                                right: 13),
+                                                        prefixIcon: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 12,
+                                                                  right: 8),
+                                                          child: Center(
+                                                            widthFactor: 1.0,
+                                                            child: Text(
+                                                              '\$',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        prefixIconConstraints:
+                                                            const BoxConstraints(
+                                                                minWidth: 28,
+                                                                maxWidth: 32),
                                                       ),
                                                     ),
                                                   ),
@@ -4508,7 +4894,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           });
                                                         },
                                                         //  controller: password,
+                                                        textAlign:
+                                                            calculationType ==
+                                                                    "fixed"
+                                                                ? TextAlign
+                                                                    .right
+                                                                : TextAlign
+                                                                    .left,
                                                         cursorColor: blueColor,
+                                                        keyboardType: TextInputType
+                                                            .numberWithOptions(
+                                                                decimal: true),
                                                         decoration:
                                                             InputDecoration(
                                                           // hintText: "Enter password",
@@ -4533,8 +4929,56 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(13),
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? const EdgeInsets
+                                                                      .only(
+                                                                      left: 8,
+                                                                      top: 13,
+                                                                      bottom:
+                                                                          13,
+                                                                      right: 13)
+                                                                  : const EdgeInsets
+                                                                      .all(13),
+                                                          prefixIcon:
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              12,
+                                                                          right:
+                                                                              8),
+                                                                      child:
+                                                                          Center(
+                                                                        widthFactor:
+                                                                            1.0,
+                                                                        child:
+                                                                            Text(
+                                                                          '\$',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : null,
+                                                          prefixIconConstraints:
+                                                              calculationType ==
+                                                                      "fixed"
+                                                                  ? const BoxConstraints(
+                                                                      minWidth:
+                                                                          28,
+                                                                      maxWidth:
+                                                                          32)
+                                                                  : null,
                                                           suffixIcon:
                                                               calculationType ==
                                                                       "percent"
@@ -4545,13 +4989,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                           blueColor,
                                                                       size: 18,
                                                                     )
-                                                                  : Icon(
-                                                                      Icons
-                                                                          .attach_money,
-                                                                      color:
-                                                                          blueColor,
-                                                                      size: 18,
-                                                                    ),
+                                                                  : null,
                                                         ),
                                                       ),
                                                     ),
@@ -5139,49 +5577,59 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   if (MediaQuery.of(context).size.width > 500)
                                     const SizedBox(width: 2),
                                   GestureDetector(
-                                    onTap: () async {
-                                      if (islatefeeupdate)
-                                        await updateLatefee();
-                                      else
-                                        await AddLatefeedata();
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: blueColor,
-                                          boxShadow: [
-                                            const BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
+                                    onTap: _hasLateFeeChanges()
+                                        ? () async {
+                                            if (islatefeeupdate)
+                                              await updateLatefee();
+                                            else
+                                              await AddLatefeedata();
+                                          }
+                                        : null,
+                                    child: Opacity(
+                                      opacity: _hasLateFeeChanges() ? 1.0 : 0.5,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 35
+                                              : 50,
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 100
+                                              : 150,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            color: blueColor,
+                                            boxShadow: [
+                                              const BoxShadow(
+                                                color: Colors.grey,
+                                                offset:
+                                                    Offset(0.0, 1.0), //(x,y)
+                                                blurRadius: 6.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 16
+                                                          : 20),
                                             ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Save",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 16
-                                                    : 20),
                                           ),
                                         ),
                                       ),
@@ -5601,43 +6049,71 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   child: Column(
                                                                     children: [
                                                                       Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.end,
                                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
-                                                                          Expanded(
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () async {
+                                                                              _showEditAccount(context, account);
+                                                                            },
                                                                             child:
-                                                                                GestureDetector(
-                                                                              onTap: () {
-                                                                                _showDeleteAlert(context, account.accountId!);
-                                                                              },
-                                                                              child: Container(
-                                                                                height: 40,
-                                                                                decoration: BoxDecoration(
-                                                                                  border: Border.all(color: Colors.red, width: 1.5),
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                ),
-                                                                                child: const Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                  children: [
-                                                                                    FaIcon(
-                                                                                      FontAwesomeIcons.trashCan,
-                                                                                      size: 15,
-                                                                                      color: Colors.red,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 10,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "Delete",
-                                                                                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                                                                                    )
-                                                                                  ],
-                                                                                ),
+                                                                                Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.green.shade50,
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                              ),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.edit,
+                                                                                    size: 15,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                             ),
                                                                           ),
+                                                                          SizedBox(
+                                                                              width: 10),
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              _showDeleteAlert(context, account.accountId!);
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.red.shade50,
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                              ),
+                                                                              child: const Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.trashCan,
+                                                                                    size: 15,
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              width: 10),
                                                                         ],
                                                                       ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              10),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -6615,6 +7091,525 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                               const SizedBox(height: 15),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Configure Notifications",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 28,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0, vertical: 4),
+                                    // decoration: BoxDecoration(
+                                    //   color: Colors.white,
+                                    //   borderRadius:
+                                    //       BorderRadius.circular(10),
+                                    //   boxShadow: [
+                                    //     BoxShadow(
+                                    //       color: Colors.grey
+                                    //           .withOpacity(0.1),
+                                    //       spreadRadius: 1,
+                                    //       blurRadius: 5,
+                                    //       offset: const Offset(0, 2),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Create Section
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFFF4F8FF),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: blueColor.withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Create',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 15
+                                                          : 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Administrator',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: createAdmin,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            createAdmin =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Assignee',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: createAssignee,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            createAssignee =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Tenant',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: createTenant,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            createTenant =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Update Section
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF4F8FF),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: blueColor.withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Update',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 15
+                                                          : 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Administrator',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: updateAdmin,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            updateAdmin =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Assignee',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: updateAssignee,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            updateAssignee =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Tenant',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: updateTenant,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            updateTenant =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Complete Section
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF4F8FF),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: blueColor.withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Complete',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 15
+                                                          : 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Administrator',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: completeAdmin,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            completeAdmin =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Assignee',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: completeAssignee,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            completeAssignee =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Tenant',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 16,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
+                                                      Checkbox(
+                                                        value: completeTenant,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            completeTenant =
+                                                                value ?? false;
+                                                          });
+                                                        },
+                                                        activeColor: blueColor,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        height: 50,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                          onPressed: isSavingNotifications
+                                              ? null
+                                              : () async {
+                                                  await saveWorkOrderNotificationSettings();
+                                                },
+                                          child: isSavingNotifications
+                                              ? const Center(
+                                                  child: SpinKitFadingCircle(
+                                                    color: Colors.white,
+                                                    size: 30.0,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  'Save',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 16
+                                                            : 25,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
                               Row(
                                 children: [
                                   Text(
@@ -7097,9 +8092,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                               const SizedBox(
-                                height: 15,
+                                height: 30,
                               ),
+                              // Configure Notifications Section
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Container(
                                     height: 50,
@@ -7141,6 +8138,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(
+                                height: 10,
                               ),
                             ],
                           ),
@@ -7826,7 +8826,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   Text(
                     "Account Name",
                     style: TextStyle(
@@ -7972,11 +8972,260 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                             child: Center(
                               child: isLoading
-                                  ? const CircularProgressIndicator(
+                                  ? const SpinKitFadingCircle(
                                       color: Colors.white,
+                                      size: 20,
                                     )
                                   : const Text(
                                       'Add',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 30),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(3),
+                              border: Border.all(color: blueColor),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: blueColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  if (isError)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Please fill all fields',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void _showEditAccount(BuildContext context, Setting4 account) {
+    // Store original values for comparison
+    final String originalAccountName = account.account ?? '';
+    final String originalNote = account.notes ?? '';
+    final String? originalAccountType = account.accountType;
+    final String? originalFundType = account.fundType;
+
+    // Create controllers for edit dialog
+    TextEditingController editAccountName =
+        TextEditingController(text: account.account ?? '');
+    TextEditingController editNote =
+        TextEditingController(text: account.notes ?? '');
+    String? editSelectedAccounttype = account.accountType;
+    String? editSelectedFundtype = account.fundType;
+    bool editIsLoading = false;
+    bool editIsError = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              'Edit Account',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // const SizedBox(height: 20),
+                  Text(
+                    "Account Name",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter account name';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter account name',
+                    controller: editAccountName,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Account Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (editSelectedAccounttype == null) {
+                        return 'Please select an account type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: accounttypeitems,
+                    selectedValue: editSelectedAccounttype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        editSelectedAccounttype = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Fund Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (editSelectedFundtype == null) {
+                        return 'Please select a fund type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: fundtypeitems,
+                    selectedValue: editSelectedFundtype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        editSelectedFundtype = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Note",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter notes';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter notes',
+                    controller: editNote,
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            if (editSelectedAccounttype == null ||
+                                editAccountName.text.trim().isEmpty ||
+                                editSelectedFundtype == null) {
+                              setState(() {
+                                editIsError = true;
+                              });
+                            } else {
+                              // Check if any changes were made
+                              final String currentAccountName =
+                                  editAccountName.text.trim();
+                              final String currentNote = editNote.text.trim();
+
+                              bool hasChanges =
+                                  currentAccountName != originalAccountName ||
+                                      currentNote != originalNote ||
+                                      editSelectedAccounttype !=
+                                          originalAccountType ||
+                                      editSelectedFundtype != originalFundType;
+
+                              if (!hasChanges) {
+                                // No changes made, just close dialog and show message
+                                Navigator.pop(context);
+                                Fluttertoast.showToast(msg: "No changes made");
+                                return;
+                              }
+
+                              setState(() {
+                                editIsLoading = true;
+                                editIsError = false;
+                              });
+
+                              try {
+                                await accountRepository().updateAccount(
+                                  accountId: account.accountId!,
+                                  account: currentAccountName,
+                                  accounttype: editSelectedAccounttype,
+                                  fundtype: editSelectedFundtype,
+                                  chargetype: account.chargeType ?? "",
+                                  notes: currentNote,
+                                );
+                                Navigator.pop(context);
+                                _refreshAccounts();
+                              } catch (e) {
+                                setState(() {
+                                  editIsError = true;
+                                });
+                              } finally {
+                                setState(() {
+                                  editIsLoading = false;
+                                });
+                              }
+                            }
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Center(
+                              child: editIsLoading
+                                  ? const SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
+                                    )
+                                  : const Text(
+                                      'Update',
                                       style: TextStyle(color: Colors.white),
                                     ),
                             ),
@@ -7994,6 +9243,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(3),
+                              border: Border.all(color: blueColor),
                             ),
                             child: Center(
                               child: Text(
@@ -8006,7 +9256,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                       ),
                     ],
                   ),
-                  if (isError)
+                  const SizedBox(height: 10),
+                  if (editIsError)
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
                       child: Text(

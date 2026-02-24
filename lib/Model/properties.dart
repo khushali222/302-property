@@ -27,6 +27,7 @@ class Rentals {
   String? parcelNumber;
   String? purchaseDate;
   double? purchasePrice;
+  String? placedInService;
 
   List<String>? rentalImages;
   bool? isDelete;
@@ -65,6 +66,7 @@ class Rentals {
       this.parcelNumber,
       this.purchaseDate,
       this.purchasePrice,
+      this.placedInService,
       this.units,
       this.insuredValues});
 
@@ -100,6 +102,7 @@ class Rentals {
       purchasePrice: (json['purchase_price'] is int)
           ? (json['purchase_price'] as int).toDouble()
           : (json['purchase_price'] as num?)?.toDouble(),
+      placedInService: json['placed_in_service'] ?? "",
       rentalOwnerData:
           RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
       propertyTypeData:
@@ -132,13 +135,20 @@ class InsuredValue {
   });
 
   factory InsuredValue.fromJson(Map<String, dynamic> json) {
+    double? parsed;
+    final raw = json['insured_value'];
+    if (raw is int) {
+      parsed = raw.toDouble();
+    } else if (raw is num) {
+      parsed = raw.toDouble();
+    } else if (raw != null) {
+      parsed = double.tryParse(raw.toString());
+    }
     return InsuredValue(
       id: json['_id'] ?? "",
-      year: json['year'] ?? "",
-      insuredValue: (json['insured_value'] is int)
-          ? (json['insured_value'] as int).toDouble()
-          : (json['insured_value'] as num?)?.toDouble(),
-      createdAt: json['created_at'] ?? "",
+      year: json['year']?.toString() ?? "",
+      insuredValue: parsed,
+      createdAt: json['created_at']?.toString() ?? "",
     );
   }
 }

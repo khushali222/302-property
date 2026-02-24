@@ -142,6 +142,12 @@ class _manage_templatesState extends State<manage_templates> {
             }else{
               selectedTemplates[element.type!] = null;
             }
+            
+            // Store original values for change tracking
+            if (element.type != null) {
+              _originalIsEnabled[element.type!] = element.isEnabled ?? false;
+              _originalSelectedTemplates[element.type!] = selectedTemplates[element.type!];
+            }
           }
         });
       } else {
@@ -152,6 +158,35 @@ class _manage_templatesState extends State<manage_templates> {
   }
 
   Map<String, String?> selectedTemplates = {};
+  // Original values for change tracking
+  Map<String, bool> _originalIsEnabled = {};
+  Map<String, String?> _originalSelectedTemplates = {};
+  
+  // Check if any changes were made
+  bool _hasTemplateChanges() {
+    // Check if any switch state changed
+    for (var element in dummyTemplateList) {
+      if (element.type != null) {
+        final originalEnabled = _originalIsEnabled[element.type!] ?? false;
+        final currentEnabled = element.isEnabled ?? false;
+        if (originalEnabled != currentEnabled) {
+          return true;
+        }
+      }
+    }
+    
+    // Check if any dropdown selection changed
+    for (var entry in selectedTemplates.entries) {
+      final originalValue = _originalSelectedTemplates[entry.key];
+      final currentValue = entry.value;
+      if (originalValue != currentValue) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -304,49 +339,54 @@ class _manage_templatesState extends State<manage_templates> {
           ),
           SizedBox(height: 10),
           GestureDetector(
-            onTap: () async {
-              final jsonData = dummyTemplateList.map((e) => e.toJson()).toList();
-              log(jsonEncode(jsonData));
-              updateSelectedTemplates();
-              print(selectedTemplates);
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: Container(
-                height:
-                MediaQuery.of(context).size.width <
-                    500
-                    ? 35
-                    : 50,
-                width:
-                MediaQuery.of(context).size.width <
-                    500
-                    ? 100
-                    : 150,
-                decoration: BoxDecoration(
-                  borderRadius:
-                  BorderRadius.circular(5.0),
-                  color: blueColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 6.0,
+            onTap: _hasTemplateChanges()
+                ? () async {
+                    final jsonData = dummyTemplateList.map((e) => e.toJson()).toList();
+                    log(jsonEncode(jsonData));
+                    await updateSelectedTemplates();
+                    print(selectedTemplates);
+                  }
+                : null,
+            child: Opacity(
+              opacity: _hasTemplateChanges() ? 1.0 : 0.5,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  height:
+                  MediaQuery.of(context).size.width <
+                      500
+                      ? 35
+                      : 50,
+                  width:
+                  MediaQuery.of(context).size.width <
+                      500
+                      ? 100
+                      : 150,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                    BorderRadius.circular(5.0),
+                    color: blueColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0), //(x,y)
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Save",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context)
+                              .size
+                              .width <
+                              500
+                              ? 16
+                              : 20),
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    "Save",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context)
-                            .size
-                            .width <
-                            500
-                            ? 16
-                            : 20),
                   ),
                 ),
               ),
@@ -401,6 +441,11 @@ class _manage_templatesState extends State<manage_templates> {
   }
 
   Future<void> updateSwitchBasedPreferences() async {
+    // Check if there are any changes before proceeding
+    if (!_hasTemplateChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+    
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminId = prefs.getString('adminId');
@@ -431,6 +476,15 @@ class _manage_templatesState extends State<manage_templates> {
 
     print(response.body);
     if (response.statusCode == 200) {
+      // Update original values after successful save
+      setState(() {
+        for (var element in dummyTemplateList) {
+          if (element.type != null) {
+            _originalIsEnabled[element.type!] = element.isEnabled ?? false;
+            _originalSelectedTemplates[element.type!] = selectedTemplates[element.type!];
+          }
+        }
+      });
       Fluttertoast.showToast(msg: "Changes saved");
       print("✅ Mail preferences updated successfully.");
     } else {

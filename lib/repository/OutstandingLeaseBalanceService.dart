@@ -50,7 +50,7 @@ class OutstandingLeaseBalanceService {
       });
 
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('Response body outstanding lease balance: ${response.body}');
 
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON

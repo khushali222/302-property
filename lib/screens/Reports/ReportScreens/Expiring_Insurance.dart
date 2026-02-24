@@ -31,7 +31,7 @@ import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import '../../../Model/Expiring_insurance_model.dart';
 import '../../../repository/Expiring_insurance.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -981,12 +981,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 16,
-                  ),
-                  titleBar(
+                  ReportHeader(
                     title: 'Expiring Insurance',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
@@ -1002,28 +998,27 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: DropdownButtonHideUnderline(
-                                    child: Material(
-                                      elevation: 3,
-                                      borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: DropdownButtonHideUnderline(
                                       child: DropdownButton2<String>(
                                         isExpanded: true,
-                                        hint: Row(
-                                          children: [
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                daterange ?? "Date Range",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: daterange == null
-                                                      ? const Color(0xFF8A95A8)
-                                                      : Colors.black,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                        hint: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4),
+                                          child: Text(
+                                            daterange ?? "Date Range",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: daterange == null
+                                                  ? const Color(0xFF8A95A8)
+                                                  : Colors.black,
                                             ),
-                                          ],
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         items: [
                                           DropdownMenuItem<String>(
@@ -1446,10 +1441,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                               left: 14, right: 14),
                                           decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                              color: const Color(0xFF8A95A8),
-                                            ),
+                                                BorderRadius.circular(5),
                                             color: Colors.white,
                                           ),
                                           elevation: 0,

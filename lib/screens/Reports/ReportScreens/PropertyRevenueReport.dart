@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -9,9 +10,9 @@ import 'package:three_zero_two_property/Model/PropertyRevenueReportModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/PropertyRevenueReportService.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -33,9 +34,10 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   late Future<PropertyRevenueReportModel> _futurePropertyRevenueReport =
       Future.value(PropertyRevenueReportModel());
   PropertyRevenueReportModel? propertyRevenueReportModel;
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
   ConnectivityResult? _connectivityResult;
+  bool filtersApplied = false; // Track if filters have been applied
 
   // Track which property is expanded
   int? expandedPropertyIndex;
@@ -64,10 +66,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     });
     checkInternet();
     _initializeDates();
-    // Fetch data after dates are initialized
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _futurePropertyRevenueReport = fetchPropertyRevenueReportData();
-    });
+    // Don't fetch data automatically - wait for filters to be applied
   }
 
   void _initializeDates() {
@@ -87,11 +86,8 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     // Calculate previous period (same period last year)
     _calculatePreviousPeriod();
 
-    setState(() {
-      fromDateController.text =
-          dateProvider.formatCurrentDate(_currentStartDate);
-      toDateController.text = dateProvider.formatCurrentDate(_currentEndDate);
-    });
+    fromDateController.text = dateProvider.formatCurrentDate(_currentStartDate);
+    toDateController.text = dateProvider.formatCurrentDate(_currentEndDate);
   }
 
   void _calculatePreviousPeriod() {
@@ -126,7 +122,85 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
 
     setState(() {
       dateRange = value;
-      if (value == 'This Month') {
+      if (value == 'Today') {
+        customDateRange = false;
+        String todayApiFormat = DateFormat('yyyy-MM-dd').format(now);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(todayApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(todayApiFormat);
+        _currentStartDate = todayApiFormat;
+        _currentEndDate = todayApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Yesterday') {
+        customDateRange = false;
+        DateTime yesterday = now.subtract(Duration(days: 1));
+        String yesterdayApiFormat = DateFormat('yyyy-MM-dd').format(yesterday);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(yesterdayApiFormat);
+        toDateController.text =
+            dateProvider.formatCurrentDate(yesterdayApiFormat);
+        _currentStartDate = yesterdayApiFormat;
+        _currentEndDate = yesterdayApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last 7 Days') {
+        customDateRange = false;
+        DateTime startDate = now.subtract(Duration(days: 6));
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(startDate);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(now);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last 14 Days') {
+        customDateRange = false;
+        DateTime startDate = now.subtract(Duration(days: 13));
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(startDate);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(now);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last 30 Days') {
+        customDateRange = false;
+        DateTime startDate = now.subtract(Duration(days: 29));
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(startDate);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(now);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'This Week') {
+        customDateRange = false;
+        int weekday = now.weekday; // Monday = 1, Sunday = 7
+        DateTime weekStart = now.subtract(Duration(days: weekday - 1));
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(weekStart);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(now);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last Week') {
+        customDateRange = false;
+        int weekday = now.weekday;
+        DateTime weekStart = now.subtract(Duration(days: weekday + 6));
+        DateTime weekEnd = now.subtract(Duration(days: weekday));
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(weekStart);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(weekEnd);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'This Month') {
         customDateRange = false;
         DateTime monthStart = DateTime(now.year, now.month, 1);
         DateTime monthEnd = DateTime(now.year, now.month + 1, 0);
@@ -139,6 +213,18 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
             dateProvider.formatCurrentDate(monthEndApiFormat);
         _currentStartDate = monthStartApiFormat;
         _currentEndDate = monthEndApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last Month') {
+        customDateRange = false;
+        DateTime lastMonthStart = DateTime(now.year, now.month - 1, 1);
+        DateTime lastMonthEnd = DateTime(now.year, now.month, 0);
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(lastMonthStart);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(lastMonthEnd);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
         _calculatePreviousPeriod();
       } else if (value == 'This Quarter') {
         customDateRange = false;
@@ -157,7 +243,26 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         _currentStartDate = quarterStartApiFormat;
         _currentEndDate = quarterEndApiFormat;
         _calculatePreviousPeriod();
-      } else if (value == 'Year to Date') {
+      } else if (value == 'Last Quarter') {
+        customDateRange = false;
+        int currentQuarter = (now.month - 1) ~/ 3 + 1;
+        int lastQuarter = currentQuarter == 1 ? 4 : currentQuarter - 1;
+        int lastQuarterYear = currentQuarter == 1 ? now.year - 1 : now.year;
+        DateTime quarterStart =
+            DateTime(lastQuarterYear, (lastQuarter - 1) * 3 + 1, 1);
+        DateTime quarterEnd = DateTime(lastQuarterYear, lastQuarter * 3 + 1, 0);
+        String quarterStartApiFormat =
+            DateFormat('yyyy-MM-dd').format(quarterStart);
+        String quarterEndApiFormat =
+            DateFormat('yyyy-MM-dd').format(quarterEnd);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(quarterStartApiFormat);
+        toDateController.text =
+            dateProvider.formatCurrentDate(quarterEndApiFormat);
+        _currentStartDate = quarterStartApiFormat;
+        _currentEndDate = quarterEndApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Year to Date (YTD)') {
         customDateRange = false;
         DateTime yearStart = DateTime(now.year, 1, 1);
         String yearStartApiFormat = DateFormat('yyyy-MM-dd').format(yearStart);
@@ -168,6 +273,18 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
             dateProvider.formatCurrentDate(yearEndApiFormat);
         _currentStartDate = yearStartApiFormat;
         _currentEndDate = yearEndApiFormat;
+        _calculatePreviousPeriod();
+      } else if (value == 'Last Year') {
+        customDateRange = false;
+        DateTime lastYearStart = DateTime(now.year - 1, 1, 1);
+        DateTime lastYearEnd = DateTime(now.year - 1, 12, 31);
+        String startApiFormat = DateFormat('yyyy-MM-dd').format(lastYearStart);
+        String endApiFormat = DateFormat('yyyy-MM-dd').format(lastYearEnd);
+        fromDateController.text =
+            dateProvider.formatCurrentDate(startApiFormat);
+        toDateController.text = dateProvider.formatCurrentDate(endApiFormat);
+        _currentStartDate = startApiFormat;
+        _currentEndDate = endApiFormat;
         _calculatePreviousPeriod();
       } else if (value == 'Each Calendar Year for the Last 10 Years') {
         customDateRange = false;
@@ -225,6 +342,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       setState(() {
         propertyRevenueReportModel = data;
         isLoading = false;
+        filtersApplied = true;
         errorMessage = data.statusCode != 200 ? data.message : null;
       });
       return data;
@@ -324,28 +442,32 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: widget_302.App_Bar(context: context),
       drawer: CustomDrawer(
         currentpage: "Reports",
         dropdown: false,
       ),
-      appBar: widget_302.App_Bar(context: context),
       body: _connectivityResult == ConnectivityResult.none
           ? _buildNoInternetWidget()
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  titleBar(
-                    title: 'Property Revenue Report',
-                    width: MediaQuery.of(context).size.width * .98,
+          : Column(
+              children: [
+                ReportHeader(title: "Property Revenue Report"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Filters Section - Only show title with menu button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                          child: _buildFilterHeader(),
+                        ),
+                        _buildReportContent(),
+                      ],
+                    ),
                   ),
-                  // Filters Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: _buildFiltersSection(),
-                  ),
-                  _buildReportContent(),
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }
@@ -390,6 +512,67 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   }
 
   Widget _buildReportContent() {
+    // Show "No Data Available" until filters are applied
+    if (!filtersApplied) {
+      return Column(
+        children: [
+          // Property Header - always show
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Color(0xFFF7F9FC),
+              border: Border(
+                top: BorderSide(color: Colors.grey[300]!),
+                bottom: BorderSide(color: Colors.grey[300]!),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Property',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          // No Data Available message
+          Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/images/no_data.jpg",
+                    height: 200,
+                    width: 200,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "No Data Available",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return FutureBuilder<PropertyRevenueReportModel>(
       future: _futurePropertyRevenueReport,
       builder: (context, snapshot) {
@@ -401,12 +584,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           return _buildErrorWidget();
         }
 
-        if (propertyRevenueReportModel?.data == null ||
-            propertyRevenueReportModel!.data!.properties == null ||
-            propertyRevenueReportModel!.data!.properties!.isEmpty) {
-          return _buildNoDataWidget();
-        }
-
+        // Always show the table structure, even if no properties
         return _buildDataTable();
       },
     );
@@ -498,188 +676,478 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     );
   }
 
-  Widget _buildFiltersSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Date Range Dropdown
-          Text(
-            'Date Range',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: dateRange,
-                isExpanded: true,
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                hint: Text(
-                  'Date Range',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-                items: [
-                  DropdownMenuItem(
-                    value: 'This Month',
-                    child: Text('This Month'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'This Quarter',
-                    child: Text('This Quarter'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Year to Date',
-                    child: Text('Year to Date'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Each Calendar Year for the Last 10 Years',
-                    child: Text('Each Calendar Year for the Last 10 Years'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Custom Date Range',
-                    child: Text('Custom Date Range'),
-                  ),
-                ],
-                onChanged: _handleDateRangeChange,
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey[600],
+  Widget _buildFilterHeader() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Report Filters',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ),
-          ),
-          // From Date (always visible)
-          SizedBox(height: 10),
-          _buildDateField(
-            controller: fromDateController,
-            label: 'From',
-            onTap: customDateRange ? () => _pickFromDate(context) : null,
-            enabled: customDateRange,
-          ),
-          // To Date (always visible)
-          SizedBox(height: 10),
-          _buildDateField(
-            controller: toDateController,
-            label: 'To',
-            onTap: customDateRange ? () => _pickToDate(context) : null,
-            enabled: customDateRange,
-          ),
-          SizedBox(height: 20),
-          // Run and Export Buttons
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isLoading = true;
-                      errorMessage = null;
-                    });
-                    _futurePropertyRevenueReport =
-                        fetchPropertyRevenueReportData();
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
+              ),
+              child: IconButton(
+                icon: Icon(Icons.more_vert, color: blueColor),
+                padding: EdgeInsets.zero,
+                onPressed: () => _showFilterBottomSheet(),
+              ),
+            ),
+            SizedBox(width: 10),
+            Container(
+              height: 40,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: blueColor,
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+                onPressed: () {},
+                child: PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    final properties =
+                        propertyRevenueReportModel?.data?.properties ?? [];
+                    if (properties.isEmpty || !filtersApplied) {
+                      Fluttertoast.showToast(
+                        msg: 'No data to export',
+                        toastLength: Toast.LENGTH_SHORT,
+                      );
+                      return;
+                    }
+                    if (value == 'PDF') {
+                      await _generatePdf(properties);
+                    } else if (value == 'XLSX') {
+                      await _generateExcel(properties);
+                    } else if (value == 'CSV') {
+                      await _generateCsv(properties);
+                    }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'PDF',
+                      child: Text('PDF'),
                     ),
-                  ),
-                  child: Text(
-                    'Run',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    const PopupMenuItem<String>(
+                      value: 'XLSX',
+                      child: Text('XLSX'),
                     ),
+                    const PopupMenuItem<String>(
+                      value: 'CSV',
+                      child: Text('CSV'),
+                    ),
+                  ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Export'),
+                      Icon(Icons.arrow_drop_down),
+                    ],
                   ),
                 ),
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      final properties =
-                          propertyRevenueReportModel?.data?.properties ?? [];
-                      if (properties.isEmpty) {
-                        Fluttertoast.showToast(
-                          msg: 'No data to export',
-                          toastLength: Toast.LENGTH_SHORT,
-                        );
-                        return;
-                      }
-                      if (value == 'PDF') {
-                        await _generatePdf(properties);
-                      } else if (value == 'XLSX') {
-                        await _generateExcel(properties);
-                      } else if (value == 'CSV') {
-                        await _generateCsv(properties);
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'PDF',
-                        child: Text('PDF'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with title and close button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filters',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      const PopupMenuItem<String>(
-                        value: 'XLSX',
-                        child: Text('XLSX'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'CSV',
-                        child: Text('CSV'),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
                       ),
                     ],
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Export',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                        ),
-                      ],
+                  ),
+                  SizedBox(height: 20),
+                  // Date Range Dropdown
+                  Text(
+                    'Date Range',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
                     ),
                   ),
-                ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            dateRange ?? "Date Range",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: dateRange == null
+                                  ? const Color(0xFF8A95A8)
+                                  : Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        items: [
+                          DropdownMenuItem<String>(
+                            value: 'Today',
+                            child: Text(
+                              'Today',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Yesterday',
+                            child: Text(
+                              'Yesterday',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 7 Days',
+                            child: Text(
+                              'Last 7 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 14 Days',
+                            child: Text(
+                              'Last 14 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last 30 Days',
+                            child: Text(
+                              'Last 30 Days',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Week',
+                            child: Text(
+                              'This Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Week',
+                            child: Text(
+                              'Last Week',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Month',
+                            child: Text(
+                              'This Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Month',
+                            child: Text(
+                              'Last Month',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Quarter',
+                            child: Text(
+                              'This Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Quarter',
+                            child: Text(
+                              'Last Quarter',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Year to Date (YTD)',
+                            child: Text(
+                              'Year to Date (YTD)',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Last Year',
+                            child: Text(
+                              'Last Year',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Each Calendar Year for the Last 10 Years',
+                            child: Text(
+                              'Each Calendar Year for the Last 10 Years',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Custom Date Range',
+                            child: Text(
+                              'Custom Date Range',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                        value: dateRange,
+                        onChanged: (value) {
+                          setModalState(() {
+                            _handleDateRangeChange(value);
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 42,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 40,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // From Date (always visible)
+                  SizedBox(height: 16),
+                  _buildDateField(
+                    controller: fromDateController,
+                    label: 'From',
+                    onTap: customDateRange
+                        ? () async {
+                            await _pickFromDate(context);
+                            setModalState(() {});
+                          }
+                        : null,
+                    enabled: customDateRange,
+                  ),
+                  // To Date (always visible)
+                  SizedBox(height: 16),
+                  _buildDateField(
+                    controller: toDateController,
+                    label: 'To',
+                    onTap: customDateRange
+                        ? () async {
+                            await _pickToDate(context);
+                            setModalState(() {});
+                          }
+                        : null,
+                    enabled: customDateRange,
+                  ),
+                  SizedBox(height: 24),
+                  // Action Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _clearFilters();
+                            });
+                            Navigator.pop(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            side: BorderSide(color: Colors.grey[300]!),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Clear',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _applyFilters();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Apply Filters',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          );
+        },
       ),
     );
+  }
+
+  void _clearFilters() {
+    setState(() {
+      dateRange = 'This Month';
+      customDateRange = false;
+      _initializeDates();
+    });
+  }
+
+  void _applyFilters() {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    _futurePropertyRevenueReport = fetchPropertyRevenueReportData();
   }
 
   Widget _buildDateField({
@@ -737,16 +1205,15 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   }
 
   Widget _buildDataTable() {
-    final properties = propertyRevenueReportModel!.data!.properties ?? [];
-    final summary = propertyRevenueReportModel!.data!.summary;
+    final properties = propertyRevenueReportModel?.data?.properties ?? [];
+    final summary = propertyRevenueReportModel?.data?.summary;
+    final hasNoData = propertyRevenueReportModel?.data == null ||
+        propertyRevenueReportModel!.data!.properties == null ||
+        properties.isEmpty;
 
     return Column(
       children: [
-        //   SizedBox(height: 20),
-        // Summary Cards
-        // if (summary != null) _buildSummaryCards(summary),
-        // SizedBox(height: 20),
-        // Expandable Property Cards
+        // Property Header - always show
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
@@ -776,11 +1243,42 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
-            children: properties.asMap().entries.map((entry) {
-              int index = entry.key;
-              PropertyRevenue property = entry.value;
-              return _buildExpandablePropertyCard(property, index);
-            }).toList(),
+            children: [
+              // Show properties if available
+              if (!hasNoData)
+                ...properties.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  PropertyRevenue property = entry.value;
+                  return _buildExpandablePropertyCard(property, index);
+                }).toList(),
+              // Show "No Data Available" message if no properties
+              if (hasNoData)
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/no_data.jpg",
+                        height: 200,
+                        width: 200,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "No Data Available",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              // Total Revenue Row - show if summary exists (even if no properties)
+              if (summary != null) _buildTotalRevenueCard(summary),
+            ],
           ),
         ),
         SizedBox(height: 20),
@@ -864,19 +1362,20 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        // color: Colors.white,
+       color: index % 2 != 0 ? Color(0xFFF4F8FF): Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Color(0xFFDBE0E5)),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey.withOpacity(0.1),
+        //     spreadRadius: 0,
+        //     blurRadius: 4,
+        //     offset: Offset(0, 2),
+        //   ),
+        // ],
+    
       ),
       child: Column(
         children: [
@@ -914,7 +1413,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(12),
                   bottomRight: Radius.circular(12),
@@ -952,8 +1451,10 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
     required String title,
     required PeriodData? period,
     required DateProvider dateProvider,
+    double? overrideRevenue,
   }) {
-    final revenue = period?.revenue ?? 0;
+    // Use overrideRevenue if provided, otherwise use period.revenue
+    final revenue = overrideRevenue ?? (period?.revenue ?? 0);
     final startDate = period?.startDate ?? '';
     final endDate = period?.endDate ?? '';
 
@@ -1007,6 +1508,91 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTotalRevenueCard(PropertyRevenueSummary summary) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final isExpanded = expandedPropertyIndex == -1; // Use -1 for total revenue
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Collapsed Header
+          InkWell(
+            onTap: () {
+              setState(() {
+                expandedPropertyIndex = isExpanded ? null : -1;
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Total Revenue',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.grey[600],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Expanded Content
+          if (isExpanded)
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Current Period Revenue
+                  _buildRevenueSection(
+                    title: 'Current Period Revenue',
+                    period: summary.currentPeriod,
+                    dateProvider: dateProvider,
+                    overrideRevenue: summary.totalCurrentRevenue,
+                  ),
+                  SizedBox(height: 16),
+                  // Previous Period Revenue
+                  _buildRevenueSection(
+                    title: 'Previous Period Revenue',
+                    period: summary.previousPeriod,
+                    dateProvider: dateProvider,
+                    overrideRevenue: summary.totalPreviousRevenue,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 

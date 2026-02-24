@@ -5,9 +5,12 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ConvenienceFee.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/CustomReportBuilder.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Expiring_Insurance.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/LeaseRenewalReport.dart'
+    show LeaseRenewalReportScreen;
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
@@ -15,6 +18,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/Home_System_Report.dart';
+import 'ReportScreens/InsurancePremiumReport.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
 import 'ReportScreens/Rent_collection.dart';
@@ -563,6 +567,12 @@ List<ReportCardModel> reportCards = [
     destination: ExpiringLeases(),
   ),
   ReportCardModel(
+    title: "Lease Renewal",
+    description:
+        "Report of leases ending and month-to-month leases with renewal details",
+    destination: LeaseRenewalReportScreen(),
+  ),
+  ReportCardModel(
     title: "Delinquent Tenants",
     description:
         "Tenants with an outstanding ledger balance as of a specific date",
@@ -756,18 +766,18 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'Rent balance due by property and tenants',
                   "navigate": RentersInsurances()
                 },
-                // {
-                //   'title': 'Outstanding Lease Balance Report',
-                //   'subtitle':
-                //       'Detailed breakdown of outstanding lease balances by aging period',
-                //   "navigate": OutstandingLeaseBalance()
-                // },
-                // {
-                //   'title': 'Property Revenue Report',
-                //   'subtitle':
-                //       'Compare property revenue between current and previous periods',
-                //   "navigate": PropertyRevenueReport()
-                // },
+                {
+                  'title': 'Outstanding Lease Balance Report',
+                  'subtitle':
+                  'Detailed breakdown of outstanding lease balances with aging analysis',
+                  "navigate": OutstandingLeaseBalance()
+                },
+                {
+                  'title': 'Property Revenue Report',
+                  'subtitle':
+                      'Compare property revenue between current and previous periods',
+                  "navigate": PropertyRevenueReport()
+                },
               ],
               "Track payments, transactions, and owner accounts.",
               context),
@@ -788,11 +798,11 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'All completed work orders',
                   "navigate": CompletedWorkOrders()
                 },
-                // {
-                //   'title': 'Reopen Work Orders',
-                //   'subtitle': 'Work orders on hold with future reopen dates',
-                //   "navigate": ReopenWorkorder()
-                // },
+                {
+                  'title': 'Reopen Work Orders',
+                  'subtitle': 'Work orders on hold with future reopen dates',
+                  "navigate": ReopenWorkorder()
+                },
                 {
                   'title': 'Home System Report',
                   'subtitle': 'Home system report',
@@ -819,6 +829,12 @@ class ReportScreen extends StatelessWidget {
                   'subtitle':
                       'Renter\'s insurance policies expiring within the selected time period',
                   "navigate": ExpiringInsurance()
+                },
+                {
+                  'title': 'Insurance Premium Report',
+                  'subtitle':
+                      'Compare property insurance premiums across selected years/spans',
+                  "navigate": InsurancePremiumReport()
                 },
                 // {
                 //   'title': 'Property Insurance Summary',
@@ -861,6 +877,12 @@ class ReportScreen extends StatelessWidget {
                   "navigate": DelinquentTenants()
                 },
                 {
+                  'title': 'Lease Renewal',
+                  'subtitle':
+                      'Report of leases ending and month-to-month leases with renewal details',
+                  "navigate": LeaseRenewalReportScreen()
+                },
+                {
                   'title': 'Convenience Fee Override',
                   'subtitle':
                       'All leases with tenant that have convenience fee override',
@@ -871,6 +893,22 @@ class ReportScreen extends StatelessWidget {
               context),
           SizedBox(
             height: 10,
+          ),
+          reportSection(
+              'assets/images/graph - Copy.svg',
+              'Custom Reports',
+              [
+                {
+                  'title': 'Custom Report Builder',
+                  'subtitle':
+                      'Choose columns, historic values, and filters to build a custom lease report',
+                  "navigate": CustomReportBuilder()
+                },
+              ],
+              "",
+              context),
+              SizedBox(
+            height: 20,
           ),
         ],
       ),

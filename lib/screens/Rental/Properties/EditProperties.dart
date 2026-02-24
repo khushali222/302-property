@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +21,11 @@ import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowne
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../Model/propertytype.dart';
 import '../../../constant/constant.dart';
-import '../../../model/add_property.dart';
+import '../../../Model/add_property.dart' as add_prop;
 import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../repository/Property_type.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
@@ -35,7 +37,7 @@ class Edit_properties extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
   Rentals properties;
-  RentalRequest? propties;
+  add_prop.RentalRequest? propties;
   final String rentalId;
 
   Edit_properties({
@@ -140,12 +142,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
   TextEditingController searchController = TextEditingController();
 
+  // Insured Value Information
+  TextEditingController datePlacedInService = TextEditingController();
+  List<HistoricalInsuredValue> historicalInsuredValues = [];
+  bool datePlacedInServiceError = false;
+  String datePlacedInServiceMessage = "";
+
   late Future<List<Staffmembers>> futureStaffMembers;
   String? selectedStaffmember;
 
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
-  Future<List<RentalOwners>>? futureRentalOwner;
+  Future<List<add_prop.RentalOwners>>? futureRentalOwner;
 
   Map<String, List<propertytype>> groupPropertiesByType(
       List<propertytype> properties) {
@@ -280,6 +288,21 @@ class _Edit_propertiesState extends State<Edit_properties> {
       }
     });
     isEditable = false;
+    // Show insured values from list immediately so they appear before fetch completes
+    if (widget.properties.insuredValues != null &&
+        widget.properties.insuredValues!.isNotEmpty) {
+      for (var iv in widget.properties.insuredValues!) {
+        historicalInsuredValues.add(HistoricalInsuredValue(
+          year: iv.year,
+          yearController: TextEditingController(text: iv.year ?? ''),
+          valueController: TextEditingController(
+            text: iv.insuredValue != null
+                ? NumberFormat('#,##0').format(iv.insuredValue!)
+                : '',
+          ),
+        ));
+      }
+    }
     fetchDetails1(widget.rentalId).then((_) {
       // Load unit data after property details are set
       fetchunits1();
@@ -485,6 +508,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   Future<void> fetchDetails1(String rentalId) async {
+    final dateProvider =
+                  Provider.of<DateProvider>(context, listen: false);
     try {
       setState(() {
         isLoading = true;
@@ -561,6 +586,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
         isLoading = false;
         address.text = fetchedDetails.rentalAddress!;
+
+        datePlacedInService.text = dateProvider.formatCurrentDate(fetchedDetails.placedInService!);
+        
         city.text = fetchedDetails.rentalCity!;
         state.text = fetchedDetails.rentalState!;
         postalcode.text = fetchedDetails.rentalPostcode!;
@@ -645,6 +673,50 @@ class _Edit_propertiesState extends State<Edit_properties> {
         initialPhoneNumber =
             fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
 
+        // Load placed_in_service date
+        try {
+          // Use dynamic access to avoid compilation errors if field not yet recognized
+          final placedInServiceValue =
+              (fetchedDetails as dynamic).placedInService;
+          if (placedInServiceValue != null &&
+              placedInServiceValue.toString().isNotEmpty) {
+            try {
+              final dateProvider =
+                  Provider.of<DateProvider>(context, listen: false);
+              datePlacedInService.text = dateProvider
+                  .formatCurrentDate(placedInServiceValue.toString());
+            } catch (e) {
+              print('Error loading placed_in_service date: $e');
+            }
+          }
+        } catch (e) {
+          print('Error accessing placedInService: $e');
+        }
+
+        // Load insured values from fetch response, or fallback to initial properties (e.g. from list)
+        final insuredValuesToLoad = fetchedDetails.insuredValues != null &&
+                fetchedDetails.insuredValues!.isNotEmpty
+            ? fetchedDetails.insuredValues!
+            : (widget.properties.insuredValues != null &&
+                    widget.properties.insuredValues!.isNotEmpty
+                ? widget.properties.insuredValues!
+                : null);
+        if (insuredValuesToLoad != null) {
+          historicalInsuredValues.clear();
+          for (var insuredValue in insuredValuesToLoad) {
+            historicalInsuredValues.add(HistoricalInsuredValue(
+              year: insuredValue.year,
+              yearController:
+                  TextEditingController(text: insuredValue.year ?? ''),
+              valueController: TextEditingController(
+                text: insuredValue.insuredValue != null
+                    ? NumberFormat('#,##0').format(insuredValue.insuredValue!)
+                    : '',
+              ),
+            ));
+          }
+        }
+
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
     } catch (e) {
@@ -655,6 +727,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
   @override
   void dispose() {
     searchController.dispose();
+    datePlacedInService.dispose();
+    for (var item in historicalInsuredValues) {
+      item.yearController.dispose();
+      item.valueController.dispose();
+    }
     super.dispose();
   }
 
@@ -1320,6 +1397,62 @@ class _Edit_propertiesState extends State<Edit_properties> {
         // print(controllers[j].text);
       }
     }
+  }
+
+  // Insured Value Information helper methods
+  void addHistoricalInsuredValue() {
+    setState(() {
+      historicalInsuredValues.add(HistoricalInsuredValue(
+        yearController: TextEditingController(),
+        valueController: TextEditingController(),
+      ));
+    });
+  }
+
+  void removeHistoricalInsuredValue(int index) {
+    setState(() {
+      historicalInsuredValues[index].yearController.dispose();
+      historicalInsuredValues[index].valueController.dispose();
+      historicalInsuredValues.removeAt(index);
+    });
+  }
+
+  Future<void> _selectDatePlacedInService() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        datePlacedInService.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+        datePlacedInServiceError = false;
+      });
+    }
+  }
+
+  List<String> _generateYearList() {
+    int currentYear = DateTime.now().year;
+    List<String> years = [];
+    for (int i = currentYear; i >= 1900; i--) {
+      years.add(i.toString());
+    }
+    return years;
   }
 
   RentalOwner? Ownersdetails;
@@ -4349,8 +4482,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 13
-                                                              : 15),
+                                                              ? 12
+                                                              : 14),
                                                 ),
                                               ],
                                             ),
@@ -4513,6 +4646,514 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             ),
                           ],
                         )),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                //  Insured Value Information
+                Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: blueColor),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const SizedBox(width: 15),
+                              Text(
+                                "Insured Value Information",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 16.5
+                                      : 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              const SizedBox(width: 15),
+                              Text(
+                                "Date Placed in Service *",
+                                style: TextStyle(
+                                  color: const Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14.5
+                                      : 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: datePlacedInServiceError
+                                      ? Colors.red
+                                      : const Color(0xFFDBE0E5),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: TextField(
+                                      controller: datePlacedInService,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 14
+                                            : 15,
+                                      ),
+                                      cursorColor: blueColor,
+                                      decoration: InputDecoration(
+                                        enabledBorder: InputBorder.none,
+                                        border: InputBorder.none,
+                                        contentPadding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 14),
+                                        hintText: "MM/DD/YYYY",
+                                        hintStyle: TextStyle(
+                                          color: Colors.grey[400],
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 14
+                                              : 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 12,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Center(
+                                      child: GestureDetector(
+                                        onTap: _selectDatePlacedInService,
+                                        child: Icon(
+                                          Icons.calendar_today,
+                                          color: const Color(0xFF8A95A8),
+                                          size: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 18
+                                              : 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (datePlacedInServiceError)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 15, top: 5),
+                              child: Text(
+                                datePlacedInServiceMessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const SizedBox(width: 15),
+                              Text(
+                                "Historical Insured Values",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 16.5
+                                      : 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          if (historicalInsuredValues.isNotEmpty)
+                            ...historicalInsuredValues
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              HistoricalInsuredValue item = entry.value;
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: 15, left: 15, right: 15),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "YEAR *",
+                                            style: TextStyle(
+                                              color: const Color(0xFF8A95A8),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 14.5
+                                                  : 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: item.yearError
+                                                    ? Colors.red
+                                                    : const Color(0xFFDBE0E5),
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 3,
+                                                  offset: const Offset(0, 1),
+                                                ),
+                                              ],
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                value: item.year,
+                                                hint: Text(
+                                                  'Select Year',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 15,
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                ),
+                                                onChanged: (String? newValue) {
+                                                  setState(() {
+                                                    item.year = newValue;
+                                                    item.yearError = false;
+                                                  });
+                                                },
+                                                items: _generateYearList()
+                                                    .map((String year) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: year,
+                                                    child: Text(
+                                                      year,
+                                                      style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width <
+                                                            500
+                                                            ? 14
+                                                            : 15,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                isExpanded: true,
+                                                buttonStyleData:
+                                                ButtonStyleData(
+                                                  height: 50,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                    color: Colors.transparent,
+                                                  ),
+                                                ),
+                                                dropdownStyleData:
+                                                DropdownStyleData(
+                                                  maxHeight: 300,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        10),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                    radius:
+                                                    const Radius.circular(
+                                                        40),
+                                                    thickness:
+                                                    MaterialStateProperty
+                                                        .all(6),
+                                                    thumbVisibility:
+                                                    MaterialStateProperty
+                                                        .all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData:
+                                                const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          if (item.yearError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, left: 2),
+                                              child: Text(
+                                                "Required",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "VALUE (\$) *",
+                                            style: TextStyle(
+                                              color: const Color(0xFF8A95A8),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 14.5
+                                                  : 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Material(
+                                            elevation: 0,
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            color: Colors.white,
+                                            child: Container(
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(10),
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                  color: item.valueError
+                                                      ? Colors.red
+                                                      : const Color(0xFFDBE0E5),
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 3,
+                                                    offset: const Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: TextField(
+                                                key: ValueKey('value_$index'),
+                                                controller:
+                                                item.valueController,
+                                                enabled: true,
+                                                readOnly: false,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                    decimal: true),
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 14
+                                                      : 15,
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    item.valueError = false;
+                                                  });
+                                                },
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
+                                                  enabledBorder:
+                                                  InputBorder.none,
+                                                  focusedBorder:
+                                                  InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 14),
+                                                  hintText: "Enter value..",
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.grey[400],
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          if (item.valueError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, left: 2),
+                                              child: Text(
+                                                "Required",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 28),
+                                      child: InkWell(
+                                        onTap: () =>
+                                            removeHistoricalInsuredValue(index),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.trashCan,
+                                            color: Colors.red,
+                                            size: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 18
+                                                : 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: GestureDetector(
+                              onTap: addHistoricalInsuredValue,
+                              child: Container(
+                                height: 40,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      "Add Historical Insured Value",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -5569,7 +6210,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             await SharedPreferences.getInstance();
                         String? id = prefs.getString("adminId");
 
-                        Rental rentals = Rental(
+                        add_prop.Rental rentals = add_prop.Rental(
                           rentalId: widget.rentalId,
                           adminId: id,
                           propertyId: widget.properties.propertyId,
@@ -5718,7 +6359,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                         print("Converted Units: $convertedUnits");
 
-                        RentalOwners owners = RentalOwners(
+                        add_prop.RentalOwners owners = add_prop.RentalOwners(
                           adminId: id,
                           firstName: firstname.text.trim(),
                           companyName: comname.text.trim(),
@@ -5884,6 +6525,57 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         print('Final unit data: $unitData');
 
                         print('Making API call with updated unit data...');
+
+                        // Format placed_in_service date to yyyy-MM-dd
+                        String? formattedPlacedInService;
+                        if (datePlacedInService.text.isNotEmpty) {
+                          try {
+                            // Parse the displayed date back to DateTime
+                            DateTime? parsedDate;
+                            List<String> dateFormats = [
+                              'yyyy-MM-dd',
+                              'yyyy-M-d',
+                              'dd-MM-yyyy',
+                              'd-M-yyyy',
+                              'M/d/yyyy',
+                              'MM/dd/yyyy',
+                            ];
+                            for (String format in dateFormats) {
+                              try {
+                                parsedDate = DateFormat(format)
+                                    .parse(datePlacedInService.text);
+                                break;
+                              } catch (e) {
+                                continue;
+                              }
+                            }
+                            if (parsedDate != null) {
+                              formattedPlacedInService =
+                                  DateFormat('yyyy-MM-dd').format(parsedDate);
+                            }
+                          } catch (e) {
+                            print(
+                                'Error formatting placed_in_service date: $e');
+                          }
+                        }
+
+                        // Create InsuredValue list from historicalInsuredValues
+                        // Use InsuredValue from model/properties.dart so Rentals.insuredValues type matches
+                        List<InsuredValue> insuredValuesList = [];
+                        for (var item in historicalInsuredValues) {
+                          if (item.year != null &&
+                              item.year!.isNotEmpty &&
+                              item.valueController.text.isNotEmpty) {
+                            String cleanValue =
+                                item.valueController.text.replaceAll(',', '');
+                            final numValue = double.tryParse(cleanValue);
+                            insuredValuesList.add(InsuredValue(
+                              year: item.year,
+                              insuredValue: numValue,
+                            ));
+                          }
+                        }
+
                         Rentals properties = Rentals(
                           units: unitData,
                           // Always pass the units, even if empty
@@ -5918,6 +6610,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           rentalPostcode: postalcode.text.trim(),
                           staffMemberId: selectedStaff,
                           processor_id: processorId,
+                          placedInService: formattedPlacedInService,
+                          insuredValues: insuredValuesList.isNotEmpty
+                              ? insuredValuesList
+                              : null,
                         );
 
                         print('About to make API call');
@@ -6352,5 +7048,23 @@ class OwnersDetails {
   RentalOwner? Ownersdetails;
   OwnersDetails({
     required this.Ownersdetails,
+  });
+}
+
+class HistoricalInsuredValue {
+  String? year;
+  String? insuredValue;
+  TextEditingController yearController;
+  TextEditingController valueController;
+  bool yearError;
+  bool valueError;
+
+  HistoricalInsuredValue({
+    this.year,
+    this.insuredValue,
+    required this.yearController,
+    required this.valueController,
+    this.yearError = false,
+    this.valueError = false,
   });
 }

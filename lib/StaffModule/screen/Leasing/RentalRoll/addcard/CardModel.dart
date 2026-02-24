@@ -245,8 +245,8 @@ class BillingData {
 
         customerVaultId: customerVaultId,
         billingId: json["@attributes"]["id"].toString(),
-        email: json["email"].runtimeType == Map ? null : json["email"],
-        address_1: json["address_1"].runtimeType == Map ? null : json["address_1"],
+        email: json["email"] is Map ? null : json["email"]?.toString(),
+        address_1: json["address_1"] is Map ? null : json["address_1"]?.toString(),
         company: companyName
 
     );

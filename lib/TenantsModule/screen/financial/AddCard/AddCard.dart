@@ -526,6 +526,9 @@ class _AddCardState extends State<AddCard> {
                       ],
                       label: "enter card number",
                       keyboardType: TextInputType.number,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       hintText: '0000 0000 0000 0000',
                       controller: cardNumber,
                       cardnum: true,
@@ -558,6 +561,9 @@ class _AddCardState extends State<AddCard> {
                       hintText: 'MM/YYYY',
                       controller: expirationDate,
                       label: "Enter Expiration Date",
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       //  allerror: true,
                       //isexpirydate: true,
                       formatter: [ExpiryDateInputFormatter()],
@@ -590,6 +596,9 @@ class _AddCardState extends State<AddCard> {
                       controller: cvv,
                       optional: false,
                       label: "Enter CVV",
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       cvv: true,
                       //isexpirydate: true,
                       formatter: [CVVFormatter()],
@@ -617,6 +626,10 @@ class _AddCardState extends State<AddCard> {
                             color: Colors.grey)),
                     CustomTextField(
                       keyboardType: TextInputType.text,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
+
                       hintText: 'Enter First Name',
                       controller: firstName,
                       optional: true,
@@ -634,6 +647,9 @@ class _AddCardState extends State<AddCard> {
                             color: Colors.grey)),
                     CustomTextField(
                       keyboardType: TextInputType.text,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       hintText: 'Enter Last Name',
                       controller: lastName,
                       optional: true,
@@ -653,6 +669,9 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.emailAddress,
                       hintText: 'Enter Email',
                       email: true,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       controller: email,
                       optional: true,
                     ),
@@ -677,6 +696,9 @@ class _AddCardState extends State<AddCard> {
                       // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                       hintText: 'Enter Phone Number',
                       controller: phoneNumber,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       phone: true,
                       optional: true,
                     ),
@@ -695,6 +717,9 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter Address',
                       controller: address,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       optional: true,
                     ),
                     const SizedBox(
@@ -712,6 +737,9 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter City',
                       controller: city,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       optional: true,
                     ),
                     const SizedBox(
@@ -729,6 +757,9 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.text,
                       hintText: 'Enter State',
                       controller: state,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       optional: true,
                     ),
                     const SizedBox(
@@ -763,6 +794,9 @@ class _AddCardState extends State<AddCard> {
                       keyboardType: TextInputType.number,
                       hintText: 'Enter Zip',
                       controller: zip,
+                      borderColor: Colors.grey.shade300,
+                      borderWidth: 1,
+                      showElevation: false,
                       optional: true,
                     ),
                     const SizedBox(
@@ -1469,6 +1503,10 @@ class CustomTextField extends StatefulWidget {
   final Function(String?)? onError;
   final Function(String?)? onErrorcard;
   final Function(String?)? onErrorcvv;
+  final Border? customBorder;
+  final Color? borderColor;
+  final double? borderWidth;
+  final bool? showElevation;
 
   CustomTextField({
     Key? key,
@@ -1499,6 +1537,10 @@ class CustomTextField extends StatefulWidget {
     this.onError,
     this.onErrorcard,
     this.onErrorcvv,
+    this.customBorder,
+    this.borderColor,
+    this.borderWidth,
+    this.showElevation,
     // Initialize onTap
   }) : super(key: key);
 
@@ -1631,7 +1673,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             return Column(
               children: <Widget>[
                 Material(
-                  elevation: 2,
+                  elevation: widget.showElevation != null && widget.showElevation! ? 2 : 0,
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
@@ -1640,14 +1682,30 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
+                      border: widget.customBorder ??
+                          (widget.borderColor != null
+                              ? Border.all(
+                                  color: widget.borderColor!,
+                                  width: widget.borderWidth ?? 1.0)
+                              : null),
+                      boxShadow: widget.showElevation != null && widget.showElevation!
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: const Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ]
+                          : null,
                       //border: Border.all(color: blueColor),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: Offset(4, 4),
-                          blurRadius: 3,
-                        ),
-                      ],
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: Colors.grey.shade300,
+                      //     offset: Offset(4, 4),
+                      //     blurRadius: 3,
+                      //   ),
+                      // ],
+                 
                     ),
                     child: TextFormField(
                       /*    onFieldSubmitted: (value){

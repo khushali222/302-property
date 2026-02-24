@@ -24,7 +24,7 @@ import 'package:three_zero_two_property/repository/RentersInsuranceService.dart'
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -256,7 +256,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 10 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 10 : 0),
       child: Container(
         decoration: BoxDecoration(
             color: const Color(0xFFF4F8FF),
@@ -306,18 +308,20 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                     child: Row(
                       children: [
                         width < 400
-                            ?  Text("Leases",
-                                style: TextStyle( color: blueColor,
+                            ? Text("Leases",
+                                style: TextStyle(
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15))
-                            :  Text("Leases",
-                                style: TextStyle( color: blueColor,
+                            : Text("Leases",
+                                style: TextStyle(
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15)),
                         // Text("Property", style: TextStyle(color: Colors.white)),
                         const SizedBox(width: 3),
                         ascending1
-                            ?  Padding(
+                            ? Padding(
                                 padding: EdgeInsets.only(top: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortUp,
@@ -325,12 +329,12 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                   color: blueColor,
                                 ),
                               )
-                            :  Padding(
+                            : Padding(
                                 padding: EdgeInsets.only(bottom: 7, left: 2),
                                 child: FaIcon(
                                   FontAwesomeIcons.sortDown,
                                   size: 20,
-                                  color:blueColor,
+                                  color: blueColor,
                                 ),
                               ),
                       ],
@@ -903,708 +907,705 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: "Delinquent Tenants",
-                      ),
-                    ),
+                  ReportHeader(
+                    title: "Delinquent Tenants",
                   ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<List<DelinquentTenantsData>>(
-                      future: _futureRentersInsurance,
-                      builder: (context, snapshot) {
-                        if (isLoading) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ColabShimmerLoadingWidget(),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-
-                        var data = snapshot.data!;
-
-                        // Apply filtering based on selectedValue and searchValue
-                        if (selectedValue == null && searchvalue.isEmpty) {
-                          data = snapshot.data!;
-                        } else if (selectedValue == "All") {
-                          data = snapshot.data!;
-                        } else if (searchvalue.isNotEmpty) {
-                          data = snapshot.data!
-                              .where((item) =>
-                                  item.rentalAddress!
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase()) ||
-                                  item.tenants!.any((tenant) => tenant
-                                      .tenantName!
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase())))
-                              .toList();
-                        } else {
-                          data = snapshot.data!
-                              .where(
-                                  (item) => item.rentalAddress == selectedValue)
-                              .toList();
-                        }
-
-                        // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
-
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                  FutureBuilder<List<DelinquentTenantsData>>(
+                    future: _futureRentersInsurance,
+                    builder: (context, snapshot) {
+                      if (isLoading) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ColabShimmerLoadingWidget(),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * .5,
+                          child: Center(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 48
-                                                : 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
-                                        ),
-                                        onPressed: () {},
-                                        child: PopupMenuButton<String>(
-                                          onSelected: (value) async {
-                                            // Export logic
-                                            if (value == 'PDF') {
-                                              print('pdf');
-                                              generateDelinquentTenantsPdf(
-                                                  data);
-                                            } else if (value == 'XLSX') {
-                                              print('XLSX');
-                                              generateDelinquentTenantsExcel(
-                                                  data);
-                                            } else if (value == 'CSV') {
-                                              print('CSV');
-                                              generateDelinquentTenantsCsv(
-                                                  data);
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            const PopupMenuItem<String>(
-                                                value: 'PDF',
-                                                child: Text('PDF')),
-                                            const PopupMenuItem<String>(
-                                                value: 'XLSX',
-                                                child: Text('XLSX')),
-                                            const PopupMenuItem<String>(
-                                                value: 'CSV',
-                                                child: Text('CSV')),
-                                          ],
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              istenantDataLoading
-                                                  ? const Center(
-                                                      child:
-                                                          SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 21.0,
-                                                      ),
-                                                    )
-                                                  : Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
                                 ),
-                                const SizedBox(height: 20),
-                                _buildHeaders(),
-                                const SizedBox(height: 10),
-                                Padding(
-                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
-                                  child: Container(
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int rowIndex = entry.key;
-                                        var item = entry.value;
-                                        bool isRowExpanded =
-                                            expandedRowIndex == rowIndex;
-
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: rowIndex % 2 != 0
-                                                ? const Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: const Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedRowIndex ==
-                                                                rowIndex) {
-                                                              expandedRowIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedRowIndex =
-                                                                  rowIndex;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin: const EdgeInsets
-                                                              .only(left: 5),
-                                                          padding: !isRowExpanded
-                                                              ? const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 10)
-                                                              : const EdgeInsets
-                                                                  .only(top: 10),
-                                                          child: FaIcon(
-                                                            isRowExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: isRowExpanded
-                                                                ? blueColor
-                                                                : blueColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .04),
-                                                      Expanded(
-                                                        child: Text(
-                                                          '${item.rentalAddress ?? '-'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isRowExpanded)
-                                                Column(
-                                                  children: item.tenants!
-                                                      .asMap()
-                                                      .entries
-                                                      .map((tenantEntry) {
-                                                    int tenantIndex =
-                                                        tenantEntry.key;
-                                                    var tenant =
-                                                        tenantEntry.value;
-                                                    bool isTenantExpanded =
-                                                        expandedTenantIndex[
-                                                                rowIndex] ==
-                                                            tenantIndex;
-
-                                                    return Column(
-                                                      children: <Widget>[
-                                                        Divider(
-                                                          color: blueColor,
-                                                        ),
-                                                        ListTile(
-                                                          contentPadding:
-                                                              EdgeInsets.zero,
-                                                          title: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(2.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: <Widget>[
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    setState(() {
-                                                                      if (expandedTenantIndex[
-                                                                              rowIndex] ==
-                                                                          tenantIndex) {
-                                                                        expandedTenantIndex[
-                                                                                rowIndex] =
-                                                                            null;
-                                                                      } else {
-                                                                        expandedTenantIndex[
-                                                                                rowIndex] =
-                                                                            tenantIndex;
-                                                                      }
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                5),
-                                                                    padding: !isTenantExpanded
-                                                                        ? const EdgeInsets
-                                                                            .only(
-                                                                            bottom:
-                                                                                10)
-                                                                        : const EdgeInsets
-                                                                            .only(
-                                                                            top:
-                                                                                10),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              24),
-                                                                      child:
-                                                                          FaIcon(
-                                                                        isTenantExpanded
-                                                                            ? FontAwesomeIcons
-                                                                                .sortUp
-                                                                            : FontAwesomeIcons
-                                                                                .sortDown,
-                                                                        size: 20,
-                                                                        color: isTenantExpanded
-                                                                            ? blueColor
-                                                                            : blueColor,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    width: MediaQuery.of(
-                                                                                context)
-                                                                            .size
-                                                                            .width *
-                                                                        .02),
-                                                                Expanded(
-                                                                  child: RichText(
-                                                                      text: TextSpan(
-                                                                          children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Tenant ${tenantIndex + 1} ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                Colors.grey[600],
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                            fontSize:
-                                                                                14,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              ': ${tenant.tenantName ?? '-'}',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            fontSize:
-                                                                                14,
-                                                                          ),
-                                                                        ),
-                                                                      ])),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        if (isTenantExpanded)
-                                                          Container(
-                                                            width:
-                                                                double.infinity,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              36.0),
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                0),
-                                                                        child: Text
-                                                                            .rich(
-                                                                          TextSpan(
-                                                                            children: [
-                                                                              TextSpan(
-                                                                                text: 'Total Amount',
-                                                                                style: TextStyle(
-                                                                                  color: blueColor,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              TextSpan(
-                                                                                text: ' :  ${formatCurrency(double.tryParse(tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0'))}',
-                                                                                style: TextStyle(
-                                                                                  color: Colors.grey[500],
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 15,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                0),
-                                                                        child: Text
-                                                                            .rich(
-                                                                          TextSpan(
-                                                                            children: [
-                                                                              TextSpan(
-                                                                                text: 'Last 30 Days',
-                                                                                style: TextStyle(
-                                                                                  color: blueColor,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              TextSpan(
-                                                                                text: ' :  \$${tenant.pdfDelinquentTenantsData!.last30Days ?? '-'}',
-                                                                                style: TextStyle(
-                                                                                  color: Colors.grey[500],
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 15,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                0),
-                                                                        child: Text
-                                                                            .rich(
-                                                                          TextSpan(
-                                                                            children: [
-                                                                              TextSpan(
-                                                                                text: 'Last 31 to 60 days',
-                                                                                style: TextStyle(
-                                                                                  color: blueColor,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              TextSpan(
-                                                                                text: ' :  \$${tenant.pdfDelinquentTenantsData!.last31To60Days ?? '-'}',
-                                                                                style: TextStyle(
-                                                                                  color: Colors.grey[500],
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 15,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                0),
-                                                                        child: Text
-                                                                            .rich(
-                                                                          TextSpan(
-                                                                            children: [
-                                                                              TextSpan(
-                                                                                text: 'Last 61 to 90 Days',
-                                                                                style: TextStyle(
-                                                                                  color: blueColor,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              TextSpan(
-                                                                                text: ' :  \$${tenant.pdfDelinquentTenantsData!.last61To90Days ?? '-'}',
-                                                                                style: TextStyle(
-                                                                                  color: Colors.grey[500],
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 15,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                0),
-                                                                        child: Text
-                                                                            .rich(
-                                                                          TextSpan(
-                                                                            children: [
-                                                                              TextSpan(
-                                                                                text: 'Last 91+ Days',
-                                                                                style: TextStyle(
-                                                                                  color: blueColor,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 14,
-                                                                                ),
-                                                                              ),
-                                                                              TextSpan(
-                                                                                text: ' :  \$${tenant.pdfDelinquentTenantsData!.last91PlusDays ?? '-'}',
-                                                                                style: TextStyle(
-                                                                                  color: Colors.grey[500],
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: 15,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              8),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
+                                SizedBox(
+                                  height: 10,
                                 ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                Text(
+                                  "No Data Available",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16),
+                                )
                               ],
                             ),
                           ),
                         );
-                      },
-                    ),
+                      }
+
+                      var data = snapshot.data!;
+
+                      // Apply filtering based on selectedValue and searchValue
+                      if (selectedValue == null && searchvalue.isEmpty) {
+                        data = snapshot.data!;
+                      } else if (selectedValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchvalue.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((item) =>
+                                item.rentalAddress!
+                                    .toLowerCase()
+                                    .contains(searchvalue.toLowerCase()) ||
+                                item.tenants!.any((tenant) => tenant.tenantName!
+                                    .toLowerCase()
+                                    .contains(searchvalue.toLowerCase())))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where(
+                                (item) => item.rentalAddress == selectedValue)
+                            .toList();
+                      }
+
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 48
+                                              : 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: const Color(0xFF8A95A8)),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                searchvalue = value;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor,
+                                      ),
+                                      onPressed: () {},
+                                      child: PopupMenuButton<String>(
+                                        onSelected: (value) async {
+                                          // Export logic
+                                          if (value == 'PDF') {
+                                            print('pdf');
+                                            generateDelinquentTenantsPdf(data);
+                                          } else if (value == 'XLSX') {
+                                            print('XLSX');
+                                            generateDelinquentTenantsExcel(
+                                                data);
+                                          } else if (value == 'CSV') {
+                                            print('CSV');
+                                            generateDelinquentTenantsCsv(data);
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) =>
+                                            <PopupMenuEntry<String>>[
+                                          const PopupMenuItem<String>(
+                                              value: 'PDF', child: Text('PDF')),
+                                          const PopupMenuItem<String>(
+                                              value: 'XLSX',
+                                              child: Text('XLSX')),
+                                          const PopupMenuItem<String>(
+                                              value: 'CSV', child: Text('CSV')),
+                                        ],
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            istenantDataLoading
+                                                ? const Center(
+                                                    child: SpinKitFadingCircle(
+                                                      color: Colors.white,
+                                                      size: 21.0,
+                                                    ),
+                                                  )
+                                                : Text('Export'),
+                                            Icon(Icons.arrow_drop_down),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              _buildHeaders(),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 10
+                                            : 0),
+                                child: Container(
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int rowIndex = entry.key;
+                                      var item = entry.value;
+                                      bool isRowExpanded =
+                                          expandedRowIndex == rowIndex;
+
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: rowIndex % 2 != 0
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedRowIndex ==
+                                                              rowIndex) {
+                                                            expandedRowIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedRowIndex =
+                                                                rowIndex;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
+                                                        padding: !isRowExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isRowExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: isRowExpanded
+                                                              ? blueColor
+                                                              : blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        '${item.rentalAddress ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isRowExpanded)
+                                              Column(
+                                                children: item.tenants!
+                                                    .asMap()
+                                                    .entries
+                                                    .map((tenantEntry) {
+                                                  int tenantIndex =
+                                                      tenantEntry.key;
+                                                  var tenant =
+                                                      tenantEntry.value;
+                                                  bool isTenantExpanded =
+                                                      expandedTenantIndex[
+                                                              rowIndex] ==
+                                                          tenantIndex;
+
+                                                  return Column(
+                                                    children: <Widget>[
+                                                      Divider(
+                                                        color: blueColor,
+                                                      ),
+                                                      ListTile(
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
+                                                        title: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(2.0),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: <Widget>[
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    if (expandedTenantIndex[
+                                                                            rowIndex] ==
+                                                                        tenantIndex) {
+                                                                      expandedTenantIndex[
+                                                                              rowIndex] =
+                                                                          null;
+                                                                    } else {
+                                                                      expandedTenantIndex[
+                                                                              rowIndex] =
+                                                                          tenantIndex;
+                                                                    }
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  margin:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              5),
+                                                                  padding: !isTenantExpanded
+                                                                      ? const EdgeInsets
+                                                                          .only(
+                                                                          bottom:
+                                                                              10)
+                                                                      : const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              10),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            24),
+                                                                    child:
+                                                                        FaIcon(
+                                                                      isTenantExpanded
+                                                                          ? FontAwesomeIcons
+                                                                              .sortUp
+                                                                          : FontAwesomeIcons
+                                                                              .sortDown,
+                                                                      size: 20,
+                                                                      color: isTenantExpanded
+                                                                          ? blueColor
+                                                                          : blueColor,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      .02),
+                                                              Expanded(
+                                                                child: RichText(
+                                                                    text: TextSpan(
+                                                                        children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Tenant ${tenantIndex + 1} ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.grey[600],
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          fontSize:
+                                                                              14,
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            ': ${tenant.tenantName ?? '-'}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              14,
+                                                                        ),
+                                                                      ),
+                                                                    ])),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      if (isTenantExpanded)
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            36.0),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0),
+                                                                      child: Text
+                                                                          .rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Total Amount',
+                                                                              style: TextStyle(
+                                                                                color: blueColor,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: ' :  ${formatCurrency(double.tryParse(tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0'))}',
+                                                                              style: TextStyle(
+                                                                                color: Colors.grey[500],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 15,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0),
+                                                                      child: Text
+                                                                          .rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Last 30 Days',
+                                                                              style: TextStyle(
+                                                                                color: blueColor,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: ' :  \$${tenant.pdfDelinquentTenantsData!.last30Days ?? '-'}',
+                                                                              style: TextStyle(
+                                                                                color: Colors.grey[500],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 15,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0),
+                                                                      child: Text
+                                                                          .rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Last 31 to 60 days',
+                                                                              style: TextStyle(
+                                                                                color: blueColor,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: ' :  \$${tenant.pdfDelinquentTenantsData!.last31To60Days ?? '-'}',
+                                                                              style: TextStyle(
+                                                                                color: Colors.grey[500],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 15,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0),
+                                                                      child: Text
+                                                                          .rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Last 61 to 90 Days',
+                                                                              style: TextStyle(
+                                                                                color: blueColor,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: ' :  \$${tenant.pdfDelinquentTenantsData!.last61To90Days ?? '-'}',
+                                                                              style: TextStyle(
+                                                                                color: Colors.grey[500],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 15,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              0),
+                                                                      child: Text
+                                                                          .rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: 'Last 91+ Days',
+                                                                              style: TextStyle(
+                                                                                color: blueColor,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 14,
+                                                                              ),
+                                                                            ),
+                                                                            TextSpan(
+                                                                              text: ' :  \$${tenant.pdfDelinquentTenantsData!.last91PlusDays ?? '-'}',
+                                                                              style: TextStyle(
+                                                                                color: Colors.grey[500],
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 15,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   FutureBuilder<List<DelinquentTenantsData>>(
                   //     future: _futureRentersInsurance,

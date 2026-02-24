@@ -1,11 +1,13 @@
 class LeaseResponse {
   final int? statusCode;
   final List<LeaseDatacronjob>? data;
+  final List<LeaseDatacronjob>? failedPayments;
   final Metadata? metadata;
 
   LeaseResponse({
     this.statusCode,
     this.data,
+    this.failedPayments,
     this.metadata,
   });
 
@@ -13,6 +15,9 @@ class LeaseResponse {
     return LeaseResponse(
       statusCode: json['statusCode'],
       data: (json['data'] as List?)
+          ?.map((e) => LeaseDatacronjob.fromJson(e))
+          .toList(),
+      failedPayments: (json['failedPayments'] as List?)
           ?.map((e) => LeaseDatacronjob.fromJson(e))
           .toList(),
       metadata:

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -14,26 +15,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/properties.dart';
-
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-
 import '../../../Model/ApplicantModel.dart';
 import '../../../Model/tenants.dart';
 import '../../../model/cosigner.dart';
 import '../../../model/edit_lease.dart';
 import '../../../model/get_lease.dart';
 import '../../../model/lease.dart';
-
 import '../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -194,6 +191,9 @@ class _Edit_leaseState extends State<Edit_lease>
           fetchedDetails.lease.leasePaymentSettings ?? false;
       _creditCardAccepted = fetchedDetails.lease.creditCardAccepted ?? false;
       _debitCardAccepted = fetchedDetails.lease.debitCardAccepted ?? false;
+      print('achAccepted ${fetchedDetails.lease.achAccepted}');
+     _achAccepted = fetchedDetails.lease.achAccepted ?? false;
+     _achAcceptedDirty = false;
     });
 
     _loadUnits(renderId);
@@ -423,7 +423,86 @@ class _Edit_leaseState extends State<Edit_lease>
   bool _selectedResidentsEmail = false; // Initialize the boolean variable
   bool _leasePaymentSettings = false; // Enable payment settings
   bool _creditCardAccepted = false; // Credit card checkbox
-  bool _debitCardAccepted = false; // Debit card checkbox
+  bool _debitCardAccepted = false;
+  bool _achAccepted = false; // Debit card checkbox
+  bool _achAcceptedDirty = false;
+  bool _isUpdatingAchSetting = false;
+
+  Future<bool> _confirmReenableAch() async {
+    final completer = Completer<bool>();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Re-enable ACH?",
+      desc: "Are you sure you want to re-enable ACH for this lease?",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () {
+            completer.complete(true);
+            Navigator.pop(context);
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {
+            completer.complete(false);
+            Navigator.pop(context);
+          },
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+      ],
+    ).show();
+    return completer.future;
+  }
+
+  Future<void> _updateAchSetting({required bool achAccepted}) async {
+    if (_isUpdatingAchSetting) return;
+
+    final prevAchAccepted = _achAccepted;
+    final prevLeasePaymentSettings = _leasePaymentSettings;
+
+    setState(() {
+      _isUpdatingAchSetting = true;
+      _achAccepted = achAccepted;
+      _leasePaymentSettings = true;
+    });
+
+    final success = await LeaseRepository().updateLeasePaymentSettings(
+      leaseId: widget.leaseId,
+      leasePaymentSettings: _leasePaymentSettings,
+      achAccepted: _achAccepted,
+    );
+
+    if (!mounted) return;
+
+    if (!success) {
+      setState(() {
+        _achAccepted = prevAchAccepted;
+        _leasePaymentSettings = prevLeasePaymentSettings;
+        _isUpdatingAchSetting = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _achAcceptedDirty = false;
+      _isUpdatingAchSetting = false;
+    });
+  }
   Widget _buildDataCell(String text) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -3711,114 +3790,149 @@ class _Edit_leaseState extends State<Edit_lease>
                       const SizedBox(
                         height: 10,
                       ),
-                      // lease payment setting
-                      // Container(
-                      //   width: double.infinity,
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(
-                      //         color: blueColor,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10.0)),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(12.0),
-                      //     child: Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         const SizedBox(
-                      //           height: 10,
-                      //         ),
-                      //         Text('Lease Payment Settings',
-                      //             style: TextStyle(
-                      //                 fontSize: 16,
-                      //                 fontWeight: FontWeight.w500,
-                      //                 color: blueColor)),
-                      //         //     .toList(),
-                      //         const SizedBox(height: 5),
-                      //         Text(
-                      //             "When enabled, these payment settings will override the rental owner's payment settings for this specific lease.  If disabled, the lease will automatically apply the rental owner's default payment settings.",
-                      //             textAlign: TextAlign.justify,
-                      //             style: TextStyle(
-                      //                 fontSize: 16,
-                      //                 fontWeight: FontWeight.w300,
-                      //                 color: Colors.grey)),
-                      //
-                      //         const SizedBox(
-                      //           height: 10,
-                      //         ),
-                      //         Row(
-                      //           children: [
-                      //             Checkbox(
-                      //               activeColor: blueColor,
-                      //               value: _leasePaymentSettings,
-                      //               onChanged: (newValue) {
-                      //                 setState(() {
-                      //                   _leasePaymentSettings =
-                      //                       newValue ?? false;
-                      //                   if (!_leasePaymentSettings) {
-                      //                     _creditCardAccepted = false;
-                      //                     _debitCardAccepted = false;
-                      //                   }
-                      //                 });
-                      //               },
-                      //             ),
-                      //             Text('Enable Lease Payment Settings',
-                      //                 style: TextStyle(
-                      //                     fontSize: 14,
-                      //                     fontWeight: FontWeight.w500,
-                      //                     color: blueColor)),
-                      //           ],
-                      //         ),
-                      //         if (_leasePaymentSettings) ...[
-                      //           const SizedBox(
-                      //             height: 5,
-                      //           ),
-                      //           Row(
-                      //             children: [
-                      //               SizedBox(width: 5,),
-                      //               Checkbox(
-                      //                 activeColor: blueColor,
-                      //                 value: _creditCardAccepted,
-                      //                 onChanged: (bool? value) {
-                      //                   setState(() {
-                      //                     _creditCardAccepted = value ?? false;
-                      //                   });
-                      //                 },
-                      //               ),
-                      //               const Text('Accepted Credit Card',
-                      //                   style: TextStyle(
-                      //                       fontSize: 14,
-                      //                       fontWeight: FontWeight.w500,
-                      //                       color: Color(0xFF748097))),
-                      //             ],
-                      //           ),
-                      //           Row(
-                      //             children: [
-                      //               SizedBox(width: 5,),
-                      //               Checkbox(
-                      //                 activeColor: blueColor,
-                      //                 value: _debitCardAccepted,
-                      //                 onChanged: (bool? value) {
-                      //                   setState(() {
-                      //                     _debitCardAccepted = value ?? false;
-                      //                   });
-                      //                 },
-                      //               ),
-                      //               const Text('Accepted Debit Card',
-                      //                   style: TextStyle(
-                      //                       fontSize: 14,
-                      //                       fontWeight: FontWeight.w500,
-                      //                       color: Color(0xFF748097))),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-
+                     // lease payment settings
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: blueColor,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text('Lease Payment Settings',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
+                              //     .toList(),
+                              const SizedBox(height: 5),
+                              Text(
+                                  "When enabled, these payment settings will override the rental owner's payment settings for this specific lease.  If disabled, the lease will automatically apply the rental owner's default payment settings.",
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey)),
+                    
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(children: [
+                                Checkbox(
+                                  activeColor: blueColor,
+                                  value: !_achAccepted, // UI is "Disable ACH"
+                                  onChanged: _isUpdatingAchSetting
+                                      ? null
+                                      : (newValue) async {
+                                          final disableAch = newValue ?? false;
+                                          final nextAchAccepted = !disableAch;
+                    
+                                          // If currently disabled and user wants to re-enable, confirm first.
+                                          if (_achAccepted == false &&
+                                              nextAchAccepted == true) {
+                                            final ok =
+                                                await _confirmReenableAch();
+                                            if (!ok) return;
+                                          }
+                    
+                                          setState(() {
+                                            _achAcceptedDirty = true;
+                                          });
+                                          await _updateAchSetting(
+                                              achAccepted: nextAchAccepted);
+                                        },
+                                ),
+                                Text('Disable ACH',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
+                              ]),
+                    
+                              // Row(
+                              //   children: [
+                              //     Checkbox(
+                              //       activeColor: blueColor,
+                              //       value: _leasePaymentSettings,
+                              //       onChanged: (newValue) {
+                              //         setState(() {
+                              //           _leasePaymentSettings =
+                              //               newValue ?? false;
+                              //           if (!_leasePaymentSettings) {
+                              //             _creditCardAccepted = false;
+                              //             _debitCardAccepted = false;
+                              //           }
+                              //         });
+                              //       },
+                              //     ),
+                              //     Text('Enable Lease Payment Settings',
+                              //         style: TextStyle(
+                              //             fontSize: 14,
+                              //             fontWeight: FontWeight.w500,
+                              //             color: blueColor)),
+                              //   ],
+                              // ),
+                              // if (_leasePaymentSettings) ...[
+                              //   const SizedBox(
+                              //     height: 5,
+                              //   ),
+                              //   Row(
+                              //     children: [
+                              //       SizedBox(
+                              //         width: 5,
+                              //       ),
+                              //       Checkbox(
+                              //         activeColor: blueColor,
+                              //         value: _creditCardAccepted,
+                              //         onChanged: (bool? value) {
+                              //           setState(() {
+                              //             _creditCardAccepted = value ?? false;
+                              //           });
+                              //         },
+                              //       ),
+                              //       const Text('Accepted Credit Card',
+                              //           style: TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.w500,
+                              //               color: Color(0xFF748097))),
+                              //     ],
+                              //   ),
+                              //   Row(
+                              //     children: [
+                              //       SizedBox(
+                              //         width: 5,
+                              //       ),
+                              //       Checkbox(
+                              //         activeColor: blueColor,
+                              //         value: _debitCardAccepted,
+                              //         onChanged: (bool? value) {
+                              //           setState(() {
+                              //             _debitCardAccepted = value ?? false;
+                              //           });
+                              //         },
+                              //       ),
+                              //       const Text('Accepted Debit Card',
+                              //           style: TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.w500,
+                              //               color: Color(0xFF748097))),
+                              //     ],
+                              //   ),
+                              // ],
+                    
+                            ],
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                    
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -3897,6 +4011,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           ),
                         ),
                       ),
+
                       const SizedBox(
                         height: 10,
                       ),

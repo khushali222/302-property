@@ -53,8 +53,11 @@ class AddMortgageScreen extends StatefulWidget {
   // pass the mortgage data to this screen from the previous screen
   final Map<String, dynamic>? mortgageData;
   final String? mortgageId; // For editing existing mortgages
+  final String?
+      propertyId; // Property ID from context (when adding from property page)
 
-  const AddMortgageScreen({Key? key, this.mortgageId, this.mortgageData})
+  const AddMortgageScreen(
+      {Key? key, this.mortgageId, this.mortgageData, this.propertyId})
       : super(key: key);
 
   @override
@@ -91,12 +94,36 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   final _borrowerAddressController = TextEditingController();
   final _borrowerPhoneController = TextEditingController();
   final _borrowerEmailController = TextEditingController();
-
+  final _typeController = TextEditingController();
+  final _amortizationPeriodController = TextEditingController();
+  // Conditional fields for Fixed Rate Mortgage
+  final _fixedInterestPeriodController = TextEditingController();
+  final _fixedInterestExpirationDateController = TextEditingController();
+  DateTime? _fixedInterestExpirationDate;
+  // Conditional fields for Floating Rate Mortgage
+  final _spreadController = TextEditingController();
+  // Conditional field for Fixed Rate Mortgage
+  final _spreadOnFloatingRateController = TextEditingController();
   // Selected dates
   DateTime? _startDate;
   DateTime? _endDate;
   DateTime? _lastPaymentDate;
   DateTime? _nextPaymentDate;
+
+  // Payoff History
+  List<Map<String, dynamic>> _payoffs = [];
+  final TextEditingController _newPayoffAmountController =
+      TextEditingController();
+  final TextEditingController _newPayoffDateController =
+      TextEditingController();
+  DateTime? _newPayoffDate;
+  int? _editingPayoffIndex;
+  final TextEditingController _editingPayoffAmountController =
+      TextEditingController();
+  final TextEditingController _editingPayoffDateController =
+      TextEditingController();
+  DateTime? _editingPayoffDate;
+  bool _showAddPayoffForm = false;
 
   // Status options
   final List<String> _statusOptions = [
@@ -105,10 +132,19 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     'Defaulted',
     'Refinanced'
   ];
+  final List<String> _typeOptions = [
+    'Floating Rate Mortgage',
+    'Fixed Rate Mortgage',
+  ];
+  String _selectedMortgageType =
+      ''; // Track selected mortgage type for reactive UI
   List<Map<String, dynamic>> _propertyOptions = [];
   bool _isLoadingProperties = false;
 
   bool _isLoading = false;
+
+  // Store original mortgage data for comparison
+  Map<String, dynamic>? _originalMortgageData;
 
   @override
   void initState() {
@@ -143,20 +179,71 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     _borrowerAddressController.dispose();
     _borrowerPhoneController.dispose();
     _borrowerEmailController.dispose();
+    _typeController.dispose();
+    _amortizationPeriodController.dispose();
+    _fixedInterestPeriodController.dispose();
+    _fixedInterestExpirationDateController.dispose();
+    _spreadController.dispose();
+    _spreadOnFloatingRateController.dispose();
+    _newPayoffAmountController.dispose();
+    _newPayoffDateController.dispose();
+    _editingPayoffAmountController.dispose();
+    _editingPayoffDateController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
 // add the first date picker for the start date
 
+  // Helper function to convert date format pattern to readable hint text
+  // Example: "MM/dd/yyyy" -> "mm/dd/yyyy", "dd-MM-yyyy" -> "dd-mm-yyyy", "yyyy-MM-dd" -> "yyyy-mm-dd"
+  String _getDateHintText(DateProvider dateProvider) {
+    String format = dateProvider.dateFormat;
+    // Convert format pattern to lowercase while preserving separators (/, -, etc.)
+    String hint =
+        format.replaceAll('M', 'm').replaceAll('d', 'd').replaceAll('y', 'y');
+    return hint;
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate,
-      {DateTime? firstDate}) async {
+      {DateTime? firstDate, DateTime? lastDate}) async {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+
+    // Determine the actual firstDate and lastDate
+    final actualFirstDate = firstDate ?? DateTime(2000);
+    final actualLastDate = lastDate ?? DateTime(2100);
+
+    // Ensure initialDate is within the valid range
+    DateTime actualInitialDate;
+    if (initialDate != null) {
+      if (initialDate.isBefore(actualFirstDate)) {
+        actualInitialDate = actualFirstDate;
+      } else if (initialDate.isAfter(actualLastDate)) {
+        actualInitialDate = actualLastDate;
+      } else {
+        actualInitialDate = initialDate;
+      }
+    } else {
+      // If no initial date, use firstDate if it's valid, otherwise today (but ensure it's within range)
+      if (actualFirstDate.isBefore(today) ||
+          actualFirstDate.isAtSameMomentAs(today)) {
+        actualInitialDate =
+            actualFirstDate.isAfter(today) ? actualFirstDate : today;
+        if (actualInitialDate.isAfter(actualLastDate)) {
+          actualInitialDate = actualLastDate;
+        }
+      } else {
+        actualInitialDate = actualFirstDate;
+      }
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDate ?? DateTime.now(),
-      firstDate: firstDate ?? DateTime(2000),
-      lastDate: DateTime(2100),
+      initialDate: actualInitialDate,
+      firstDate: actualFirstDate,
+      lastDate: actualLastDate,
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -187,14 +274,66 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         if (controller == _startDateController) {
           _startDate = picked;
           controller.text = displayFormat;
+          // Clear maturity date if it's before or equal to origination date
+          if (_endDate != null &&
+              (_endDate!.isBefore(_startDate!) ||
+                  _endDate!.isAtSameMomentAs(_startDate!))) {
+            _endDate = null;
+            _endDateController.text = '';
+          }
+          // Clear fixed interest expiration date if it's invalid (must be strictly between)
+          if (_fixedInterestExpirationDate != null && _endDate != null) {
+            final startDateOnly =
+                DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+            final endDateOnly =
+                DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+            final expirationDateOnly = DateTime(
+                _fixedInterestExpirationDate!.year,
+                _fixedInterestExpirationDate!.month,
+                _fixedInterestExpirationDate!.day);
+
+            if (expirationDateOnly.isBefore(startDateOnly) ||
+                expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
+                expirationDateOnly.isAfter(endDateOnly) ||
+                expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
+              _fixedInterestExpirationDate = null;
+              _fixedInterestExpirationDateController.text = '';
+            }
+          } else if (_fixedInterestExpirationDate != null && _endDate == null) {
+            // If end date is cleared, clear fixed interest expiration date too
+            _fixedInterestExpirationDate = null;
+            _fixedInterestExpirationDateController.text = '';
+          }
         } else if (controller == _endDateController) {
           _endDate = picked;
           controller.text = displayFormat;
+          // Clear fixed interest expiration date if it's invalid (must be strictly between)
+          if (_fixedInterestExpirationDate != null && _startDate != null) {
+            final startDateOnly =
+                DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+            final endDateOnly =
+                DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+            final expirationDateOnly = DateTime(
+                _fixedInterestExpirationDate!.year,
+                _fixedInterestExpirationDate!.month,
+                _fixedInterestExpirationDate!.day);
+
+            if (expirationDateOnly.isBefore(startDateOnly) ||
+                expirationDateOnly.isAtSameMomentAs(startDateOnly) ||
+                expirationDateOnly.isAfter(endDateOnly) ||
+                expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
+              _fixedInterestExpirationDate = null;
+              _fixedInterestExpirationDateController.text = '';
+            }
+          }
         } else if (controller == _lastPaymentDateController) {
           _lastPaymentDate = picked;
           controller.text = displayFormat;
         } else if (controller == _nextPaymentDateController) {
           _nextPaymentDate = picked;
+          controller.text = displayFormat;
+        } else if (controller == _fixedInterestExpirationDateController) {
+          _fixedInterestExpirationDate = picked;
           controller.text = displayFormat;
         }
       });
@@ -275,17 +414,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       // Remove all non-digit characters to check length
       String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
 
-      if (digitsOnly.length < 3) {
-        return 'Mortgage number must be at least 3 digits';
+      if (value.length < 2) {
+        return 'Account number must be at least 2 digits';
       }
     }
     return null;
   }
 
   String? _validateProperties() {
-    if (_selectedProperties.isEmpty) {
-      return 'At least one property must be selected';
-    }
+    // Property selection is now optional - no validation needed
+    // This function always returns null to allow mortgages without properties
     return null;
   }
 
@@ -467,6 +605,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
   void _populateFormWithData(Map<String, dynamic> mortgageData) {
     try {
+      // Store original data for comparison
+      _originalMortgageData = Map<String, dynamic>.from(mortgageData);
       setState(() {
         // Bank Information
         _bankNameController.text = mortgageData['bank_name'] ?? '';
@@ -485,6 +625,25 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             mortgageData['relationship_manager_email'] ?? '';
 
         // Mortgage Details
+        // Set mortgage type - map API values to dropdown options
+        final mortgageType = mortgageData['mortgage_type']?.toString() ?? '';
+        if (mortgageType.isNotEmpty) {
+          // Map API values to dropdown display values
+          if (mortgageType == 'floating_rate' ||
+              mortgageType == 'Floating Rate Mortgage') {
+            _typeController.text = 'Floating Rate Mortgage';
+          } else if (mortgageType == 'fixed_rate' ||
+              mortgageType == 'Fixed Rate Mortgage') {
+            _typeController.text = 'Fixed Rate Mortgage';
+          } else {
+            // Try to match by partial string
+            if (mortgageType.toLowerCase().contains('floating')) {
+              _typeController.text = 'Floating Rate Mortgage';
+            } else if (mortgageType.toLowerCase().contains('fixed')) {
+              _typeController.text = 'Fixed Rate Mortgage';
+            }
+          }
+        }
         _mortgageNumberController.text = mortgageData['mortgage_no'] ?? '';
         _loanAmountController.text = mortgageData['loan_amount'].toString();
         print(mortgageData['interest_rate']);
@@ -497,7 +656,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             _startDate = DateTime.parse(mortgageData['start_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-            Provider.of<DateProvider>(context, listen: false);
+                Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate = DateFormat('yyyy-MM-dd').format(_startDate!);
             _startDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
@@ -514,7 +673,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             _endDate = DateTime.parse(mortgageData['end_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-            Provider.of<DateProvider>(context, listen: false);
+                Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate = DateFormat('yyyy-MM-dd').format(_endDate!);
             _endDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
@@ -532,14 +691,48 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         final formattedStatus = status
             .split('_') // split into ['paid', 'off']
             .map((word) =>
-        word[0].toUpperCase() + word.substring(1)) // capitalize each
+                word[0].toUpperCase() + word.substring(1)) // capitalize each
             .join(' '); // join back with space
 
         _statusController.text = formattedStatus;
 
         //_statusController.text = mortgageData['status'] ?? '';
+        _amortizationPeriodController.text =
+            mortgageData['amortization_period']?.toString() ?? '';
         _remainingBalanceController.text =
             mortgageData['remaining_balance'].toString();
+
+        // Set selected mortgage type for reactive UI
+        _selectedMortgageType = _typeController.text;
+
+        // Populate conditional fields based on mortgage type
+        if (_typeController.text == 'Fixed Rate Mortgage') {
+          _fixedInterestPeriodController.text =
+              mortgageData['fixed_interest_period']?.toString() ?? '';
+
+          if (mortgageData['fixed_interest_expiration_date'] != null &&
+              mortgageData['fixed_interest_expiration_date']
+                  .toString()
+                  .isNotEmpty) {
+            try {
+              _fixedInterestExpirationDate = DateTime.parse(
+                  mortgageData['fixed_interest_expiration_date']);
+              final dateProvider =
+                  Provider.of<DateProvider>(context, listen: false);
+              String apiFormatDate = DateFormat('yyyy-MM-dd')
+                  .format(_fixedInterestExpirationDate!);
+              _fixedInterestExpirationDateController.text =
+                  dateProvider.formatCurrentDate(apiFormatDate);
+            } catch (e) {
+              _fixedInterestExpirationDateController.text = '';
+            }
+          }
+
+          _spreadOnFloatingRateController.text =
+              mortgageData['spread_on_floating_rate']?.toString() ?? '';
+        } else if (_typeController.text == 'Floating Rate Mortgage') {
+          _spreadController.text = mortgageData['spread']?.toString() ?? '';
+        }
 
         // Format payment dates properly for display using DateProvider
         if (mortgageData['last_payment_date'] != null &&
@@ -549,9 +742,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 DateTime.parse(mortgageData['last_payment_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-            Provider.of<DateProvider>(context, listen: false);
+                Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate =
-            DateFormat('yyyy-MM-dd').format(_lastPaymentDate!);
+                DateFormat('yyyy-MM-dd').format(_lastPaymentDate!);
             _lastPaymentDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
           } catch (e) {
@@ -568,9 +761,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 DateTime.parse(mortgageData['next_payment_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-            Provider.of<DateProvider>(context, listen: false);
+                Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate =
-            DateFormat('yyyy-MM-dd').format(_nextPaymentDate!);
+                DateFormat('yyyy-MM-dd').format(_nextPaymentDate!);
             _nextPaymentDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
           } catch (e) {
@@ -602,12 +795,25 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             print(_propertyOptions);
             // Find the property in _propertyOptions by rental_id
             final property = _propertyOptions.firstWhere(
-                  (p) => p['rental_id'] == propertyId,
+              (p) => p['rental_id'] == propertyId,
               orElse: () => <String, dynamic>{},
             );
             if (property.isNotEmpty) {
               _selectedProperties.add(property);
             }
+          }
+        }
+
+        // Handle payoffs
+        if (mortgageData['payoffs'] != null &&
+            mortgageData['payoffs'] is List) {
+          _payoffs.clear();
+          for (var payoff in mortgageData['payoffs']) {
+            _payoffs.add({
+              'amount': payoff['amount'],
+              'date': DateTime.parse(payoff['date']),
+              '_id': payoff['_id'],
+            });
           }
         }
       });
@@ -616,7 +822,342 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
   }
 
+  // Compare current form data with original data
+  bool _hasChanges() {
+    if (_originalMortgageData == null || widget.mortgageId == null) {
+      // If no original data or not in edit mode, consider it as having changes (for new records)
+      return widget.mortgageId == null;
+    }
+
+    try {
+      // We'll build the current data similar to _saveForm
+      List<String> propertyIds = _selectedProperties
+          .map((p) => p['rental_id'].toString())
+          .toList()
+          .cast<String>();
+      if (propertyIds.isEmpty &&
+          widget.propertyId != null &&
+          widget.propertyId!.isNotEmpty) {
+        propertyIds = [widget.propertyId!];
+      }
+
+      final mortgageType = _selectedMortgageType.isNotEmpty
+          ? _selectedMortgageType
+          : _typeController.text.trim();
+      final isFixedRate = mortgageType == 'Fixed Rate Mortgage';
+
+      // Build current mortgage data
+      final currentData = <String, dynamic>{
+        'properties': propertyIds,
+        'bank_name': _bankNameController.text.trim(),
+        'bank_address': _bankAddressController.text.trim(),
+        'bank_contact_no': _bankContactController.text.trim(),
+        'bank_email': _bankEmailController.text.trim(),
+        'relationship_manager_first_name':
+            _managerFirstNameController.text.trim(),
+        'relationship_manager_last_name':
+            _managerLastNameController.text.trim(),
+        'relationship_manager_phone': _managerPhoneController.text.trim(),
+        'relationship_manager_email': _managerEmailController.text.trim(),
+        'mortgage_no': _mortgageNumberController.text.trim(),
+        'mortgage_type': isFixedRate ? 'fixed_rate' : 'floating_rate',
+        'loan_amount': _loanAmountController.text.trim(),
+        'interest_rate': _interestRateController.text.trim(),
+        'start_date': _startDate != null ? _startDate!.toIso8601String() : '',
+        'end_date': _endDate != null ? _endDate!.toIso8601String() : '',
+        'amortization_period': _amortizationPeriodController.text.trim(),
+        'status':
+            _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
+        'remaining_balance': _remainingBalanceController.text.trim(),
+        'last_payment_date':
+            _lastPaymentDate != null ? _lastPaymentDate!.toIso8601String() : '',
+        'next_payment_date':
+            _nextPaymentDate != null ? _nextPaymentDate!.toIso8601String() : '',
+        'borrower_first_name': _borrowerFirstNameController.text.trim(),
+        'borrower_last_name': _borrowerLastNameController.text.trim(),
+        'borrower_ssn': _borrowerSSNController.text.trim(),
+        'borrower_address': _borrowerAddressController.text.trim(),
+        'borrower_phone': _borrowerPhoneController.text.trim(),
+        'borrower_email': _borrowerEmailController.text.trim(),
+        'payoffs': _payoffs
+            .map((payoff) => {
+                  'amount': payoff['amount'],
+                  'date': (payoff['date'] as DateTime).toIso8601String(),
+                  if (payoff['_id'] != null) '_id': payoff['_id'],
+                })
+            .toList(),
+      };
+
+      // Add conditional fields based on mortgage type
+      if (isFixedRate) {
+        currentData['fixed_interest_period'] =
+            _fixedInterestPeriodController.text.trim();
+        currentData['fixed_interest_expiration_date'] =
+            _fixedInterestExpirationDate != null
+                ? _fixedInterestExpirationDate!.toIso8601String()
+                : '';
+        currentData['spread_on_floating_rate'] =
+            _spreadOnFloatingRateController.text.trim();
+      } else {
+        currentData['spread'] = _spreadController.text.trim();
+      }
+
+      // Normalize original data for comparison
+      final originalData = <String, dynamic>{};
+      originalData['properties'] =
+          List<String>.from(_originalMortgageData!['properties'] ?? []);
+      originalData['bank_name'] = _originalMortgageData!['bank_name'] ?? '';
+      originalData['bank_address'] =
+          _originalMortgageData!['bank_address'] ?? '';
+      originalData['bank_contact_no'] =
+          _originalMortgageData!['bank_contact_no'] ?? '';
+      originalData['bank_email'] = _originalMortgageData!['bank_email'] ?? '';
+      originalData['relationship_manager_first_name'] =
+          _originalMortgageData!['relationship_manager_first_name'] ?? '';
+      originalData['relationship_manager_last_name'] =
+          _originalMortgageData!['relationship_manager_last_name'] ?? '';
+      originalData['relationship_manager_phone'] =
+          _originalMortgageData!['relationship_manager_phone'] ?? '';
+      originalData['relationship_manager_email'] =
+          _originalMortgageData!['relationship_manager_email'] ?? '';
+      originalData['mortgage_no'] = _originalMortgageData!['mortgage_no'] ?? '';
+      originalData['mortgage_type'] =
+          _originalMortgageData!['mortgage_type'] ?? '';
+      originalData['loan_amount'] =
+          _originalMortgageData!['loan_amount']?.toString() ?? '';
+      originalData['interest_rate'] =
+          _originalMortgageData!['interest_rate']?.toString() ?? '';
+      originalData['start_date'] =
+          _originalMortgageData!['start_date']?.toString() ?? '';
+      originalData['end_date'] =
+          _originalMortgageData!['end_date']?.toString() ?? '';
+      originalData['amortization_period'] =
+          _originalMortgageData!['amortization_period']?.toString() ?? '';
+      originalData['status'] =
+          _originalMortgageData!['status']?.toString() ?? '';
+      originalData['remaining_balance'] =
+          _originalMortgageData!['remaining_balance']?.toString() ?? '';
+      originalData['last_payment_date'] =
+          _originalMortgageData!['last_payment_date']?.toString() ?? '';
+      originalData['next_payment_date'] =
+          _originalMortgageData!['next_payment_date']?.toString() ?? '';
+      originalData['borrower_first_name'] =
+          _originalMortgageData!['borrower_first_name'] ?? '';
+      originalData['borrower_last_name'] =
+          _originalMortgageData!['borrower_last_name'] ?? '';
+      originalData['borrower_ssn'] =
+          _originalMortgageData!['borrower_ssn'] ?? '';
+      originalData['borrower_address'] =
+          _originalMortgageData!['borrower_address'] ?? '';
+      originalData['borrower_phone'] =
+          _originalMortgageData!['borrower_phone'] ?? '';
+      originalData['borrower_email'] =
+          _originalMortgageData!['borrower_email'] ?? '';
+
+      // Handle payoffs - normalize dates to ISO8601 format for comparison
+      if (_originalMortgageData!['payoffs'] != null &&
+          _originalMortgageData!['payoffs'] is List) {
+        originalData['payoffs'] =
+            (_originalMortgageData!['payoffs'] as List).map((payoff) {
+          String dateStr = '';
+          if (payoff['date'] != null) {
+            try {
+              // If it's already a DateTime object, convert to ISO8601
+              if (payoff['date'] is DateTime) {
+                dateStr = (payoff['date'] as DateTime).toIso8601String();
+              } else {
+                // If it's a string, try to parse and convert to ISO8601
+                dateStr =
+                    DateTime.parse(payoff['date'].toString()).toIso8601String();
+              }
+            } catch (e) {
+              dateStr = payoff['date']?.toString() ?? '';
+            }
+          }
+          return {
+            'amount': payoff['amount'],
+            'date': dateStr,
+            if (payoff['_id'] != null) '_id': payoff['_id'],
+          };
+        }).toList();
+      } else {
+        originalData['payoffs'] = [];
+      }
+
+      // Handle conditional fields
+      if (isFixedRate) {
+        originalData['fixed_interest_period'] =
+            _originalMortgageData!['fixed_interest_period']?.toString() ?? '';
+        originalData['fixed_interest_expiration_date'] =
+            _originalMortgageData!['fixed_interest_expiration_date']
+                    ?.toString() ??
+                '';
+        originalData['spread_on_floating_rate'] =
+            _originalMortgageData!['spread_on_floating_rate']?.toString() ?? '';
+      } else {
+        originalData['spread'] =
+            _originalMortgageData!['spread']?.toString() ?? '';
+      }
+
+      // Compare properties lists
+      final currentProps = List<String>.from(currentData['properties'] ?? [])
+        ..sort();
+      final originalProps = List<String>.from(originalData['properties'] ?? [])
+        ..sort();
+      if (currentProps.toString() != originalProps.toString()) {
+        return true;
+      }
+
+      // Compare payoffs
+      final currentPayoffs = List.from(currentData['payoffs'] ?? []);
+      final originalPayoffs = List.from(originalData['payoffs'] ?? []);
+      if (currentPayoffs.length != originalPayoffs.length) {
+        return true;
+      }
+      for (int i = 0; i < currentPayoffs.length; i++) {
+        final currentPayoff = currentPayoffs[i];
+        final originalPayoff = originalPayoffs[i];
+        if (currentPayoff['amount'] != originalPayoff['amount'] ||
+            currentPayoff['date'] != originalPayoff['date']) {
+          return true;
+        }
+      }
+
+      // Compare all other fields
+      for (String key in currentData.keys) {
+        if (key != 'properties' && key != 'payoffs') {
+          if (currentData[key] != originalData[key]) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    } catch (e) {
+      print('Error comparing data: $e');
+      // If comparison fails, assume there are changes to be safe
+      return true;
+    }
+  }
+
   void _saveForm() async {
+    // Validate dates before form validation
+    if (_startDate != null && _endDate != null) {
+      if (_endDate!.isBefore(_startDate!) ||
+          _endDate!.isAtSameMomentAs(_startDate!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Maturity Date must be after Origination Date'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
+    // Validate Fixed Interest Expiration Date for Fixed Rate Mortgage
+    if (_selectedMortgageType == 'Fixed Rate Mortgage' ||
+        (_selectedMortgageType.isEmpty &&
+            _typeController.text == 'Fixed Rate Mortgage')) {
+      if (_fixedInterestExpirationDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fixed Interest Expiration Date is required'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      if (_startDate != null && _endDate != null) {
+        // Must be strictly between Origination and Maturity dates (exclusive)
+        // expDate > startDate AND expDate < endDate
+        final startDateOnly =
+            DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
+        final endDateOnly =
+            DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
+        final expirationDateOnly = DateTime(
+            _fixedInterestExpirationDate!.year,
+            _fixedInterestExpirationDate!.month,
+            _fixedInterestExpirationDate!.day);
+
+        // Check: expDate > startDate (must be after origination date)
+        if (expirationDateOnly.isBefore(startDateOnly) ||
+            expirationDateOnly.isAtSameMomentAs(startDateOnly)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Fixed interest expiration date must be after origination date'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        // Check: expDate < endDate (must be before maturity date)
+        if (expirationDateOnly.isAfter(endDateOnly) ||
+            expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Fixed interest expiration date must be before maturity date'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
+    }
+
+    // Check if in edit mode and if there are any changes - do this before business logic validations
+    if (widget.mortgageId != null && !_hasChanges()) {
+      // No changes made, don't call API and skip business logic validations
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No changes detected. Nothing to update.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Validate Last Payment Date (if provided, cannot be in the future)
+    if (_lastPaymentDate != null) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+      final lastPaymentDateOnly = DateTime(_lastPaymentDate!.year,
+          _lastPaymentDate!.month, _lastPaymentDate!.day);
+
+      if (lastPaymentDateOnly.isAfter(today)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Last payment date cannot be in the future'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
+    // Validate Next Payment Date (if provided, cannot be in the past)
+    if (_nextPaymentDate != null) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+      final nextPaymentDateOnly = DateTime(_nextPaymentDate!.year,
+          _nextPaymentDate!.month, _nextPaymentDate!.day);
+
+      if (nextPaymentDateOnly.isBefore(today)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Next payment date cannot be in the past'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -628,8 +1169,26 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         String? id = prefs.getString('adminId');
 
         // Prepare the data according to your API structure
-        final mortgageData = {
-          'properties': _selectedProperties.map((p) => p['rental_id']).toList(),
+        // If no properties selected but propertyId is available from context, use it
+        List<String> propertyIds = _selectedProperties
+            .map((p) => p['rental_id'].toString())
+            .toList()
+            .cast<String>();
+        if (propertyIds.isEmpty &&
+            widget.propertyId != null &&
+            widget.propertyId!.isNotEmpty) {
+          propertyIds = [widget.propertyId!];
+        }
+
+        // Determine mortgage type
+        final mortgageType = _selectedMortgageType.isNotEmpty
+            ? _selectedMortgageType
+            : _typeController.text.trim();
+        final isFixedRate = mortgageType == 'Fixed Rate Mortgage';
+
+        // Build base mortgage data
+        final mortgageData = <String, dynamic>{
+          'properties': propertyIds,
           'bank_name': _bankNameController.text.trim(),
           'bank_address': _bankAddressController.text.trim(),
           'bank_contact_no': _bankContactController.text.trim(),
@@ -641,11 +1200,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           'relationship_manager_phone': _managerPhoneController.text.trim(),
           'relationship_manager_email': _managerEmailController.text.trim(),
           'mortgage_no': _mortgageNumberController.text.trim(),
+          // Map dropdown values to API enum values
+          'mortgage_type': isFixedRate ? 'fixed_rate' : 'floating_rate',
           'loan_amount': _loanAmountController.text.trim(),
           'interest_rate': _interestRateController.text.trim(),
           'start_date': _startDate != null ? _startDate!.toIso8601String() : '',
           'end_date': _endDate != null ? _endDate!.toIso8601String() : '',
-          'status':  _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
+          'amortization_period': _amortizationPeriodController.text.trim(),
+          'status':
+              _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
           'remaining_balance': _remainingBalanceController.text.trim(),
           'last_payment_date': _lastPaymentDate != null
               ? _lastPaymentDate!.toIso8601String()
@@ -659,7 +1222,28 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           'borrower_address': _borrowerAddressController.text.trim(),
           'borrower_phone': _borrowerPhoneController.text.trim(),
           'borrower_email': _borrowerEmailController.text.trim(),
+          'payoffs': _payoffs
+              .map((payoff) => {
+                    'amount': payoff['amount'],
+                    'date': (payoff['date'] as DateTime).toIso8601String(),
+                    if (payoff['_id'] != null) '_id': payoff['_id'],
+                  })
+              .toList(),
         };
+
+        // Add conditional fields based on mortgage type
+        if (isFixedRate) {
+          mortgageData['fixed_interest_period'] =
+              _fixedInterestPeriodController.text.trim();
+          mortgageData['fixed_interest_expiration_date'] =
+              _fixedInterestExpirationDate != null
+                  ? _fixedInterestExpirationDate!.toIso8601String()
+                  : '';
+          mortgageData['spread_on_floating_rate'] =
+              _spreadOnFloatingRateController.text.trim();
+        } else {
+          mortgageData['spread'] = _spreadController.text.trim();
+        }
 
         http.Response response;
         String apiUrl = '$Api_url/api/mortgage';
@@ -679,6 +1263,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               .timeout(const Duration(seconds: 30));
         } else {
           // Create new mortgage (POST)
+          print("mortgage data $mortgageData");
           response = await http
               .post(
                 Uri.parse(apiUrl),
@@ -779,7 +1364,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -792,61 +1377,61 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Property Selection Section
-                    if (_isLoadingProperties)
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              SpinKitFadingCircle(
-                                color: Colors.black,
-                                size: 50.0,
-                              ),
-                              SizedBox(height: 8),
-                              Text('Loading properties...'),
-                            ],
-                          ),
-                        ),
-                      )
-                    else if (_propertyOptions.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Icon(Icons.home_outlined,
-                                  size: 48, color: Colors.grey[400]),
-                              const SizedBox(height: 8),
-                              Text(
-                                'No properties available',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                              const SizedBox(height: 8),
-                              ElevatedButton(
-                                onPressed: _loadProperties,
-                                child: const Text('Retry'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    else
-                      _buildMultiSelectField(
-                        label: 'Select Properties *',
-                        hint: 'Select properties...',
-                        validator: _validateProperties,
-                        items: _propertyOptions,
-                        selectedItems: _selectedProperties,
-                        onSelectionChanged:
-                            (List<Map<String, dynamic>> selectedItems) {
-                          setState(() {
-                            _selectedProperties.clear();
-                            _selectedProperties.addAll(selectedItems);
-                          });
-                        },
-                      ),
-                    const SizedBox(height: 24),
+                    // // Property Selection Section
+                    // if (_isLoadingProperties)
+                    //   Container(
+                    //     padding: const EdgeInsets.all(16),
+                    //     child: Center(
+                    //       child: Column(
+                    //         children: [
+                    //           SpinKitFadingCircle(
+                    //             color: Colors.black,
+                    //             size: 50.0,
+                    //           ),
+                    //           SizedBox(height: 8),
+                    //           Text('Loading properties...'),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   )
+                    // else if (_propertyOptions.isEmpty)
+                    //   Container(
+                    //     padding: const EdgeInsets.all(16),
+                    //     child: Center(
+                    //       child: Column(
+                    //         children: [
+                    //           Icon(Icons.home_outlined,
+                    //               size: 48, color: Colors.grey[400]),
+                    //           const SizedBox(height: 8),
+                    //           Text(
+                    //             'No properties available',
+                    //             style: TextStyle(color: Colors.grey[600]),
+                    //           ),
+                    //           const SizedBox(height: 8),
+                    //           ElevatedButton(
+                    //             onPressed: _loadProperties,
+                    //             child: const Text('Retry'),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   )
+                    // else
+                    //   _buildMultiSelectField(
+                    //     label: 'Select Properties *',
+                    //     hint: 'Select properties...',
+                    //     validator: _validateProperties,
+                    //     items: _propertyOptions,
+                    //     selectedItems: _selectedProperties,
+                    //     onSelectionChanged:
+                    //         (List<Map<String, dynamic>> selectedItems) {
+                    //       setState(() {
+                    //         _selectedProperties.clear();
+                    //         _selectedProperties.addAll(selectedItems);
+                    //       });
+                    //     },
+                    //   ),
+                    // const SizedBox(height: 24),
 
                     // Bank Information Section
                     _buildSectionHeader('Bank Information'),
@@ -926,15 +1511,37 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
                     // Mortgage Details Section
                     _buildSectionHeader('Mortgage Details'),
+                    _buildDropdownField(
+                        controller: _typeController,
+                        label: 'Mortgage Type *',
+                        hint: 'Select mortgage type',
+                        validator: (value) =>
+                            _validateRequired(value, 'Mortgage type'),
+                        items: _typeOptions,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _typeController.text = newValue ?? '';
+                            _selectedMortgageType = newValue ?? '';
+                            // Clear conditional fields when type changes
+                            if (newValue == 'Fixed Rate Mortgage') {
+                              _spreadController.clear();
+                            } else if (newValue == 'Floating Rate Mortgage') {
+                              _fixedInterestPeriodController.clear();
+                              _fixedInterestExpirationDateController.clear();
+                              _fixedInterestExpirationDate = null;
+                              _spreadOnFloatingRateController.clear();
+                            }
+                          });
+                        }),
+                    const SizedBox(height: 16),
                     _buildTextField(
                       controller: _mortgageNumberController,
-                      label: 'Mortgage Number *',
-                      hint: 'Enter mortgage number',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      label: 'Account Number *',
+                      hint: 'Enter account number',
+                      keyboardType: TextInputType.text,
                       validator: (value) {
                         String? requiredError =
-                            _validateRequired(value, 'Mortgage number');
+                            _validateRequired(value, 'Account number');
                         if (requiredError != null) return requiredError;
                         return _validateMortgageNumber(value);
                       },
@@ -942,36 +1549,238 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _loanAmountController,
-                      label: 'Loan Amount *',
+                      label: 'Loan Amount (\$) *',
                       hint: '\$Enter loan amount',
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _interestRateController,
-                      label: 'Interest Rate *',
+                      label: 'Interest Rate (%) *',
                       hint: 'Enter interest rate',
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: _validateInterestRate,
                     ),
                     const SizedBox(height: 16),
-                    _buildDateField(
-                      controller: _startDateController,
-                      label: 'Start Date *',
-                      hint: 'DD/MMM/YYYY',
-                      onTap: () => _selectDate(
-                          context, _startDateController, _startDate),
+                    Builder(
+                      builder: (context) {
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final exampleDate =
+                            dateProvider.formatCurrentDate('2026-01-28');
+                        // Create hint by replacing digits and letters with placeholder
+                        // final dateHint = exampleDate
+                        //     .replaceAll(RegExp(r'\d'), 'X')
+                        //     .replaceAll(RegExp(r'[A-Za-z]'), 'X');
+                        final dateHint = _getDateHintText(dateProvider);
+                        return _buildDateField(
+                          controller: _startDateController,
+                          label: 'Origination Date *',
+                          hint: dateHint,
+                          validator: (value) =>
+                              _validateRequired(value, 'Origination Date'),
+                          onTap: () {
+                            final DateTime now = DateTime.now();
+                            final DateTime today =
+                                DateTime(now.year, now.month, now.day);
+                            // Do not allow future dates for Origination Date
+                            _selectDate(
+                              context,
+                              _startDateController,
+                              _startDate,
+                              firstDate: DateTime(2000),
+                              lastDate: today,
+                            );
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
-                    _buildDateField(
-                      controller: _endDateController,
-                      label: 'End Date *',
-                      hint: 'DD/MMM/YYYY',
-                      onTap: () =>
-                          _selectDate(context, _endDateController, _endDate),
+                    Builder(
+                      builder: (context) {
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
+                        return _buildDateField(
+                          controller: _endDateController,
+                          label: 'Maturity Date *',
+                          hint: dateHint,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Maturity Date is required';
+                            }
+                            if (_startDate != null && _endDate != null) {
+                              if (_endDate!.isBefore(_startDate!) ||
+                                  _endDate!.isAtSameMomentAs(_startDate!)) {
+                                return 'Maturity Date must be after Origination Date';
+                              }
+                            }
+                            return null;
+                          },
+                          onTap: () {
+                            if (_startDate == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Please select Origination Date first'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return;
+                            }
+                            // Maturity date must be after origination date
+                            // Add 1 day to start date to ensure it's after
+                            final minDate = DateTime(_startDate!.year,
+                                    _startDate!.month, _startDate!.day)
+                                .add(const Duration(days: 1));
+                            _selectDate(context, _endDateController, _endDate,
+                                firstDate: minDate);
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
+                    _buildTextField(
+                        controller: _amortizationPeriodController,
+                        label: 'Amortization Period (months) *',
+                        hint: 'Enter amortization period'),
+                    const SizedBox(height: 16),
+                    // Conditional fields based on mortgage type
+                    if (_selectedMortgageType == 'Fixed Rate Mortgage' ||
+                        (_selectedMortgageType.isEmpty &&
+                            _typeController.text == 'Fixed Rate Mortgage')) ...[
+                      _buildTextField(
+                        controller: _fixedInterestPeriodController,
+                        label: 'Fixed Interest Period (months) *',
+                        hint: 'Enter fixed interest period in months',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Fixed Interest Period'),
+                      ),
+                      const SizedBox(height: 16),
+                      Builder(
+                        builder: (context) {
+                          final dateProvider =
+                              Provider.of<DateProvider>(context, listen: false);
+                          final dateHint = _getDateHintText(dateProvider);
+                          return _buildDateField(
+                            controller: _fixedInterestExpirationDateController,
+                            label: 'Fixed Interest Expiration Date *',
+                            hint: dateHint,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Fixed Interest Expiration Date is required';
+                              }
+                              if (_startDate != null &&
+                                  _endDate != null &&
+                                  _fixedInterestExpirationDate != null) {
+                                // Must be strictly between Origination and Maturity dates (exclusive)
+                                final startDateOnly = DateTime(_startDate!.year,
+                                    _startDate!.month, _startDate!.day);
+                                final endDateOnly = DateTime(_endDate!.year,
+                                    _endDate!.month, _endDate!.day);
+                                final expirationDateOnly = DateTime(
+                                    _fixedInterestExpirationDate!.year,
+                                    _fixedInterestExpirationDate!.month,
+                                    _fixedInterestExpirationDate!.day);
+
+                                if (expirationDateOnly
+                                        .isBefore(startDateOnly) ||
+                                    expirationDateOnly
+                                        .isAtSameMomentAs(startDateOnly) ||
+                                    expirationDateOnly.isAfter(endDateOnly) ||
+                                    expirationDateOnly
+                                        .isAtSameMomentAs(endDateOnly)) {
+                                  return 'Must be strictly between Origination and Maturity dates';
+                                }
+                              }
+                              return null;
+                            },
+                            onTap: () {
+                              if (_startDate == null || _endDate == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please select Origination Date and Maturity Date first'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+                              // Fixed Interest Expiration Date must be strictly between start and end dates
+                              // After origination date (at least 1 day after)
+                              final minDate = DateTime(_startDate!.year,
+                                      _startDate!.month, _startDate!.day)
+                                  .add(const Duration(days: 1));
+                              // Before maturity date (at least 1 day before)
+                              final maxDate = DateTime(_endDate!.year,
+                                      _endDate!.month, _endDate!.day)
+                                  .subtract(const Duration(days: 1));
+
+                              // Allow 2-day gap: if maturity is exactly 2 days after origination,
+                              // there's still 1 day in between for expiration date
+                              // Only show error if there's less than 2 days gap (i.e., maturity is same day or next day)
+                              final daysDifference =
+                                  _endDate!.difference(_startDate!).inDays;
+                              if (daysDifference < 2) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Maturity Date must be at least 2 days after Origination Date for Fixed Interest Expiration Date'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+
+                              _selectDate(
+                                context,
+                                _fixedInterestExpirationDateController,
+                                _fixedInterestExpirationDate,
+                                firstDate: minDate,
+                                lastDate: maxDate,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: _spreadOnFloatingRateController,
+                        label: 'Spread on Floating Rate (%) *',
+                        hint: 'Enter spread on floating rate',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Spread on Floating Rate'),
+                      ),
+                      const SizedBox(height: 16),
+                    ] else if (_selectedMortgageType ==
+                            'Floating Rate Mortgage' ||
+                        (_selectedMortgageType.isEmpty &&
+                            _typeController.text ==
+                                'Floating Rate Mortgage')) ...[
+                      _buildTextField(
+                        controller: _spreadController,
+                        label: 'Spread (%) *',
+                        hint: 'Enter spread',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateRequired(value, 'Spread'),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     _buildDropdownField(
                       controller: _statusController,
                       label: 'Status *',
@@ -979,30 +1788,59 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       validator: (value) => _validateRequired(value, 'Status'),
                       items: _statusOptions,
                     ),
+
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _remainingBalanceController,
                       label: 'Remaining Balance',
-                      hint: '\$Enter remaining balance',
+                      hint: '\$ Enter remaining balance',
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
-                    _buildDateField(
-                      controller: _lastPaymentDateController,
-                      label: 'Last Payment Date',
-                      hint: 'DD/MMM/YYYY',
-                      onTap: () => _selectDate(context,
-                          _lastPaymentDateController, _lastPaymentDate),
+                    Builder(
+                      builder: (context) {
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
+                        return _buildDateField(
+                          controller: _lastPaymentDateController,
+                          label: 'Last Payment Date',
+                          hint: dateHint,
+                          onTap: () {
+                            final DateTime now = DateTime.now();
+                            final DateTime today =
+                                DateTime(now.year, now.month, now.day);
+                            // Allow today and past dates, but not future dates
+                            _selectDate(context, _lastPaymentDateController,
+                                _lastPaymentDate,
+                                firstDate: DateTime(2000), lastDate: today);
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
-                    _buildDateField(
-                      controller: _nextPaymentDateController,
-                      label: 'Next Payment Date',
-                      hint: 'DD/MMM/YYYY',
-                      onTap: () => _selectDate(
-                          context, _nextPaymentDateController, _nextPaymentDate,
-                          firstDate: _lastPaymentDate),
+                    Builder(
+                      builder: (context) {
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        final dateHint = _getDateHintText(dateProvider);
+                        return _buildDateField(
+                          controller: _nextPaymentDateController,
+                          label: 'Next Payment Date',
+                          hint: dateHint,
+                          onTap: () {
+                            final DateTime now = DateTime.now();
+                            final DateTime today =
+                                DateTime(now.year, now.month, now.day);
+                            // Don't let select past dates, allow today and future dates
+                            _selectDate(context, _nextPaymentDateController,
+                                _nextPaymentDate,
+                                firstDate: today, lastDate: DateTime(2100));
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 24),
 
@@ -1023,13 +1861,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       validator: (value) =>
                           _validateRequired(value, 'Borrower last name'),
                     ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _borrowerSSNController,
-                      label: 'SSN',
-                      hint: 'Enter SSN',
-                      validator: _validateSSN,
-                    ),
+                    // const SizedBox(height: 16),
+                    // _buildTextField(
+                    //   controller: _borrowerSSNController,
+                    //   label: 'SSN',
+                    //   hint: 'Enter SSN',
+                    //   validator: _validateSSN,
+                    // ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _borrowerAddressController,
@@ -1059,7 +1897,10 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: _validateEmail,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    _buildSectionHeader('Payoff History'),
+                    _buildPayoffHistorySection(),
+                    const SizedBox(height: 16),
                     Container(
                       child: Row(
                         children: [
@@ -1099,15 +1940,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                 ),
                               ),
                               child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
+                                  ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 20,
                                     )
                                   : Text(
                                       widget.mortgageId != null
@@ -1217,6 +2052,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     required String label,
     required String hint,
     required VoidCallback onTap,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1235,6 +2071,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           child: AbsorbPointer(
             child: TextFormField(
               controller: controller,
+              validator: validator,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: TextStyle(
@@ -1273,6 +2110,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     required String hint,
     required List<String> items,
     String? Function(String?)? validator,
+    Function(String?)? onChanged,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1327,6 +2165,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             setState(() {
               controller.text = newValue ?? '';
             });
+            if (onChanged != null) {
+              onChanged(newValue);
+            }
           },
           validator: validator,
           icon: Icon(Icons.arrow_drop_down, color: blueColor),
@@ -1574,6 +2415,719 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  Widget _buildPayoffHistorySection() {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Payoff List - Card Based Design
+        if (_payoffs.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Center(
+              child: Text(
+                'No payoffs added yet',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          )
+        else
+          Column(
+            children: _payoffs.asMap().entries.map((entry) {
+              final index = entry.key;
+              final payoff = entry.value;
+              final bool isEditing = _editingPayoffIndex == index;
+
+              DateTime payoffDate;
+              if (payoff['date'] is DateTime) {
+                payoffDate = payoff['date'];
+              } else {
+                payoffDate = DateTime.parse(payoff['date'].toString());
+              }
+
+              // Check 24-hour lock based on created_at, not date
+              bool is24HoursOld = false;
+              final bool isSaved = payoff['_id'] != null;
+              if (isSaved && payoff['created_at'] != null) {
+                DateTime createdAt;
+                if (payoff['created_at'] is DateTime) {
+                  createdAt = payoff['created_at'];
+                } else {
+                  createdAt = DateTime.parse(payoff['created_at'].toString());
+                }
+                final Duration difference = now.difference(createdAt);
+                is24HoursOld = difference.inHours >= 24;
+              }
+
+              // Format date using DateProvider
+              String apiFormatDate =
+                  DateFormat('yyyy-MM-dd').format(payoffDate);
+
+              return Container(
+                margin: EdgeInsets.only(
+                    bottom: index < _payoffs.length - 1 ? 12 : 0),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: isEditing
+                    ? _buildEditingPayoffCard(index, payoff)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Amount and Locked Status Row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Amount - Simple text, no green badge
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Payoff Amount',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '\$${payoff['amount']}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.grey[900],
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Locked Badge (if locked)
+                              if (isSaved && is24HoursOld)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[100],
+                                    borderRadius: BorderRadius.circular(6),
+                                    border:
+                                        Border.all(color: Colors.orange[300]!),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.lock_outline,
+                                        size: 14,
+                                        color: Colors.orange[800],
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Locked (24h+)',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.orange[800],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          // Date Row with Edit Button beside it
+                          Builder(
+                            builder: (context) {
+                              final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false);
+                              String displayDate =
+                                  dateProvider.formatCurrentDate(apiFormatDate);
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          size: 16,
+                                          color: Colors.grey[600],
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            displayDate,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey[700],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Simple Edit Icon Button beside date
+                                  IconButton(
+                                    onPressed: isSaved && is24HoursOld
+                                        ? null
+                                        : () => _startEditingPayoff(index),
+                                    icon: Icon(
+                                      Icons.edit,
+                                      size: 18,
+                                      color: isSaved && is24HoursOld
+                                          ? Colors.grey[400]
+                                          : blueColor,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    tooltip: isSaved && is24HoursOld
+                                        ? 'Locked (24h+)'
+                                        : 'Edit',
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+              );
+            }).toList(),
+          ),
+        // Add Payoff Form (shown when button is clicked)
+        if (_showAddPayoffForm) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.grey[300]!,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '+ Add New Payoff',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Amount',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _newPayoffAmountController,
+                            decoration: InputDecoration(
+                              prefixText: '\$',
+                              hintText: '0.00',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          GestureDetector(
+                            onTap: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: _newPayoffDate ?? today,
+                                firstDate: DateTime(2000),
+                                lastDate: today,
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: ColorScheme.light(
+                                        primary: blueColor,
+                                        onPrimary: Colors.white,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: blueColor,
+                                        ),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (picked != null) {
+                                setState(() {
+                                  _newPayoffDate = picked;
+                                  final dateProvider =
+                                      Provider.of<DateProvider>(context,
+                                          listen: false);
+                                  String apiFormatDate =
+                                      DateFormat('yyyy-MM-dd').format(picked);
+                                  _newPayoffDateController.text = dateProvider
+                                      .formatCurrentDate(apiFormatDate);
+                                });
+                              }
+                            },
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                controller: _newPayoffDateController,
+                                decoration: InputDecoration(
+                                  hintText: 'dd-mm-yyyy',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 12),
+                                  suffixIcon: Icon(
+                                    Icons.calendar_today,
+                                    size: 18,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _isLoading ? null : _saveNewPayoff,
+                        icon: const Icon(Icons.add,
+                            color: Colors.white, size: 18),
+                        label: const Text(
+                          'Save Payoff',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[600],
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _newPayoffAmountController.clear();
+                                  _newPayoffDateController.clear();
+                                  _newPayoffDate = null;
+                                  _showAddPayoffForm = false;
+                                });
+                              },
+                        icon: const Icon(Icons.delete_outline, size: 18),
+                        label: const Text('Delete'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: BorderSide(color: Colors.red[300]!),
+                          foregroundColor: Colors.red[600],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+        // Add Payoff Button (Below the list) - Always shows "ADD PAYOFF"
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            OutlinedButton.icon(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        if (_showAddPayoffForm) {
+                          // If form is open, close it and clear fields
+                          _newPayoffAmountController.clear();
+                          _newPayoffDateController.clear();
+                          _newPayoffDate = null;
+                          _showAddPayoffForm = false;
+                        } else {
+                          // If form is closed, open it
+                          _showAddPayoffForm = true;
+                        }
+                      });
+                    },
+              icon: Icon(
+                Icons.add,
+                color: blueColor,
+                size: 18,
+              ),
+              label: Text(
+                'ADD PAYOFF',
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              // style: OutlinedButton.styleFrom(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              //   side: BorderSide(color: blueColor, width: 1.5),
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(6),
+              //   ),
+              // ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditingPayoffCard(int index, Map<String, dynamic> payoff) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Amount',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: _editingPayoffAmountController,
+                    decoration: InputDecoration(
+                      prefixText: '\$',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Date',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: () async {
+                      final DateTime now = DateTime.now();
+                      final DateTime today =
+                          DateTime(now.year, now.month, now.day);
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _editingPayoffDate ?? today,
+                        firstDate: DateTime(2000),
+                        lastDate: today,
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: blueColor,
+                                onPrimary: Colors.white,
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: blueColor,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _editingPayoffDate = picked;
+                          final dateProvider =
+                              Provider.of<DateProvider>(context, listen: false);
+                          String apiFormatDate =
+                              DateFormat('yyyy-MM-dd').format(picked);
+                          _editingPayoffDateController.text =
+                              dateProvider.formatCurrentDate(apiFormatDate);
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _editingPayoffDateController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          suffixIcon: Icon(
+                            Icons.calendar_today,
+                            size: 18,
+                            color: blueColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : () => _saveEditingPayoff(index),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[600],
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _isLoading ? null : () => _deletePayoff(index),
+                icon: const Icon(Icons.delete_outline, size: 18),
+                label: const Text('Delete'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: BorderSide(color: Colors.red[300]!),
+                  foregroundColor: Colors.red[600],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _saveNewPayoff() {
+    if (_newPayoffAmountController.text.trim().isEmpty ||
+        _newPayoffDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    setState(() {
+      _payoffs.add({
+        'amount': double.parse(_newPayoffAmountController.text.trim()),
+        'date': _newPayoffDate!,
+      });
+      _newPayoffAmountController.clear();
+      _newPayoffDateController.clear();
+      _newPayoffDate = null;
+      _showAddPayoffForm = false;
+    });
+  }
+
+  void _startEditingPayoff(int index) {
+    final payoff = _payoffs[index];
+    setState(() {
+      _editingPayoffIndex = index;
+      _editingPayoffAmountController.text = payoff['amount'].toString();
+      DateTime? date;
+      if (payoff['date'] is DateTime) {
+        date = payoff['date'];
+      } else {
+        date = DateTime.parse(payoff['date'].toString());
+      }
+      _editingPayoffDate = date;
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      String apiFormatDate = DateFormat('yyyy-MM-dd').format(date!);
+      _editingPayoffDateController.text =
+          dateProvider.formatCurrentDate(apiFormatDate);
+    });
+  }
+
+  void _saveEditingPayoff(int index) {
+    if (_editingPayoffAmountController.text.trim().isEmpty ||
+        _editingPayoffDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all required fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    setState(() {
+      _payoffs[index] = {
+        'amount': double.parse(_editingPayoffAmountController.text.trim()),
+        'date': _editingPayoffDate!,
+        '_id': _payoffs[index]['_id'],
+      };
+      _cancelEditingPayoff();
+    });
+  }
+
+  void _cancelEditingPayoff() {
+    setState(() {
+      _editingPayoffIndex = null;
+      _editingPayoffAmountController.clear();
+      _editingPayoffDateController.clear();
+      _editingPayoffDate = null;
+    });
+  }
+
+  void _deletePayoff(int index) {
+    // If currently editing this payoff, cancel editing first
+    if (_editingPayoffIndex == index) {
+      _cancelEditingPayoff();
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Payoff'),
+          content: const Text('Are you sure you want to delete this payoff?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _payoffs.removeAt(index);
+                  // Reset editing index if needed
+                  if (_editingPayoffIndex != null &&
+                      _editingPayoffIndex! >= _payoffs.length) {
+                    _editingPayoffIndex = null;
+                  } else if (_editingPayoffIndex != null &&
+                      _editingPayoffIndex! > index) {
+                    _editingPayoffIndex = _editingPayoffIndex! - 1;
+                  }
+                });
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child:
+                  const Text('Delete', style: TextStyle(color: Colors.white)),
+            ),
+          ],
         );
       },
     );

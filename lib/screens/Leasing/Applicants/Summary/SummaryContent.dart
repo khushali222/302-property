@@ -12,6 +12,8 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/applicant_summery2.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import 'package:three_zero_two_property/widgets/custom_history_table.dart';
+import 'package:three_zero_two_property/enums/history_type.dart';
 
 class SummaryContent extends StatefulWidget {
   applicant_summery_details summery;
@@ -956,6 +958,17 @@ class _SummaryContentState extends State<SummaryContent> {
             ),
             const SizedBox(
               height: 10,
+            ),
+            //Applicant History Table
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              child: CustomHistoryTable(
+                historyType: HistoryType.applicant,
+                entityId: widget.applicant_id,
+                title: 'History',
+                blueColor: blueColor,
+                itemsPerPage: 10,
+              ),
             ),
           ],
         ),

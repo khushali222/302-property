@@ -375,6 +375,50 @@ class accountRepository {
     }
   }
 
+  Future<Map<String, dynamic>> updateAccount({
+    required String? accountId,
+    required String? account,
+    required String? accounttype,
+    required String? fundtype,
+    required String? chargetype,
+    required String? notes,
+  }) async {
+    final Map<String, dynamic> data = {
+      'account': account,
+      'account_type': accounttype,
+      'fund_type': fundtype,
+      'charge_type': chargetype,
+      'notes': notes,
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    print("id of id 1 $id");
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/accounts/accounts/$accountId'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    var responseData = json.decode(response.body);
+
+    print('update account ${response.body}');
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to update account');
+    }
+  }
+
   Future<Map<String, dynamic>> DeleteAccount(
       {required String? account_id}) async {
     //print('$apiUrl/$id');

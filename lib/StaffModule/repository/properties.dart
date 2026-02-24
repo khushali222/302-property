@@ -169,20 +169,40 @@ class PropertiesRepository {
     };
 
     // Prepare the request body with units data
+    Map<String, dynamic> rentalData = {
+      "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
+      "rental_id": rentalRequest.rentalId,
+      "property_id": rentalRequest.propertyId,
+      "rental_adress": rentalRequest.rentalAddress,
+      "rental_city": rentalRequest.rentalCity,
+      "rental_state": rentalRequest.rentalState,
+      "rental_country": rentalRequest.rentalCountry,
+      "rental_postcode": rentalRequest.rentalPostcode,
+      "staffmember_id": rentalRequest.staffMemberId,
+      "processor_id": rentalRequest.processor_id,
+    };
+    
+    // Add placed_in_service and insured_values using dynamic access
+    try {
+      final placedInService = (rentalRequest as dynamic).placedInService;
+      if (placedInService != null && placedInService.toString().isNotEmpty) {
+        rentalData["placed_in_service"] = placedInService;
+      }
+      
+      final insuredValues = (rentalRequest as dynamic).insuredValues;
+      if (insuredValues != null && (insuredValues as List).isNotEmpty) {
+        rentalData["insured_values"] = (insuredValues as List).map((iv) => {
+          "year": (iv as dynamic).year,
+          "insured_value": (iv as dynamic).insuredValue?.toString() ?? ""
+        }).toList();
+      }
+    } catch (e) {
+      print('Error accessing placedInService/insuredValues: $e');
+    }
+    
     Map<String, dynamic> requestBody = {
       "rentalOwner": rentalOwnerData,
-      "rental": {
-        "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
-        "rental_id": rentalRequest.rentalId,
-        "property_id": rentalRequest.propertyId,
-        "rental_adress": rentalRequest.rentalAddress,
-        "rental_city": rentalRequest.rentalCity,
-        "rental_state": rentalRequest.rentalState,
-        "rental_country": rentalRequest.rentalCountry,
-        "rental_postcode": rentalRequest.rentalPostcode,
-        "staffmember_id": rentalRequest.staffMemberId,
-        "processor_id": rentalRequest.processor_id
-      },
+      "rental": rentalData,
       "units": formattedUnits
     };
 

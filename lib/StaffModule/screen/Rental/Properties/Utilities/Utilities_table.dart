@@ -423,10 +423,14 @@ class _Utilities_tableState extends State<Utilities_table> {
                                 utility['customer_service_phone'] != null &&
                                         utility['customer_service_phone']
                                             .toString()
-                                            .isNotEmpty
+                                            .isNotEmpty &&
+                                        utility['customer_service_phone']
+                                                .toString() !=
+                                            'null'
                                     ? formatPhoneNumber(
                                         utility['customer_service_phone']
-                                            .toString())
+                                            .toString()
+                                            .trim())
                                     : 'N/A',
                                 '',
                                 '',
@@ -498,6 +502,36 @@ class _Utilities_tableState extends State<Utilities_table> {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUnitHeader(String unitName, String? unitId) {
+    return Container(
+      margin: EdgeInsets.only(top: 15, bottom: 10),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+        color: blueColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: blueColor.withOpacity(0.3), width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.home,
+            color: blueColor,
+            size: 20,
+          ),
+          SizedBox(width: 10),
+          Text(
+            unitName,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
         ],
       ),
     );
@@ -669,6 +703,16 @@ class _Utilities_tableState extends State<Utilities_table> {
               final filteredUtilities = _getFilteredUtilities();
               final currentUnitKey = selectedUnit?.unitId ?? 'single';
 
+              // Get unit name for header
+              String? unitName;
+              if (selectedUnit != null) {
+                unitName = selectedUnit!.rentalunit ??
+                    'Unit ${selectedUnit!.unitId ?? ''}';
+              } else if (utilitiesByUnit != null &&
+                  utilitiesByUnit!.containsKey('single')) {
+                unitName = 'All Units';
+              }
+
               return SingleChildScrollView(
                 child: Column(
                   children: [
@@ -679,6 +723,8 @@ class _Utilities_tableState extends State<Utilities_table> {
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Column(
                           children: [
+                            if (unitName != null && isMultiUnit)
+                              _buildUnitHeader(unitName, selectedUnit?.unitId),
                             _buildHeaders(),
                             SizedBox(height: 10),
                             ...filteredUtilities.asMap().entries.map((entry) {

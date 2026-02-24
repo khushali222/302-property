@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/ConvenienceFeeRepo.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -31,6 +32,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -376,33 +378,35 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))
-                          :  Text("Property",
-                          style: TextStyle( color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
+                          ? Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("Property",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ?  Padding(
-                        padding: EdgeInsets.only(top: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortUp,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      )
-                          :  Padding(
-                        padding: EdgeInsets.only(bottom: 7, left: 2),
-                        child: FaIcon(
-                          FontAwesomeIcons.sortDown,
-                          size: 20,
-                          color: blueColor,
-                        ),
-                      ),
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -434,33 +438,34 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   children: [
                     SizedBox(width: 22),
                     width < 400
-                        ?  Text("Lease\nEndDate",
-                        style: TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15))
-                        :  Text("Lease\nEndDate",
-                        style:
-                        TextStyle( color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
+                        ? Text("Lease\nEndDate",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("Lease\nEndDate",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding:  EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding:  EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    ),
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -491,27 +496,29 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 25),
-                    Text("Tenant", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Tenant",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding:  EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: blueColor,
-                      ),
-                    )
+                            padding: EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
                         : Padding(
-                      padding:  EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color:blueColor,
-                      ),
-                    ),
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1163,10 +1170,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  titleBar(
+                  StaffReportHeader(
                     title: 'Convenience Fee Override',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
@@ -1279,7 +1284,6 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                 const SizedBox(height: 10),
                                 // if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1302,7 +1306,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -1675,35 +1679,31 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 48
-                                          : 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Search here...",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8)),
-                                        ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    height:
+                                    MediaQuery.of(context).size.width <
+                                        500
+                                        ? 48
+                                        : 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: Colors.grey),
+                                    ),
+                                    child: TextField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF8A95A8)),
                                       ),
                                     ),
                                   ),
@@ -2436,34 +2436,30 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
               Expanded(
                 child: Row(
                   children: [
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        // height: 40,
-                        height:
-                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                        width: MediaQuery.of(context).size.width < 500
-                            ? MediaQuery.of(context).size.width * .44
-                            : MediaQuery.of(context).size.width * .4,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF8A95A8)),
-                        ),
-                        child: TextField(
-                          onChanged: (value) {
-                            setState(() {
-                              searchvalue = value;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Search here...",
-                            hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                            contentPadding: EdgeInsets.all(11),
-                          ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      // height: 40,
+                      height:
+                          MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .44
+                          : MediaQuery.of(context).size.width * .4,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchvalue = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                          contentPadding: EdgeInsets.all(11),
                         ),
                       ),
                     ),

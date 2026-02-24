@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../model/EnterChargeModel.dart';
 import '../../model/LeaseLedgerModel.dart';
+import '../../../Model/LeaseChargesModel.dart';
 import '../../model/LeaseSummary.dart';
 import '../../model/edit_lease.dart';
 import '../../model/get_lease.dart';
@@ -155,7 +156,7 @@ class LeaseRepository {
       throw Exception('Error fetching lease data: $e');
     }*/
   }
-  Future<bool> updateLease(Lease lease) async {
+  Future<bool> updateLease(Lease lease, {bool? achAccepted}) async {
     print(lease);
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -163,11 +164,20 @@ class LeaseRepository {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
 
+    final payload = lease.toJson();
+    if (achAccepted != null) {
+      final leaseData = payload['leaseData'];
+      if (leaseData is Map<String, dynamic>) {
+        leaseData['achAccepted'] = achAccepted;
+      }
+    }
+    final encodedBody = json.encode(payload);
+
     print('Lease ID: ${lease.leaseData.leaseId}');
     print('Token: $token');
     print('Admin ID: $id');
     print('API URL: $Api_url/api/leases/leases/${lease.leaseData.leaseId}');
-    print('Lease Data: ${json.encode(lease)}');
+    print('Lease Data: $encodedBody');
 
     try {
       print('Entering the try block');
@@ -178,7 +188,7 @@ class LeaseRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json'
         },
-        body: json.encode(lease),
+        body: encodedBody,
       );
       print('Request complete');
 
@@ -206,6 +216,124 @@ class LeaseRepository {
       }
     } catch (error) {
       print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred: $error');
+      return false;
+    }
+  }
+
+  Future<bool> updateLeasePaymentSettings({
+    required String leaseId,
+    required bool leasePaymentSettings,
+    required bool achAccepted,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final String companyName = prefs.getString('companyName') ?? '';
+
+    // Backend expects the full lease payload shape (chargeData/cosignerData/leaseData/tenantData).
+    // Build it from the latest saved lease details to avoid pushing unsaved UI edits.
+    final details = await fetchLeaseDetails(leaseId);
+
+    dynamic stripMongoKeys(dynamic value) {
+      if (value is List) {
+        return value.map(stripMongoKeys).toList();
+      }
+      if (value is Map) {
+        final out = <String, dynamic>{};
+        value.forEach((k, v) {
+          final key = k.toString();
+          if (key == '_id' || key == '__v') return;
+          out[key] = stripMongoKeys(v);
+        });
+        return out;
+      }
+      return value;
+    }
+
+    // Use parsed `details.lease.entry` so `_id` from backend isn't re-sent.
+    final List<dynamic> allEntries =
+        details.lease.entry.map((e) => e.toJson()).toList();
+
+    final cosigner = (details.cosigner != null && details.cosigner!.isNotEmpty)
+        ? details.cosigner!.first
+        : null;
+
+    final payload = {
+      'chargeData': {
+        'admin_id': details.lease.adminId,
+        'entry': allEntries,
+        'is_leaseAdded': true,
+      },
+      'cosignerData': {
+        'admin_id': details.lease.adminId,
+        'cosigner_address': cosigner?.streetAddress ?? '',
+        'cosigner_alternativeEmail': cosigner?.alterEmail ?? '',
+        'cosigner_alternativeNumber': cosigner?.workNumber ?? '',
+        'cosigner_city': cosigner?.city ?? '',
+        'cosigner_country': cosigner?.country ?? '',
+        'cosigner_email': cosigner?.email ?? '',
+        'cosigner_firstName': cosigner?.firstName ?? '',
+        // Some payload builders use Mongo _id here; keep fallback for compatibility.
+        'cosigner_id': cosigner?.c_id ?? cosigner?.cosignerId ?? '',
+        'cosigner_lastName': cosigner?.lastName ?? '',
+        'cosigner_phoneNumber': cosigner?.phoneNumber ?? '',
+        'cosigner_postalcode': cosigner?.postalCode ?? '',
+      },
+      'leaseData': {
+        'lease_id': details.lease.leaseId,
+        'admin_id': details.lease.adminId,
+        'company_name': companyName,
+        'end_date': details.lease.endDate,
+        'entry': allEntries,
+        'lease_amount': details.lease.leaseAmount.toString(),
+        'lease_type': details.lease.leaseType,
+        'rental_id': details.lease.rentalId,
+        'start_date': details.lease.startDate,
+        'tenant_id': details.lease.tenantId,
+        'tenant_residentStatus': false,
+        'unit_id': details.lease.unitId,
+        'uploaded_file': details.lease.uploadedFile,
+        'creditCardAccepted': details.lease.creditCardAccepted,
+        'debitCardAccepted': details.lease.debitCardAccepted,
+        'achAccepted': achAccepted,
+        'leasePaymentSettings': leasePaymentSettings,
+      },
+      'tenantData': details.tenant
+              ?.map((t) => stripMongoKeys((t as dynamic).toJson()))
+              .toList() ??
+          [],
+    };
+
+    try {
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/leases/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(payload),
+      );
+
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Lease payment settings updated');
+          return true;
+        } else {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to update lease');
+          return false;
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to update lease');
+        return false;
+      }
+    } catch (error) {
       Fluttertoast.showToast(msg: 'An error occurred: $error');
       return false;
     }
@@ -696,5 +824,31 @@ class LeaseRepository {
     }
 
     return response.statusCode;
+  }
+
+  Future<LeaseCharges?> fetchLeaseCharges(String leaseId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+
+    try {
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/lease-charges/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return LeaseCharges.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception(
+            'Failed to load lease charges. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching lease charges: $e');
+      throw Exception('Error fetching lease charges: $e');
+    }
   }
 }

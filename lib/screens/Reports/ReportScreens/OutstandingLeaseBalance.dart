@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/OutstandingLeaseBalanceService.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:convert';
@@ -52,6 +53,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   // Rental owners list
   List<Map<String, dynamic>> _rentalOwners = [];
   List<String> selectedRentalOwnerIds = [];
+  final ValueNotifier<List<String>> _selectedOwnersNotifier =
+      ValueNotifier<List<String>>([]);
 
   @override
   void initState() {
@@ -120,6 +123,66 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         message:
             'Failed to load outstanding lease balance data. Please try again later.',
       );
+    }
+  }
+
+  // Fetch ALL data for export (without pagination)
+  Future<List<OutstandingLeaseBalanceData>> fetchAllDataForExport() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+
+      if (adminId == null) {
+        return [];
+      }
+
+      List<OutstandingLeaseBalanceData> allData = [];
+      int currentPage = 1;
+      int limit = 1000; // Fetch large batches
+      bool hasMoreData = true;
+
+      while (hasMoreData) {
+        OutstandingLeaseBalanceModel data =
+            await OutstandingLeaseBalanceService().fetchOutstandingLeaseBalance(
+          adminId: adminId,
+          statusFilter: _statusFilter,
+          rentalOwnerFilter: _rentalOwnerFilter,
+          page: currentPage,
+          limit: limit,
+          sortBy: _sortBy,
+          sortOrder: _sortOrder,
+        );
+
+        if (data.success == true &&
+            data.data != null &&
+            data.data!.isNotEmpty) {
+          allData.addAll(data.data!);
+
+          // Check if there are more pages
+          if (data.pagination != null) {
+            int totalPages = data.pagination!.totalPages ?? 1;
+            if (currentPage >= totalPages) {
+              hasMoreData = false;
+            } else {
+              currentPage++;
+            }
+          } else {
+            // If no pagination info, assume no more data if returned less than limit
+            if (data.data!.length < limit) {
+              hasMoreData = false;
+            } else {
+              currentPage++;
+            }
+          }
+        } else {
+          hasMoreData = false;
+        }
+      }
+
+      return allData;
+    } catch (e) {
+      print('Error fetching all data for export: $e');
+      return [];
     }
   }
 
@@ -227,6 +290,8 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               _rentalOwnerFilter = selectedRentalOwnerIds.join(',');
             }
           }
+          // Update the notifier
+          _selectedOwnersNotifier.value = List.from(selectedRentalOwnerIds);
         });
       }
     } catch (e) {
@@ -423,13 +488,13 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  titleBar(
+                  ReportHeader(
                     title: 'Outstanding Lease Balance Report',
-                    width: MediaQuery.of(context).size.width * .98,
                   ),
                   // Filters Section - Always visible
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                     child: _buildFiltersSection(),
                   ),
                   _buildReportContent(),
@@ -592,48 +657,55 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   }
 
   Widget _buildFiltersSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Status Filter
-          Text(
-            'Status Filter',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(8),
-            ),
+    return Row(
+      children: [
+        // Status Filter
+        Flexible(
+          flex: 2,
+          child: Container(
+            height: 50,
             child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _statusFilter,
+              child: DropdownButton2<String>(
                 isExpanded: true,
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                value: _statusFilter,
+                hint: Text(
+                  'Status Filter',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: const Color(0xFF8A95A8),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
                 items: [
                   DropdownMenuItem(
                     value: 'all',
-                    child: Text('All Leases'),
+                    child: Text(
+                      'All Leases',
+                      style: TextStyle(fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'active',
-                    child: Text('Active'),
+                    child: Text(
+                      'Active',
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ),
-                  // dropdown item for Future and past
                   DropdownMenuItem(
                     value: 'future',
-                    child: Text('Future'),
+                    child: Text(
+                      'Future',
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'past',
-                    child: Text('Past'),
+                    child: Text(
+                      'Past',
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ),
                 ],
                 onChanged: (value) {
@@ -641,129 +713,415 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     _statusFilter = value ?? 'all';
                   });
                 },
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: Colors.grey[600],
+                buttonStyleData: ButtonStyleData(
+                  height: 50,
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFF8A95A8),
+                    ),
+                    color: Colors.white,
+                  ),
+                  elevation: 0,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.grey[600],
+                    size: 18,
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 250,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  offset: const Offset(0, -5),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.only(left: 12, right: 12),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 10),
+        ),
+        SizedBox(width: 8),
 
-          // Rental Owner Filter
-          Text(
-            'Rental Owner',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
+        // Rental Owner Filter
+        Flexible(
+          flex: 2,
+          child: Container(
+            height: 50,
+            child: _buildMultiSelectRentalOwnerCompact(),
           ),
-          SizedBox(height: 10),
-          _buildMultiSelectRentalOwner(),
+        ),
+        SizedBox(width: 8),
 
-          SizedBox(height: 20),
-
-          // Run and Export Buttons
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentPage = 1;
-                      isLoading = true;
-                    });
-                    _futureOutstandingLeaseBalance =
-                        fetchOutstandingLeaseBalanceData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Run',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+        // Run Button
+        Flexible(
+          flex: 1,
+          child: Container(
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _currentPage = 1;
+                  isLoading = true;
+                });
+                _futureOutstandingLeaseBalance =
+                    fetchOutstandingLeaseBalanceData();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      final filteredData = _getFilteredData();
-                      if (filteredData.isEmpty) {
-                        Fluttertoast.showToast(
-                          msg: 'No data to export',
-                          toastLength: Toast.LENGTH_SHORT,
-                        );
-                        return;
-                      }
-                      if (value == 'PDF') {
-                        await _generatePdf(filteredData);
-                      } else if (value == 'XLSX') {
-                        await _generateExcel(filteredData);
-                      } else if (value == 'CSV') {
-                        await _generateCsv(filteredData);
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'PDF',
-                        child: Text('PDF'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'XLSX',
-                        child: Text('XLSX'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'CSV',
-                        child: Text('CSV'),
-                      ),
-                    ],
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Export',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
+              child: Text(
+                'Run',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 8),
+
+        // Export Button
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Color(0xFF8A95A8)),
+          ),
+          child: PopupMenuButton<String>(
+            offset: Offset(0, 50),
+            onSelected: (value) async {
+              // Show loading indicator
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
+              try {
+                // Fetch ALL data for export
+                final allData = await fetchAllDataForExport();
+
+                Navigator.pop(context); // Close loading dialog
+
+                if (allData.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: 'No data to export',
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                  return;
+                }
+
+                if (value == 'PDF') {
+                  await _generatePdf(allData);
+                } else if (value == 'XLSX') {
+                  await _generateExcel(allData);
+                } else if (value == 'CSV') {
+                  await _generateCsv(allData);
+                }
+              } catch (e) {
+                Navigator.pop(context); // Close loading dialog
+                Fluttertoast.showToast(
+                  msg: 'Error exporting data: ${e.toString()}',
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'PDF',
+                child: Text('PDF'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'XLSX',
+                child: Text('XLSX'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'CSV',
+                child: Text('CSV'),
               ),
             ],
+            child: Center(
+              child:
+                  FaIcon(FontAwesomeIcons.download, color: blueColor, size: 20),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMultiSelectRentalOwnerCompact() {
+    // Filter out "All" option for the dropdown
+    List<Map<String, dynamic>> rentalOwnersList = _rentalOwners
+        .where((o) => o['rentalowner_id']?.toString() != 'all')
+        .toList();
+
+    // Check if all owners are selected
+    bool allSelected = rentalOwnersList.isNotEmpty &&
+        rentalOwnersList.every((owner) => selectedRentalOwnerIds
+            .contains(owner['rentalowner_id']?.toString()));
+
+    String displayText = selectedRentalOwnerIds.isEmpty
+        ? "Rental Owner"
+        : allSelected
+            ? "All"
+            : rentalOwnersList
+                        .where((owner) => selectedRentalOwnerIds
+                            .contains(owner['rentalowner_id']?.toString()))
+                        .length ==
+                    1
+                ? rentalOwnersList
+                        .firstWhere((owner) => selectedRentalOwnerIds.contains(
+                            owner['rentalowner_id']
+                                ?.toString()))['rentalOwner_name']
+                        ?.toString() ??
+                    "Rental Owner"
+                : "${rentalOwnersList.where((owner) => selectedRentalOwnerIds.contains(owner['rentalowner_id']?.toString())).length} selected";
+
+    return ValueListenableBuilder<List<String>>(
+      valueListenable: _selectedOwnersNotifier,
+      builder: (context, currentSelected, _) {
+        return DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            hint: Text(
+              displayText,
+              style: TextStyle(
+                fontSize: 13,
+                color: selectedRentalOwnerIds.isEmpty
+                    ? const Color(0xFF8A95A8)
+                    : Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            value: null, // Always null for multi-select
+            items: [
+              // "All" option at the top
+              DropdownMenuItem<String>(
+                value: 'all',
+                enabled: false,
+                child: ValueListenableBuilder<List<String>>(
+                  valueListenable: _selectedOwnersNotifier,
+                  builder: (context, currentSelectedList, _) {
+                    final isCurrentlySelected = rentalOwnersList.isNotEmpty &&
+                        rentalOwnersList.every((owner) => currentSelectedList
+                            .contains(owner['rentalowner_id']?.toString()));
+                    return InkWell(
+                      onTap: () {
+                        if (isCurrentlySelected) {
+                          selectedRentalOwnerIds.clear();
+                        } else {
+                          // Select all rental owners
+                          selectedRentalOwnerIds = rentalOwnersList
+                              .map((owner) =>
+                                  owner['rentalowner_id']?.toString() ?? '')
+                              .where((id) => id.isNotEmpty)
+                              .toList();
+                        }
+                        _selectedOwnersNotifier.value =
+                            List.from(selectedRentalOwnerIds);
+                        setState(() {
+                          // Convert to comma-separated string for API (but don't fetch yet)
+                          if (selectedRentalOwnerIds.isEmpty) {
+                            _rentalOwnerFilter = null;
+                          } else {
+                            _rentalOwnerFilter =
+                                selectedRentalOwnerIds.join(',');
+                          }
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: isCurrentlySelected,
+                            onChanged: (bool? checked) {
+                              if (checked == true) {
+                                // Select all rental owners
+                                selectedRentalOwnerIds = rentalOwnersList
+                                    .map((owner) =>
+                                        owner['rentalowner_id']?.toString() ??
+                                        '')
+                                    .where((id) => id.isNotEmpty)
+                                    .toList();
+                              } else {
+                                selectedRentalOwnerIds.clear();
+                              }
+                              _selectedOwnersNotifier.value =
+                                  List.from(selectedRentalOwnerIds);
+                              setState(() {
+                                // Convert to comma-separated string for API (but don't fetch yet)
+                                if (selectedRentalOwnerIds.isEmpty) {
+                                  _rentalOwnerFilter = null;
+                                } else {
+                                  _rentalOwnerFilter =
+                                      selectedRentalOwnerIds.join(',');
+                                }
+                              });
+                            },
+                            activeColor: blueColor,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'All',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: isCurrentlySelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Individual rental owners
+              ...rentalOwnersList.map((owner) {
+                return DropdownMenuItem<String>(
+                  value: owner['rentalowner_id']?.toString(),
+                  enabled: false,
+                  child: ValueListenableBuilder<List<String>>(
+                    valueListenable: _selectedOwnersNotifier,
+                    builder: (context, currentSelectedList, _) {
+                      final isCurrentlySelected = currentSelectedList
+                          .contains(owner['rentalowner_id']?.toString());
+                      return InkWell(
+                        onTap: () {
+                          if (isCurrentlySelected) {
+                            selectedRentalOwnerIds
+                                .remove(owner['rentalowner_id']?.toString());
+                          } else {
+                            selectedRentalOwnerIds
+                                .add(owner['rentalowner_id']?.toString() ?? '');
+                          }
+                          _selectedOwnersNotifier.value =
+                              List.from(selectedRentalOwnerIds);
+                          setState(() {
+                            // Convert to comma-separated string for API (but don't fetch yet)
+                            if (selectedRentalOwnerIds.isEmpty) {
+                              _rentalOwnerFilter = null;
+                            } else {
+                              _rentalOwnerFilter =
+                                  selectedRentalOwnerIds.join(',');
+                            }
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: isCurrentlySelected,
+                              onChanged: (bool? checked) {
+                                if (checked == true) {
+                                  selectedRentalOwnerIds.add(
+                                      owner['rentalowner_id']?.toString() ??
+                                          '');
+                                } else {
+                                  selectedRentalOwnerIds.remove(
+                                      owner['rentalowner_id']?.toString());
+                                }
+                                _selectedOwnersNotifier.value =
+                                    List.from(selectedRentalOwnerIds);
+                                setState(() {
+                                  // Convert to comma-separated string for API (but don't fetch yet)
+                                  if (selectedRentalOwnerIds.isEmpty) {
+                                    _rentalOwnerFilter = null;
+                                  } else {
+                                    _rentalOwnerFilter =
+                                        selectedRentalOwnerIds.join(',');
+                                  }
+                                });
+                              },
+                              activeColor: blueColor,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            Expanded(
+                              child: Text(
+                                owner['rentalOwner_name']!,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: isCurrentlySelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w400,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+            ],
+            onChanged:
+                (_) {}, // Do nothing - selection handled in item's InkWell
+            buttonStyleData: ButtonStyleData(
+              height: 50,
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF8A95A8),
+                ),
+                color: Colors.white,
+              ),
+              elevation: 0,
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.grey[600],
+                size: 18,
+              ),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 250,
+              width: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              offset: const Offset(-20, -5),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all(6),
+                thumbVisibility: MaterialStateProperty.all(true),
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.only(left: 12, right: 12),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -783,45 +1141,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         // Data Table
         Column(
           children: [
-            // Table Header
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey[300]!),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Lease',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: blueColor,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '0-30 Days',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: blueColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Data Rows
-            ...filteredData.map((item) => _buildLeaseCard(item)).toList(),
+            ...filteredData.asMap().entries.map((entry) {
+              int index = entry.key;
+              OutstandingLeaseBalanceData item = entry.value;
+              return _buildLeaseCard(item, index);
+            }).toList(),
           ],
         ),
         SizedBox(height: 20),
@@ -946,12 +1271,15 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Total Outstanding Balance',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Text(
+                      'Total Outstanding Balance',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(height: 8),
@@ -972,16 +1300,16 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
     );
   }
 
-  Widget _buildLeaseCard(OutstandingLeaseBalanceData item) {
+  Widget _buildLeaseCard(OutstandingLeaseBalanceData item, int index) {
     final isExpanded =
         expandedRowIndex == outstandingLeaseBalanceModel!.data!.indexOf(item);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Color(0xFFDBE0E5)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.08),
@@ -993,7 +1321,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       ),
       child: Column(
         children: [
-          // Main row
+          // Main row - clickable header
           InkWell(
             onTap: () {
               setState(() {
@@ -1003,30 +1331,29 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Lease info
                   Expanded(
-                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${item.propertyAddress ?? ''} ',
+                          item.propertyAddress ?? '',
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
                           ),
                         ),
-                        SizedBox(height: 6),
+                        SizedBox(height: 4),
                         Text(
                           item.tenantNames ?? '',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: Colors.black,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1034,78 +1361,411 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     ),
                   ),
 
-                  // 0-30 Days amount
-                  Expanded(
-                    child: Text(
-                      '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3A4A57)),
-                      textAlign: TextAlign.end,
+                  // Spacing between tenant and amount
+                  SizedBox(width: 16),
+
+                  // Total Balance
+                  Text(
+                    '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
                     ),
+                  ),
+
+                  // Expand/Collapse icon
+                  SizedBox(width: 8),
+                  Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Colors.grey[600],
                   ),
                 ],
               ),
             ),
           ),
 
-          // Expanded details
+          // Expanded details - Nested table
           if (isExpanded)
             Container(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(12),
                   bottomRight: Radius.circular(12),
                 ),
               ),
-              child: Column(
-                children: [
-                  _buildDetailRow('31-60 Days', item.balance3160),
-                  _buildDetailRow('61-90 Days', item.balance6190),
-                  _buildDetailRow('90+ Days', item.balance90Plus),
-                  SizedBox(height: 8),
-                  Container(
-                    height: 1,
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(height: 8),
-                  _buildDetailRow('Balance', item.outstandingBalance,
-                      isTotal: true),
-                ],
-              ),
+              child: _buildNestedTable(item),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, double? amount, {bool isTotal = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isTotal ? 15 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: isTotal ? Colors.grey[800] : Colors.grey[600],
-            ),
+  Widget _buildNestedTable(OutstandingLeaseBalanceData item) {
+    return Column(
+      children: [
+        //build first row content
+
+        // Table Header
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
           ),
-          Text(
-            '\$${NumberFormat('#,##0.00').format(amount ?? 0)}',
-            style: TextStyle(
-              fontSize: isTotal ? 15 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: Color(0xFF3A4A57),
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                  'Lease',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '0-30\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '31-60\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '61-90\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    '90+\n Days',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
+              // Expanded(
+              //   child: Text(
+              //     'Balance',
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: 13,
+              //       color: Colors.black,
+              //     ),
+              //     textAlign: TextAlign.right,
+              //   ),
+              // ),
+            ],
           ),
-        ],
-      ),
+        ),
+        SizedBox(height: 8),
+
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          margin: EdgeInsets.only(bottom: 4),
+          child: Row(
+            children: [ 
+              Expanded(
+                flex: 2,
+                child: Text(
+                  '${item.propertyAddress ?? 'N/A'}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.visible,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 8),
+
+        // Account breakdown rows (show account name and total balance only, like PDF)
+        if (item.accountBreakdown != null && item.accountBreakdown!.isNotEmpty)
+          ...item.accountBreakdown!.map((account) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              margin: EdgeInsets.only(bottom: 4),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          account.accountName ?? '',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 0-30 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 31-60 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '-', // Empty for 61-90 days (like PDF)
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                       '-',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                   
+                    ],
+                  ),
+                SizedBox(height: 8),
+                 Row(
+                 
+                  children: [
+                    Text('Balance :', style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),),
+                  Spacer(),
+                    Text(
+                      '\$${NumberFormat('#,##0.00').format(account.amount ?? 0)}',
+                      style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),
+                      textAlign: TextAlign.right,
+                    ),
+                  ],
+                ),
+                ],
+              ),
+            );
+          }).toList(),
+
+        // Balance row (totals like PDF)
+        SizedBox(height: 8),
+        // Container(
+        //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        //   decoration: BoxDecoration(
+        //     color: Colors.white,
+        //     borderRadius: BorderRadius.circular(4),
+        //     border: Border(
+        //       top: BorderSide(color: Colors.grey[300]!, width: 1),
+        //     ),
+        //   ),
+        //   child: Row(
+        //     children: [
+        //       Expanded(
+        //         flex: 2,
+        //         child: Text(
+        //           'Balance',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: Colors.grey[800],
+        //           ),
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: Text(
+        //           '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: blueColor,
+        //           ),
+        //           textAlign: TextAlign.right,
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: Text(
+        //           '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: blueColor,
+        //           ),
+        //           textAlign: TextAlign.right,
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: Text(
+        //           '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: blueColor,
+        //           ),
+        //           textAlign: TextAlign.right,
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: Text(
+        //           '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: blueColor,
+        //           ),
+        //           textAlign: TextAlign.right,
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: Text(
+        //           '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
+        //           style: TextStyle(
+        //             fontWeight: FontWeight.bold,
+        //             fontSize: 13,
+        //             color: blueColor,
+        //           ),
+        //           textAlign: TextAlign.right,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+      
+      ],
     );
   }
 
@@ -1152,9 +1812,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 },
                 icon: const Icon(
                   Icons.arrow_drop_down,
-                  size: 40,
+                  size: 24,
                 ),
-                style: const TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 14),
                 dropdownColor: Colors.white,
               ),
             ),

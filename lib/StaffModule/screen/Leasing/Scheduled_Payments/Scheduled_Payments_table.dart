@@ -1,13 +1,25 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 import '../../../../Model/Scheduled_Payment_model.dart';
+import '../../../../Model/profile.dart';
 import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
+import '../../../../repository/GetAdminAddressPdf.dart';
 import '../../../../repository/Scheduled_Payment_repo.dart';
 import '../../../../widgets/CustomTableShimmer.dart';
 import '../../../../widgets/titleBar.dart';
@@ -342,6 +354,288 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     ).show();
   }
 
+  Future<void> _exportPDF(List<Scheduled_Payment> data) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
+    );
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      print("Error fetching profile data: $e");
+      return;
+    }
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final pdf = pw.Document();
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    pdf.addPage(
+      pw.MultiPage(
+        margin: const pw.EdgeInsets.all(30),
+        build: (pw.Context context) {
+          return [
+            pw.Header(
+              level: 0,
+              padding: const pw.EdgeInsets.only(bottom: 10),
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Image(image, width: 50, height: 50),
+                  pw.SizedBox(width: 50),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text(
+                        'Scheduled Payments',
+                        style: pw.TextStyle(
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.SizedBox(height: 10),
+                      pw.Text('As of $currentDate'),
+                    ],
+                  ),
+                  pw.SizedBox(width: 50),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      if (profileData?.companyName != null &&
+                          profileData!.companyName!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyName!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if (profileData?.companyAddress != null &&
+                          profileData!.companyAddress!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyAddress!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if ((profileData?.companyCity != null &&
+                              profileData!.companyCity!.isNotEmpty) ||
+                          (profileData?.companyState != null &&
+                              profileData!.companyState!.isNotEmpty) ||
+                          (profileData?.companyCountry != null &&
+                              profileData!.companyCountry!.isNotEmpty))
+                        pw.Text(
+                          [
+                            if (profileData?.companyCity != null &&
+                                profileData!.companyCity!.isNotEmpty)
+                              profileData!.companyCity!,
+                            if (profileData?.companyState != null &&
+                                profileData!.companyState!.isNotEmpty)
+                              profileData!.companyState!,
+                            if (profileData?.companyCountry != null &&
+                                profileData!.companyCountry!.isNotEmpty)
+                              profileData!.companyCountry!,
+                          ].join(', '),
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      if (profileData?.companyPostalCode != null &&
+                          profileData!.companyPostalCode!.isNotEmpty)
+                        pw.Text(
+                          profileData!.companyPostalCode!,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Table(
+              border: null,
+              columnWidths: {
+                0: const pw.FlexColumnWidth(2), // Date
+                1: const pw.FlexColumnWidth(3), // Property
+                2: const pw.FlexColumnWidth(3), // Tenant
+                3: const pw.FlexColumnWidth(2), // Account
+                4: const pw.FlexColumnWidth(2), // Amount
+              },
+              children: [
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(
+                    color: PdfColor.fromHex("#5A86D5"),
+                    borderRadius:
+                        const pw.BorderRadius.all(pw.Radius.circular(2)),
+                  ),
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(6),
+                      child: pw.Align(
+                        child: pw.Text('Date',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 9,
+                                color: PdfColors.white)),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(6),
+                      child: pw.Text('Property',
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 9,
+                              color: PdfColors.white)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(6),
+                      child: pw.Text('Tenant',
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 9,
+                              color: PdfColors.white)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(6),
+                      child: pw.Align(
+                        child: pw.Text('Account',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 9,
+                                color: PdfColors.white)),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(6),
+                      child: pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text('Amount',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 9,
+                                color: PdfColors.white)),
+                      ),
+                    ),
+                  ],
+                ),
+                ...data.map((charge) => pw.TableRow(
+                      decoration: const pw.BoxDecoration(),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(6),
+                          child: pw.Align(
+                            child: pw.Text(charge.date != null
+                                ? dateProvider.formatCurrentDate(charge.date!)
+                                : ''),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(6),
+                          child: pw.Text(charge.rentalAddress ?? ''),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(6),
+                          child: pw.Text(charge.tenant?.tenantName ?? ''),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(6),
+                          child: pw.Align(
+                            child: pw.Text(charge.account ?? ''),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(6),
+                          child: pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(charge.totalAmount != null
+                                ? formatCurrency(charge.totalAmount)
+                                : formatCurrency(0.0)),
+                          ),
+                        ),
+                      ],
+                    )),
+              ],
+            ),
+          ];
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (format) async => pdf.save(),
+    );
+  }
+
+  Future<void> _exportExcel(List<Scheduled_Payment> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final workbook = syncXlsx.Workbook();
+    final sheet = workbook.worksheets[0];
+    final headers = ['Date', 'Property', 'Tenant', 'Account', 'Amount'];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+    }
+    for (int row = 0; row < data.length; row++) {
+      final charge = data[row];
+      sheet.getRangeByIndex(row + 2, 1).setText(charge.date != null
+          ? dateProvider.formatCurrentDate(charge.date!)
+          : '');
+      sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
+      sheet
+          .getRangeByIndex(row + 2, 3)
+          .setText(charge.tenant?.tenantName ?? '');
+      sheet.getRangeByIndex(row + 2, 4).setText(charge.account ?? '');
+      sheet.getRangeByIndex(row + 2, 5).setText(
+          charge.totalAmount != null ? charge.totalAmount.toString() : '0.0');
+    }
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'ScheduledPayments_$formattedDate.xlsx';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+    final path = '${directory.path}/$fileName';
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    await Share.shareXFiles([XFile(path)]);
+  }
+
+  Future<void> _exportCSV(List<Scheduled_Payment> data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final StringBuffer csvBuffer = StringBuffer();
+    csvBuffer.writeln('Date,Property,Tenant,Account,Amount');
+    for (final charge in data) {
+      csvBuffer.writeln([
+        charge.date != null ? dateProvider.formatCurrentDate(charge.date!) : '',
+        charge.rentalAddress ?? '',
+        charge.tenant?.tenantName ?? '',
+        charge.account ?? '',
+        charge.totalAmount != null ? charge.totalAmount.toString() : ''
+      ].map((e) => '"${e.toString().replaceAll('"', '""')}"').join(','));
+    }
+    final List<int> bytes = utf8.encode(csvBuffer.toString());
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'ScheduledPayments_$formattedDate.csv';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+    final path = '${directory.path}/$fileName';
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    await Share.shareXFiles([XFile(path)]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -378,13 +672,13 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                   const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width > 500 ? 25 : 14,
+                        right:
+                            MediaQuery.of(context).size.width > 500 ? 26 : 20),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 16),
                         Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8),
@@ -444,6 +738,53 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 45,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () async {
+                              final data = await futurescheduledpayment;
+                              await _exportPDF(data);
+                            },
+                            child: PopupMenuButton(
+                              onSelected: (value) async {
+                                final data = await futurescheduledpayment;
+                                if (value == 'Export PDF') {
+                                  await _exportPDF(data);
+                                }
+                                if (value == 'Export Excel') {
+                                  await _exportExcel(data);
+                                }
+                                if (value == 'Export CSV') {
+                                  await _exportCSV(data);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'Export PDF',
+                                  child: Text('Export PDF'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'Export Excel',
+                                  child: Text('Export Excel'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'Export CSV',
+                                  child: Text('Export CSV'),
+                                ),
+                              ],
+                              child: const Row(
+                                children: [
+                                  Text('Export'),
+                                  Icon(Icons.arrow_drop_down),
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -243,22 +243,22 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   selectedSubtopic:
                       !widget.dropdown ? null : widget.currentpage,
                 ),
-              // Only show Work Order if staff has workorder permission (Vendor removed - shown in Settings)
+              // Only show Work Orders if staff has workorder permission (Vendor removed - shown in Settings)
               if (permissions != null && permissions.workorderView == true)
                 buildListTile(
                   context,
                   FaIcon(
                     FontAwesomeIcons.bookBookmark,
                     size: 20,
-                    color: widget.currentpage == "Work Order"
+                    color: widget.currentpage == "Work Orders"
                         ? Colors.white
                         : blueColor,
                   ),
-                  "Work Order",
-                  widget.currentpage == "Work Order",
+                  "Work Orders",
+                  widget.currentpage == "Work Orders",
                 ),
               // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
-              // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Order in future
+              // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Orders in future
               // if (permissions != null &&
               //     (permissions.vendorView == true ||
               //         permissions.workorderView == true))
@@ -272,7 +272,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
               //     "Maintenance",
               //     [
               //       if (permissions.vendorView == true) "Vendor",
-              //       if (permissions.workorderView == true) "Work Order",
+              //       if (permissions.workorderView == true) "Work Orders",
               //     ],
               //     [
               //       if (permissions.vendorView ?? false)
@@ -287,10 +287,10 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
               //         FaIcon(
               //           FontAwesomeIcons.bookBookmark,
               //           size: 20,
-              //           color: widget.currentpage == "Work Order"
+              //           color: widget.currentpage == "Work Orders"
               //               ? Colors.white
               //               : blueColor,
-              //         ), // Icon for Work Order
+              //         ), // Icon for Work Orders
               //     ],
               //     selectedSubtopic:
               //     !widget.dropdown ? null : widget.currentpage,
@@ -432,8 +432,8 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   height: 20,
                   width: 20,
                 ),
-                "Work Order",
-                widget.currentpage == "Work Order",
+                "Work Orders",
+                widget.currentpage == "Work Orders",
               ),
 
               buildListTile(

@@ -23,7 +23,7 @@ import 'package:three_zero_two_property/repository/RentersInsuranceService.dart'
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -529,12 +529,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("    Unit\n    Details",
-                              style: TextStyle( color: blueColor,
+                          ? Text("    Unit\n    Details",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15))
-                          :  Text("    Unit\n    Details",
-                              style: TextStyle( color: blueColor,
+                          : Text("    Unit\n    Details",
+                              style: TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15)),
                       const SizedBox(width: 3),
@@ -567,7 +569,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 child: Row(
                   children: [
                     Text("       Appliance\n       Status",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -1814,10 +1817,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  titleBar(
+                  ReportHeader(
                     title: 'Home System Report',
-                    width: MediaQuery.of(context).size.width * .91,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -2339,16 +2340,13 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       bool isRowExpanded = expandedRowIndex == rowIndex;
 
                       return Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 6),
+                        margin: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
                               ? const Color(0xFFF4F8FF)
                               : Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFDBE0E5)),
-                          borderRadius:
-                          BorderRadius.circular(10),
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [
@@ -2633,10 +2631,11 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       height: 45,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey),
                         color: Colors.white,
                       ),
-                      elevation: 2,
+                      elevation: 0,
                     ),
                     iconStyleData: const IconStyleData(
                       icon: Icon(Icons.arrow_drop_down),
@@ -2678,8 +2677,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 width: 45,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey),
                 ),
                 child: IconButton(
                   padding: EdgeInsets.zero,

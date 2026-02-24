@@ -116,6 +116,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       },
     );
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       setState(() {
@@ -142,70 +144,100 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   }
 
   void fetchExistingCards(String tenantid, String leaseid, int index) async {
-    setState(() {
-      isLoading = true;
-    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    final response = await http.post(
-      Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
-      headers: {
-        'authorization': 'CRM $token',
-        'id': 'CRM $id',
-      },
-      body: {
+    try {
+      final requestBody = {
         "lease_id": leaseid,
         "tenant_id": tenantid,
-      },
-    );
+        "is_web": true,
+        "user_active_recently": true,
+      };
 
-    print(response.body);
-    Map<String, dynamic> Response = json.decode(response.body);
+      final response = await http.post(
+        Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
 
-    if (Response["statusCode"] == 200) {
-      Map<String, dynamic> jsonResponse = Response['data'];
+      print("get-cards requestBody: $requestBody");
+      print("response.body get cards: ${response.body}");
+      print("response.statusCode get cards: ${response.statusCode}");
+
+      final decoded = json.decode(response.body);
+      if (decoded is! Map<String, dynamic>) {
+        print('get-cards unexpected response type: ${decoded.runtimeType}');
+        return;
+      }
+
+      final statusCode = decoded["statusCode"];
+      if (statusCode != 200) {
+        final msg = decoded["message"]?.toString();
+        messageCardAvailable = msg;
+        print('get-cards not 200 for tenant=$tenantid lease=$leaseid: $msg');
+        return;
+      }
+
+      final data = decoded['data'];
+      if (data is! Map<String, dynamic>) {
+        print('get-cards missing data map: ${decoded['data']}');
+        return;
+      }
+
+      final recurrings = data["recurrings"];
+      if (recurrings is! List || recurrings.isEmpty) {
+        print('get-cards recurrings empty for tenant=$tenantid lease=$leaseid');
+        return;
+      }
+
+      final recurring = recurrings.first;
+      if (recurring is! Map<String, dynamic>) {
+        print('get-cards recurring unexpected type: ${recurring.runtimeType}');
+        return;
+      }
 
       setState(() {
-        final recurring = jsonResponse["recurrings"][0];
+        final fetchedBillingId = recurring['billing_id']?.toString();
+        final fetchedCardType = recurring['card_type']?.toString();
 
-        String? fetchedBillingId = recurring['billing_id'];
-        String? fetchedCardType = recurring['card_type'];
-
-        bool cardExists =
-        cardDetails.any((card) => card.billingId == fetchedBillingId);
-        String selectedCard =
-        cardExists && fetchedBillingId != null && fetchedCardType != null
+        final selectedCard = (fetchedBillingId != null &&
+                fetchedCardType != null &&
+                cardDetails.any((card) => card.billingId == fetchedBillingId))
             ? "${fetchedBillingId}_${fetchedCardType}"
-            : "";
+            : null;
 
-        List<Setting4> accountMatches = accounts
-            .where((acc) => acc.account == recurring['account'])
-            .toList();
-        Setting4? fetchaccount =
-        accountMatches.isNotEmpty ? accountMatches.first : null;
+        final accountName = recurring['account']?.toString();
+        final fetchaccount = accountName == null
+            ? null
+            : (accounts.where((acc) => acc.account == accountName).isNotEmpty
+                ? accounts.where((acc) => acc.account == accountName).first
+                : null);
 
         tenantDropdowns[index] = [
           {
             "selectedCard": selectedCard,
-            "selectedDay": recurring['date'] ?? "",
+            "selectedDay": recurring['date'],
             "selectedAccount": fetchaccount != null
                 ? "${fetchaccount.account}_${fetchaccount.createdAt}"
-                : "",
+                : null,
             "amount": TextEditingController(
                 text: recurring['amount']?.toString() ?? ""),
             "scrollController": ScrollController(),
           }
         ];
-
-        isScrollLeft.add(false);
       });
 
       calculateTotal();
       checkFieldsFilled();
-    } else {
-      print('Failed to fetch settings: ${response.body}');
+    } catch (e, st) {
+      print('get-cards exception tenant=$tenantid lease=$leaseid: $e');
+      print(st);
     }
   }
 
@@ -280,33 +312,39 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                   children: [
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: blueColor,
-                            size: 20,
-                          ),
+                        Material(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 18),
+                            ),
+
+                        ),    
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    Row(
-                      children: [
-                        Text(
+                      const SizedBox(width: 16),
+                      Text(
                           "Configure Recurring Payment",
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: blueColor),
                         ),
-                      ],
+                    ],  
                     ),
-                    const SizedBox(height: 7),
-                    Row(
+                    const SizedBox(height: 17),
+                 
+                
+                  Row(
                       children: [
+                        SizedBox(width: 8),
                         Text(
                           "Total Rent Amount : \$${widget.leaseData.amount}",
                           style: TextStyle(
@@ -316,7 +354,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 17),
+                    const SizedBox(height: 10),
                     isLoading
                         ? Center(
                       child: SpinKitFadingCircle(
@@ -334,10 +372,16 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         int? vaultId = customervaultid.length > index
                             ? customervaultid[index]
                             : null;
-                        List<BillingData> tenantCards = cardDetails
+                        final tenantCards = cardDetails
                             .where((card) =>
-                        card.customerVaultId ==
-                            vaultId.toString())
+                                card.customerVaultId ==
+                                (vaultId == null ? null : vaultId.toString()))
+                            // NMI customer vault response may include non-card "billing" entries
+                            // (e.g., check_account) where cc_type/cc_number are {} and become null.
+                            // Those crash the dropdown (`card.ccType!` / `card.ccNumber!`).
+                            .where((card) =>
+                                (card.ccType ?? '').trim().isNotEmpty &&
+                                (card.ccNumber ?? '').trim().isNotEmpty)
                             .toList();
 
                         return Container(
@@ -469,7 +513,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -524,7 +568,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           width:
                                                                           24,
                                                                           child:
-                                                                          Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
+                                                                          Image.network(
+                                                                            "https://logo.clearbit.com/${(card.ccType ?? '').replaceAll(RegExp(r'[-\s]'), '').toLowerCase()}.com",
+                                                                            errorBuilder: (context, error, stackTrace) {
+                                                                              return const Icon(Icons.credit_card, size: 20, color: Colors.grey);
+                                                                            },
+                                                                          ),
                                                                         ),
                                                                         const SizedBox(
                                                                             width: 8),
@@ -534,11 +583,11 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                                             children: [
                                                                               Text(
-                                                                                "${card.ccNumber}",
+                                                                                "${card.ccNumber ?? ''}",
                                                                                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                                                               ),
                                                                               Text(
-                                                                                "${card.binResult != null ? card.binResult : "N/A"} • ${card.ccExp}",
+                                                                                "${(card.binResult == null || card.binResult == "Unknown") ? (card.ccType ?? "N/A") : card.binResult} • ${card.ccExp ?? ''}",
                                                                                 style: const TextStyle(fontSize: 10, color: Colors.grey),
                                                                               ),
                                                                             ],
@@ -623,7 +672,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                   Alignment
                                                                       .centerLeft,
                                                                   child: Text(
-                                                                    card.ccNumber!,
+                                                                    card.ccNumber ?? '',
                                                                     style:
                                                                     const TextStyle(
                                                                       fontSize:
@@ -693,8 +742,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       fontSize: 14,
                                                       fontWeight:
                                                       FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade700,
+                                                      color:
+                                                          Colors.grey.shade700,
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -707,7 +756,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -759,7 +808,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                               value: day
                                                                   .toString(),
                                                               child: Text(
-                                                                  '$day'),
+                                                                  '$day', style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
                                                             ))
                                                             .toList(),
                                                         onChanged:
@@ -838,7 +887,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         .symmetric(
                                                         horizontal:
                                                         12,
-                                                        vertical: 4),
+                                                        vertical: 1),
                                                     decoration:
                                                     BoxDecoration(
                                                       color: Colors.white,
@@ -883,7 +932,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 value:
                                                                 uniqueKey,
                                                                 child: Text(
-                                                                    "${card.account}"),
+                                                                    "${card.account}", style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),),
                                                               );
                                                             }).toList()
                                                             : [
@@ -993,6 +1042,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       style:
                                                       const TextStyle(
                                                         fontSize: 14,
+                                                        color: Colors.black,
                                                         fontWeight:
                                                         FontWeight
                                                             .w500,
@@ -1010,7 +1060,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         contentPadding:
                                                         EdgeInsets
                                                             .symmetric(
-                                                          vertical: 12,
+                                                          vertical: 15,
                                                           horizontal: 12,
                                                         ),
                                                         border:
@@ -1298,6 +1348,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -1327,54 +1378,60 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final slotIndex = customervaultid.length;
+    customervaultid.add(0); // keep tenant index alignment even on errors
 
-    setState(() {
-      isLoading = true;
-    });
+    try {
+      final response = await http.get(
+        Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
+        headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      );
 
-    final response = await http.get(
-      Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
-    );
+      print(response.body);
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      int? custvaultid = jsonResponse['customer_vault_id'];
-
-      if (custvaultid != null) {
-        customervaultid.add(custvaultid);
-        List<dynamic> cardDetailsList = jsonResponse['card_detail'];
-
-        for (var cardDetail in cardDetailsList) {
-          print('Billing ID: ${cardDetail['billing_id']}');
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        if (decoded is! Map<String, dynamic>) {
+          print(
+              'getCreditCards unexpected response type: ${decoded.runtimeType}');
+          return;
         }
 
-        CustomerData? customerData = await postBillingCustomerVault(
-            custvaultid.toString(), cardDetailsList);
+        final custvaultid = decoded['customer_vault_id'];
+        if (custvaultid is int) {
+          customervaultid[slotIndex] = custvaultid;
 
-        if (customerData != null) {
-          setState(() {
-            cardDetails.addAll(customerData.billing);
-          });
+          final cardDetailsList = (decoded['card_detail'] is List)
+              ? (decoded['card_detail'] as List<dynamic>)
+              : <dynamic>[];
+
+          for (var cardDetail in cardDetailsList) {
+            if (cardDetail is Map) {
+              print('Billing ID: ${cardDetail['billing_id']}');
+            }
+          }
+
+          CustomerData? customerData = await postBillingCustomerVault(
+              custvaultid.toString(), cardDetailsList);
+
+          if (customerData != null) {
+            setState(() {
+              cardDetails.addAll(customerData.billing);
+            });
+          }
+        } else {
+          print('Customer vault ID not found for tenant: $tenantId');
         }
-      } else {
+      } else if (response.statusCode == 404) {
         print('Customer vault ID not found for tenant: $tenantId');
-        setState(() {
-          customervaultid.add(0);
-        });
+      } else {
+        print(
+            'Failed to load credit card data for tenant=$tenantId: ${response.statusCode}');
       }
-    } else if (response.statusCode == 404) {
-      print('Customer vault ID not found for tenant: $tenantId');
-      setState(() {
-        customervaultid.add(0);
-      });
-    } else {
-      print('Failed to load credit card data');
+    } catch (e, st) {
+      print('fetchcreditcard exception tenant=$tenantId: $e');
+      print(st);
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<String> binCheck(String ccBin) async {
@@ -1387,6 +1444,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
       },
     );
+
+    print(response.body);
 
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
@@ -1418,7 +1477,15 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       },
       body: json.encode(requestBody),
     );
-    print(response.body);
+    print("response.body post billing customer vault: ${response.body}");
+    print("response.statusCode post billing customer vault: ${response.statusCode}");
+    print("requestBody post billing customer vault: ${requestBody}");
+    print("adminId post billing customer vault: ${adminId}");
+    print("token post billing customer vault: ${token}");
+    print("customerVaultId post billing customer vault: ${customerVaultId}");
+    print("cardDetailsList post billing customer vault: ${cardDetailsList}");
+    print("Api_url post billing customer vault: ${Api_url}");
+  
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
       print(jsonResponse['data'].toString() == "{}");
@@ -1432,8 +1499,21 @@ class _RecurringPaymentState extends State<RecurringPayment> {
           print('CC Bin: ${billing.ccBin}');
         });
 
-        for (int i = 0; i < cardDetailsList.length; i++) {
-          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        final billingById = <String, BillingData>{};
+        for (final b in customerData.billing) {
+          final id = b.billingId;
+          if (id != null) billingById[id] = b;
+        }
+
+        for (final detail in cardDetailsList) {
+          if (detail is! Map) continue;
+          final billingId = detail["billing_id"]?.toString();
+          if (billingId == null) continue;
+          final cardType = detail["card_type"]?.toString();
+          final matched = billingById[billingId];
+          if (matched != null) {
+            matched.binResult = cardType;
+          }
         }
 
         return customerData;
@@ -1462,7 +1542,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       );
 
       var responseData = jsonDecode(response.body);
-      print('Response body of the lease :${response.body}');
+      print('Response body of the lease add recu :${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
           print('Response successfully: ${responseData['data']}');

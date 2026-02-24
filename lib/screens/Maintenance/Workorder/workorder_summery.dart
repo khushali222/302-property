@@ -472,7 +472,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Work Order",
+        currentpage: "Work Orders",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none

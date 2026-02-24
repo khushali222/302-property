@@ -17,16 +17,18 @@ import '../../../../../Model/unit.dart';
 import 'package:http/http.dart' as http;
 import 'ApplianceSummary.dart';
 import 'edit_appliences.dart';
-import '../summery_page.dart';
 import '../../../../../model/properties.dart';
 
 class AppliancesPart extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
+  /// When true (StaffModule), Add button and Edit/Delete actions are hidden; only View (eye) is shown.
+  final bool isStaffModule;
 
   AppliancesPart({
     this.unit,
     this.properties,
+    this.isStaffModule = false,
   });
   @override
   _AppliancesPartState createState() => _AppliancesPartState();
@@ -699,7 +701,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       width: 20,
                     ),
                   Text(
-                    'Appliances',
+                    'Unit Infrastructure ',
                     style: TextStyle(
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 17 : 20,
@@ -1719,9 +1721,20 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text(
-                              'You don\'t have any applience for this unit right now ..'));
+                      return  Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              _buildHeaders(),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20.0),
+                                child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ));
                     } else {
                       var data = snapshot.data!;
                       if (searchValue == null || searchValue!.isEmpty) {
@@ -2295,9 +2308,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text(
-                              'You don\'t have any applience for this unit right now ..'));
+                      return  Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              _buildHeaders(),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  'No records found',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor),),
+                              ),
+                            ],
+                          ));
                     } else {
                       List<unit_appliance>? filteredData = [];
                       _tableData = snapshot.data!;

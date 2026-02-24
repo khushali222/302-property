@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/enums/history_type.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/custom_history_table.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,6 +27,7 @@ class MortgageSummary extends StatefulWidget {
 class _MortgageSummaryState extends State<MortgageSummary> {
   Map<String, dynamic>? mortgageData;
   bool _isLoading = false;
+  Set<int> _expandedPayoffIndices = {}; // Track which payoff rows are expanded
 
   @override
   void initState() {
@@ -182,12 +185,13 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                    right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
                 child: titleBar(
                   width: double.infinity,
                   title: 'Mortgage Summary',
@@ -461,6 +465,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
                   const SizedBox(height: 20),
 
+                  // // Payoff History Section
+                  _buildPayoffHistorySection(),
+
+                  const SizedBox(height: 20),
+
                   // Payment Information Section
                   _buildPaymentInfoSection(),
 
@@ -475,7 +484,20 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   //     _buildInfoRow('Status', status.toUpperCase()),
                   //   ],
                   // ),
-
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: CustomHistoryTable(
+                        historyType: HistoryType.mortgage,
+                        entityId: mortgageData!['id'] ??
+                            mortgageData!['_id'] ??
+                            widget.mortgageData!['_id'],
+                        title: 'Mortgage History',
+                        blueColor: blueColor,
+                        itemsPerPage: 10),
+                  ),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -933,6 +955,245 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             ),
             textAlign: TextAlign.center,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPayoffHistorySection() {
+    final payoffs = mortgageData!['payoffs'] as List<dynamic>? ?? [];
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Payoff History (${payoffs.length})',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E3A8A),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (payoffs.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  'No payoff history available',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            )
+          else
+            Column(
+              children: [
+                // Table Header
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            'Payoff Amount',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E3A8A),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            '  Payoff Date',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E3A8A),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Table Rows
+                ...payoffs.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final payoff = entry.value;
+                  final amount = payoff['amount'] ?? 0;
+                  final dateString = payoff['date']?.toString() ?? '';
+                  String formattedDate = 'N/A';
+
+                  if (dateString.isNotEmpty) {
+                    try {
+                      final date = DateTime.parse(dateString);
+                      final apiFormatDate =
+                          DateFormat('yyyy-MM-dd').format(date);
+                      formattedDate =
+                          dateProvider.formatCurrentDate(apiFormatDate);
+                    } catch (e) {
+                      formattedDate = 'Invalid Date';
+                    }
+                  }
+
+                  String addedBy = 'N/A';
+                  if (payoff['added_by'] != null) {
+                    if (payoff['added_by'] is Map) {
+                      final addedByData =
+                          payoff['added_by'] as Map<String, dynamic>;
+                      final firstName = addedByData['first_name'] ?? '';
+                      final lastName = addedByData['last_name'] ?? '';
+                      addedBy = '$firstName $lastName'.trim();
+                      if (addedBy.isEmpty) addedBy = 'N/A';
+                    } else {
+                      addedBy = payoff['added_by'].toString();
+                    }
+                  }
+
+                  final isExpanded = _expandedPayoffIndices.contains(index);
+
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (isExpanded) {
+                              _expandedPayoffIndices.remove(index);
+                            } else {
+                              _expandedPayoffIndices.add(index);
+                            }
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              left: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              right: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    _formatCurrency(amount),
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                              // Container(
+                              //   width: 2,
+                              //   color: Colors.grey.shade300,
+                              // ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    formattedDate,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Icon(
+                                  isExpanded
+                                      ? Icons.expand_less
+                                      : Icons.expand_more,
+                                  color: Colors.grey[600],
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Expanded section showing "Added By"
+                      if (isExpanded)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            border: Border(
+                              left: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              right: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Added By: ',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                addedBy,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
         ],
       ),
     );
