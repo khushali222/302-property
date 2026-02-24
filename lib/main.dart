@@ -95,6 +95,7 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
     timeago.setLocaleMessages('en_custom', CustomTimeAgo());
     SystemChrome.setPreferredOrientations([
+
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);

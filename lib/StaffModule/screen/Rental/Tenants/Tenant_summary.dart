@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/Model/AdminTenantInsuranceModel/adminTen
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/SummeryPageLease.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import '../../../../StaffModule/screen/Rental/Tenants/Payments/Tenant_payments.dart';
@@ -106,12 +107,22 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
           }
         }
       }
-
+      if (mounted) {
+        setState(() {
+          _leaseData = allLeaseData;
+          if (widget.tenants != null) {
+            widget.tenants!.leaseData = allLeaseData;
+          }
+        });
+      }
       return allLeaseData;
     } else {
       throw Exception('Failed to load lease data');
     }
   }
+
+  /// Fetched lease data (used when widget.tenants is null or not yet updated). Ensures Lease tab has data in Staff.
+  List<TenantLeaseData>? _leaseData;
 
   final TenantsRepository _tenantService = TenantsRepository();
   final TenantsRepository repo = TenantsRepository();
@@ -870,6 +881,86 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   }
 
   int _selectedIndex = 0;
+
+  /// Lease ID for API calls: use first lease's ID when available, else tenant ID as fallback.
+  String get _effectiveLeaseId {
+    final list = _leaseListForTab;
+    final leaseId = list?.isNotEmpty == true ? list!.first.leaseId : null;
+    return leaseId ?? widget.tenantId;
+  }
+
+  /// True if lease is active (today between start and end). Used for lease tab.
+  bool _isLeaseActive(String? startDate, String? endDate) {
+    if (startDate == null || endDate == null || startDate.isEmpty || endDate.isEmpty) return false;
+    try {
+      final start = _parseLeaseDate(startDate);
+      final end = _parseLeaseDate(endDate);
+      final now = DateTime.now();
+      return !now.isBefore(start) && !now.isAfter(end);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  DateTime _parseLeaseDate(String dateStr) {
+    final formats = ['yyyy-MM-dd', 'dd-MM-yyyy', 'MM/dd/yyyy', 'M/d/yyyy'];
+    for (final f in formats) {
+      try {
+        return DateFormat(f).parse(dateStr);
+      } catch (_) {}
+    }
+    return DateTime.tryParse(dateStr) ?? DateTime.now();
+  }
+
+  /// Lease list for Lease tab: use widget.tenants first, else fetched _leaseData (Staff needs this so data loads).
+  List<TenantLeaseData>? get _leaseListForTab =>
+      widget.tenants?.leaseData?.isNotEmpty == true
+          ? widget.tenants!.leaseData
+          : (_leaseData?.isNotEmpty == true ? _leaseData : null);
+
+  /// First *active* lease's ID for lease summary. Null if no lease data or no active lease.
+  String? get _firstActiveLeaseId {
+    final list = _leaseListForTab;
+    if (list == null || list.isEmpty) return null;
+    for (final lease in list) {
+      if (_isLeaseActive(lease.startDate, lease.endDate) && (lease.leaseId ?? '').isNotEmpty) {
+        return lease.leaseId;
+      }
+    }
+    return null;
+  }
+
+  Widget _buildLeaseTabContent() {
+    final list = _leaseListForTab;
+    if (list == null || list.isEmpty) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height - 300,
+        child: const Center(
+          child: Text('No lease data available for this tenant.',style: TextStyle(fontSize: 12),),
+        ),
+      );
+    }
+    final activeLeaseId = _firstActiveLeaseId;
+    if (activeLeaseId == null || activeLeaseId.isEmpty) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height - 300,
+        child: const Center(
+          child: Text('No active lease. All leases are expired or not yet started.',style: TextStyle(fontSize: 13),),
+        ),
+      );
+    }
+    final activeLease = list.firstWhere((l) => l.leaseId == activeLeaseId);
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height - 300,
+      child: SummeryPageLease(
+        leaseId: activeLeaseId,
+        enddate: activeLease.endDate,
+        isredirectpayment: false,
+        embeddedInTenantSummary: true,
+      ),
+    );
+  }
+
   Widget _buildTabButton(String title, int index, int flex) {
     final isSelected = _selectedIndex == index;
     return Expanded(
@@ -1172,8 +1263,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     child: Row(
                       children: [
                         _buildTabButton("Details", 0, 2),
-                        _buildTabButton("Communication", 1, 3),
-                        _buildTabButton("Payments", 2, 2),
+                        _buildTabButton("Leases", 1, 2),
+                        _buildTabButton("Communication", 2, 3),
+                        _buildTabButton("Payments", 3, 2),
                       ],
                     ),
                   ),
@@ -2775,12 +2867,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       ),
                     ),
                   if (_selectedIndex == 1)
-                    Tenant_communication(
-                      lease_id: widget.tenantId,
-                    ),
+                    _buildLeaseTabContent(),
                   if (_selectedIndex == 2)
+                    Tenant_communication(
+                      lease_id: _effectiveLeaseId,
+                    ),
+                  if (_selectedIndex == 3)
                     FinancialTable(
-                      leaseId: widget.tenantId,
+                      leaseId: _effectiveLeaseId,
                     )
                 ],
               ),

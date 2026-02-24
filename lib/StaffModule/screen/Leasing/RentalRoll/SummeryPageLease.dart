@@ -53,8 +53,14 @@ class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
   String? enddate;
+  /// When true, hides app bar and drawer (e.g. when embedded in Tenant Summary).
+  bool embeddedInTenantSummary;
   SummeryPageLease(
-      {super.key, required this.leaseId, this.isredirectpayment, this.enddate});
+      {super.key,
+      required this.leaseId,
+      this.isredirectpayment,
+      this.enddate,
+      this.embeddedInTenantSummary = false});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -93,6 +99,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     });
     checkInternet();
     // TODO: implement initState
+    print("tenant summery calling");
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _leaseLedgerFuture =
@@ -373,9 +380,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       // appBar: widget302.,
-      appBar: widget_302_Staff.App_Bar(context: context),
+      appBar: widget.embeddedInTenantSummary ? null : widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawerStaff(
+      drawer: widget.embeddedInTenantSummary ? null : CustomDrawerStaff(
         currentpage: "Leases",
         dropdown: true,
       ),
@@ -400,42 +407,43 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       var lease = snapshot.data!;
                       return Column(
                         children: <Widget>[
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              if (MediaQuery.of(context).size.width < 500)
-                                const SizedBox(
-                                  width: 18,
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                const SizedBox(
-                                  width: 25,
-                                ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width > 500
-                                    ? 200
-                                    : 180,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 1),
-                                  child: Text(
-                                    '${snapshot.data?.data?.rentalAddress}',
-                                    maxLines: 5, // Set maximum number of lines
-                                    overflow: TextOverflow
-                                        .ellipsis, // Handle overflow with ellipsis
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 13
-                                                : 18,
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold),
+                          if (!widget.embeddedInTenantSummary) ...[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                if (MediaQuery.of(context).size.width < 500)
+                                  const SizedBox(
+                                    width: 18,
+                                  ),
+                                if (MediaQuery.of(context).size.width > 500)
+                                  const SizedBox(
+                                    width: 25,
+                                  ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width > 500
+                                      ? 200
+                                      : 180,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 1),
+                                    child: Text(
+                                      '${snapshot.data?.data?.rentalAddress}',
+                                      maxLines: 5, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis, // Handle overflow with ellipsis
+                                      style: TextStyle(
+                                          fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                      500
+                                                  ? 13
+                                                  : 18,
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // Text('${snapshot.data!.data!.rentalAddress}',
+                                // Text('${snapshot.data!.data!.rentalAddress}',
                               //     style: TextStyle(
                               //         color: blueColor,
                               //         fontWeight: FontWeight.bold,
@@ -567,6 +575,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           const SizedBox(
                             height: 10,
                           ),
+                          ],
                           Container(
                             height: 60,
                             margin: const EdgeInsets.symmetric(
