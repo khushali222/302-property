@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../model/EnterChargeModel.dart';
 import '../../model/LeaseLedgerModel.dart';
+import '../../../Model/LeaseChargesModel.dart';
 import '../../model/LeaseSummary.dart';
 import '../../model/edit_lease.dart';
 import '../../model/get_lease.dart';
@@ -823,5 +824,31 @@ class LeaseRepository {
     }
 
     return response.statusCode;
+  }
+
+  Future<LeaseCharges?> fetchLeaseCharges(String leaseId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+
+    try {
+      final response = await http.get(
+        Uri.parse('$Api_url/api/leases/lease-charges/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return LeaseCharges.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception(
+            'Failed to load lease charges. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching lease charges: $e');
+      throw Exception('Error fetching lease charges: $e');
+    }
   }
 }

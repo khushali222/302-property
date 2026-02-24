@@ -2473,6 +2473,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     },
                   ),
                 ),
+              
+              
               Padding(
                 padding: const EdgeInsets.only(
                     left: 15, right: 15, top: 8, bottom: 25),
@@ -4083,6 +4085,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                 ),
               ),
+           
             ],
           );
         }
