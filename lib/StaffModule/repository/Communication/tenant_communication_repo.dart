@@ -34,6 +34,8 @@ class EmailLogRepository {
 
       if (response.statusCode == 200) {
         return TenantCommunation.fromJson(json.decode(response.body));
+      } else if (response.statusCode == 204) {
+        return TenantCommunation(statusCode: 204, emails: [], totalEmails: 0, currentPage: 1, totalPages: 0);
       } else {
         print('Failed to fetch emails: ${response.body}');
         throw Exception('Failed to Acknowledgement payment');

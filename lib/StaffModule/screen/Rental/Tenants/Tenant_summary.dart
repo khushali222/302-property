@@ -1265,7 +1265,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                         _buildTabButton("Details", 0, 2),
                         _buildTabButton("Leases", 1, 2),
                         _buildTabButton("Communication", 2, 3),
-                        _buildTabButton("Payments", 3, 2),
+                        _buildTabButton("Payments", 3
+                        , 2),
                       ],
                     ),
                   ),
@@ -2870,11 +2871,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     _buildLeaseTabContent(),
                   if (_selectedIndex == 2)
                     Tenant_communication(
-                      lease_id: _effectiveLeaseId,
+                      lease_id: widget.tenantId,
                     ),
                   if (_selectedIndex == 3)
                     FinancialTable(
-                      leaseId: _effectiveLeaseId,
+                      leaseId: widget.tenantId,
                     )
                 ],
               ),

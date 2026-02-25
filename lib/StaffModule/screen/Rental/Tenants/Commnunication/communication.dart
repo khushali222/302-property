@@ -21,9 +21,6 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:html/parser.dart' as htmlParser;
 import '../../../../../Model/TenantCommunication.dart';
 
-
-
-
 import '../../../../../constant/constant.dart';
 import '../../../../../provider/dateProvider.dart';
 import '../../../../../repository/Communication/tenant_communication_repo.dart';
@@ -184,7 +181,7 @@ class _Tenant_communicationState extends State<Tenant_communication> {
                 },
                 child: Row(
                   children: [
-                    Text("            Sent",
+                    Text("         Sent",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
