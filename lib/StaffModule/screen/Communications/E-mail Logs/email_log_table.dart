@@ -157,56 +157,56 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 ),
               ),
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Rental\nAddress",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
-                    // SizedBox(width: 5),
-                    // ascending2
-                    //     ? Padding(
-                    //   padding: const EdgeInsets.only(top: 7, left: 2),
-                    //   child: FaIcon(
-                    //     FontAwesomeIcons.sortUp,
-                    //     size: 20,
-                    //     color: Colors.white,
-                    //   ),
-                    // )
-                    //     : Padding(
-                    //   padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //   child: FaIcon(
-                    //     FontAwesomeIcons.sortDown,
-                    //     size: 20,
-                    //     color: Colors.white,
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting2) {
+            //           sorting1 = false;
+            //           sorting2 = sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = !sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         }
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("Rental\nAddress",
+            //             textAlign: TextAlign.left,
+            //             style: TextStyle(
+            //                 color: blueColor, fontWeight: FontWeight.bold)),
+            //         // SizedBox(width: 5),
+            //         // ascending2
+            //         //     ? Padding(
+            //         //   padding: const EdgeInsets.only(top: 7, left: 2),
+            //         //   child: FaIcon(
+            //         //     FontAwesomeIcons.sortUp,
+            //         //     size: 20,
+            //         //     color: Colors.white,
+            //         //   ),
+            //         // )
+            //         //     : Padding(
+            //         //   padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //         //   child: FaIcon(
+            //         //     FontAwesomeIcons.sortDown,
+            //         //     size: 20,
+            //         //     color: Colors.white,
+            //         //   ),
+            //         // ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -232,7 +232,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("   Sent",
+                    Text("         Sent",
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
@@ -1100,28 +1100,28 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              .05),
-                                                      Expanded(
-                                                        child: Text(
-                                                          Propertytype.rentalAddress
-                                                                      ?.isNotEmpty ==
-                                                                  true
-                                                              ? '${Propertytype.rentalAddress}'
-                                                              : 'N/A',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
+                                                              .09),
+                                                      // Expanded(
+                                                      //   child: Text(
+                                                      //     Propertytype.rentalAddress
+                                                      //                 ?.isNotEmpty ==
+                                                      //             true
+                                                      //         ? '${Propertytype.rentalAddress}'
+                                                      //         : 'N/A',
+                                                      //     style: TextStyle(
+                                                      //       color: blueColor,
+                                                      //       fontWeight:
+                                                      //           FontWeight.bold,
+                                                      //       fontSize: 13,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
                                                       SizedBox(
                                                           width: MediaQuery.of(
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              .08),
+                                                              .09),
                                                       Expanded(
                                                         child: Text(
                                                           // '${widget.data.createdAt}',
@@ -1142,12 +1142,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .01),
+
                                                     ],
                                                   ),
                                                 ),

@@ -170,7 +170,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                 },
                 child: Row(
                   children: [
-                    Text("              Sent",
+                    Text("     Sent",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 3),
