@@ -114,6 +114,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Rentals>> futurerentalowners;
   late Future<List<Properties_lease_model>> futureLeaseDetails;
   late Future<List<Map<String, dynamic>>> futurePropertyTaxes;
+  late Future<(Rentals, Map<String, dynamic>?)> futureSummaryWithFinancial;
   bool isLoaders = false;
   int _taxInsuranceSelectedIndex = 0;
   bool _isTaxInsuranceDropdownOpen = false;
@@ -261,6 +262,7 @@ class _Summery_pageState extends State<Summery_page>
     // street3.text = widget.unit!.rentalunitadress!;
     futureRentalDetails = Properies_summery_Repo()
         .fetchrentalDetails(widget.properties.rentalId!);
+    futureSummaryWithFinancial = _loadSummaryWithFinancial();
     // futureLeaseDetails = Properies_summery_Repo().fetchrLeaseDetails(widget.unit?.unitId ?? "");
     futureUnitsummery.then((units) {
       if (units.isNotEmpty) {
@@ -360,6 +362,291 @@ class _Summery_pageState extends State<Summery_page>
       print('Error loading property taxes: $e');
       return [];
     }
+  }
+
+  Future<Map<String, dynamic>?> _fetchFinancialSummary() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? staffid = prefs.getString("staff_id");
+      final response = await http.get(
+        Uri.parse(
+            '${Api_url}/api/mortgage/${widget.properties.rentalId}/financial-summary'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $staffid',
+        },
+      ).timeout(const Duration(seconds: 30));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          return Map<String, dynamic>.from(data['data']);
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error loading financial summary: $e');
+      return null;
+    }
+  }
+
+  Future<(Rentals, Map<String, dynamic>?)> _loadSummaryWithFinancial() async {
+    final rental = await futureRentalDetails;
+    final financial = await _fetchFinancialSummary();
+    return (rental, financial);
+  }
+
+  Widget _buildFinancialSummarySection(BuildContext context,
+      [Map<String, dynamic>? financialData]) {
+    if (financialData == null) return const SizedBox.shrink();
+
+    final data = financialData;
+    final isSmall = MediaQuery.of(context).size.width < 500;
+    final titleSize = isSmall ? 16.0 : 20.0;
+    final bodySize = isSmall ? 13.0 : 16.0;
+
+    final loans = data['loans'] as List<dynamic>? ?? [];
+    final estimatedPropertyValue =
+            (data['estimated_property_value'] ?? 0).toDouble();
+        final totalLtvPercent = data['total_ltv_percent'] ?? 0;
+        final annualRentIncome = (data['annual_rent_income'] ?? 0).toDouble();
+        final taxes = (data['taxes'] ?? 0).toDouble();
+        final maintenance = (data['maintenance'] ?? 0).toDouble();
+        final insurance = (data['insurance'] ?? 0).toDouble();
+        final netOperatingIncome = (data['net_operating_income'] ?? 0).toDouble();
+        final dscr = (data['debt_service_coverage_ratio'] ?? 0.0).toDouble();
+
+        String fmtCurrencySimple(num v) =>
+            NumberFormat.currency(symbol: '\$', decimalDigits: 2).format(v);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Loan To Value card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: blueColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Loan To Value',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleSize,
+                          color: blueColor)),
+                  const SizedBox(height: 12),
+                  if (loans.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text('No loans',
+                          style: TextStyle(
+                              fontSize: bodySize,
+                              color: Colors.grey[600])),
+                    )
+                  else
+                    ...loans.map<Widget>((l) {
+                      final map = l as Map<String, dynamic>;
+                      final bankName =
+                          map['bank_name']?.toString() ?? '';
+                      final mortgageNo =
+                          map['mortgage_no']?.toString() ?? '';
+                      final remainingBalance =
+                          (map['remaining_balance'] ?? 0).toDouble();
+                      final allocatedBalance =
+                          (map['allocated_balance'] ?? 0).toDouble();
+                      final sharePercent =
+                          (map['property_share_percent'] ?? 0).toDouble();
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '$bankName - $mortgageNo',
+                                    style: TextStyle(
+                                        fontSize: bodySize,
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  '${NumberFormat('#,##0.00').format(sharePercent)}%',
+                                  style: TextStyle(
+                                      fontSize: bodySize,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Loan balance : ${fmtCurrencySimple(remainingBalance)}',
+                              style: TextStyle(
+                                  fontSize: bodySize - 1,
+                                  fontWeight: FontWeight.bold,
+                                
+                                  color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Allocated balance : ${fmtCurrencySimple(allocatedBalance)}',
+                              style: TextStyle(
+                                  fontSize: bodySize - 1,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700]),
+                            ),
+                            if (loans.indexOf(l) < loans.length - 1)
+                              Divider(height: 16, color: Colors.grey[300]),
+                          ],
+                        ),
+                      );
+                    }),
+                  Divider(height: 20, color: Colors.grey[400]),
+                  Text(
+                    'Est. value : ${fmtCurrencySimple(estimatedPropertyValue)}',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: bodySize,
+                        color: Colors.grey[700]),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Total LTV : ${NumberFormat('#,##0.1').format(totalLtvPercent)}%',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: bodySize,
+                        color: blueColor),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Net Operating Income card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: blueColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Net Operating Income',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleSize,
+                          color: blueColor)),
+                  const SizedBox(height: 12),
+                  _noiRow('Operating income', annualRentIncome, bodySize),
+                  _noiRow('Taxes', -taxes, bodySize),
+                  _noiRow('Maintenance', maintenance, bodySize),
+                  _noiRow('Insurance', -insurance, bodySize),
+                  Divider(height: 20, color: Colors.grey[400]),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Net Operating Income',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: bodySize,
+                              color: blueColor)),
+                      Text(
+                        '${fmtCurrencySimple(netOperatingIncome)} / year',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: bodySize,
+                            color: blueColor),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Debt Service Coverage Ratio card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: blueColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Debt Service Coverage Ratio',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleSize,
+                          color: blueColor)),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      '${NumberFormat('#,##0.00').format(dscr)}x',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: isSmall ? 28 : 36,
+                          color: blueColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+  }
+
+  Widget _noiRow(String label, num value, double bodySize) {
+    final isNegative = value < 0;
+    final display = (isNegative ? '-' : '') +
+        NumberFormat.currency(symbol: '\$', decimalDigits: 2).format(value.abs());
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: TextStyle(fontSize: bodySize, color: Colors.grey[700],fontWeight: FontWeight.bold)),
+          Text(display,
+              style: TextStyle(
+                  fontSize: bodySize,
+                  color: blueColor,
+                  fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
   }
 
   String _formatDate(String dateString) {
@@ -3757,8 +4044,8 @@ class _Summery_pageState extends State<Summery_page>
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
     final dateProvider = Provider.of<DateProvider>(context);
-    return FutureBuilder<Rentals>(
-      future: futureRentalDetails,
+    return FutureBuilder<(Rentals, Map<String, dynamic>?)>(
+      future: futureSummaryWithFinancial,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -3788,7 +4075,9 @@ class _Summery_pageState extends State<Summery_page>
             ),
           );
         }
-        final rentalDetails = snapshot.data!;
+        final pair = snapshot.data!;
+        final rentalDetails = pair.$1;
+        final financialData = pair.$2;
         currentImage = "${rentalDetails.rentalImage}";
         print("property data summery with api ${rentalDetails.rentalAddress}");
         return Container(
@@ -4149,6 +4438,8 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 20,
                 ),
+                _buildFinancialSummarySection(context, financialData),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
