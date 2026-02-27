@@ -54,10 +54,16 @@ class AddMortgageScreen extends StatefulWidget {
   final String? mortgageId; // For editing existing mortgages
   final String?
       propertyId; // Property ID from context (when adding from property page)
+  /// Which drawer item to highlight: "Mortgage" when opened from main Mortgage list, "Properties" when from property summary.
+  final String? drawerCurrentPage;
 
-  const AddMortgageScreen(
-      {Key? key, this.mortgageId, this.mortgageData, this.propertyId})
-      : super(key: key);
+  const AddMortgageScreen({
+    Key? key,
+    this.mortgageId,
+    this.mortgageData,
+    this.propertyId,
+    this.drawerCurrentPage,
+  }) : super(key: key);
 
   @override
   State<AddMortgageScreen> createState() => _AddMortgageScreenState();
@@ -390,10 +396,43 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     if (value != null && value.isNotEmpty) {
       final rate = double.tryParse(value.replaceAll('%', ''));
       if (rate == null || rate < 0 || rate > 100) {
-        return 'Interest rate must be between 0% and 100%';
+        return 'Interest rate must be between 0 and 100';
       }
     }
     return null;
+  }
+
+  /// Returns true if another mortgage already uses this loan number (excluding current when editing).
+  Future<bool> _isDuplicateMortgageNo(String mortgageNo) async {
+    if (mortgageNo.isEmpty) return false;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final response = await http.get(
+        Uri.parse('$Api_url/api/mortgage/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(const Duration(seconds: 15));
+      if (response.statusCode != 200) return false;
+      final data = json.decode(response.body);
+      final list = data['data'] as List?;
+      if (list == null) return false;
+      final currentId = widget.mortgageId;
+      for (final m in list) {
+        final no = (m['mortgage_no'] ?? '').toString().trim();
+        if (no.isEmpty) continue;
+        if (no != mortgageNo) continue;
+        if (currentId != null && m['_id']?.toString() == currentId) continue;
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 
   String? _validateSSN(String? value) {
@@ -642,9 +681,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           }
         }
         _mortgageNumberController.text = mortgageData['mortgage_no'] ?? '';
-        _loanAmountController.text = mortgageData['loan_amount'].toString();
+        _loanAmountController.text =
+            mortgageData['loan_amount']?.toString() ?? '';
         print(mortgageData['interest_rate']);
-        _interestRateController.text = mortgageData['interest_rate'].toString();
+        _interestRateController.text =
+            mortgageData['interest_rate']?.toString() ?? '';
 
         // Format dates properly for display using DateProvider
         if (mortgageData['start_date'] != null &&
@@ -697,7 +738,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _amortizationPeriodController.text =
             mortgageData['amortization_period']?.toString() ?? '';
         _remainingBalanceController.text =
-            mortgageData['remaining_balance'].toString();
+            mortgageData['remaining_balance']?.toString() ?? '0';
 
         // Principal, Interest, Monthly Payment (from API or recalc)
         _principalController.text =
@@ -705,6 +746,17 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _interestController.text =
             mortgageData['monthly_interest']?.toString() ?? '';
         _updateMonthlyPaymentDisplay();
+        // When API returns monthly_payment (e.g. create had only total, no principal/interest), show it in edit
+        if (mortgageData['monthly_payment'] != null) {
+          final v = mortgageData['monthly_payment'];
+          if (v is num) {
+            _monthlyPaymentDisplayController.text = v is int
+                ? v.toString()
+                : (v as double).toStringAsFixed(2);
+          } else {
+            _monthlyPaymentDisplayController.text = v.toString();
+          }
+        }
 
         // Set selected mortgage type for reactive UI
         _selectedMortgageType = _typeController.text;
@@ -1179,6 +1231,21 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
+      final mortgageNo = _mortgageNumberController.text.trim();
+      if (mortgageNo.isNotEmpty) {
+        final isDuplicate = await _isDuplicateMortgageNo(mortgageNo);
+        if (isDuplicate && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'This loan number is already in use. Please enter a unique loan number.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
+
       setState(() {
         _isLoading = true;
       });
@@ -1355,7 +1422,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Properties",
+        currentpage: widget.drawerCurrentPage ?? "Mortgage",
         dropdown: true,
       ),
       body: Form(
@@ -1954,9 +2021,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 24),
-                    _buildSectionHeader('Payoff History'),
-                    _buildPayoffHistorySection(),
-                    const SizedBox(height: 16),
+                    // _buildSectionHeader('Payoff History'),
+                    // _buildPayoffHistorySection(),
+                    // const SizedBox(height: 16),
 
                     Container(
                       child: Row(
@@ -2018,6 +2085,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     ),
                     const SizedBox(height: 32),
                   ],
+
+
+                  
                 ),
               ),
             ),

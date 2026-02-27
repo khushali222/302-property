@@ -120,6 +120,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 widget.currentpage == "Properties",
               ),
 
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.handHoldingDollar,
+                  size: 18,
+                  color: widget.currentpage == "Mortgage"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Mortgage",
+                widget.currentpage == "Mortgage",
+              ),
+
               // Tenants as top-level menu item
               buildListTile(
                 context,

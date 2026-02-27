@@ -22,7 +22,7 @@ class StaffPermission {
   bool? workorderView;
   bool? workorderAdd;
   bool? workorderDelete;
-
+  bool? mortgageView;
   // New variables for additional permissions
   bool? settingView;
   bool? propertytypeView;
@@ -66,7 +66,7 @@ class StaffPermission {
     this.workorderView,
     this.workorderAdd,
     this.workorderDelete,
-
+    this.mortgageView,
     // New permissions
     this.settingView,
     this.propertytypeView,
@@ -111,7 +111,7 @@ class StaffPermission {
     workorderView = json['workorder_view'];
     workorderAdd = json['workorder_add'];
     workorderDelete = json['workorder_delete'];
-
+    mortgageView = json['mortgage_view'];
     // Deserialize new permissions
     settingView = json['setting_view'];
     propertytypeView = json['propertytype_view'];
@@ -157,7 +157,7 @@ class StaffPermission {
     data['workorder_view'] = this.workorderView;
     data['workorder_add'] = this.workorderAdd;
     data['workorder_delete'] = this.workorderDelete;
-
+    data['mortgage_view'] = this.mortgageView;
     // Serialize new permissions
     data['setting_view'] = this.settingView;
     data['propertytype_view'] = this.propertytypeView;

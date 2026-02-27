@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:three_zero_two_property/screens/Rental/mortgage/assign_properties_dialog.dart';
 
 class MortgageTable extends StatefulWidget {
   const MortgageTable({Key? key}) : super(key: key);
@@ -50,13 +51,12 @@ class _MortgageTableState extends State<MortgageTable> {
   void sortData(List<Map<String, dynamic>> data) {
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2) {
-      data.sort((a, b) => ascending1
-          ? (a['bank_name'] ?? '')
-              .toString()
-              .compareTo((b['bank_name'] ?? '').toString())
-          : (b['bank_name'] ?? '')
-              .toString()
-              .compareTo((a['bank_name'] ?? '').toString()));
+      data.sort((a, b) {
+        final nameA = _getLenderName(a).toLowerCase();
+        final nameB = _getLenderName(b).toLowerCase();
+        final cmp = nameA.compareTo(nameB);
+        return ascending1 ? cmp : -cmp;
+      });
     } else if (sorting2 && !sorting1) {
       data.sort((a, b) => ascending2
           ? (a['status'] ?? '')
@@ -270,7 +270,9 @@ class _MortgageTableState extends State<MortgageTable> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const AddMortgageScreen(),
+        builder: (context) => const AddMortgageScreen(
+          drawerCurrentPage: 'Mortgage',
+        ),
       ),
     ).then((_) {
       // Refresh the mortgage list when returning from the form
@@ -329,6 +331,7 @@ class _MortgageTableState extends State<MortgageTable> {
         builder: (context) => AddMortgageScreen(
           mortgageId: mortgage['_id'],
           mortgageData: mortgage,
+          drawerCurrentPage: 'Mortgage',
         ),
       ),
     ).then((_) {
@@ -338,8 +341,6 @@ class _MortgageTableState extends State<MortgageTable> {
   }
 
   void _viewMortgage(Map<String, dynamic> mortgage) {
-    // TODO: Implement view functionality
-    // navigate to the mortgage_summery page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -347,11 +348,56 @@ class _MortgageTableState extends State<MortgageTable> {
     );
   }
 
+  void _openAssignPropertiesDialog(Map<String, dynamic> mortgage) {
+    Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AssignPropertiesDialog(
+          mortgageId: mortgage['_id'] ?? '',
+          mortgageNo: (mortgage['mortgage_no'] ?? '').toString(),
+          initialPropertyIds: mortgage['properties'] is List ? mortgage['properties'] : null,
+          initialPropertyAssignments: mortgage['property_assignments'] is List ? mortgage['property_assignments'] : null,
+          fullScreen: true,
+          isStaffModule: true,
+        ),
+      ),
+    ).then((saved) {
+      if (saved == true) _loadMortgages();
+    });
+  }
+
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
     final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
     return formatter.format(numValue);
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${_getMonthAbbr(date.month)}/${date.year}';
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+
+  String _getMonthAbbr(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
+  }
+
+  String _getLenderName(Map<String, dynamic> m) {
+    return (m['bank_name'] ?? 'N/A').toString().trim();
+  }
+
+  String _getPropertyDisplay(List<dynamic> properties) {
+    if (properties.isEmpty) return 'No Properties';
+    return '${properties.length} ${properties.length > 1 ? '' : ''}';
   }
 
   Widget _buildHeaders() {
@@ -385,7 +431,7 @@ class _MortgageTableState extends State<MortgageTable> {
                 child: Row(
                   children: [
                     Text(
-                      "    Bank",
+                      "    Lender",
                       style: TextStyle(
                           color: blueColor, fontWeight: FontWeight.bold),
                     ),
@@ -415,7 +461,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -434,7 +480,7 @@ class _MortgageTableState extends State<MortgageTable> {
                 child: Row(
                   children: [
                     Text(
-                      "Status",
+                      "    Status",
                       style: TextStyle(
                           color: blueColor, fontWeight: FontWeight.bold),
                     ),
@@ -538,11 +584,12 @@ class _MortgageTableState extends State<MortgageTable> {
         currentpage: "Mortgage",
         dropdown: true,
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          // Header Section with Title and Add Button
-          Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            // Header Section with Title and Add Button
+            Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
@@ -641,16 +688,20 @@ class _MortgageTableState extends State<MortgageTable> {
           // const SizedBox(height: 25),
 
           // Content Section
-          Expanded(
-            child: _isLoading
-                ? const Center(
+          _isLoading
+              ? const SizedBox(
+                  height: 200,
+                  child: Center(
                     child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 50.0,
                     ),
-                  )
-                : _filteredMortgages.isEmpty
-                    ? Center(
+                  ),
+                )
+              : _filteredMortgages.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -678,13 +729,14 @@ class _MortgageTableState extends State<MortgageTable> {
                             ),
                           ],
                         ),
-                      )
-                    : SingleChildScrollView(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width < 500 ? 10 : 28),
-                        child: Column(
-                          children: [
-                            _buildHeaders(),
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 10 : 28),
+                      child: Column(
+                        children: [
+                          _buildHeaders(),
                             const SizedBox(height: 10),
                             Container(
                               child: Column(
@@ -775,7 +827,7 @@ class _MortgageTableState extends State<MortgageTable> {
                                                           children: [
                                                             TextSpan(
                                                               text:
-                                                                  '${mortgage['bank_name'] ?? 'N/A'}',
+                                                                  _getLenderName(mortgage),
                                                               style: TextStyle(
                                                                 color:
                                                                     blueColor,
@@ -792,13 +844,13 @@ class _MortgageTableState extends State<MortgageTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 50, right: 5),
+                                                        left: 2, right: 8),
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 8,
+                                                        horizontal: 0,
                                                         vertical: 6),
                                                     decoration: BoxDecoration(
                                                       color: _getStatusColor(
@@ -875,13 +927,34 @@ class _MortgageTableState extends State<MortgageTable> {
                                                                   '${mortgage['interest_rate'] ?? 0}%'),
                                                             ),
                                                             _buildTableRow(
-                                                              'Mortgage#',
+                                                              'Loan Number',
                                                               _getDisplayValue(
                                                                   mortgage[
                                                                       'mortgage_no']),
-                                                              '',
+                                                              'Start Date',
                                                               _getDisplayValue(
-                                                                  ''),
+                                                                  _formatDate(
+                                                                      mortgage['start_date']?.toString())),
+                                                            ),
+                                                            _buildTableRow(
+                                                              'End Date',
+                                                              _getDisplayValue(
+                                                                  _formatDate(
+                                                                      mortgage['end_date']?.toString())),
+                                                              'Balance',
+                                                              _getDisplayValue(
+                                                                  _formatCurrency(
+                                                                      mortgage[
+                                                                          'remaining_balance'])),
+                                                            ),
+                                                            _buildTableRow(
+                                                              'Properties',
+                                                              _getDisplayValue(_getPropertyDisplay(
+                                                                  mortgage['properties'] is List
+                                                                      ? mortgage['properties'] as List
+                                                                      : [])),
+                                                              '',
+                                                              _getDisplayValue(''),
                                                             ),
                                                           ],
                                                         ),
@@ -1001,6 +1074,42 @@ class _MortgageTableState extends State<MortgageTable> {
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5),
+                                                      GestureDetector(
+                                                        onTap: () =>
+                                                            _openAssignPropertiesDialog(
+                                                                mortgage),
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          child: const Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .link,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
                                                       const SizedBox(width: 15),
                                                     ],
                                                   ),
@@ -1100,9 +1209,9 @@ class _MortgageTableState extends State<MortgageTable> {
                             ),
                           ],
                         ),
-                      ),
-          ),
-        ],
+                    ),
+          ],
+        ),
       ),
     );
   }

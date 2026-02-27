@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import '../../widgets/navigation_helper.dart';
 
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
@@ -67,6 +68,12 @@ Widget buildListTile(
             (context) => PropertiesTable(),
             "Properties",
           );
+        } else if (title == "Mortgage" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => MortgageTable(),
+            "Mortgage",
+          );
         } else if (title == "Tenants" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -97,6 +104,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "Tenants": (context) => Tenants_table(),
+    "Mortgage": (context) => MortgageTable(),
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
     "Vendor": (context) =>
