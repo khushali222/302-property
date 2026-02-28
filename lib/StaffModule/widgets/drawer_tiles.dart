@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/Send_email_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/send_mail.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import '../../widgets/navigation_helper.dart';
 
@@ -15,7 +17,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportsMainSc
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../screens/Profile/Settings_screen.dart';
 import '../screen/Communications/E-mail Logs/email_log_table.dart';
-import '../screen/Communications/Send E-mail/Send_email_table.dart';
+
 import '../screen/Communications/Templates/Templet_table.dart';
 import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
@@ -114,8 +116,9 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Templates": (context) => TempletTable(),
-    "E-mail Logs": (context) => Email_log_tablee(),
-    "Send E-mail": (context) => Send_Email_table(),
+    //"E-mail Logs": (context) => Email_log_tablee(),
+    "E-mail Logs": (context) => Send_Email_table(),
+    "Send E-mail": (context) => send_email(),//Send_Email_table(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
     // "Mortgage": (context) => MortgageTable() // Commented out - not deleted

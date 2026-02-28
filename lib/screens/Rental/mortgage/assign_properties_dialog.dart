@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -251,23 +252,12 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
 
   Future<void> _save() async {
     if (_assigned.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please add at least one property.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      Fluttertoast.showToast(msg: 'Please add at least one property.', backgroundColor: Colors.orange, textColor: Colors.white);
       return;
     }
     if (!_isManualPercentValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Total manual percent must equal 100%. Current total is $_totalManualPercent%.',
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
+      Fluttertoast.showToast(msg: 'Total manual percent must equal 100%. Current total is $_totalManualPercent%.', backgroundColor: Colors.red, textColor: Colors.white);
+     
       return;
     }
 
@@ -311,31 +301,16 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
         setState(() => _saving = false);
         if (response.statusCode == 200 || response.statusCode == 201) {
           Navigator.of(context).pop(true);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Property assignments saved successfully.'),
-              backgroundColor: Colors.green,
-            ),
-          );
+         Fluttertoast.showToast(msg: 'Property assignments saved successfully.', backgroundColor: Colors.green, textColor: Colors.white);
         } else {
           final err = json.decode(response.body);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(err['message']?.toString() ?? 'Failed to save'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          Fluttertoast.showToast(msg: err['message']?.toString() ?? 'Failed to save', backgroundColor: Colors.red, textColor: Colors.white);
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        Fluttertoast.showToast(msg: 'Error: $e', backgroundColor: Colors.red, textColor: Colors.white);
       }
     }
   }
@@ -369,55 +344,55 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
             ? staff_drawer.CustomDrawerStaff(
                 currentpage: "Mortgage", dropdown: true)
             : CustomDrawer(currentpage: "Mortgage", dropdown: true),
-        body: Column(
-          children: [
-            // const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
-              child: Row(
-                children: [
-                   Material(
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(10),
+        body: SingleChildScrollView(
+          child: Padding(padding: const EdgeInsets.all(16), 
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                     Material(
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).pop(false),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.arrow_back_ios_new, color: Colors.black87),
                         ),
-                        child: Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+                      ),
+                     ),
+                     const SizedBox(width: 16),
+                     Expanded(
+                      child: Text(
+                        'Assign Properties',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor),
                       ),
                     ),
-                   ),
-                   const SizedBox(width: 16),
-                   Expanded(
-                    child: Text(
-                      'Assign Properties',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor),
-                    ),
-                  ),
-                
-              ]),
-            ),
-           
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildTopSection(),
-                    const SizedBox(height: 16),
-                    _buildAssignedSection(),
-                    const SizedBox(height: 24),
-                    _buildInlineActions(),
-                  ],
-                ),
+                  
+                ]),
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildTopSection(),
+                  const SizedBox(height: 16),
+                  _buildAssignedSection(),
+                  const SizedBox(height: 24),
+                  _buildInlineActions(),
+                ],
+              ),
+            ],
+          ),
+        ),
         ),
       );
     }
@@ -650,7 +625,7 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
                   side: BorderSide(color: Colors.grey.shade400),
                   backgroundColor: Colors.white,
                 ),
-                child: const Text('Cancel'),
+                child:  Text('Cancel',style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:blueColor),),
               ),
             ),
           ),
@@ -668,10 +643,9 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
                     ? const SizedBox(
                         height: 22,
                         width: 22,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                        child: SpinKitFadingCircle(color: Colors.white, size: 25.0,),
                       )
-                    : const Text('Save'),
+                    : const Text('Save',style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),),
               ),
             ),
           ),
@@ -741,10 +715,10 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
           ),
           const SizedBox(height: 8),
           if (_loading)
-            const Center(
+             Center(
                 child: Padding(
               padding: EdgeInsets.all(16),
-              child: CircularProgressIndicator(),
+              child: SpinKitFadingCircle(color: blueColor, size: 25.0,),
             ))
           else if (_loadError != null)
             Padding(

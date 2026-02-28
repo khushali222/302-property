@@ -393,11 +393,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   }
 
   String? _validateInterestRate(String? value) {
-    if (value != null && value.isNotEmpty) {
-      final rate = double.tryParse(value.replaceAll('%', ''));
-      if (rate == null || rate < 0 || rate > 100) {
-        return 'Interest rate must be between 0 and 100';
-      }
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return 'Interest rate must be between 0 to 100';
+    }
+    final rate = double.tryParse(trimmed.replaceAll('%', ''));
+    if (rate == null || rate < 0 || rate > 100) {
+      return 'Interest rate must be between 0 to 100';
     }
     return null;
   }
@@ -1730,7 +1732,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _interestRateController,
-                      label: 'Interest Rate (%) *',
+                      label: 'Interest Rate (%)',
                       hint: 'Enter interest rate',
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -1739,7 +1741,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                    _buildTextField(
                       controller: _loanAmountController,
-                      label: 'Loan Amount (\$) *',
+                      label: 'Loan Amount (\$)',
                       hint: '\$Enter loan amount',
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],

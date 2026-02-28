@@ -719,7 +719,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Send E-mail",
+       // currentpage: "Send E-mail",
+        currentpage: "E-mail Logs",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
@@ -745,7 +746,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                             padding: const EdgeInsets.only(right: 8.0),
                             child: titleBar(
                               width: double.infinity,
-                              title: 'Emails',
+                             // title: 'Emails',
+                             title: "E-mail Logs",
                             ),
                           ),
                         ),

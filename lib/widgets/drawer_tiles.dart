@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import '../screens/Communications/Send E-mail/send_mail.dart';
 import '../screens/Rental/mortgage/mortgageTable.dart';
 import 'navigation_helper.dart';
 
@@ -135,8 +136,9 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Bid Room": (context) => BidRoomTable(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
-    "E-mail Logs": (context) => Email_log_tablee(),
-    "Send E-mail": (context) => Send_Email_table(),
+   // "E-mail Logs": (context) => Email_log_tablee(),
+    "E-mail Logs": (context) => Send_Email_table(),
+    "Send E-mail": (context) => send_email(),//Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),

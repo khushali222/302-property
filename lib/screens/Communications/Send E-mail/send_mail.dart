@@ -540,7 +540,8 @@ class _send_emailState extends State<send_email> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Templates",
+        //currentpage: "Templates",
+        currentpage: "Send E-mail",
         dropdown: true,
       ),
       appBar: widget_302.App_Bar(context: context),
@@ -553,7 +554,7 @@ class _send_emailState extends State<send_email> {
               key: _formkey,
               child: Column(
                 children: [
-                  titleBar(title: "Send Email", width: double.infinity),
+                  titleBar(title: "Send New Email", width: double.infinity),
                   const SizedBox(height: 10),
                   if (tenants.length > 0)
                     Column(
