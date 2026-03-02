@@ -1749,7 +1749,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 child: Row(
                                                                   children: [
                                                                     const SizedBox(
-                                                                      width: 20,
+                                                                      width: 2,
                                                                     ),
                                                                     GestureDetector(
                                                                       onTap:
@@ -1791,7 +1791,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                 child: Row(
                                                                   children: [
                                                                     const SizedBox(
-                                                                      width: 20,
+                                                                      width: 2,
                                                                     ),
                                                                     GestureDetector(
                                                                       onTap:
