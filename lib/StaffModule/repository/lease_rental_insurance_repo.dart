@@ -8,6 +8,46 @@ import 'package:three_zero_two_property/Model/lease_renter_insurance.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 class RentersInsuranceService {
+  /// Fetch renter insurance policies by tenant ID (GET /api/renter-insurance/policies-by-tenant/{tenantId}).
+  /// Each policy gets computed [policyStatus]: FUTURE, ACTIVE, or EXPIRED.
+  Future<List<lease_renter_insurance>> fetchPoliciesByTenant(
+      String tenantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$Api_url/api/renter-insurance/policies-by-tenant/$tenantId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      if (response.statusCode == 200) {
+        final parsed = jsonDecode(response.body);
+        if (parsed['statusCode'] == 200 &&
+            parsed['data'] != null &&
+            parsed['data'] is List) {
+          final List<lease_renter_insurance> list = [];
+          for (var e in parsed['data'] as List) {
+            final p = lease_renter_insurance.fromJson(
+                Map<String, dynamic>.from(e as Map));
+            p.policyStatus = lease_renter_insurance.computeStatus(
+                p.effectiveDate, p.expirationDate);
+            list.add(p);
+          }
+          return list;
+        }
+        return [];
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching policies by tenant: $e');
+      return [];
+    }
+  }
+
   Future<List<lease_renter_insurance>> fetchRentersInsurance(
       String leaseid) async {
     print('entry');

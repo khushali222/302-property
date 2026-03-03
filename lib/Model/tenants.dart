@@ -45,6 +45,7 @@ class Tenant {
   TextEditingController? rentShareController;
   String? comments;
   EmergencyContact? emergencyContact;
+  List<EmergencyContactItem>? emergencyContacts;
   List<TenantLeaseData>? leaseData; // Changed to match JSON field name
   String? createdAt;
   String? updatedAt;
@@ -76,6 +77,7 @@ class Tenant {
     this.comments,
     this.rentshare,
     this.emergencyContact,
+    this.emergencyContacts,
     this.tenant_residentStatus,
     this.createdAt,
     this.updatedAt,
@@ -111,6 +113,14 @@ class Tenant {
     emergencyContact = json['emergency_contact'] != null
         ? EmergencyContact.fromJson(json['emergency_contact'])
         : null;
+    if (json['emergency_contacts'] != null) {
+      emergencyContacts = <EmergencyContactItem>[];
+      for (var v in json['emergency_contacts']) {
+        if (v is Map<String, dynamic>) {
+          emergencyContacts!.add(EmergencyContactItem.fromJson(v));
+        }
+      }
+    }
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     rentalAddress = json['rental_adress'] ?? '';
@@ -151,6 +161,10 @@ class Tenant {
     if (emergencyContact != null) {
       data['emergency_contact'] = emergencyContact!.toJson();
     }
+    if (emergencyContacts != null) {
+      data['emergency_contacts'] =
+          emergencyContacts!.map((e) => e.toJson()).toList();
+    }
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['rental_adress'] = rentalAddress;
@@ -190,6 +204,98 @@ class EmergencyContact {
     data['phoneNumber'] = phoneNumber;
     return data;
   }
+}
+
+/// Single item in the emergency_contacts array (from API).
+class EmergencyContactItem {
+  String? contactId;
+  String? name;
+  String? relation;
+  String? email;
+  String? phoneNumber;
+
+  EmergencyContactItem({
+    this.contactId,
+    this.name,
+    this.relation,
+    this.email,
+    this.phoneNumber,
+  });
+
+  EmergencyContactItem.fromJson(Map<String, dynamic> json) {
+    contactId = json['contact_id']?.toString();
+    name = json['name'] ?? "";
+    relation = json['relation'] ?? "";
+    email = json['email'] ?? "";
+    phoneNumber = json['phoneNumber']?.toString() ?? "";
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['contact_id'] = contactId;
+    data['name'] = name;
+    data['relation'] = relation;
+    data['email'] = email;
+    data['phoneNumber'] = phoneNumber;
+    return data;
+  }
+}
+
+/// Merged row for display: legacy (emergency_contact) + emergency_contacts.
+class MergedEmergencyContact {
+  final String contactId;
+  final String name;
+  final String relation;
+  final String email;
+  final String phoneNumber;
+  final bool isLegacy;
+
+  MergedEmergencyContact({
+    required this.contactId,
+    required this.name,
+    required this.relation,
+    required this.email,
+    required this.phoneNumber,
+    required this.isLegacy,
+  });
+}
+
+/// Combine old (emergency_contact) + new (emergency_contacts) for display.
+/// Single record gets contact_id "primary" so edit can target the right API.
+List<MergedEmergencyContact> getCombinedEmergencyContacts(Tenant? tenant) {
+  final list = <MergedEmergencyContact>[];
+  if (tenant == null) return list;
+
+  final ec = tenant.emergencyContact;
+  final hasLegacy = ec != null &&
+      ((ec.name ?? '').isNotEmpty ||
+          (ec.relation ?? '').isNotEmpty ||
+          (ec.email ?? '').isNotEmpty ||
+          (ec.phoneNumber ?? '').isNotEmpty);
+  if (hasLegacy) {
+    list.add(MergedEmergencyContact(
+      contactId: 'primary',
+      name: ec.name ?? '',
+      relation: ec.relation ?? '',
+      email: ec.email ?? '',
+      phoneNumber: ec.phoneNumber ?? '',
+      isLegacy: true,
+    ));
+  }
+
+  for (var c in tenant.emergencyContacts ?? []) {
+    if (c.contactId != null && c.contactId!.isNotEmpty) {
+      list.add(MergedEmergencyContact(
+        contactId: c.contactId!,
+        name: c.name ?? '',
+        relation: c.relation ?? '',
+        email: c.email ?? '',
+        phoneNumber: c.phoneNumber ?? '',
+        isLegacy: false,
+      ));
+    }
+  }
+  return list;
 }
 
 class TenantLeaseData {

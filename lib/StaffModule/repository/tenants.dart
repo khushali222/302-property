@@ -474,6 +474,112 @@ class TenantsRepository {
     }
   }
 
+  /// POST: Add new emergency contact to emergency_contacts array.
+  Future<bool> addEmergencyContact(
+    String tenantId, {
+    required String name,
+    required String relation,
+    required String email,
+    required String phoneNumber,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final response = await http.post(
+      Uri.parse('$Api_url/api/tenant/tenants/$tenantId/emergency-contacts'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+      },
+      body: json.encode({
+        'name': name.trim().isEmpty ? '' : name.trim(),
+        'relation': relation.trim().isEmpty ? '' : relation.trim(),
+        'email': email.trim().isEmpty ? '' : email.trim(),
+        'phoneNumber': phoneNumber.trim().isEmpty ? '' : phoneNumber.trim(),
+      }),
+    );
+    if (response.statusCode == 200) return true;
+    throw Exception('Failed to add emergency contact: ${response.body}');
+  }
+
+  /// PUT: Update the single emergency_contact (primary).
+  Future<bool> updateEmergencyContactPrimary(
+    String tenantId, {
+    required String name,
+    required String relation,
+    required String email,
+    required String phoneNumber,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final response = await http.put(
+      Uri.parse('$Api_url/api/tenant/tenants/$tenantId/emergency-contact'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+      },
+      body: json.encode({
+        'name': name.trim().isEmpty ? '' : name.trim(),
+        'relation': relation.trim().isEmpty ? '' : relation.trim(),
+        'email': email.trim().isEmpty ? '' : email.trim(),
+        'phoneNumber': phoneNumber.trim().isEmpty ? '' : phoneNumber.trim(),
+      }),
+    );
+    if (response.statusCode == 200) return true;
+    throw Exception('Failed to update emergency contact: ${response.body}');
+  }
+
+  /// PUT: Update one item in emergency_contacts by contact_id.
+  Future<bool> updateEmergencyContact(
+    String tenantId,
+    String contactId, {
+    required String name,
+    required String relation,
+    required String email,
+    required String phoneNumber,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final response = await http.put(
+      Uri.parse(
+          '$Api_url/api/tenant/tenants/$tenantId/emergency-contacts/$contactId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+      },
+      body: json.encode({
+        'name': name.trim().isEmpty ? '' : name.trim(),
+        'relation': relation.trim().isEmpty ? '' : relation.trim(),
+        'email': email.trim().isEmpty ? '' : email.trim(),
+        'phoneNumber': phoneNumber.trim().isEmpty ? '' : phoneNumber.trim(),
+      }),
+    );
+    if (response.statusCode == 200) return true;
+    throw Exception('Failed to update emergency contact: ${response.body}');
+  }
+
+  /// DELETE: Remove emergency contact from emergency_contacts (only for non-primary).
+  Future<bool> deleteEmergencyContact(String tenantId, String contactId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("staff_id");
+    final response = await http.delete(
+      Uri.parse(
+          '$Api_url/api/tenant/tenants/$tenantId/emergency-contacts/$contactId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    if (response.statusCode == 200) return true;
+    throw Exception('Failed to delete emergency contact: ${response.body}');
+  }
+
   Future<String> fetchCompanyName(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
