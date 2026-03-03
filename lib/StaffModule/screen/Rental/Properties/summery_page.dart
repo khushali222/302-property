@@ -381,8 +381,12 @@ class _Summery_pageState extends State<Summery_page>
     return (rental, financial);
   }
 
-  Widget _buildFinancialSummarySection(BuildContext context,
-      [Map<String, dynamic>? financialData]) {
+  Widget _buildFinancialSummarySection(
+    BuildContext context,
+    Map<String, dynamic>? financialData, {
+    bool ltvExpanded = false,
+    VoidCallback? onLtvToggle,
+  }) {
     if (financialData == null) return const SizedBox.shrink();
 
     final data = financialData;
@@ -413,12 +417,17 @@ class _Summery_pageState extends State<Summery_page>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: blueColor),
+                border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
@@ -440,73 +449,100 @@ class _Summery_pageState extends State<Summery_page>
                               color: Colors.grey[600])),
                     )
                   else
-                    ...loans.map<Widget>((l) {
-                      final map = l as Map<String, dynamic>;
-                      final bankName =
-                          map['bank_name']?.toString() ?? '';
-                      final mortgageNo =
-                          map['mortgage_no']?.toString() ?? '';
-                      final remainingBalance =
-                          (map['remaining_balance'] ?? 0).toDouble();
-                      final allocatedBalance =
-                          (map['allocated_balance'] ?? 0).toDouble();
-                      final sharePercent =
-                          (map['property_share_percent'] ?? 0).toDouble();
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Column(
+                    Builder(
+                      builder: (context) {
+                        const int maxInitial = 3;
+                        final showViewMore = loans.length > maxInitial;
+                        final listToShow = (showViewMore && !ltvExpanded)
+                            ? loans.take(maxInitial).toList()
+                            : loans;
+                        return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
+                            ...listToShow.map<Widget>((l) {
+                              final map = l as Map<String, dynamic>;
+                              final bankName =
+                                  map['bank_name']?.toString() ?? '';
+                              final mortgageNo =
+                                  map['mortgage_no']?.toString() ?? '';
+                              final remainingBalance =
+                                  (map['remaining_balance'] ?? 0).toDouble();
+                              final allocatedBalance =
+                                  (map['allocated_balance'] ?? 0).toDouble();
+                              final sharePercent =
+                                  (map['property_share_percent'] ?? 0).toDouble();
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '$bankName - $mortgageNo',
+                                            style: TextStyle(
+                                                fontSize: bodySize,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.w600),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${NumberFormat('#,##0.00').format(sharePercent)}%',
+                                          style: TextStyle(
+                                              fontSize: bodySize,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Loan balance : ${fmtCurrencySimple(remainingBalance)}',
+                                      style: TextStyle(
+                                          fontSize: bodySize - 1,
+                                          color: Colors.grey[700],
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      'Allocated balance : ${fmtCurrencySimple(allocatedBalance)}',
+                                      style: TextStyle(
+                                          fontSize: bodySize - 1,
+                                          color: Colors.grey[700],
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    if (loans.indexOf(l) < listToShow.length - 1)
+                                      Divider(height: 16, color: Colors.grey[300]),
+                                  ],
+                                ),
+                              );
+                            }),
+                            if (showViewMore && onLtvToggle != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                                child: GestureDetector(
+                                  onTap: onLtvToggle,
                                   child: Text(
-                                    '$bankName - $mortgageNo',
+                                    ltvExpanded ? 'View less' : 'View more',
                                     style: TextStyle(
                                         fontSize: bodySize,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
+                                        fontWeight: FontWeight.w600,
+                                        color: blueColor),
                                   ),
                                 ),
-                                Text(
-                                  '${NumberFormat('#,##0.00').format(sharePercent)}%',
-                                  style: TextStyle(
-                                      fontSize: bodySize,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Loan balance : ${fmtCurrencySimple(remainingBalance)}',
-                              style: TextStyle(
-                                  fontSize: bodySize - 1,
-                                  fontWeight: FontWeight.bold,
-                                
-                                  color: Colors.grey[700]),
-                            ),
-                            Text(
-                              'Allocated balance : ${fmtCurrencySimple(allocatedBalance)}',
-                              style: TextStyle(
-                                  fontSize: bodySize - 1,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[700]),
-                            ),
-                            if (loans.indexOf(l) < loans.length - 1)
-                              Divider(height: 16, color: Colors.grey[300]),
+                              ),
                           ],
-                        ),
-                      );
-                    }),
+                        );
+                      },
+                    ),
+                  if (loans.isNotEmpty) ...[
                   Divider(height: 20, color: Colors.grey[400]),
                   Text(
                     'Est. value : ${fmtCurrencySimple(estimatedPropertyValue)}',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         fontSize: bodySize,
                         color: Colors.grey[700]),
                   ),
@@ -518,6 +554,7 @@ class _Summery_pageState extends State<Summery_page>
                         fontSize: bodySize,
                         color: blueColor),
                   ),
+                  ],
                 ],
               ),
             ),
@@ -528,12 +565,17 @@ class _Summery_pageState extends State<Summery_page>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: blueColor),
+                border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
@@ -578,12 +620,17 @@ class _Summery_pageState extends State<Summery_page>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: blueColor),
+                border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
@@ -2241,6 +2288,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   int _selectedIndex = 0;
+  bool _ltvViewMoreExpanded = false;
 
   bool isMovedOut = false;
   Future<void> _uploadAllImages() async {
@@ -2717,7 +2765,7 @@ class _Summery_pageState extends State<Summery_page>
                                   child: Row(
                                     children: [
                                       Image.asset(iconPath,
-                                          width: 20, height: 20),
+                                          width: 20, height: 20,),
                                       const SizedBox(width: 12),
                                       Text(
                                         title,
@@ -2755,7 +2803,7 @@ class _Summery_pageState extends State<Summery_page>
                                   child: Row(
                                     children: [
                                       Image.asset(iconPath,
-                                          width: 20, height: 20),
+                                          width: 20, height: 20,color: blueColor,),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Text(
@@ -2802,10 +2850,22 @@ class _Summery_pageState extends State<Summery_page>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: Colors.grey.shade500!,
+                                  color: Color(0xFFCED4DA),
                                   width: 1,
                                 ),
                                 color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.04),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
                               ),
                             ),
                             iconStyleData: IconStyleData(
@@ -2816,12 +2876,12 @@ class _Summery_pageState extends State<Summery_page>
                               iconSize: 24,
                             ),
                             dropdownStyleData: DropdownStyleData(
-                              maxHeight: MediaQuery.of(context).size.height * 0.5,
+                              maxHeight: MediaQuery.of(context).size.height * 0.54,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: Colors.grey.shade500!,
+                                  color: Color(0xFFCED4DA),
                                   width: 1,
                                 ),
                                 boxShadow: [
@@ -4099,11 +4159,22 @@ class _Summery_pageState extends State<Summery_page>
                   //   height: 20,
                   // ),
                   Container(
-                    // height: 150,
-                    // width: MediaQuery.of(context).size.width * .94,
                     decoration: BoxDecoration(
-                      border: Border.all(color: blueColor),
+                      color: Colors.white,
+                      border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -4446,7 +4517,13 @@ class _Summery_pageState extends State<Summery_page>
                   const SizedBox(
                     height: 20,
                   ),
-                  _buildFinancialSummarySection(context, financialData),
+                  _buildFinancialSummarySection(
+                  context,
+                  financialData,
+                  ltvExpanded: _ltvViewMoreExpanded,
+                  onLtvToggle: () =>
+                      setState(() => _ltvViewMoreExpanded = !_ltvViewMoreExpanded),
+                ),
                   const SizedBox(height: 20),
                   Row(
                     children: [

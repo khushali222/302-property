@@ -1995,6 +1995,208 @@ class _TabBarExampleState extends State<TabBarExample> {
     });
   }
 
+  static const List<String> _settingsTabTitles = [
+    'Accounts', 'Categories', 'Charges', 'Date Format', 'Late Fee Charge',
+    'Manage Template', 'Mail', 'Work Order', 'Property Owners', 'Property Type',
+    'Surcharge', 'Vendor',
+  ];
+
+  String _getCurrentSettingsTab() {
+    if (isaccounts) return 'Accounts';
+    if (iscategories) return 'Categories';
+    if (ischargesetting) return 'Charges';
+    if (isdateformate) return 'Date Format';
+    if (islatefee) return 'Late Fee Charge';
+    if (ismanagetemplate) return 'Manage Template';
+    if (ismail) return 'Mail';
+    if (isworkorder) return 'Work Order';
+    if (ispropertyowner) return 'Property Owners';
+    if (ispropertytype) return 'Property Type';
+    if (issurge) return 'Surcharge';
+    if (isvendor) return 'Vendor';
+    return 'Accounts';
+  }
+
+  void _onSettingsTabChanged(String value) {
+    setState(() {
+      issurge = value == 'Surcharge';
+      ismail = value == 'Mail';
+      isaccounts = value == 'Accounts';
+      islatefee = value == 'Late Fee Charge';
+      isdateformate = value == 'Date Format';
+      isworkorder = value == 'Work Order';
+      ismanagetemplate = value == 'Manage Template';
+      ischargesetting = value == 'Charges';
+      iscategories = value == 'Categories';
+      isvendor = value == 'Vendor';
+      ispropertyowner = value == 'Property Owners';
+      ispropertytype = value == 'Property Type';
+      if (value == 'Date Format') {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        dateformateselect = dateProvider.dateformateselect;
+        timeformateselect = dateProvider.timeformateselect;
+        DateTime now = DateTime.now();
+        dateformate1 = DateFormat('MM/dd/yyyy').format(now);
+        dateformate2 = DateFormat('yyyy-MM-dd').format(now);
+        dateformate3 = DateFormat('yyyy-MMM-dd').format(now);
+        timeformate1 = DateFormat('HH:mm:ss').format(now);
+        timeformate2 = DateFormat('h:mm:ss a').format(now);
+      }
+      if (value == 'Late Fee Charge') {
+        fetchAccountsData();
+        fetchlatefeeData();
+      }
+      if (value == 'Work Order') {
+        _loadDropdownCategories();
+        fetchWorkData();
+        fetchWorkOrderNotificationSettings();
+      }
+    });
+  }
+
+  static IconData _iconForSettingsTab(String title) {
+    switch (title) {
+      case 'Accounts': return Icons.account_balance;
+      case 'Categories': return Icons.category;
+      case 'Charges': return Icons.attach_money;
+      case 'Date Format': return Icons.calendar_today;
+      case 'Late Fee Charge': return Icons.schedule;
+      case 'Manage Template': return Icons.description;
+      case 'Mail': return Icons.email;
+      case 'Work Order': return Icons.build;
+      case 'Property Owners': return Icons.people;
+      case 'Property Type': return Icons.home;
+      case 'Surcharge': return Icons.receipt;
+      case 'Vendor': return Icons.store;
+      default: return Icons.settings;
+    }
+  }
+
+  Widget _buildSettingsTabDropdown() {
+    final current = _getCurrentSettingsTab();
+    return Container(
+      height: 60,
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+      //padding: const EdgeInsets.symmetric(horizontal: ),
+      child: DropdownButton2<String>(
+        isExpanded: true,
+        underline: const SizedBox(),
+        value: current,
+        items: _settingsTabTitles.asMap().entries.map((entry) {
+          final index = entry.key;
+          final title = entry.value;
+          return DropdownMenuItem<String>(
+            value: title,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                border: index < _settingsTabTitles.length - 1
+                    ? Border(
+                        bottom: BorderSide(
+                          color: blueColor.withOpacity(0.2),
+                          width: 0.5,
+                        ),
+                      )
+                    : null,
+              ),
+              child: Row(
+                children: [
+                  Icon(_iconForSettingsTab(title), size: 20, color: blueColor),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: blueColor,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, size: 25, color: blueColor),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? value) {
+          if (value != null) _onSettingsTabChanged(value);
+        },
+        selectedItemBuilder: (BuildContext context) {
+          return _settingsTabTitles.map((String title) {
+            return Row(
+              children: [
+                Icon(_iconForSettingsTab(title), size: 20, color: blueColor),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: blueColor,
+                  ),
+                ),
+              ],
+            );
+          }).toList();
+        },
+        buttonStyleData: ButtonStyleData(
+          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade400!, width: 1),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+        ),
+        iconStyleData: IconStyleData(
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+          iconSize: 24,
+        ),
+        dropdownStyleData: DropdownStyleData(
+          maxHeight: MediaQuery.of(context).size.height * 0.5,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade400!, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.12),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          scrollbarTheme: ScrollbarThemeData(
+            thumbVisibility: MaterialStateProperty.all(false),
+          ),
+        ),
+        menuItemStyleData: MenuItemStyleData(
+          height: 50,
+          padding: EdgeInsets.zero,
+          overlayColor: MaterialStateProperty.all(Colors.grey[100]),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -2079,713 +2281,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     ),
                     child: Column(
                       children: [
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ismanagetemplate = false;
-                                      isworkorder = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 40
-                                            : 50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !isaccounts
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Accounts",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isaccounts
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Visibility(
-                                    visible: true,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor),
-                                        color: !iscategories
-                                            ? Colors.white
-                                            : blueColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Categories",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: iscategories
-                                                  ? Colors.white
-                                                  : blueColor,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        _buildSettingsTabDropdown(),
                         const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      ischargesetting = true;
-                                      ismanagetemplate = false;
-                                      islatefee = false;
-                                      isaccounts = false;
-                                      isdateformate = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ischargesetting
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Charges",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ischargesetting
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    final dateProvider =
-                                        Provider.of<DateProvider>(context,
-                                            listen: false);
-                                    setState(() {
-                                      issurge = false;
-                                      isaccounts = false;
-                                      ismail = false;
-                                      isdateformate = true;
-                                      islatefee = false;
-                                      isworkorder = false;
-                                      ismanagetemplate = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      DateTime now = DateTime.now();
-                                      dateformateselect =
-                                          dateProvider.dateformateselect;
-                                      timeformateselect =
-                                          dateProvider.timeformateselect;
-                                      dateformate1 =
-                                          DateFormat('MM/dd/yyyy').format(now);
-                                      dateformate2 =
-                                          DateFormat('yyyy-MM-dd').format(now);
-                                      dateformate3 =
-                                          DateFormat('yyyy-MMM-dd').format(now);
-                                      timeformate1 =
-                                          DateFormat('HH:mm:ss').format(now);
-                                      timeformate2 =
-                                          DateFormat('h:mm:ss a').format(now);
-                                      //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !isdateformate
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Date Format",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isdateformate
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () async {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isdateformate = false;
-                                      islatefee = true;
-                                      isworkorder = false;
-                                      ismanagetemplate = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                    await fetchAccountsData();
-                                    await fetchlatefeeData();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color:
-                                          !islatefee ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Late Fee Charge",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: islatefee
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      isaccounts = false;
-                                      ismail = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ismanagetemplate = false;
-                                      isworkorder = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ismail ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Mail Service",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ismail
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      isaccounts = false;
-                                      ischargesetting = false;
-                                      ismail = false;
-                                      isdateformate = false;
-                                      islatefee = false;
-                                      isworkorder = false;
-                                      ismanagetemplate = true;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ismanagetemplate
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Manage Template",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ismanagetemplate
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertytype = false;
-                                      ispropertyowner = true;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ispropertyowner
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Property Owners",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ispropertyowner
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = true;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ispropertytype
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Property Type",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ispropertytype
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = true;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      isworkorder = false;
-                                      ismanagetemplate = false;
-                                      ischargesetting = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color:
-                                          !issurge ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Surcharge",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: issurge
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? 850
-                              : 900,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = false;
-                                      iscategories = false;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                      isvendor = true;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color:
-                                          !isvendor ? Colors.white : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Vendor",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isvendor
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () async {
-                                    setState(() {
-                                      issurge = false;
-                                      ismail = false;
-                                      isaccounts = false;
-                                      isworkorder = true;
-                                      islatefee = false;
-                                      isdateformate = false;
-                                      ischargesetting = false;
-                                      ismanagetemplate = false;
-                                      iscategories = false;
-                                      isvendor = false;
-                                      ispropertyowner = false;
-                                      ispropertytype = false;
-                                      // Don't set loading state - show table immediately
-                                    });
-                                    await _loadDropdownCategories(); // Always fetch latest categories from backend
-                                    await fetchWorkData(); // Fetch work order settings after categories are loaded
-                                    // Fetch notification settings in background without showing loading
-                                    fetchWorkOrderNotificationSettings(); // Fetch in background
-                                  },
-                                  child: Visibility(
-                                    visible: true,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: blueColor),
-                                        color: !isworkorder
-                                            ? Colors.white
-                                            : blueColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Work Order",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: isworkorder
-                                                  ? Colors.white
-                                                  : blueColor,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Expanded(
-                              //   child: InkWell(
-                              //     onTap: () {
-                              //       setState(() {
-                              //         issurge = false;
-                              //         ismail = false;
-                              //         isaccounts = false;
-                              //         isworkorder = true;
-                              //         islatefee = false;
-                              //         isdateformate = false;
-                              //       });
-                              //     },
-                              //     child: Visibility(
-                              //       visible: true,
-                              //       child: Container(
-                              //         decoration: BoxDecoration(
-                              //           border: Border.all(color: blueColor),
-                              //           color: !isworkorder
-                              //               ? Colors.white
-                              //               : blueColor,
-                              //         ),
-                              //         child: Center(
-                              //           child: Text(
-                              //             "WorkOrder",
-                              //             style: TextStyle(
-                              //                 fontWeight: FontWeight.bold,
-                              //                 color: isworkorder
-                              //                     ? Colors.white
-                              //                     : blueColor,
-                              //                 fontSize: MediaQuery.of(context)
-                              //                     .size
-                              //                     .width <
-                              //                     500
-                              //                     ? 15
-                              //                     : 20),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-
-                              // Spacer()
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
+                          height: 4,
                         ),
                         Divider(
                           color: grey,
