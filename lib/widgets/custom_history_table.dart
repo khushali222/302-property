@@ -2780,19 +2780,16 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                             onTap: () {},
                             child: Row(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 20.0),
-                                  child: Text(
-                                    width < 400
-                                        ? "Date & Time"
-                                        : "     Date & Time",
-                                    style: TextStyle(
-                                      color: widget.blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                Text(
+                                  width < 400
+                                      ? "Date & Time"
+                                      : "     Date & Time",
+                                  style: TextStyle(
+                                    color: widget.blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),

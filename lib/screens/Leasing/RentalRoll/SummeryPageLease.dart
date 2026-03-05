@@ -51,6 +51,7 @@ import 'Move_out_lease/Moveout_lease.dart';
 import 'Notes/Notes_table.dart';
 import 'edit_lease.dart';
 import 'make_payment.dart';
+import 'RecurringChargeDialog.dart';
 
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
@@ -2134,6 +2135,61 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                             ),
                                           ),
+                                        //
+                                        // const SizedBox(height: 12),
+                                        // // Add Recurring Charges Button
+                                        // Padding(
+                                        //   padding: const EdgeInsets.symmetric(
+                                        //       horizontal: 8.0),
+                                        //   child: GestureDetector(
+                                        //     onTap: () {
+                                        //       showRecurringChargeDialog(
+                                        //         context: context,
+                                        //         leaseId: widget.leaseId,
+                                        //         onSuccess: () {
+                                        //           setState(() {
+                                        //             _leaseChargesFuture =
+                                        //                 LeaseRepository().fetchLeaseCharges(widget.leaseId);
+                                        //           });
+                                        //         },
+                                        //       );
+                                        //     },
+                                        //     child: Container(
+                                        //       height: 40,
+                                        //       decoration: BoxDecoration(
+                                        //         color: Colors.white,
+                                        //         border: Border.all(
+                                        //             color: Colors.grey[300]!),
+                                        //         borderRadius: BorderRadius.circular(8),
+                                        //       ),
+                                        //       child: Padding(
+                                        //         padding: const EdgeInsets.symmetric(
+                                        //             horizontal: 16),
+                                        //         child: Row(
+                                        //           children: [
+                                        //             Icon(
+                                        //               Icons.add,
+                                        //               color: Colors.grey[700],
+                                        //               size: 20,
+                                        //             ),
+                                        //             const SizedBox(width: 12),
+                                        //             Text(
+                                        //               'Add Recurring Charges',
+                                        //               style: TextStyle(
+                                        //                 fontSize: 16,
+                                        //                 fontWeight: FontWeight.w500,
+                                        //                 color: Colors.grey[700],
+                                        //               ),
+                                        //             ),
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        //   ),
+                                        //
+                                        const SizedBox(height: 5),
+                                      
                                         ],
                                       ),
                                     ),

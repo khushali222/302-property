@@ -95,14 +95,13 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
     timeago.setLocaleMessages('en_custom', CustomTimeAgo());
     SystemChrome.setPreferredOrientations([
-
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
     runApp(
       DevicePreview(
-        enabled: kDebugMode ? false :  false,
-        tools: const [        
+        enabled: kDebugMode ? false : false,
+        tools: const [
           ...DevicePreview.defaultTools,
         ],
         builder: (context) => MultiProvider(
@@ -143,7 +142,6 @@ void main() {
     );
   }, (error, stackTrace) {
     // Handle uncaught errors here if needed
-
   }, zoneSpecification: ZoneSpecification(
     print: (self, parent, zone, line) {
       if (kDebugMode) {
