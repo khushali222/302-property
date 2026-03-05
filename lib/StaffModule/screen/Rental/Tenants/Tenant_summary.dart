@@ -3387,8 +3387,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                _buildEmergencyContactSection(),
-                                const SizedBox(height: 10),
+                                // _buildEmergencyContactSection(),
+                                // const SizedBox(height: 10),
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -3796,25 +3796,26 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 20),
+                                  child: CustomHistoryTable(
+                                    historyType: HistoryType.tenant,
+                                    entityId: widget.tenantId,
+                                    title: 'History',
+                                    blueColor: blueColor,
+                                    itemsPerPage: 10,
+                                  ),
+                                ),
+                             
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  // Tenant History Table - Using CustomHistoryTable
-                  if (_selectedIndex == 0)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 20),
-                      child: CustomHistoryTable(
-                        historyType: HistoryType.tenant,
-                        entityId: widget.tenantId,
-                        title: 'History',
-                        blueColor: blueColor,
-                        itemsPerPage: 10,
-                      ),
-                    ),
+                  
                   if (_selectedIndex == 1) _buildLeaseTabContent(),
                   if (_selectedIndex == 2)
                     Tenant_communication(

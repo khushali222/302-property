@@ -2416,8 +2416,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                _buildEmergencyContactSection(),
-                                const SizedBox(height: 10),
+                                // _buildEmergencyContactSection(),
+                                // const SizedBox(height: 10),
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -2837,6 +2837,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     itemsPerPage: 10,
                                   ),
                                 ),
+                             
                               ],
                             ),
                           ),
