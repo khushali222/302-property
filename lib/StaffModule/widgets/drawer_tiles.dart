@@ -24,6 +24,7 @@ import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
+import 'package:three_zero_two_property/screens/BidRoom/bid_room_table.dart';
 
 Widget buildListTile(
   BuildContext context,
@@ -63,6 +64,14 @@ Widget buildListTile(
             context,
             (context) => Workorder_table(),
             "Work Orders",
+          );
+        }
+        
+        else if (title == "Bid Room" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => const BidRoomTable(useStaffLayout: true),
+            "Bid Room",
           );
         } else if (title == "Properties" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -121,6 +130,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Send E-mail": (context) => send_email(),//Send_Email_table(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
+    "Bid Room": (context) => const BidRoomTable(useStaffLayout: true),
     // "Mortgage": (context) => MortgageTable() // Commented out - not deleted
   };
 

@@ -101,7 +101,7 @@ void main() {
     runApp(
       DevicePreview(
         enabled: kDebugMode ? false : false,
-        tools: const [
+        tools: kDebugMode ? [] : const [
           ...DevicePreview.defaultTools,
         ],
         builder: (context) => MultiProvider(

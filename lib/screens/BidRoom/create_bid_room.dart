@@ -10,12 +10,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
+    as staff_drawer;
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as widget_302_staff;
 import '../../widgets/custom_drawer.dart';
 import '../../repository/fetch_allcategories.dart';
 import '../../Model/All_categories_model.dart';
 
 class CreateBidRoom extends StatefulWidget {
-  const CreateBidRoom({super.key});
+  /// When true, uses staff drawer and staff app bar (for Staff module).
+  final bool useStaffLayout;
+
+  const CreateBidRoom({super.key, this.useStaffLayout = false});
 
   @override
   State<CreateBidRoom> createState() => _CreateBidRoomState();
@@ -402,12 +409,19 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.widget_302.App_Bar(context: context),
+      appBar: widget.useStaffLayout
+          ? widget_302_staff.widget_302_Staff.App_Bar(context: context)
+          : widget_302.widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Bid Room",
-        dropdown: false,
-      ),
+      drawer: widget.useStaffLayout
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Bid Room",
+              dropdown: false,
+            )
+          : CustomDrawer(
+              currentpage: "Bid Room",
+              dropdown: false,
+            ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -546,53 +560,62 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                 const SizedBox(height: 24),
 
                 // Action Buttons
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: blueColor,
+                          side: BorderSide(color: blueColor),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        )
-                      : const Text(
-                          'Create Bid Room',
+                        ),
+                        child: const Text(
+                          'Cancel',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blueColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Create Bid Room',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: blueColor,
-                    side: BorderSide(color: blueColor),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -633,10 +656,31 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
         const SizedBox(height: 8),
         Container(
           //   color: Colors.red,
-          child: DropdownButtonFormField2<String>(
+          child: isLoading
+              ? Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade50,
+                    border: Border.all(
+                      color: const Color(0xFFDBE0E5),
+                      width: 1,
+                    ),
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Loading...',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                )
+              : DropdownButtonFormField2<String>(
             value: value,
             items: items,
-            onChanged: isLoading ? null : onChanged,
+            onChanged: onChanged,
             isExpanded: true,
             hint: Text(
               hint,
@@ -653,16 +697,6 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               border: InputBorder.none,
-              suffixIcon: isLoading
-                  ? const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : null,
             ),
             validator: isRequired
                 ? (value) {
@@ -725,6 +759,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       ],
     );
   }
+
 
   Widget _buildTextField({
     required String label,

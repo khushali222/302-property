@@ -23,6 +23,7 @@ class StaffPermission {
   bool? workorderAdd;
   bool? workorderDelete;
   bool? mortgageView;
+  
   // New variables for additional permissions
   bool? settingView;
   bool? propertytypeView;

@@ -19,7 +19,11 @@ import 'package:three_zero_two_property/StaffModule/screen/Dashboard/cronjob_pay
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/lease_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Properties_table.dart';
+// Wizard not used for now: same Add Work Order screen as web/tablet (phone skill = easy access, not different UI).
+// import 'package:three_zero_two_property/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Add_workorder.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
@@ -474,6 +478,171 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     return exitConfirmed;
   }
 
+  // ==========================================================================
+  // PHONE SKILL – STAFF MODULE & ADMIN MODULE (explained in detail)
+  // ==========================================================================
+  //
+  // What "phone skill" means: easy access to key field tasks from the dashboard
+  // on phone (width < 600). Same screens and flow as web – no wizard, no extra UI.
+  //
+  // --- STAFF MODULE (this file) ---
+  // • When: Staff opens dashboard on a phone/small tablet (width < 600).
+  // • What appears: An "In the field" section at the top with 3 actions.
+  // • Add Work Order: 1 tap → opens the SAME Add Work Order form as web
+  //   (ResponsiveAddWorkOrder from StaffModule). If the app has detected a
+  //   "nearest property" (from device location), that property is pre-filled
+  //   so staff does not have to search when they are on site.
+  // • Take Payment: 1 tap → opens Leases list (Staff Lease_table). Staff
+  //   picks a lease → opens lease summary → uses "Make payment" there. Same
+  //   flow as Drawer → Leasing → Leases, but one tap from dashboard.
+  // • Work Orders: 1 tap → opens Work Orders list (same as tapping the
+  //   Work Orders card in the dashboard).
+  //
+  // --- ADMIN MODULE (screens/Dashboard/dashboard_one.dart) ---
+  // • Same idea: on phone (width < 600), "In the field" quick actions at top.
+  // • Add Work Order: 1 tap → same Add Work Order form as web (ResponsiveAddWorkOrder
+  //   from main app). Admin has no "nearest property" so no pre-fill.
+  // • Take Payment: 1 tap → Leases list (admin Lease_table) → pick lease →
+  //   Make payment on lease summary.
+  // • Work Orders: 1 tap → Work Orders list.
+  //
+  // --- TO DISABLE (comment for now) ---
+  // In THIS file: comment out the two lines that show the quick actions:
+  //   (1) "if (width < 600) _buildQuickActionsForField(context, width),"
+  //   (2) the "if (width < 600) SizedBox(...)" right below it.
+  // You can also comment out _buildQuickActionsForField and _quickActionCard
+  // methods below if you want. To turn it back on later, uncomment the same.
+  //
+  // --- TO USE WIZARD INSTEAD (optional, later) ---
+  // Uncomment the AddWorkOrderMobileWizard import at top and in the Add Work
+  // Order onTap use: AddWorkOrderMobileWizard(rentalid: nearstProperty?.rentalId).
+  // ==========================================================================
+
+  Widget _buildQuickActionsForField(BuildContext context, double width) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F4FA),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: blueColor.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12, bottom: 10),
+            child: Text(
+              'In the field',
+              style: TextStyle(
+                color: blueColor,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.build_circle_outlined,
+                  label: 'Add Work Order',
+                  onTap: () async {
+                    // Use same Add Work Order screen as web (no wizard). Pre-fill property when at nearest site.
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ResponsiveAddWorkOrder(
+                          rentalid: nearstProperty?.rentalId,
+                        ),
+                      ),
+                    );
+                    if (result == true) {
+                      fetchNearbyProperties();
+                      fetchDatacount();
+                      fetchData();
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.payment_outlined,
+                  label: 'Take Payment',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Lease_table(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.assignment_outlined,
+                  label: 'Work Orders',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Workorder_table(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(child: SizedBox()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickActionCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 28, color: blueColor),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: blueColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -692,6 +861,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                               SizedBox(
                                   height: MediaQuery.of(context).size.height *
                                       0.02),
+                              // Quick actions for field (phone): easy access to Add Work Order & Take Payment
+                              // Phone skill: quick actions on phone. To enable, uncomment next 4 lines.
+                              // if (width < 600) _buildQuickActionsForField(context, width),
+                              // if (width < 600)
+                              //   SizedBox(
+                              //       height: MediaQuery.of(context).size.height *
+                              //           0.02),
                               if (nearestPropertyWorkOrders.length > 0)
                                 Column(
                                   children: [

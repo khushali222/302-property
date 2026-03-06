@@ -269,6 +269,19 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   "Work Orders",
                   widget.currentpage == "Work Orders",
                 ),
+           
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.buildingUser,
+                    size: 20,
+                    color: widget.currentpage == "Bid Room"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Bid Room",
+                  widget.currentpage == "Bid Room",
+                ),
               // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
               // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Orders in future
               // if (permissions != null &&

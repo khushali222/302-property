@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Add_workorder.dart';
-import 'package:three_zero_two_property/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart';
+// Wizard not used: same Add Work Order screen on phone as web (phone skill = easy access from dashboard).
+// import 'package:three_zero_two_property/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Edit_workorders.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
