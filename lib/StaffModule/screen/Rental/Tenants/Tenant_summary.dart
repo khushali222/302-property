@@ -1645,7 +1645,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       context: context,
       builder: (ctx) => AlertDialog(
         title:
-            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact"),
+            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",style: TextStyle(color: blueColor, fontWeight: FontWeight.bold,fontSize: 18),),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -3387,8 +3387,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                // _buildEmergencyContactSection(),
-                                // const SizedBox(height: 10),
+                                _buildEmergencyContactSection(),
+                                const SizedBox(height: 10),
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
