@@ -194,14 +194,20 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ), // Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
+          selectedItemColor: blueColor,
+          unselectedItemColor: grey,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          iconSize: 24,
           items: [
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 "assets/images/tenants/dashboard.svg",
-                height: 20,
-                width: 20,
+                height: 24,
+                width: 24,
                 color: _selectedIndex == 0 ? blueColor : grey,
               ),
               label: 'Dashboard',
@@ -209,8 +215,8 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 "assets/images/tenants/Admin.svg",
-                height: 20,
-                width: 20,
+                height: 24,
+                width: 24,
                 color: _selectedIndex == 1 ? blueColor : grey,
               ),
               label: 'Profile',
@@ -218,8 +224,8 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 "assets/images/tenants/Work.svg",
-                height: 20,
-                width: 20,
+                height: 24,
+                width: 24,
                 color: _selectedIndex == 2 ? blueColor : grey,
               ),
               label: 'Work Order',
@@ -227,7 +233,7 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: FaIcon(
                 FontAwesomeIcons.fileLines,
-                size: 20,
+                size: 24,
                 color: _selectedIndex == 3 ? blueColor : grey,
               ),
               label: 'Bid Room',

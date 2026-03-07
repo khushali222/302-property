@@ -5,15 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:three_zero_two_property/Model/profile.dart';
 
 import '../../constant/constant.dart';
-import '../../repository/profile_repository.dart';
 import '../widgets/drawer_tiles.dart';
-import '../../widgets/titleBar.dart';
 import '../widgets/appbar.dart';
 
 class Profile_screen extends StatefulWidget {
@@ -23,23 +19,224 @@ class Profile_screen extends StatefulWidget {
   State<Profile_screen> createState() => _Profile_screenState();
 }
 
+class _ContactEntry {
+  TextEditingController name = TextEditingController();
+  TextEditingController number = TextEditingController();
+  TextEditingController email = TextEditingController();
+}
+
+class _ZipDistanceEntry {
+  TextEditingController zipCode = TextEditingController();
+  TextEditingController distanceMiles = TextEditingController();
+}
+
 class _Profile_screenState extends State<Profile_screen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _companyNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
   bool _hasError = false;
   String _errorMessage = '';
-  profile? _profile;
   Map<String, dynamic> profiledata = {};
+
+  // Vendor Information
+  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _companyEmailController = TextEditingController();
+  final TextEditingController _cellPhoneController = TextEditingController();
+  final TextEditingController _contactCellController = TextEditingController();
+
+  // Address Details
+  final TextEditingController _streetAddressController =
+      TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
+
+  // Contact Information (dynamic list)
+  List<_ContactEntry> _contacts = [];
+
+  // Trade & Service Area: one common trade type, multiple zip+distance pairs
+  String? _selectedTradeType;
+  List<_ZipDistanceEntry> _zipDistancePairs = [];
+  static const Map<String, String> _tradeToApiValue = {
+    'Plumbing': 'plumbing',
+    'Electrical': 'electrical',
+    'HVAC': 'hvac',
+    'Landscaping': 'landscaping',
+    'General Contractor': 'general',
+    'Other': 'other',
+  };
+  static const Map<String, String> _apiValueToTrade = {
+    'plumbing': 'Plumbing',
+    'electrical': 'Electrical',
+    'hvac': 'HVAC',
+    'landscaping': 'Landscaping',
+    'general': 'General Contractor',
+    'other': 'Other',
+  };
+  final List<String> _tradeTypeOptions = [
+    'Plumbing',
+    'Electrical',
+    'HVAC',
+    'Landscaping',
+    'General Contractor',
+    'Other'
+  ];
+
+  // Compliance & Legal
+  final TextEditingController _licensesPermitsController =
+      TextEditingController();
+
+  bool _showValidationError = false;
   @override
   void initState() {
     super.initState();
+    _contacts.add(_ContactEntry());
+    _zipDistancePairs.add(_ZipDistanceEntry());
     _fetchProfile();
+  }
+
+  @override
+  void dispose() {
+    _companyNameController.dispose();
+    _companyEmailController.dispose();
+    _cellPhoneController.dispose();
+    _contactCellController.dispose();
+    _streetAddressController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _zipCodeController.dispose();
+    _countryController.dispose();
+    _licensesPermitsController.dispose();
+    for (var c in _contacts) {
+      c.name.dispose();
+      c.number.dispose();
+      c.email.dispose();
+    }
+    for (var z in _zipDistancePairs) {
+      z.zipCode.dispose();
+      z.distanceMiles.dispose();
+    }
+    super.dispose();
+  }
+
+  void _populateFromProfile() {
+    // Vendor Information
+    _companyNameController.text = profiledata['vendor_name']?.toString() ?? '';
+    _companyEmailController.text =
+        profiledata['vendor_email']?.toString() ?? '';
+    _cellPhoneController.text =
+        profiledata['vendor_phoneNumber']?.toString() ?? '';
+    _contactCellController.text =
+        profiledata['contact_cell_number']?.toString() ?? '';
+
+    // Address Details
+    _streetAddressController.text =
+        (profiledata['vendor_address'] ?? profiledata['street_address'])
+                ?.toString() ??
+            '';
+    _cityController.text =
+        (profiledata['vendor_city'] ?? profiledata['city'])?.toString() ?? '';
+    _stateController.text =
+        (profiledata['vendor_state'] ?? profiledata['state'])?.toString() ?? '';
+    _zipCodeController.text =
+        (profiledata['vendor_zip'] ?? profiledata['zip_code'])?.toString() ??
+            '';
+    _countryController.text =
+        (profiledata['vendor_country'] ?? profiledata['country'])?.toString() ??
+            '';
+
+    // Compliance & Legal
+    _licensesPermitsController.text =
+        profiledata['licenses_permits']?.toString() ?? '';
+
+    // Contact Information – support both contact_info and contacts from API
+    final contactsList =
+        (profiledata['contact_info'] ?? profiledata['contacts']) as List?;
+    if (contactsList != null && contactsList.isNotEmpty) {
+      while (_contacts.length > contactsList.length) {
+        final last = _contacts.removeLast();
+        last.name.dispose();
+        last.number.dispose();
+        last.email.dispose();
+      }
+      for (var i = 0; i < contactsList.length; i++) {
+        final m = contactsList[i] is Map ? contactsList[i] as Map : null;
+        if (i < _contacts.length) {
+          _contacts[i].name.text = m?['contact_name']?.toString() ?? '';
+          _contacts[i].number.text = m?['contact_number']?.toString() ?? '';
+          _contacts[i].email.text = m?['contact_email']?.toString() ?? '';
+        } else {
+          final e = _ContactEntry();
+          e.name.text = m?['contact_name']?.toString() ?? '';
+          e.number.text = m?['contact_number']?.toString() ?? '';
+          e.email.text = m?['contact_email']?.toString() ?? '';
+          _contacts.add(e);
+        }
+      }
+    } else {
+      // No contacts from API: keep one empty contact row
+      while (_contacts.length > 1) {
+        final last = _contacts.removeLast();
+        last.name.dispose();
+        last.number.dispose();
+        last.email.dispose();
+      }
+      _contacts[0].name.text = '';
+      _contacts[0].number.text = '';
+      _contacts[0].email.text = '';
+    }
+
+    // Trade & Service Area
+    final tradeFromApi =
+        (profiledata['trade'] ?? profiledata['trade_type'])?.toString();
+    _selectedTradeType = tradeFromApi != null
+        ? (_apiValueToTrade[tradeFromApi.toString().toLowerCase()] ??
+            (_tradeTypeOptions.contains(tradeFromApi) ? tradeFromApi : null))
+        : null;
+
+    final tradeList = (profiledata['region_covered'] ??
+        profiledata['trade_service_areas']) as List?;
+    if (tradeList != null && tradeList.isNotEmpty) {
+      if (_selectedTradeType != null &&
+          !_tradeTypeOptions.contains(_selectedTradeType)) {
+        _selectedTradeType = null;
+      }
+      while (_zipDistancePairs.length > tradeList.length) {
+        final last = _zipDistancePairs.removeLast();
+        last.zipCode.dispose();
+        last.distanceMiles.dispose();
+      }
+      for (var i = 0; i < tradeList.length; i++) {
+        final m = tradeList[i] is Map ? tradeList[i] as Map : null;
+        final zipVal = m?['zip_code']?.toString() ?? '';
+        final distVal = m?['distance_miles']?.toString() ??
+            ''; // handles number (e.g. 98) from API
+        if (i < _zipDistancePairs.length) {
+          _zipDistancePairs[i].zipCode.text = zipVal;
+          _zipDistancePairs[i].distanceMiles.text = distVal;
+        } else {
+          final e = _ZipDistanceEntry();
+          e.zipCode.text = zipVal;
+          e.distanceMiles.text = distVal;
+          _zipDistancePairs.add(e);
+        }
+      }
+    } else {
+      while (_zipDistancePairs.length > 1) {
+        final last = _zipDistancePairs.removeLast();
+        last.zipCode.dispose();
+        last.distanceMiles.dispose();
+      }
+      if (_zipDistancePairs.isNotEmpty) {
+        _zipDistancePairs[0].zipCode.text = '';
+        _zipDistancePairs[0].distanceMiles.text = '';
+      }
+      if (_selectedTradeType != null &&
+          !_tradeTypeOptions.contains(_selectedTradeType)) {
+        _selectedTradeType = null;
+      }
+    }
   }
 
   Future<void> fetchProfile() async {
@@ -49,7 +246,6 @@ class _Profile_screenState extends State<Profile_screen> {
     //  String? token = prefs.getString('token');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("vendor_id");
-    String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final String apiUrl = "${Api_url}/api/vendor/get_vendor/$id";
     final response = await http.get(
@@ -63,12 +259,11 @@ class _Profile_screenState extends State<Profile_screen> {
     print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print("hello");
       setState(() {
-        profiledata = response_Data["data"];
+        profiledata = response_Data["data"] ?? {};
         _isLoading = false;
+        _populateFromProfile();
       });
-      // return profile.fromJson(jsonDecode(response.body)["data"]);
     } else {
       setState(() {
         _isLoading = false;
@@ -80,16 +275,6 @@ class _Profile_screenState extends State<Profile_screen> {
   Future<void> _fetchProfile() async {
     try {
       await fetchProfile();
-      /* final profileData = await fetchProfile();
-      setState(() {
-        _profile = profileData;
-        _firstNameController.text = profileData.firstName ?? '';
-        _lastNameController.text = profileData.lastName ?? '';
-        _emailController.text = profileData.email ?? '';
-        _phoneNumberController.text = profileData.phoneNumber?.toString() ?? '';
-        _companyNameController.text = profileData.companyName ?? '';
-        _isLoading = false;
-      });*/
     } catch (e) {
       setState(() {
         _hasError = true;
@@ -97,6 +282,149 @@ class _Profile_screenState extends State<Profile_screen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _updateProfile() async {
+    setState(() => _showValidationError = false);
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      setState(() => _showValidationError = true);
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("vendor_id");
+      String? token = prefs.getString('token');
+      final body = {
+        'vendor_name': _companyNameController.text.trim(),
+        'vendor_email': _companyEmailController.text.trim(),
+        'vendor_phoneNumber': _cellPhoneController.text.trim(),
+        'vendor_address': _streetAddressController.text.trim(),
+        'vendor_city': _cityController.text.trim(),
+        'vendor_state': _stateController.text.trim(),
+        'vendor_zip': _zipCodeController.text.trim(),
+        'vendor_country': _countryController.text.trim(),
+        'contact_info': _contacts
+            .map((c) => {
+                  'contact_name': c.name.text.trim(),
+                  'contact_number': c.number.text.trim(),
+                  'contact_email': c.email.text.trim(),
+                })
+            .toList(),
+        'trade': _selectedTradeType != null
+            ? (_tradeToApiValue[_selectedTradeType!] ??
+                _selectedTradeType!.toLowerCase().replaceAll(' ', '_'))
+            : null,
+        'region_covered': _zipDistancePairs
+            .map((z) => {
+                  'zip_code': z.zipCode.text.trim(),
+                  'distance_miles': z.distanceMiles.text.trim(),
+                })
+            .toList(),
+        'licenses_permits': _licensesPermitsController.text.trim(),
+        'user_active_recently': true,
+        'is_web': true,
+      };
+      final response = await http.put(
+        Uri.parse('${Api_url}/api/vendor/update_vendor/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(body),
+      );
+      final result = jsonDecode(response.body);
+      setState(() => _isLoading = false);
+      if (response.statusCode == 200 && result["statusCode"] == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text(result["message"]?.toString() ?? 'Profile updated')),
+        );
+        await fetchProfile();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(result["message"]?.toString() ?? 'Update failed')),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 12),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: blueColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    String? hint,
+    bool required = true,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            required ? '$label' : label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 6),
+          TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              hintText: hint ?? 'Enter $label',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade400),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey.shade400),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: blueColor, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            ),
+            validator: required
+                ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
+                : null,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -212,215 +540,392 @@ class _Profile_screenState extends State<Profile_screen> {
               ? Center(
                   child: Text('Error: $_errorMessage'),
                 )
-              : LayoutBuilder(builder: (context, constraints) {
-                  if (constraints.maxWidth > 500) {
-                    // Horizontal layout for tablet screens
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 30),
-                          titleBar(
-                              title: 'Personal Details',
-                              width: MediaQuery.of(context).size.width * 0.90),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.04,
-                                vertical: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Table(
-                                border: TableBorder.all(),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(2),
-                                  1: FlexColumnWidth(2),
-                                  2: FlexColumnWidth(3),
-                                },
-                                children: [
-                                  TableRow(
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Vendor Profile',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        _sectionTitle('Vendor Information'),
+                        _buildTextField(
+                          label: 'Company Name',
+                          controller: _companyNameController,
+                          hint: 'Enter company name',
+                        ),
+                        _buildTextField(
+                          label: 'Company Email',
+                          controller: _companyEmailController,
+                          hint: 'Enter company email',
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        _buildTextField(
+                          label: 'Cell Phone Number',
+                          controller: _cellPhoneController,
+                          hint: '(xxx) xxx-xxxx',
+                          keyboardType: TextInputType.phone,
+                        ),
+                        _buildTextField(
+                          label: 'Contact Cell Number',
+                          controller: _contactCellController,
+                          hint: '(xxx) xxx-xxxx',
+                          keyboardType: TextInputType.phone,
+                          required: false,
+                        ),
+                        _sectionTitle('Address Details'),
+                        _buildTextField(
+                          label: 'Street Address',
+                          controller: _streetAddressController,
+                          hint: 'Start typing your address...',
+                        ),
+                        _buildTextField(
+                          label: 'City',
+                          controller: _cityController,
+                          hint: 'Enter city',
+                        ),
+                        _buildTextField(
+                          label: 'State',
+                          controller: _stateController,
+                          hint: 'Enter state',
+                        ),
+                        _buildTextField(
+                          label: 'Zip Code',
+                          controller: _zipCodeController,
+                          hint: 'Enter zip code',
+                          keyboardType: TextInputType.number,
+                        ),
+                        _buildTextField(
+                          label: 'Country',
+                          controller: _countryController,
+                          hint: 'Enter country',
+                        ),
+                        _sectionTitle('Contact Information *'),
+                        ...List.generate(_contacts.length, (i) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'Name',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: blueColor),
-                                              ))),
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text('Phone Number',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: blueColor)))),
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text('Email',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: blueColor)))),
+                                      if (_contacts.length > 1)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: Text(
+                                            'Contact ${i + 1}',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: blueColor,
+                                            ),
+                                          ),
+                                        ),
+                                      _buildTextField(
+                                        label: 'Contact Name',
+                                        controller: _contacts[i].name,
+                                        hint: 'Enter contact name',
+                                      ),
+                                      _buildTextField(
+                                        label: 'Contact Number',
+                                        controller: _contacts[i].number,
+                                        hint: '(xxx) xxx-xxxx',
+                                        keyboardType: TextInputType.phone,
+                                        required: false,
+                                      ),
+                                      _buildTextField(
+                                        label: 'Contact Email',
+                                        controller: _contacts[i].email,
+                                        hint: 'Enter contact email',
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                      ),
                                     ],
                                   ),
-                                  TableRow(
-                                    children: [
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  "${profiledata['vendor_name']}",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize: 20,
-                                                      color: greyColor)))),
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  profiledata[
-                                                          'vendor_phoneNumber']
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize: 20,
-                                                      color: greyColor)))),
-                                      TableCell(
-                                          child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                  profiledata['vendor_email'],
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize: 20,
-                                                      color: greyColor)))),
-                                    ],
+                                ),
+                                if (_contacts.length > 1)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8, top: 8),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _contacts[i].name.dispose();
+                                          _contacts[i].number.dispose();
+                                          _contacts[i].email.dispose();
+                                          _contacts.removeAt(i);
+                                        });
+                                      },
+                                      icon: Icon(Icons.remove_circle_outline,
+                                          color: Colors.grey.shade600,
+                                          size: 24),
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.grey.shade100,
+                                        padding: const EdgeInsets.all(8),
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
+                              ],
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          onPressed: () =>
+                              setState(() => _contacts.add(_ContactEntry())),
+                          icon: const Icon(Icons.add, size: 20),
+                          label: const Text('Add contact'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: blueColor,
+                            side: BorderSide(color: blueColor),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          SizedBox(height: 30),
-                        ],
-                      ),
-                    );
-                  } else {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
+                        ),
+                        _sectionTitle('Trade & Service Area *'),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: blueColor.withOpacity(0.04),
+                            borderRadius: BorderRadius.circular(12),
+                            border:
+                                Border.all(color: blueColor.withOpacity(0.15)),
                           ),
-                          titleBar(
-                            title: 'Personal Details',
-                            width: MediaQuery.of(context).size.width * 0.91,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Trade/Service Type *',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
-                                    borderRadius: BorderRadius.circular(6)),
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    buildWidget('Name',
-                                        "${profiledata['vendor_name']}"),
-                                    //  buildWidget('Designation',profiledata['staffmember_designation']),
-                                    buildWidget(
-                                        'Phone Number',
-                                        profiledata['vendor_phoneNumber']
-                                            .toString()),
-
-                                    buildWidget(
-                                        'Email', profiledata['vendor_email']),
-                                  ],
+                              const SizedBox(height: 8),
+                              DropdownButtonFormField<String>(
+                                value: _tradeTypeOptions
+                                        .contains(_selectedTradeType)
+                                    ? _selectedTradeType
+                                    : null,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 14),
+                                ),
+                                hint: const Text('Select Trade'),
+                                items: _tradeTypeOptions
+                                    .map((s) => DropdownMenuItem(
+                                        value: s, child: Text(s)))
+                                    .toList(),
+                                onChanged: (v) =>
+                                    setState(() => _selectedTradeType = v),
+                                validator: (v) => (v == null || v.isEmpty)
+                                    ? 'Required'
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Service areas (zip code & distance)',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        ...List.generate(_zipDistancePairs.length, (i) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: _buildTextField(
+                                          label: 'Zip Code *',
+                                          controller:
+                                              _zipDistancePairs[i].zipCode,
+                                          hint: 'Enter zip code',
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: _buildTextField(
+                                          label: 'Distance (Miles) *',
+                                          controller: _zipDistancePairs[i]
+                                              .distanceMiles,
+                                          hint: 'Enter distance',
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (_zipDistancePairs.length > 1)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8, top: 28),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _zipDistancePairs[i]
+                                              .zipCode
+                                              .dispose();
+                                          _zipDistancePairs[i]
+                                              .distanceMiles
+                                              .dispose();
+                                          _zipDistancePairs.removeAt(i);
+                                        });
+                                      },
+                                      icon: Icon(Icons.remove_circle_outline,
+                                          color: Colors.grey.shade600,
+                                          size: 24),
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: Colors.grey.shade100,
+                                        padding: const EdgeInsets.all(8),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          onPressed: () => setState(
+                              () => _zipDistancePairs.add(_ZipDistanceEntry())),
+                          icon: const Icon(Icons.add, size: 20),
+                          label: const Text('Add service area'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: blueColor,
+                            side: BorderSide(color: blueColor),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        _sectionTitle('Compliance & Legal'),
+                        _buildTextField(
+                          label: 'Licenses/Permits',
+                          controller: _licensesPermitsController,
+                          hint:
+                              'Please provide details of your licenses and permits...',
+                          maxLines: 4,
+                        ),
+                        if (_showValidationError)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(
+                              'Please complete all required fields marked in red',
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 13),
+                            ),
+                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 48,
+                                child: ElevatedButton(
+                                  onPressed: _isLoading ? null : _updateProfile,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: blueColor,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text('Update Profile'),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                }),
-    );
-  }
-
-  buildWidget(String label, String value) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-        const SizedBox(
-          height: 5,
-        ),
-        Material(
-          //elevation: 3,
-          borderRadius: BorderRadius.circular(6.0),
-          child: Container(
-            height: 45,
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  const BoxShadow(
-                    color: Colors.black26,
-                    offset:
-                        Offset(1.0, 1.0), // Shadow offset to the bottom right
-                    blurRadius: 8.0, // How much to blur the shadow
-                    spreadRadius: 0.0, // How much the shadow should spread
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: SizedBox(
+                                height: 48,
+                                child: OutlinedButton(
+                                  onPressed: () => _fetchProfile(),
+                                  style: OutlinedButton.styleFrom(
+                                    side:
+                                        BorderSide(color: Colors.grey.shade600),
+                                    foregroundColor: Colors.grey.shade700,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text('Cancel'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-                border: Border.all(width: 0, color: Colors.white),
-                borderRadius: BorderRadius.circular(6.0)),
-            child: TextFormField(
-              style: const TextStyle(
-                color: Color(0xFF8898aa), // Text color
-                fontSize: 16.0, // Text size
-                fontWeight: FontWeight.w400, // Text weight
-              ),
-              //  controller: _dateController,
-              initialValue: value,
-              decoration: const InputDecoration(
-                hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                    color: Color(0xFFb0b6c3)),
-                border: InputBorder.none,
-                // labelText: 'Select Date',
-                hintText: 'dd-mm-yyyy',
-              ),
-              readOnly: true,
-              onTap: () {
-                //_selectDate(context);
-              },
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-      ],
+                ),
     );
   }
 }

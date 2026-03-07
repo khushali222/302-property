@@ -101,9 +101,13 @@ void main() {
     runApp(
       DevicePreview(
         enabled: kDebugMode ? false : false,
-        tools: kDebugMode ? [] : const [
-          ...DevicePreview.defaultTools,
-        ],
+        tools: kDebugMode
+            ? [
+                ...DevicePreview.defaultTools,
+              ]
+            : const [
+                ...DevicePreview.defaultTools,
+              ],
         builder: (context) => MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => OwnerDetailsProvider()),

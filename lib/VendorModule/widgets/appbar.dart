@@ -33,301 +33,172 @@ class widget_302 {
     Provider.of<NotificationProvider>(context, listen: false)
         .fetchNotificationsVendor(context);
     return AppBar(
-      iconTheme: IconThemeData(color: Colors.black),
-      elevation: 3,
+      iconTheme: const IconThemeData(color: Colors.black87),
+      elevation: 1,
+      scrolledUnderElevation: 1,
       backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      titleSpacing: 20,
+      surfaceTintColor: Colors.transparent,
+      centerTitle: false,
+      titleSpacing: 0,
       automaticallyImplyLeading: false,
-      /* leading: GestureDetector(
-          onTap: onDrawerIconPressed,
-          child:Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SvgPicture.asset("assets/images/tenants/drawer.svg",height: 20,width: 30,fit: BoxFit.fill,),
+      toolbarHeight: 56,
+      title: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Image.asset(
+          'assets/images/logo.png',
+          height: 32,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => Image.asset(
+            'assets/images/applogo.png',
+            height: 32,
+            fit: BoxFit.contain,
           ),
-        ),*/
-      //  leading: Container(),
-      //automaticallyImplyLeading: false,
-      // title: Image(
-      //   image: AssetImage('assets/images/applogo.png'),
-      //   height: 40,
-      //   width: 40,
-      // ),
-      title: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          // Check if the device width is less than 600 (considered as phone screen)
-          if (constraints.maxWidth < 50) {
-            return Image.asset(
-              'assets/images/applogo.png',
-              height: 40,
-              width: 40,
-            );
-          } else {
-            return Image.asset(
-              'assets/images/logo.png',
-
-              // Adjust height and width accordingly for tablet
-            );
-          }
-        },
-      ),
-      // leading: GestureDetector(
-      //   onTap: () {},
-      //   child: Icon(Icons.menu),
-      // ),
-      actions: [
-        /*InkWell(
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => Plan_screen()));
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 12),
-              width: 50,
-              decoration: BoxDecoration(
-                color: blueColor,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(
-                  child: Text(
-                "Buy",
-                style: TextStyle(color: Colors.white),
-              )),
-            ),
-          ),*/
-        SizedBox(
-          width: 10,
         ),
+      ),
+      actions: [
         Consumer<NotificationProvider>(
           builder: (context, notificationProvider, child) {
-            if (notificationProvider.isLoading) {
-              return Center(
-                child: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: blueColor,
+            Widget icon = FaIcon(
+              FontAwesomeIcons.bell,
+              size: 22,
+              color: blueColor,
+            );
+            if (notificationProvider.notifications.isNotEmpty) {
+              icon = badges.Badge(
+                position: badges.BadgePosition.topEnd(top: -2, end: -2),
+                badgeStyle: badges.BadgeStyle(
+                  badgeColor: Colors.red,
+                  padding: const EdgeInsets.all(4),
                 ),
+                child: icon,
               );
-            } else if (notificationProvider.notifications.isNotEmpty) {
-              return GestureDetector(
+            }
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const notifications(),
                   ));
                 },
-                child: Center(
-                  child: badges.Badge(
-                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
-                    badgeStyle: badges.BadgeStyle(
-                      badgeColor: Colors.red,
-                    ),
-                    child: FaIcon(
-                      FontAwesomeIcons.bell,
-                      size: 20,
-                      color: blueColor,
-                    ),
-                  ),
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  child: icon,
                 ),
-              );
-            } else {
-              return Center(
-                child: FaIcon(
-                  FontAwesomeIcons.bell,
-                  size: 20,
-                  color: blueColor,
-                ),
-              );
-            }
+              ),
+            );
           },
         ),
-        // InkWell(
-        //   onTap: (){
-        //     Navigator.of(context).push(MaterialPageRoute(
-        //         builder: (context) => const notifications()));
-        //   },
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(top: 15.0),
-        //     child: FaIcon(
-        //       FontAwesomeIcons.solidBell,
-        //       size: 25,
-        //       color: blueColor,
-        //     ),
-        //   ),
-        // ),
-        //   FaIcon(
-        //     FontAwesomeIcons.bell,
-        //     size: 20,
-        //     color: blueColor,
-        //   ),
-        SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 4),
         FutureBuilder<String>(
           future: _getNameFromSharedPreferences(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                  margin: EdgeInsets.symmetric(vertical: 12),
-                  width: 30,
-                  decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: BorderRadius.circular(2),
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 12, top: 8, bottom: 8),
+                child: PopupMenuButton<String>(
+                  color: Colors.white,
+                  surfaceTintColor: Colors.transparent,
+                  position: PopupMenuPosition.under,
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: PopupMenuButton(
-                    color: Colors.white,
-                    surfaceTintColor: Colors.white,
-                    position: PopupMenuPosition.under,
-                    child: Center(
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: blueColor,
+                    child: Text(
+                      snapshot.data!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem<String>(
+                      enabled: false,
+                      value: '',
                       child: Text(
-                        snapshot.data!,
-                        style: TextStyle(color: Colors.white),
+                        "WELCOME",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                    // offset: Offset(0.0, appBarHeight),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(8.0),
-                        bottomRight: Radius.circular(8.0),
-                        topLeft: Radius.circular(8.0),
-                        topRight: Radius.circular(8.0),
+                    PopupMenuItem<String>(
+                      value: 'password',
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.key,
+                              size: 18, color: blueColor),
+                          const SizedBox(width: 12),
+                          Text("Change Password",
+                              style: TextStyle(color: blueColor)),
+                        ],
                       ),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Change_password()));
+                      },
                     ),
-                    itemBuilder: (ctx) => [
-                      PopupMenuItem(
-                        child: Text(
-                          "WELCOME",
-                        ),
+                    PopupMenuItem<String>(
+                      value: 'contact',
+                      child: Row(
+                        children: [
+                          Icon(Icons.contact_mail, size: 20, color: blueColor),
+                          const SizedBox(width: 12),
+                          Text("Contact Us",
+                              style: TextStyle(color: blueColor)),
+                        ],
                       ),
-                      /*  PopupMenuItem(
-                          child: Row(
-                            children: [
-                              Icon(Icons.person),
-                              //  FaIcon(
-                              //    FontAwesomeIcons.user,
-                              //    size: 20,
-                              //    color: Colors.black,
-                              //  ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text("My Profile"),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => Profile_screen()));
-                          },
-                        ),
-                        PopupMenuItem(
-                          child: Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.cog,
-                                size: 20,
-                                color: Colors.black,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text("Settings"),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => TabBarExample()));
-                          },
-                        ),*/
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.key,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Change Password",
-                              style: TextStyle(color: blueColor),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Change_password()));
-                        },
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ContactUsScreen()));
+                      },
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'logout',
+                      child: const Row(
+                        children: [
+                          Icon(Icons.logout_rounded, size: 20),
+                          SizedBox(width: 12),
+                          Text("Logout"),
+                        ],
                       ),
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            Icon(Icons.contact_mail, color: blueColor),
-                            SizedBox(width: 10),
-                            Text("Contact Us",
-                                style: TextStyle(color: blueColor)),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ContactUsScreen()));
-                        },
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          children: [
-                            Icon(Icons.directions_run_rounded),
-                            //  FaIcon(
-                            //    FontAwesomeIcons,
-                            //    size: 20,
-                            //    color: Colors.black,
-                            //  ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text("Logout"),
-                          ],
-                        ),
-                        onTap: () async {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-
-                          // Preserve Remember Me credentials
-                          bool? rememberMe = prefs.getBool('rememberMe');
-                          String? savedEmail = prefs.getString('savedEmail');
-                          String? savedPassword =
-                              prefs.getString('savedPassword');
-
-                          // Clear all preferences
-                          prefs.clear();
-
-                          // Restore Remember Me credentials if they exist
-                          if (rememberMe == true &&
-                              savedEmail != null &&
-                              savedPassword != null) {
-                            await prefs.setBool('rememberMe', true);
-                            await prefs.setString('savedEmail', savedEmail);
-                            await prefs.setString(
-                                'savedPassword', savedPassword);
-                          }
-
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Login_Screen()),
-                              (route) => false);
-                        },
-                      ),
-                    ],
-                  ));
-            } else {
-              // Display a loading indicator or placeholder
-              return Container();
+                      onTap: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        bool? rememberMe = prefs.getBool('rememberMe');
+                        String? savedEmail = prefs.getString('savedEmail');
+                        String? savedPassword =
+                            prefs.getString('savedPassword');
+                        prefs.clear();
+                        if (rememberMe == true &&
+                            savedEmail != null &&
+                            savedPassword != null) {
+                          await prefs.setBool('rememberMe', true);
+                          await prefs.setString('savedEmail', savedEmail);
+                          await prefs.setString('savedPassword', savedPassword);
+                        }
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Login_Screen()),
+                            (route) => false);
+                      },
+                    ),
+                  ],
+                ),
+              );
             }
+            return const SizedBox.shrink();
           },
-        ),
-        SizedBox(
-          width: 20,
         ),
       ],
     );
@@ -346,7 +217,7 @@ class widget_302 {
     if (lastName != null && lastName.isNotEmpty) {
       combinationName += lastName[0].toUpperCase();
     }
-    return combinationName ?? "L"; // Default to "L" if name is not available
+    return combinationName.isEmpty ? "L" : combinationName;
   }
   // static Future<String> _getNameFromSharedPreferences() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
