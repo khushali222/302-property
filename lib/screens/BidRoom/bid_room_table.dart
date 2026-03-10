@@ -979,11 +979,18 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             5),
                                                                     GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        // TODO: Navigate to edit bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Edit Bid Room feature coming soon');
+                                                                          () async {
+                                                                        final result = await Navigator.of(context).push(
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) => CreateBidRoom(
+                                                                              useStaffLayout: widget.useStaffLayout,
+                                                                              existingBidRequest: request,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                        if (result == true) {
+                                                                          setState(() => _fetchBidRequests());
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1463,11 +1470,18 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             5),
                                                                     GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        // TODO: Navigate to edit bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Edit Bid Room feature coming soon');
+                                                                          () async {
+                                                                        final result = await Navigator.of(context).push(
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) => CreateBidRoom(
+                                                                              useStaffLayout: widget.useStaffLayout,
+                                                                              existingBidRequest: request,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                        if (result == true) {
+                                                                          setState(() => _fetchBidRequests());
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(

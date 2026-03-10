@@ -483,7 +483,10 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                   ),
                   const SizedBox(height: 25),
                   _isLoading
-                      ? ColabShimmerLoadingWidget()
+                      ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: ColabShimmerLoadingWidget(),
+                      )
                       : _filteredBidRequests.isEmpty
                           ? Container(
                               height: 300,
@@ -499,7 +502,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                             )
                           : Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 11),
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               child: Column(
                                 children: [
                                   _buildHeaders(),

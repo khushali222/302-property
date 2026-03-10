@@ -73,6 +73,9 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController description = TextEditingController();
   TextEditingController replyToEmail = TextEditingController();
   TextEditingController categories = TextEditingController();
+  TextEditingController twilioAccountSid = TextEditingController();
+  TextEditingController twilioAuthToken = TextEditingController();
+  TextEditingController twilioPhoneNumber = TextEditingController();
   late Future<List<categories_model>> futureCategories;
   late Future<List<Vendor>> futureVendors;
   bool rentDueReminderEmail = false;
@@ -113,6 +116,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool ispropertyowner = false;
   bool ispropertytype = false;
   bool _isStaffUser = false;
+  bool istwilio = false;
+  bool twilioSmsEnabled = false;
   // Vendor table state variables
   String vendorSearchValue = "";
   int vendorCurrentPage = 0;
@@ -861,6 +866,89 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  Future<void> fetchTwilioSettings() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      String? id = await _getApiId();
+      if (adminId == null || token == null || id == null) return;
+      final response = await http.get(
+        Uri.parse('$Api_url/api/settings/twilio/$adminId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 &&
+          responseData["statusCode"] == 200 &&
+          responseData["data"] != null) {
+        final data = responseData["data"] as Map<String, dynamic>;
+        setState(() {
+          twilioSmsEnabled = data["enabled"] == true;
+          twilioAccountSid.text = (data["accountSid"] ?? "").toString();
+          twilioAuthToken.text = (data["authToken"] ?? "").toString();
+          twilioPhoneNumber.text = (data["phoneNumber"] ?? "").toString();
+        });
+      }
+    } catch (e) {
+      print('Failed to load Twilio settings: $e');
+    }
+  }
+
+  Future<void> saveTwilioSettings() async {
+    if (twilioSmsEnabled) {
+      if (twilioAccountSid.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: "Account SID is required");
+        return;
+      }
+      if (twilioAuthToken.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: "Auth Token is required");
+        return;
+      }
+      if (twilioPhoneNumber.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: "Phone Number is required");
+        return;
+      }
+    }
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = await _getApiId();
+      if (token == null || id == null) {
+        Fluttertoast.showToast(msg: "Missing authentication");
+        return;
+      }
+      final body = {
+        "enabled": twilioSmsEnabled,
+        "accountSid": twilioAccountSid.text.trim(),
+        "authToken": twilioAuthToken.text.trim(),
+        "phoneNumber": twilioPhoneNumber.text.trim(),
+      };
+      final response = await http.post(
+        Uri.parse('$Api_url/api/settings/twilio'),
+        headers: {
+          "authorization": "CRM $token",
+          "Content-Type": "application/json",
+          "id": "CRM $id",
+        },
+        body: jsonEncode(body),
+      );
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData["statusCode"] == 200) {
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Twilio settings saved successfully");
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Failed to save Twilio settings");
+      }
+    } catch (e) {
+      print('Failed to save Twilio settings: $e');
+      Fluttertoast.showToast(msg: "Error saving Twilio settings");
     }
   }
 
@@ -1996,9 +2084,19 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   static const List<String> _settingsTabTitles = [
-    'Accounts', 'Categories', 'Charges', 'Date Format', 'Late Fee Charge',
-    'Manage Template', 'Mail', 'Work Order', 'Property Owners', 'Property Type',
-    'Surcharge', 'Vendor',
+    'Accounts',
+    'Categories',
+    'Charges',
+    'Date Format',
+    'Late Fee Charge',
+    'Manage Template',
+    'Mail',
+    'Work Order',
+    'Property Owners',
+    'Property Type',
+    'Surcharge',
+    'Vendor',
+    // 'Twilio',
   ];
 
   String _getCurrentSettingsTab() {
@@ -2014,6 +2112,8 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (ispropertytype) return 'Property Type';
     if (issurge) return 'Surcharge';
     if (isvendor) return 'Vendor';
+    if (istwilio) return 'Twilio';
+
     return 'Accounts';
   }
 
@@ -2029,6 +2129,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ischargesetting = value == 'Charges';
       iscategories = value == 'Categories';
       isvendor = value == 'Vendor';
+      istwilio = value == 'Twilio';
       ispropertyowner = value == 'Property Owners';
       ispropertytype = value == 'Property Type';
       if (value == 'Date Format') {
@@ -2051,24 +2152,42 @@ class _TabBarExampleState extends State<TabBarExample> {
         fetchWorkData();
         fetchWorkOrderNotificationSettings();
       }
+      if (value == 'Twilio') {
+        fetchTwilioSettings();
+      }
     });
   }
 
   static IconData _iconForSettingsTab(String title) {
     switch (title) {
-      case 'Accounts': return Icons.account_balance;
-      case 'Categories': return Icons.category;
-      case 'Charges': return Icons.attach_money;
-      case 'Date Format': return Icons.calendar_today;
-      case 'Late Fee Charge': return Icons.schedule;
-      case 'Manage Template': return Icons.description;
-      case 'Mail': return Icons.email;
-      case 'Work Order': return Icons.build;
-      case 'Property Owners': return Icons.people;
-      case 'Property Type': return Icons.home;
-      case 'Surcharge': return Icons.receipt;
-      case 'Vendor': return Icons.store;
-      default: return Icons.settings;
+      case 'Accounts':
+        return Icons.account_balance;
+      case 'Categories':
+        return Icons.category;
+      case 'Charges':
+        return Icons.attach_money;
+      case 'Date Format':
+        return Icons.calendar_today;
+      case 'Late Fee Charge':
+        return Icons.schedule;
+      case 'Manage Template':
+        return Icons.description;
+      case 'Mail':
+        return Icons.email;
+      case 'Work Order':
+        return Icons.build;
+      case 'Property Owners':
+        return Icons.people;
+      case 'Property Type':
+        return Icons.home;
+      case 'Surcharge':
+        return Icons.receipt;
+      case 'Vendor':
+        return Icons.store;
+      case 'Twilio':
+        return Icons.phone;
+      default:
+        return Icons.settings;
     }
   }
 
@@ -5484,7 +5603,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          .03),
+                                                                          .07),
                                                                   Expanded(
                                                                     child: Text(
                                                                       '${account.accountType}',
@@ -8071,6 +8190,136 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ? StaffPropertyType.PropertyTable(
                                   isEmbedded: true)
                               : PropertyTable(isEmbedded: true),
+                        if (istwilio)
+                          Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Twilio Configuration',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              Row(children: [
+                                Text(
+                                  'SMS Notifications',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ]),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Enable SMS Notifications',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                  Switch(
+                                    value: twilioSmsEnabled,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        twilioSmsEnabled = value;
+                                      });
+                                    },
+                                    activeColor: blueColor,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(children: [
+                                Text(
+                                  'Twilio Account SID',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ]),
+                              const SizedBox(height: 5),
+                              CustomTextField(
+                                controller: twilioAccountSid,
+                                hintText: 'Enter Twilio Account SID',
+                                keyboardType: TextInputType.text,
+                                readOnnly: !twilioSmsEnabled,
+                              ),
+                              const SizedBox(height: 10),
+                              Row(children: [
+                                Text(
+                                  'Twilio Auth Token',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ]),
+                              const SizedBox(height: 5),
+                              CustomTextField(
+                                controller: twilioAuthToken,
+                                hintText: 'Enter Twilio Auth Token',
+                                keyboardType: TextInputType.text,
+                                obscureText: true,
+                                readOnnly: !twilioSmsEnabled,
+                              ),
+                              const SizedBox(height: 10),
+                              Row(children: [
+                                Text(
+                                  'Twilio Phone Number',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ]),
+                              const SizedBox(height: 5),
+                              CustomTextField(
+                                controller: twilioPhoneNumber,
+                                hintText: 'Enter Twilio Phone Number',
+                                keyboardType: TextInputType.text,
+                                readOnnly: !twilioSmsEnabled,
+                              ),
+                              const SizedBox(height: 20),
+                              Row(children: [
+                                GestureDetector(
+                                  onTap: saveTwilioSettings,
+                                  child: Container(
+                                    height: 45,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      color: blueColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Save Settings',
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ],
+                          ),
                       ],
                     ),
                   ),
