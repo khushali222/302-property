@@ -219,6 +219,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   List<String?> uploaded_images = [];
   bool _isLoading = true;
   bool _Loading = false;
+  bool _isUploadingImages = false;
   Map<String, String> properties = {}; // Mapping of rental_id to rental_address
   Map<String, String> units = {}; // Mapping of unit_id to rental_unit
 
@@ -242,10 +243,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   }
 
   Future<void> uploadSelectedImages() async {
-    setState(() {
-      //  isLoading = true;
-    });
-
+    if (selectedImages.isEmpty) return;
+    setState(() => _isUploadingImages = true);
     try {
       for (File image in selectedImages) {
         var image_name = await uploadImage(image);
@@ -259,9 +258,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     } catch (e) {
       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
     } finally {
-      setState(() {
-        // isLoading = false;
-      });
+      if (mounted) setState(() => _isUploadingImages = false);
     }
   }
 
@@ -467,7 +464,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                   title: 'New Work Order',
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -477,7 +474,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color(0xFFCED4DA),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -490,12 +487,15 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   fontWeight: FontWeight.bold,
                                   color: blueColor)),
                           SizedBox(
-                            height: 10,
+                            height: 4,
                           ),
                           CustomTextField(
                             keyboardType: TextInputType.text,
                             hintText: 'Add subject',
                             controller: subject,
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'please enter the subject';
@@ -506,136 +506,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Photo ',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 45,
-                            width: 120,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                              onPressed: () async {
-                                // _pickImage().then((_) {
-                                //   setState(
-                                //           () {}); // Rebuild the widget after selecting the image
-                                // });
-                                await selectImages();
-                              },
-                              child: isLoading
-                                  ? Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 55.0,
-                                ),
-                              )
-                                  : Text(
-                                'Upload here',
-                                style:
-                                TextStyle(color: Color(0xFFf7f8f9)),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: uploaded_images.map((imageUrl) {
-                              bool isMp4 = isVideo(imageUrl!);
-                              return Container(
-                                width: uploaded_images.length == 1
-                                    ? MediaQuery.of(context).size.width / 4
-                                    : (MediaQuery.of(context).size.width / 4) -
-                                    10,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: InkWell(
-                                  onLongPress: () {
-                                    setState(() {
-                                      uploaded_images.remove(imageUrl);
-                                    });
-                                  },
-                                  child: isMp4
-                                      ? Container(
-                                    height: 80,
-                                    width: 80,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _showVideoDialog(
-                                            '$image_url${imageUrl}');
-                                      },
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          // Image.file(
-                                          //   File(snapshot.data!),
-                                          //   height:80,
-                                          //   width: 80,
-                                          //   fit: BoxFit.cover,
-                                          // ),
-                                          VideoItem(
-                                              url:
-                                              '$image_url${imageUrl}'),
-                                          Icon(Icons.play_circle_fill,
-                                              color: Colors.white,
-                                              size: 40),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                      : Container(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 68),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  uploaded_images
-                                                      .remove(imageUrl);
-                                                });
-                                              },
-                                              child: Icon(
-                                                Icons.close,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Image.network(
-                                          "$image_url${imageUrl}",
-                                          height: 80,
-                                          width: 80,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error,
-                                              stackTrace) {
-                                            return Icon(Icons
-                                                .error); // Placeholder for errors
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+                          _buildImageUploadSection(),
                           SizedBox(
                             height: 10,
                           ),
@@ -644,10 +515,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: blueColor)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Column(
+                        
+                        Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DropdownButtonHideUnderline(
@@ -714,15 +583,17 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
-                                    height: 45,
+                                    height: 50,
                                     width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
+                                      border: Border.all(color: Color(0xFFb0b6c3)),
+                                     
                                     ),
-                                    elevation: 2,
+                                    elevation: 0,
                                   ),
                                   iconStyleData: const IconStyleData(
                                     icon: Icon(
@@ -813,16 +684,24 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     });
                                   },
                                   buttonStyleData: ButtonStyleData(
-                                    height: 45,
+                                    height: 50,
                                     width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12),
                                     decoration: BoxDecoration(
                                       borderRadius:
                                       BorderRadius.circular(6),
                                       color: Colors.white,
+                                      border: Border.all(
+                                          color: Color(0xFFb0b6c3)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 2)),
+                                      ],
                                     ),
-                                    elevation: 2,
+                                    elevation: 0,
                                   ),
                                   iconStyleData: const IconStyleData(
                                     icon: Icon(Icons.arrow_drop_down),
@@ -847,8 +726,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   menuItemStyleData:
                                   const MenuItemStyleData(
                                     height: 40,
-                                    padding: EdgeInsets.only(
-                                        left: 14, right: 14),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -862,7 +741,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             ],
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 4,
                           ),
                           Text('Category',
                               style: TextStyle(
@@ -888,7 +767,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                       isExpanded: true,
                                       hint: Text(_isLoadingCategories
                                           ? 'Loading categories...'
-                                          : 'Select Category'),
+                                          : 'Select Category',style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3)),),
                                       value: _dropdownCategories.contains(
                                           _selectedDropdownCategory)
                                           ? _selectedDropdownCategory
@@ -916,15 +795,18 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                         // Notify FormField of value change
                                       },
                                       buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
+                                        height: 50,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 0, vertical: 1),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                           BorderRadius.circular(6),
                                           color: Colors.white,
+                                          border: Border.all(
+                                              color: Color(0xFFb0b6c3)),
+                                          
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(Icons.arrow_drop_down),
@@ -949,8 +831,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                       menuItemStyleData:
                                       const MenuItemStyleData(
                                         height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 12),
                                       ),
                                     ),
                                   ),
@@ -981,7 +863,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Entery allowed ',
+                          Text('Entery Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -992,7 +874,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: Text('Select'),
+                              hint: Text('Select',style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3)),),
                               value: _selectedEntry,
                               items: _entry.map((method) {
                                 return DropdownMenuItem<String>(
@@ -1010,15 +892,21 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                 print('Selected category: $_selectedEntry');
                               },
                               buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                //  width: 200,
-                                padding:
-                                const EdgeInsets.only(left: 1, right: 14),
+                                height: 50,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 1),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
+                                  border: Border.all(color: Color(0xFFb0b6c3)),
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //       color: Colors.black12,
+                                  //       blurRadius: 2,
+                                  //       offset: Offset(0, 2)),
+                                  // ],
                                 ),
-                                elevation: 2,
+                                elevation: 0,
                               ),
                               iconStyleData: const IconStyleData(
                                 icon: Icon(
@@ -1042,7 +930,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               ),
                               menuItemStyleData: const MenuItemStyleData(
                                 height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 12),
                               ),
                             ),
                           ),
@@ -1060,6 +949,9 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           CustomTextField(
                             keyboardType: TextInputType.emailAddress,
                             hintText: 'Enter here',
+                            showElevation: false,
+                            borderColor: const Color(0xFFCED4DA),
+                            borderWidth: 1.5,
                             controller: perform,
                             optional: true,
                           ),
@@ -1099,7 +991,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           )
                               : Text(
                             'Add Work Order',
-                            style: TextStyle(color: Color(0xFFf7f8f9)),
+                            style: TextStyle(color: Color(0xFFf7f8f9),fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -1122,7 +1014,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               },
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: Color(0xFF748097)),
+                                style: TextStyle(color: Color(0xFF748097),fontWeight: FontWeight.bold),
                               )))
                     ],
                   ),
@@ -1155,6 +1047,166 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   bool isVideo(String url) {
     return url.toLowerCase().endsWith(".mp4");
+  }
+
+  /// Image upload section: Maintenance-style (upload icon, file size/types text)
+  Widget _buildImageUploadSection() {
+    const double thumbSize = 80;
+    const int maxImages = 10;
+    final totalImages = uploaded_images.where((e) => e != null && e.isNotEmpty).length;
+    final canAdd = totalImages < maxImages;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+         Text('Photos (Maximum of 10)',
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: blueColor)),
+        const SizedBox(height: 10),
+        if (totalImages == 0)
+          GestureDetector(
+            onTap: canAdd ? selectImages : null,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                 Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Upload your Photo here',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Maximum File Size is 20MB',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                    const Text(
+                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                 
+                ],
+              ),
+            ),
+          ),
+        if (totalImages == 0) const SizedBox(height: 10),
+        if (totalImages > 0)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (canAdd)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: selectImages,
+                        child: Container(
+                          height: 28,
+                          width: 28,
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Icon(Icons.add, color: Colors.white, size: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                if (canAdd) const SizedBox(height: 10),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: uploaded_images
+                      .where((e) => e != null && e.isNotEmpty)
+                      .toList()
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                    final imageUrl = entry.value!;
+                    final isMp4 = isVideo(imageUrl);
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+
+                        const SizedBox(height: 4),
+                        GestureDetector(
+                          onTap: () =>
+                              setState(() => uploaded_images.remove(imageUrl)),
+                          child: Icon(Icons.close, color: Colors.grey[700], size: 22),
+                        ),
+                        Container(
+                          width: thumbSize,
+                          height: thumbSize,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: isMp4
+                                ? GestureDetector(
+                                    onTap: () => _showVideoDialog('$image_url$imageUrl'),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        VideoItem(url: '$image_url$imageUrl'),
+                                        const Icon(Icons.play_circle_fill,
+                                            color: Colors.white, size: 40),
+                                      ],
+                                    ),
+                                  )
+                                : Image.network(
+                                    '$image_url$imageUrl',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        const Icon(Icons.error, size: 32),
+                                  ),
+                          ),
+                        ),
+                        
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        if (_isUploadingImages)
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: LinearProgressIndicator(),
+          ),
+      ],
+    );
   }
 
   Widget buildTextField(

@@ -118,6 +118,9 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool _isStaffUser = false;
   bool istwilio = false;
   bool twilioSmsEnabled = false;
+  String? twilioAccountSidError;
+  String? twilioAuthTokenError;
+  String? twilioPhoneNumberError;
   // Vendor table state variables
   String vendorSearchValue = "";
   int vendorCurrentPage = 0;
@@ -900,30 +903,57 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+  void _showTwilioSnackBar(String message, {bool isError = true}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   Future<void> saveTwilioSettings() async {
+    setState(() {
+      twilioAccountSidError = null;
+      twilioAuthTokenError = null;
+      twilioPhoneNumberError = null;
+    });
+
     if (twilioSmsEnabled) {
+      bool hasError = false;
       if (twilioAccountSid.text.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "Account SID is required");
-        return;
+        twilioAccountSidError = "Account SID is required";
+        hasError = true;
       }
       if (twilioAuthToken.text.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "Auth Token is required");
-        return;
+        twilioAuthTokenError = "Auth Token is required";
+        hasError = true;
       }
       if (twilioPhoneNumber.text.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "Phone Number is required");
+        twilioPhoneNumberError = "Phone Number is required";
+        hasError = true;
+      }
+      if (hasError) {
+        setState(() {});
+        print("Please fill all required fields.");
+       // _showTwilioSnackBar("Please fill all required fields.");
         return;
       }
     }
+
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      String? adminId = prefs.getString('adminId');
       String? id = await _getApiId();
       if (token == null || id == null) {
-        Fluttertoast.showToast(msg: "Missing authentication");
+        _showTwilioSnackBar("Missing authentication.");
         return;
       }
       final body = {
+        "admin_id": adminId ?? id,
         "enabled": twilioSmsEnabled,
         "accountSid": twilioAccountSid.text.trim(),
         "authToken": twilioAuthToken.text.trim(),
@@ -940,15 +970,18 @@ class _TabBarExampleState extends State<TabBarExample> {
       );
       final responseData = jsonDecode(response.body);
       if (response.statusCode == 200 && responseData["statusCode"] == 200) {
-        Fluttertoast.showToast(
-            msg: responseData["message"] ?? "Twilio settings saved successfully");
+        _showTwilioSnackBar(
+          responseData["message"] ?? "Twilio settings saved successfully.",
+          isError: false,
+        );
       } else {
-        Fluttertoast.showToast(
-            msg: responseData["message"] ?? "Failed to save Twilio settings");
+        _showTwilioSnackBar(
+          responseData["message"] ?? "Failed to save Twilio settings.",
+        );
       }
     } catch (e) {
       print('Failed to save Twilio settings: $e');
-      Fluttertoast.showToast(msg: "Error saving Twilio settings");
+      _showTwilioSnackBar("Error saving Twilio settings.");
     }
   }
 
@@ -2096,7 +2129,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     'Property Type',
     'Surcharge',
     'Vendor',
-    // 'Twilio',
+    'Twilio',
   ];
 
   String _getCurrentSettingsTab() {
@@ -8213,7 +8246,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Text(
                                   'SMS Notifications',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
@@ -8226,13 +8259,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Text(
                                       'Enable SMS Notifications',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.bold,
-                                        color: blueColor,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                   ),
-                                  Switch(
+                                 
+                                ],
+                              ),
+                             Row(children: [
+                               Switch(
                                     value: twilioSmsEnabled,
                                     onChanged: (value) {
                                       setState(() {
@@ -8241,14 +8278,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     },
                                     activeColor: blueColor,
                                   ),
-                                ],
-                              ),
+                               
+                             ],),
                               const SizedBox(height: 10),
                               Row(children: [
                                 Text(
                                   'Twilio Account SID',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
@@ -8260,13 +8297,29 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 hintText: 'Enter Twilio Account SID',
                                 keyboardType: TextInputType.text,
                                 readOnnly: !twilioSmsEnabled,
+                                error_mess: twilioAccountSidError,
                               ),
+                              if (twilioAccountSidError != null)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      child: Text(
+                                        twilioAccountSidError!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               const SizedBox(height: 10),
                               Row(children: [
                                 Text(
                                   'Twilio Auth Token',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
@@ -8279,13 +8332,29 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 keyboardType: TextInputType.text,
                                 obscureText: true,
                                 readOnnly: !twilioSmsEnabled,
+                                error_mess: twilioAuthTokenError,
                               ),
+                              if (twilioAuthTokenError != null)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      child: Text(
+                                        twilioAuthTokenError!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               const SizedBox(height: 10),
                               Row(children: [
                                 Text(
                                   'Twilio Phone Number',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
@@ -8297,7 +8366,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 hintText: 'Enter Twilio Phone Number',
                                 keyboardType: TextInputType.text,
                                 readOnnly: !twilioSmsEnabled,
+                                error_mess: twilioPhoneNumberError,
                               ),
+                              if (twilioPhoneNumberError != null)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      child: Text(
+                                        twilioPhoneNumberError!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               const SizedBox(height: 20),
                               Row(children: [
                                 GestureDetector(

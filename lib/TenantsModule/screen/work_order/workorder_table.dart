@@ -13,6 +13,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/model/workorder_model.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_summery.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/work_order/edit_workorder.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -167,58 +168,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text(" Property",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    SizedBox(width: 5),
-                    /* ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
                     if (sorting3) {
                       sorting1 = false;
                       sorting2 = false;
@@ -240,7 +189,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Status",
+                    Text(" Ticket #",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -462,13 +411,16 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 14),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey),
+                  style: TextStyle(
+                      color: grey, fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -476,21 +428,29 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                SizedBox(height: 4.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
+            padding: EdgeInsets.only(
+              left: 15,
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    rightLabel,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                        fontSize: 14),
+                  ),
+                  SizedBox(height: 4.0), // Space between label and value
+                  Text(
+                    rightValue,
+                    style: TextStyle(
+                        color: grey, fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -841,7 +801,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  
 
                   SizedBox(height: 10),
                   //search
@@ -855,8 +815,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 22),
                         Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(2),
+                          // elevation: 3,
+                          borderRadius: BorderRadius.circular(8),
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             // height: 40,
@@ -868,7 +828,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                 : MediaQuery.of(context).size.width * .49,
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(2),
+                                borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
                                 border: Border.all(color: Color(0xFF8A95A8))),
                             child: Stack(
@@ -917,7 +877,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         SizedBox(width: 15),
                         DropdownButtonHideUnderline(
                           child: Material(
-                            elevation: 3,
+                            // elevation: 3,
+borderRadius: BorderRadius.circular(8),
                             child: DropdownButton2<String>(
                               isExpanded: true,
                               hint: const Row(
@@ -970,7 +931,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                 padding:
                                     const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     // color: Colors.black26,
                                     color: Color(0xFF8A95A8),
@@ -1006,9 +967,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   ),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+   
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: FutureBuilder<List<WorkOrder>>(
                         future: futureworkorder,
                         builder: (context, snapshot) {
@@ -1240,7 +1201,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           ),
                                                         ),
                                                         Expanded(
-                                                          flex: 3,
+                                                          flex: 4,
                                                           child: InkWell(
                                                             onTap: () {
                                                               setState(() {
@@ -1280,17 +1241,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                .03),
+                                                                .02),
                                                         Expanded(
                                                           flex: 3,
                                                           child: Text(
-                                                            '${workorder.rentalAddress}',
+                                                            '${workorder.ticketNumber ?? '-'}',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              fontSize: 12,
+                                                              fontSize: 13,
                                                             ),
                                                           ),
                                                         ),
@@ -1299,27 +1260,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                .04),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child: Text(
-                                                            // '${widget.data.createdAt}',
-                                                            '${workorder.status}',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .02),
+                                                                .025),
                                                       ],
                                                     ),
                                                   ),
@@ -1335,6 +1276,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         SingleChildScrollView(
                                                       child: Column(
                                                         children: [
+                                                          const Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 15,
+                                                                      right:
+                                                                          15),
+                                                              child: Divider(
+                                                                  thickness:
+                                                                      2)),
+                                                          const SizedBox(
+                                                              height: 2),
                                                           Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -1361,19 +1313,26 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                   },
                                                                   children: [
                                                                     _buildTableRow(
-                                                                        'Category:',
-                                                                        _getDisplayValue(workorder
-                                                                            .workCategory),
-                                                                        'Assign:',
+                                                                        'Property :',
+                                                                        _getDisplayValue(workorder.rentalAddress ??
+                                                                            '-'),
+                                                                        'Category :',
                                                                         _getDisplayValue(
-                                                                            workorder.staffMemberName)),
+                                                                            workorder.workCategory)),
                                                                     _buildTableRow(
-                                                                        'Created At:',
+                                                                        'Assign :',
+                                                                        _getDisplayValue(workorder.staffMemberName ??
+                                                                            '-'),
+                                                                        'Status :',
+                                                                        _getDisplayValue(workorder.status ??
+                                                                            '-')),
+                                                                    _buildTableRow(
+                                                                        'Created At :',
                                                                         '${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
-                                                                        'Updated At:',
+                                                                        'Updated At :',
                                                                         '${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'),
                                                                     _buildTableRow(
-                                                                        'Due Date:',
+                                                                        'Due Date :',
                                                                         '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}',
                                                                         '',
                                                                         ''),
@@ -1399,7 +1358,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 onPressed:
                                                                     () async {
                                                                   // handleEdit(Propertytype);
-                                          
+
                                                                   // var check = await Navigator.push(
                                                                   //     context,
                                                                   //     MaterialPageRoute(
@@ -1440,62 +1399,97 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           ),
                                                           Row(
                                                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
                                                             children: [
                                                               // SizedBox(width: 5,),
-                                                              Expanded(
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .push(MaterialPageRoute(
-                                                                            builder: (context) => Workorder_summery(
-                                                                                  workorder_id: workorder.workOrderId,
-                                                                                )));
-                                                                  },
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .push(MaterialPageRoute(
+                                                                          builder: (context) => Workorder_summery(
+                                                                                workorder_id: workorder.workOrderId,
+                                                                              )));
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade200,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
                                                                   child:
-                                                                      Container(
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                            color:
-                                                                                Colors.grey[350]),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        SizedBox(
+                                                                      const Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .eye,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                      SizedBox(
                                                                           width:
-                                                                              5,
-                                                                        ),
-                                                                        Image.asset(
-                                                                            'assets/icons/view.png'),
-                                                                        // FaIcon(
-                                                                        //   FontAwesomeIcons.trashCan,
-                                                                        //   size: 15,
-                                                                        //   color:blueColor,
-                                                                        // ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              8,
-                                                                        ),
-                                                                        Text(
-                                                                          "View Summery",
-                                                                          style: TextStyle(
-                                                                              fontSize: 11,
-                                                                              color: blueColor,
-                                                                              fontWeight: FontWeight.bold),
-                                                                        )
-                                                                      ],
-                                                                    ),
+                                                                              2),
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
+                                                              SizedBox(width: 10),  
+                                                              if (permissions!.workorderEdit)
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  Navigator.of(context).push(
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) => Edit_Workorder(
+                                                                        workorderId: workorder.workOrderId ?? '',
+                                                                      ),
+                                                                    ),
+                                                                  ).then((_) => setState(() {
+                                                                    futureworkorder = WorkOrderRepository().fetchWorkOrders();
+                                                                  }));
+                                                                },
+                                                                child: Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.green.shade50,
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  ),
+                                                                  child: const Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons.edit,
+                                                                        size: 15,
+                                                                        color: Colors.green,
+                                                                      ),
+                                                                      SizedBox(width: 2),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: 10),  
                                                             ],
                                                           ),
+                                                        SizedBox(height: 10),
+                                                        
                                                         ],
                                                       ),
                                                     ),

@@ -14,6 +14,7 @@ class WorkOrder {
   String? unitId;
   String? rentalAddress;
   String? rentalUnit;
+  String? ticketNumber;
   String? staffMemberName;
 
   WorkOrder({
@@ -30,6 +31,7 @@ class WorkOrder {
     this.unitId,
     this.rentalAddress,
     this.rentalUnit,
+    this.ticketNumber,
     this.staffMemberName,
   });
 
@@ -48,6 +50,7 @@ class WorkOrder {
     unitId = json['unit_id']??"";
     rentalAddress = json['rental_adress']??"";
     rentalUnit = json['rental_unit']??"";
+    ticketNumber = json['ticket_number']??"";
     staffMemberName = json['staffmember_name']??"N/A";
   }
 }
