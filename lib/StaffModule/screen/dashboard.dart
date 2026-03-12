@@ -199,10 +199,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             final coords = await getCoordinatesFromAddress(rental);
             if (coords != null) {
               double distanceInMeters = Geolocator.distanceBetween(
-                userLocation.latitude,
-                userLocation.longitude,
-                // 39.6613845,
-                // -75.6339627,
+                // userLocation.latitude,
+                // userLocation.longitude,
+                39.6613845,
+                -75.6339627,
                 coords.latitude,
                 coords.longitude,
               );
@@ -646,13 +646,17 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: const BorderRadius.only(
+      //     topLeft: Radius.circular(10),
+      //     topRight: Radius.circular(10),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -677,13 +681,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("  Work Order ",
+                        ?  Text("  Work Order ",
                             style: TextStyle(
-                                color: Colors.white,
+                                color: blueColor,
                                 fontWeight: FontWeight.bold))
-                        : const Text("  Work Order",
+                        :  Text("  Work Order",
                             style: TextStyle(
-                                color: Colors.white,
+                                color:blueColor,
                                 fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                   ],
@@ -694,11 +698,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: const Row(
+                child:  Row(
                   children: [
-                    Text("                Status",
+                    Text("Status",
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -729,6 +733,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   @override
   Widget build(BuildContext context) {
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    final dateProvider = Provider.of<DateProvider>(context);
     permissions = permissionProvider.permissions;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -904,7 +909,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                 ),
                                                 const TextSpan(
                                                   text:
-                                                      "is your Current Property. See the open work orders below:",
+                                                      "is your current property. See open work orders below.",
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.normal),
@@ -933,17 +938,14 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                               "data id 1 ${workOrder.workOrderData?.workOrderId}");
                                           //return CustomExpansionTile(data: Data, index: index);
                                           return Container(
+                                            margin: EdgeInsets.symmetric(vertical: 6),
                                             decoration: BoxDecoration(
                                               color: index % 2 != 0
-                                                  ? const Color(0xFFF4F8FF)
+                                                  ? Color(0xFFF4F8FF)
                                                   : Colors.white,
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFFDBE0E5)),
+                                              border: Border.all(color: Color(0xFFDBE0E5)),
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
-                                            // decoration: BoxDecoration(
-                                            //   border: Border.all(color: blueColor),
-                                            // ),
                                             child: Column(
                                               children: <Widget>[
                                                 ListTile(
@@ -1039,9 +1041,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                .03),
+                                                                .06),
                                                         Expanded(
-                                                          flex: 1,
+                                                          flex: 3,
                                                           child: Text(
                                                             '${workOrder.workOrderData?.status ?? "N/A"}',
                                                             style: TextStyle(
@@ -1142,14 +1144,26 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                     //     _getDisplayValue(workOrder
                                                                     //         .staffMember
                                                                     //         ?.staffmemberName)),
-                                                                    _buildTableRow(
-                                                                        'Created At:',
-                                                                        Provider.of<DateProvider>(context, listen: false).formatCurrentDateTime(
-                                                                            '${workOrder.workOrderData!.createdAt}'),
-                                                                        'Updated At:',
-                                                                        Provider.of<DateProvider>(context,
-                                                                                listen: false)
-                                                                            .formatCurrentDateTime('${workOrder.workOrderData!.updatedAt}')),
+                                                                    // _buildTableRow(
+                                                                    //     'Created On :',
+                                                                    //     workOrder.workOrderData!.createdAt
+                                                                    //         ?.isNotEmpty ==
+                                                                    //         true
+                                                                    //         ? dateProvider.formatCurrentDate(
+                                                                    //         '${workOrder.workOrderData!.createdAt}')
+                                                                    //         : 'N/A',
+                                                                    //     '',
+                                                                    //     ''
+                                                                    // ),
+
+                                                                    _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
+                                                                          ?.isNotEmpty ==
+                                                                          true
+                                                                          ? dateProvider.formatCurrentDate(
+                                                                          '${workOrder.workOrderData!.createdAt}')
+                                                                          : 'N/A',
+                                                                          '', '')
+
                                                                   ],
                                                                 ),
                                                               ),
@@ -1203,7 +1217,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                             8,
                                                                       ),
                                                                       Text(
-                                                                        "View Summery",
+                                                                        "View Summary",
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 11,
@@ -1249,7 +1263,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                     const Padding(
                                       padding: EdgeInsets.only(left: 2),
                                       child: Text(
-                                        "Properties Within 5 km",
+                                        "Properties Within 5 Miles",
                                         style: TextStyle(
                                             color: Color(0xFF101828),
                                             fontSize: 15,
@@ -1393,43 +1407,46 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         TableCell(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   leftLabel,
                   style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey),
+                  style: TextStyle(color: grey,fontSize: 13),
                 ),
               ],
             ),
           ),
         ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // TableCell(
+        //   child: Padding(
+        //     padding: EdgeInsets.only(left: 25),
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: [
+        //           Text(
+        //             rightLabel,
+        //             style:
+        //                 TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 14),
+        //           ),
+        //           const SizedBox(height: 2.0), // Space between label and value
+        //           Text(
+        //             rightValue,
+        //             style: TextStyle(color: grey,fontSize: 13),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -1528,7 +1545,7 @@ class _PropertyCardState extends State<PropertyCard> {
               ),
             ),
             Expanded(
-              flex: 6,
+              flex: 4,
               child: InkWell(
                 onTap: () {},
                 child: Row(
@@ -1573,6 +1590,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final matchingWorkOrders = widget.nearestPropertyWorkOrders
         .where((workOrder) =>
             workOrder != null &&
@@ -1585,7 +1603,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
     return hasWorkOrders
         ? Container(
-            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
             decoration: BoxDecoration(
               color: widget.index % 2 != 0
                   ? const Color(0xFFF4F8FF)
@@ -1753,7 +1771,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 6,
+                                                  flex: 4,
                                                   child: Text(
                                                     '${workOrder.workOrderData!.workSubject}',
                                                     style: TextStyle(
@@ -1769,7 +1787,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .02),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -1826,21 +1844,23 @@ class _PropertyCardState extends State<PropertyCard> {
                                                             //     _getDisplayValue(workOrder
                                                             //         .staffMember
                                                             //         ?.staffmemberName)),
-                                                            _buildTableRow(
-                                                                'Created On:',
-                                                                Provider.of<DateProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .formatCurrentDateTime(
-                                                                        '${workOrder.workOrderData!.createdAt}'),
-                                                                'Updated On:',
-                                                                Provider.of<DateProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .formatCurrentDateTime(
-                                                                        '${workOrder.workOrderData!.updatedAt}')),
+                                                            // _buildTableRow(
+                                                            //     'Created On:',
+                                                            //     workOrder.workOrderData!.createdAt
+                                                            //         ?.isNotEmpty ==
+                                                            //         true
+                                                            //         ? dateProvider.formatCurrentDate(
+                                                            //         '${workOrder.workOrderData!.createdAt}')
+                                                            //         : 'N/A',
+                                                            //     '',
+                                                            //     ''),
+                                                            _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
+                                                                ?.isNotEmpty ==
+                                                                true
+                                                                ? dateProvider.formatCurrentDate(
+                                                                '${workOrder.workOrderData!.createdAt}')
+                                                                : 'N/A','',''
+                                                                )
                                                           ],
                                                         ),
                                                       ),
@@ -1854,66 +1874,63 @@ class _PropertyCardState extends State<PropertyCard> {
                                                   ),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment: MainAxisAlignment.end,
                                                     children: [
                                                       // if(permissions!.workorderView!)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Workorder_summery(
-                                                                              workorder_id: workOrder.workOrderData?.workOrderId,
-                                                                            )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                const SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                  'assets/icons/view.png',
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                const SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summary",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Workorder_summery(
+                                                                            workorder_id: workOrder.workOrderData?.workOrderId,
+                                                                          )));
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 40,
+                                                          // width: 35,
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              const FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .eye,
+                                                                size:
+                                                                15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              // SizedBox(
+                                                              //     width:
+                                                              //     2),
+                                                              const SizedBox(
+                                                                width:
+                                                                8,
+                                                              ),
+                                                              Text(
+                                                                "View Summary",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                    11,
+                                                                    color:
+                                                                    blueColor,
+                                                                    fontWeight:
+                                                                    FontWeight.bold),
+                                                              )
+                                                            ],
                                                           ),
                                                         ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 8,
                                                       ),
                                                     ],
                                                   ),
@@ -1929,7 +1946,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               ),
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 8,
                             ),
                           ],
                         ),
@@ -1961,43 +1978,43 @@ class _PropertyCardState extends State<PropertyCard> {
         TableCell(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   leftLabel,
                   style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey),
+                  style: TextStyle(color: grey,fontSize: 13),
                 ),
               ],
             ),
           ),
         ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // TableCell(
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(4.0),
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         Text(
+        //           rightLabel,
+        //           style:
+        //               TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+        //         ),
+        //         const SizedBox(height: 2.0), // Space between label and value
+        //         Text(
+        //           rightValue,
+        //           style: TextStyle(color: grey),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
