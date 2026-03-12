@@ -508,12 +508,14 @@ class _FinancialTableState extends State<FinancialTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ?  Text("Type",
-                            style: TextStyle( color: blueColor,
+                        ? Text("Type",
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15))
-                        :  Text("Type",
-                            style: TextStyle( color: blueColor,
+                        : Text("Type",
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -544,10 +546,12 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("Balance      ",
-                        style: TextStyle( color: blueColor,
+                    Text(
+                        "    Amount",
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -578,11 +582,13 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
-                    Text("      Date", style: TextStyle( color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("    Date",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -636,14 +642,23 @@ class _FinancialTableState extends State<FinancialTable> {
         endIndex > _tableData.length ? _tableData.length : endIndex);
   }
 
+  /// Total amount from current table data (for header display).
+  double get _totalAmount =>
+      _tableData.fold(0.0, (sum, d) => sum + (d?.totalAmount ?? 0));
+
+  String _formatAmountHeader(double amount) {
+    if (amount < 0) return '(\$${amount.abs().toStringAsFixed(2)})';
+    return '\$${amount.toStringAsFixed(2)}';
+  }
+
   void sortData(List<Data> data) {
     if (sorting1) {
       data.sort((a, b) =>
           ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.balance!.compareTo(b.balance!)
-          : b.balance!.compareTo(a.balance!));
+          ? (a.totalAmount ?? 0).compareTo(b.totalAmount ?? 0)
+          : (b.totalAmount ?? 0).compareTo(a.totalAmount ?? 0));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
@@ -678,6 +693,13 @@ class _FinancialTableState extends State<FinancialTable> {
     // print('Delete ${property.sId}');
   }
 
+  void handleAccept(Data? data) {
+    // Handle accept payment action - wire to your accept payment API if needed
+    if (data == null) return;
+    Fluttertoast.showToast(msg: 'Accept payment #${data.transactionid ?? ""}');
+    // TODO: call API to accept payment then refresh: setState(() { _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId); });
+  }
+
   Widget _buildHeader<T>(
       String text, int columnIndex, Comparable<T> Function(Data? d)? getField) {
     return TableCell(
@@ -705,6 +727,25 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
+  /// Amount column header with total from backend.
+  Widget _buildAmountHeader() {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Amount',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text('Total: ${_formatAmountHeader(_totalAmount)}',
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Container(
@@ -718,35 +759,37 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget _buildActionsCell(Data? data) {
     return TableCell(
       child: Padding(
+        // color: Colors.blue,
         padding: const EdgeInsets.all(5.0),
         child: Container(
           height: 50,
-          // color: Colors.blue,
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
-                width: 20,
-              ),
-              GestureDetector(
-                onTap: () {
-                  handleEdit(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.edit,
-                  size: 30,
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => handleAccept(data),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    child: Text('Accept',
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14)),
+                  ),
                 ),
               ),
-              const SizedBox(
-                width: 15,
-              ),
+              const SizedBox(width: 8),
               GestureDetector(
-                onTap: () {
-                  handleDelete(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  size: 30,
-                ),
+                onTap: () => handleEdit(data),
+                child: const FaIcon(FontAwesomeIcons.edit, size: 22),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () => handleDelete(data),
+                child: const FaIcon(FontAwesomeIcons.trashCan, size: 22),
               ),
             ],
           ),
@@ -890,6 +933,13 @@ class _FinancialTableState extends State<FinancialTable> {
     return date;
   }
 
+  /// Format amount for table: negative values shown in parentheses.
+  String _formatAmountForTable(double? amount) {
+    if (amount == null) return '0.00';
+    if (amount < 0) return '(${amount.abs().toStringAsFixed(2)})';
+    return amount.toStringAsFixed(2);
+  }
+
   //for pdf xlsx and csv
   Future<void> generateWorkOrderPdf(List<Data> ledgerdata) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
@@ -932,9 +982,12 @@ class _FinancialTableState extends State<FinancialTable> {
               'Type',
               'Description',
               'Amount',
-              'Balance'
             ],
             data: ledgerdata.reversed.map((ledger) {
+              final amt = ledger.totalAmount ?? 0;
+              final amountStr = amt < 0
+                  ? '(\$${amt.abs().toStringAsFixed(2)})'
+                  : '\$${amt.toStringAsFixed(2)}';
               return [
                 formatDate4('${ledger.entry?.first.date}') ?? "",
                 ledger.tenantData != null
@@ -947,27 +1000,8 @@ class _FinancialTableState extends State<FinancialTable> {
                         '',
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text(
-                    ledger.type == "Refund" || ledger.type == "Charge"
-                        ? '\$${ledger.totalAmount}'
-                        : ' - \$${ledger.totalAmount}',
-                  ),
+                  child: pw.Text(amountStr),
                 ),
-                ledger.balance! < 0
-                    ? pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(
-                          ''
-                          ' - \$${ledger.balance!.abs().toStringAsFixed(2)}',
-                        ),
-                      )
-                    : pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(
-                          ''
-                          ' \$${ledger.balance!.abs().toStringAsFixed(2)}',
-                        ),
-                      ),
               ];
             }).toList(),
             border: pw.TableBorder.all(
@@ -993,9 +1027,7 @@ class _FinancialTableState extends State<FinancialTable> {
               1: const pw.FlexColumnWidth(1.4), // tenants
               2: const pw.FlexColumnWidth(1.3), // type
               3: const pw.FlexColumnWidth(2.2), // transaction
-              4: const pw.FlexColumnWidth(1.3), // increase
-              5: const pw.FlexColumnWidth(1.3), // decrease
-              6: const pw.FlexColumnWidth(1.3), // balance
+              4: const pw.FlexColumnWidth(1.3), // Amount
             },
           ),
           pw.SizedBox(height: 15),
@@ -1003,15 +1035,15 @@ class _FinancialTableState extends State<FinancialTable> {
             children: [
               pw.Align(
                 alignment: pw.Alignment.centerLeft,
-                child: pw.Text('Balance Due',
+                child: pw.Text('Total Amount',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
               pw.Spacer(),
               pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                    ledgerdata.isNotEmpty
-                        ? '\$${ledgerdata.first.balance?.toStringAsFixed(2)}'
+                        ledgerdata.isNotEmpty
+                        ? '\$${ledgerdata.fold<double>(0, (s, d) => s + (d.totalAmount ?? 0)).toStringAsFixed(2)}'
                         : '\$0.00',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
@@ -1043,7 +1075,6 @@ class _FinancialTableState extends State<FinancialTable> {
       'Type',
       'Description',
       'Amount',
-      'Balance',
     ];
 
     final syncXlsx.Style headerCellStyle = workbook.styles.add(
@@ -1075,8 +1106,6 @@ class _FinancialTableState extends State<FinancialTable> {
       }
       sheet.getRangeByIndex(2 + i, 5).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
-      sheet.getRangeByIndex(2 + i, 6).cellStyle.hAlign =
-          syncXlsx.HAlignType.right;
 
       sheet.getRangeByIndex(2 + i, 1).setText(ledger.entry?.first.date);
 
@@ -1091,21 +1120,11 @@ class _FinancialTableState extends State<FinancialTable> {
           : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}' ??
               '');
 
-      sheet.getRangeByIndex(2 + i, 5).setText(
-            ledger.type == "Refund" || ledger.type == "Charge"
-                ? '\$${ledger.totalAmount}'
-                : ' - \$${ledger.totalAmount}',
-          );
-
-      print(ledger.balance);
-
-      ledger.balance! < 0
-          ? sheet.getRangeByIndex(2 + i, 6).setText(
-                '-\$${ledger.balance!.abs().toStringAsFixed(2)}',
-              )
-          : sheet.getRangeByIndex(2 + i, 6).setText(
-                '\$${ledger.balance!.abs().toStringAsFixed(2)}',
-              );
+      final amt = ledger.totalAmount ?? 0;
+      final amountStr = amt < 0
+          ? '(\$${amt.abs().toStringAsFixed(2)})'
+          : '\$${amt.toStringAsFixed(2)}';
+      sheet.getRangeByIndex(2 + i, 5).setText(amountStr);
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -1140,7 +1159,6 @@ class _FinancialTableState extends State<FinancialTable> {
       'Type',
       'Description',
       'Amount',
-      'Balance',
     ];
 
     final List<List<String>> csvData = [];
@@ -1158,6 +1176,10 @@ class _FinancialTableState extends State<FinancialTable> {
       } catch (e) {
         formattedDate = 'Invalid Date';
       }
+      final amt = ledger.totalAmount ?? 0;
+      final amountStr = amt < 0
+          ? '(\$${amt.abs().toStringAsFixed(2)})'
+          : '\$${amt.toStringAsFixed(2)}';
       final rowData = [
         formattedDate,
         ledger.tenantData != null
@@ -1167,12 +1189,7 @@ class _FinancialTableState extends State<FinancialTable> {
         ledger.type == "Charge"
             ? "${ledger.entry?.first.memo}"
             : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
-        ledger.type == "Refund" || ledger.type == "Charge"
-            ? '\$${ledger.totalAmount}'
-            : ' - \$${ledger.totalAmount}',
-        ledger.balance! < 0
-            ? ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
-            : '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+        amountStr,
       ];
       csvData.add(rowData);
     }
@@ -1868,16 +1885,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                   final uniqueEntries =
                                       data.entry?.toSet().toList() ?? [];
                                   return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 6),
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
                                           ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border: Border.all(
                                           color: const Color(0xFFDBE0E5)),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1944,30 +1960,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           .width *
                                                       .08,
                                                 ),
-                                                if (data.balance! >= 0)
-                                                  Expanded(
+                                                Expanded(
                                                     child: Text(
-                                                      ' \$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
+                                                        data.totalAmount != null
+                                                            ? (data.type == "Payment"
+                                                                ? '(\$${(data.totalAmount!).abs().toStringAsFixed(2)})'
+                                                                : '\$${(data.totalAmount!).abs().toStringAsFixed(2)}')
+                                                            : 'N/A',
+                                                            textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
-                                                if (data.balance! < 0)
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' -\$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                ),
                                                 SizedBox(
                                                   width: MediaQuery.of(context)
                                                           .size
@@ -2103,41 +2111,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             const SizedBox(
                                                               height: 5,
                                                             ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Amount : ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: data.type ==
-                                                                                "Refund" ||
-                                                                            data.type ==
-                                                                                "Charge"
-                                                                        ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                          grey,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
+                                                         
+                                                          Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
@@ -2709,7 +2684,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   'Transaction', 2, null),
                                               _buildHeader('Increase', 3, null),
                                               _buildHeader('Decrease', 3, null),
-                                              _buildHeader('Balance', 4, null),
+                                              _buildAmountHeader(),
                                               _buildHeader('Date', 4, null),
                                             ],
                                           ),
@@ -2773,10 +2748,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       : 'N/A',
                                                 ),
                                                 _buildDataCell(
-                                                  _pagedData[i]!
-                                                      .balance!
-                                                      .abs()
-                                                      .toStringAsFixed(2),
+                                                  _formatAmountForTable(
+                                                      _pagedData[i]!.type ==
+                                                              "Payment"
+                                                          ? -(_pagedData[i]!
+                                                                  .totalAmount ??
+                                                              0)
+                                                              .abs()
+                                                          : _pagedData[i]!
+                                                              .totalAmount),
                                                 ),
                                                 _buildDataCell(
                                                   formatDate3(_pagedData[i]!
@@ -2859,8 +2839,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                           return _buildHeader(
                                               'Decrease', 4, null);
                                         case 5:
-                                          return _buildHeader(
-                                              'Balance', 5, null);
+                                          return _buildAmountHeader();
                                         case 6:
                                           return _buildHeader('Date', 6, null);
                                         default:
@@ -2935,10 +2914,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                             );
                                           case 5:
                                             return _buildInteractiveCells(
-                                              _pagedData[i]!
-                                                  .balance!
-                                                  .abs()
-                                                  .toStringAsFixed(2),
+                                              _formatAmountForTable(
+                                                  _pagedData[i]!.type ==
+                                                          "Payment"
+                                                      ? -(_pagedData[i]!
+                                                              .totalAmount ??
+                                                          0)
+                                                          .abs()
+                                                      : _pagedData[i]!
+                                                          .totalAmount),
                                               () => _toggleExpansion(i),
                                             );
                                           case 6:

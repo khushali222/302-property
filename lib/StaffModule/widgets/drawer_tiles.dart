@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/Send_email_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/send_mail.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import '../../widgets/navigation_helper.dart';
 
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
@@ -14,13 +17,14 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportsMainSc
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../screens/Profile/Settings_screen.dart';
 import '../screen/Communications/E-mail Logs/email_log_table.dart';
-import '../screen/Communications/Send E-mail/Send_email_table.dart';
+
 import '../screen/Communications/Templates/Templet_table.dart';
 import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
+import 'package:three_zero_two_property/screens/BidRoom/bid_room_table.dart';
 
 Widget buildListTile(
   BuildContext context,
@@ -61,11 +65,25 @@ Widget buildListTile(
             (context) => Workorder_table(),
             "Work Orders",
           );
+        }
+        
+        else if (title == "Bid Room" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => const BidRoomTable(useStaffLayout: true),
+            "Bid Room",
+          );
         } else if (title == "Properties" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
             context,
             (context) => PropertiesTable(),
             "Properties",
+          );
+        } else if (title == "Mortgage" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => MortgageTable(),
+            "Mortgage",
           );
         } else if (title == "Tenants" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -97,6 +115,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "Tenants": (context) => Tenants_table(),
+    "Mortgage": (context) => MortgageTable(),
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
     "Vendor": (context) =>
@@ -106,10 +125,12 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Templates": (context) => TempletTable(),
-    "E-mail Logs": (context) => Email_log_tablee(),
-    "Send E-mail": (context) => Send_Email_table(),
+    //"E-mail Logs": (context) => Email_log_tablee(),
+    "E-mail Logs": (context) => Send_Email_table(),
+    "Send E-mail": (context) => send_email(),//Send_Email_table(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
+    "Bid Room": (context) => const BidRoomTable(useStaffLayout: true),
     // "Mortgage": (context) => MortgageTable() // Commented out - not deleted
   };
 

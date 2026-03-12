@@ -641,7 +641,7 @@ class _Utilities_tableState extends State<Utilities_table> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
-          SizedBox(height: 10),
+          // SizedBox(height: 10),
           FutureBuilder<List<Map<String, dynamic>>>(
             future: _futureUtilities,
             builder: (context, snapshot) {

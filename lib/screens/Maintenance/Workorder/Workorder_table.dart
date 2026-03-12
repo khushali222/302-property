@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Add_workorder.dart';
+// Wizard not used: same Add Work Order screen on phone as web (phone skill = easy access from dashboard).
+// import 'package:three_zero_two_property/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Edit_workorders.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -761,7 +763,47 @@ class _Workorder_tableState extends State<Workorder_table> {
                             ),
                           ),
                         ),
-                        Flexible(
+                        // Flexible(
+                        //   flex: 1,
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(left: 8.0),
+                        //     child: GestureDetector(
+                        //       onTap: () async {
+                        //         final isNarrow = MediaQuery.of(context).size.width < 500;
+                        //         final result = await Navigator.of(context).push(
+                        //             MaterialPageRoute(
+                        //                 builder: (context) => isNarrow
+                        //                     ? const AddWorkOrderMobileWizard()
+                        //                     : ResponsiveAddWorkOrder()));
+                        //         if (result == true) {
+                        //           _loadWorkOrders();
+                        //         }
+                        //       },
+                        //       child: Container(
+                        //         height:
+                        //             (MediaQuery.of(context).size.width < 768)
+                        //                 ? 50
+                        //                 : 60,
+                        //         decoration: BoxDecoration(
+                        //           color: blueColor,
+                        //           borderRadius: BorderRadius.circular(5),
+                        //         ),
+                        //         child: Center(
+                        //           child: Text(
+                        //             "+ Add",
+                        //             style: TextStyle(
+                        //               color: Colors.white,
+                        //               fontWeight: FontWeight.bold,
+                        //               fontSize: 16,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        
+                         Flexible(
                           flex: 1,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 8.0),

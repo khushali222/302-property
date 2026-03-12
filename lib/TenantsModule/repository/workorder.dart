@@ -172,33 +172,48 @@ class WorkOrderRepository {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body)["data"];
+      final dynamic dataRaw = jsonDecode(response.body)["data"];
+      Map<String, dynamic> data;
+      if (dataRaw is List) {
+        data = dataRaw.isNotEmpty ? dataRaw[0] as Map<String, dynamic> : {};
+      } else if (dataRaw is Map<String, dynamic>) {
+        // API may return data.result (e.g. from details) or flat object
+        final result = dataRaw["result"];
+        data = result is Map<String, dynamic> ? result : dataRaw;
+      } else {
+        data = {};
+      }
       return WorkOrderData_summery.fromJson(data);
     } else {
       throw Exception('Failed to fetch workorder summary: ${response.body}');
     }
   }
-  static Future<bool> updateworkorderSummary(Map<String,dynamic> workorder,String workorderId) async {
+  static Future<bool> updateworkorderSummary(
+    Map<String, dynamic> workorder,
+    String workorderId, {
+    String? notificationTime,
+    String? categoryId,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
-    String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
+    final body = <String, dynamic>{"workOrder": workorder};
+    if (notificationTime != null) body['notificationTime'] = notificationTime;
+    if (categoryId != null) body['category_id'] = categoryId;
     final response = await http.put(
-        url,
-        headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},
-        body: jsonEncode({
-          "workOrder": workorder
-        })
+      url,
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(body),
     );
-
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body)["data"];
       return true;
     } else {
-      throw Exception('Failed to fetch workorder summary: ${response.body}');
+      throw Exception('Failed to update work order: ${response.body}');
     }
   }
 }

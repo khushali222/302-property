@@ -906,10 +906,25 @@ class CustomTextField extends StatefulWidget {
   final bool? phone;
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController?
-      passwordController; // For confirm password field to compare with
+      passwordController; 
+      final bool? isInRow; // NEW PARAMETER FOR ROW LAYOUT
+      final Border? customBorder; // NEW PARAMETER FOR CUSTOM BORDER
+      final Color? borderColor; // NEW PARAMETER FOR BORDER COLOR
+      final double? borderWidth; // NEW PARAMETER FOR BORDER WIDTH
+      final bool showElevation; // NEW PARAMETER TO CONTROL ELEVATION AND SHADOW
+      final int? errorMaxLines; // NEW PARAMETER FOR ERROR MESSAGE MAX LINES
+      final TextInputAction? textInputAction; // NEW PARAMETER FOR TEXT INPUT ACTION
+      // For confirm password field to compare with
 
   CustomTextField({
     Key? key,
+    this.isInRow = false,
+    this.customBorder,
+    this.borderColor,
+    this.borderWidth,
+    this.showElevation = true,
+    this.errorMaxLines,
+    this.textInputAction,
     this.controller,
     required this.hintText,
     this.obscureText = false,
@@ -927,7 +942,9 @@ class CustomTextField extends StatefulWidget {
     this.email, // Initialize onTap
     this.phone,
     this.inputFormatters,
-    this.passwordController, // Used when this is a confirm password field
+
+    this.passwordController,
+     // Used when this is a confirm password field
   }) : super(key: key);
 
   @override
@@ -1084,16 +1101,34 @@ class CustomTextFieldState extends State<CustomTextField> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    //border: Border.all(color: blueColor),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(4, 4),
-                        blurRadius: 3,
-                      ),
-                    ],
+                    // color: Colors.white,
+                    // borderRadius: BorderRadius.circular(8.0),
+                    // //border: Border.all(color: blueColor),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.black.withOpacity(0.2),
+                    //     offset: const Offset(4, 4),
+                    //     blurRadius: 3,
+                    //   ),
+                    // ],
+                   borderRadius: BorderRadius.circular(8.0),
+                      // Custom border implementation
+                      color: Colors.white,
+                      border: widget.customBorder ??
+                          (widget.borderColor != null
+                              ? Border.all(
+                                  color: widget.borderColor!,
+                                  width: widget.borderWidth ?? 1.0)
+                              : null),
+                      boxShadow: widget.showElevation
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: const Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ]
+                          : null,
                   ),
                   child: TextFormField(
                     onTap: widget.onTap,

@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,12 +18,14 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/addAdminTenantInsurance.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/editAdminTenantInsurance.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import 'package:email_validator/email_validator.dart';
 import '../../../Model/tenants.dart';
 import '../../../model/rentalOwner.dart';
 
@@ -105,7 +108,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
           }
         }
       }
+      final data = tenantResponse.data;
+      final tenantDetails =
+          (data != null && data.isNotEmpty) ? data.first : null;
       setState(() {
+        _tenantDetails = tenantDetails;
         if (widget.tenants != null) {
           widget.tenants!.leaseData = allLeaseData;
         }
@@ -114,6 +121,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     } else {
       throw Exception('Failed to load lease data');
     }
+  }
+
+  Tenant? _tenantDetails;
+  int? expandedEmergencyIndex;
+  bool expandedTenantInfo = false;
+
+  Future<void> _refreshTenantDetails() async {
+    try {
+      final list = await _tenantService.fetchTenantsummery(widget.tenantId);
+      if (mounted && list != null && list.isNotEmpty) {
+        setState(() => _tenantDetails = list.first);
+      }
+    } catch (_) {}
   }
 
   final TenantsRepository _tenantService = TenantsRepository();
@@ -199,7 +219,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       padding: const EdgeInsets.only(left: 25.0),
                       child: Text("Company",
                           style: TextStyle(
-                              color: blueColor, fontWeight: FontWeight.bold)),
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
                     ),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
@@ -233,11 +255,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
+                      padding: const EdgeInsets.only(left: 4.0),
                       child: Text("Policy Id",
                           style: TextStyle(
                               color: blueColor,
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 5),
@@ -272,10 +294,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 child: Row(
                   children: [
                     Text(
-                      "Expiration\nDate",
+                      "Expiration \nDate",
                       style: TextStyle(
                           color: blueColor,
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
@@ -1177,8 +1199,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     child: Row(
                       children: [
                         _buildTabButton("Details", 0, 2),
-                        _buildTabButton("Communication", 1, 3),
-                        _buildTabButton("Payments", 2, 2),
+                        _buildTabButton("Leases", 1, 2),
+                        _buildTabButton("Communication", 2, 3),
+                        _buildTabButton("Payments", 3, 2),
                       ],
                     ),
                   ),
@@ -1201,332 +1224,336 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 left: 10, right: 10, top: 10, bottom: 30),
                             child: Column(
                               children: [
-                                //Contact Information
-                                Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Contact Information',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            // fontSize: 18
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .045),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Name',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.tenantFirstName ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantFirstName}',
-                                                  style: TextStyle(
-                                                      color:
-                                                          Colors.grey.shade700),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Phone Number',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xFF101828),
-                                                    )),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  formatPhoneNumber(
-                                                      '${widget.tenants?.tenantPhoneNumber ?? 'N/A'}'),
-                                                  style: TextStyle(
-                                                      color:
-                                                          Colors.grey.shade700),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text('E-Mail Address',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF101828))),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${(widget.tenants?.tenantEmail ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantEmail}',
-                                            style: TextStyle(
-                                                color: Colors.grey.shade700),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                //Personal Information
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Personal Information",
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            // fontSize: 18
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .045),
-                                      ),
-                                      const SizedBox(height: 20),
+                                //tenant info table
 
-                                      // Birth Date & TaxPayer ID side-by-side
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Birth Date',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.tenantBirthDate ?? '').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.tenants?.tenantBirthDate}')}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('TaxPayer Id',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.taxPayerId ?? '').isEmpty ? 'N/A' : widget.tenants?.taxPayerId}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                // //Contact Information
+                                // Container(
+                                //   padding: const EdgeInsets.all(16.0),
+                                //   decoration: BoxDecoration(
+                                //     border:
+                                //         Border.all(color: Colors.grey.shade300),
+                                //     borderRadius: BorderRadius.circular(12.0),
+                                //   ),
+                                //   child: Column(
+                                //     crossAxisAlignment:
+                                //         CrossAxisAlignment.start,
+                                //     children: [
+                                //       Text(
+                                //         'Contact Information',
+                                //         style: TextStyle(
+                                //             color: blueColor,
+                                //             fontWeight: FontWeight.bold,
+                                //             // fontSize: 18
+                                //             fontSize: MediaQuery.of(context)
+                                //                     .size
+                                //                     .width *
+                                //                 .045),
+                                //       ),
+                                //       const SizedBox(height: 16),
+                                //       Row(
+                                //         children: [
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Name',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.tenantFirstName ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantFirstName}',
+                                //                   style: TextStyle(
+                                //                       color:
+                                //                           Colors.grey.shade700),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //           const Spacer(),
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Phone Number',
+                                //                     style: TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Color(0xFF101828),
+                                //                     )),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   formatPhoneNumber(
+                                //                       '${widget.tenants?.tenantPhoneNumber ?? 'N/A'}'),
+                                //                   style: TextStyle(
+                                //                       color:
+                                //                           Colors.grey.shade700),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       const SizedBox(height: 16),
+                                //       Column(
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.start,
+                                //         children: [
+                                //           const Text('E-Mail Address',
+                                //               style: TextStyle(
+                                //                   fontWeight: FontWeight.bold,
+                                //                   color: Color(0xFF101828))),
+                                //           const SizedBox(height: 4),
+                                //           Text(
+                                //             '${(widget.tenants?.tenantEmail ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantEmail}',
+                                //             style: TextStyle(
+                                //                 color: Colors.grey.shade700),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 10,
+                                // ),
+                                // //Personal Information
+                                // Container(
+                                //   padding: const EdgeInsets.all(16),
+                                //   decoration: BoxDecoration(
+                                //     border:
+                                //         Border.all(color: Colors.grey.shade300),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: Column(
+                                //     crossAxisAlignment:
+                                //         CrossAxisAlignment.start,
+                                //     children: [
+                                //       Text(
+                                //         "Personal Information",
+                                //         style: TextStyle(
+                                //             color: blueColor,
+                                //             fontWeight: FontWeight.bold,
+                                //             // fontSize: 18
+                                //             fontSize: MediaQuery.of(context)
+                                //                     .size
+                                //                     .width *
+                                //                 .045),
+                                //       ),
+                                //       const SizedBox(height: 20),
 
-                                      const SizedBox(height: 20),
+                                //       // Birth Date & TaxPayer ID side-by-side
+                                //       Row(
+                                //         children: [
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Birth Date',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.tenantBirthDate ?? '').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.tenants?.tenantBirthDate}')}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //           const Spacer(),
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('TaxPayer Id',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.taxPayerId ?? '').isEmpty ? 'N/A' : widget.tenants?.taxPayerId}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
 
-                                      // Comments field full width
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text('Comments',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF101828))),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${(widget.tenants?.comments ?? '').isEmpty ? 'N/A' : widget.tenants?.comments}',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                //Emergency Contact
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Emergency Contact',
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            // fontSize: 18
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .045),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      // Contact Name & Relation side-by-side
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Contact Name',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.emergencyContact?.name ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.name}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                    'Relation With Tenant',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.emergencyContact?.relation ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.relation}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      // Email & Phone side-by-side
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Emergency Email',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.emergencyContact?.email ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.email}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text('Emergency Phone',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF101828))),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(widget.tenants?.emergencyContact!.phoneNumber ?? "")}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                //       const SizedBox(height: 20),
+
+                                //       // Comments field full width
+                                //       Column(
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.start,
+                                //         children: [
+                                //           const Text('Comments',
+                                //               style: TextStyle(
+                                //                   fontWeight: FontWeight.bold,
+                                //                   color: Color(0xFF101828))),
+                                //           const SizedBox(height: 4),
+                                //           Text(
+                                //             '${(widget.tenants?.comments ?? '').isEmpty ? 'N/A' : widget.tenants?.comments}',
+                                //             style: const TextStyle(
+                                //                 fontWeight: FontWeight.bold,
+                                //                 color: Colors.grey),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 10,
+                                // ),
+                                // //Emergency Contact
+                                // Container(
+                                //   padding: const EdgeInsets.all(16),
+                                //   decoration: BoxDecoration(
+                                //     border:
+                                //         Border.all(color: Colors.grey.shade300),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: Column(
+                                //     crossAxisAlignment:
+                                //         CrossAxisAlignment.start,
+                                //     children: [
+                                //       Text(
+                                //         'Emergency Contact',
+                                //         style: TextStyle(
+                                //             color: blueColor,
+                                //             fontWeight: FontWeight.bold,
+                                //             // fontSize: 18
+                                //             fontSize: MediaQuery.of(context)
+                                //                     .size
+                                //                     .width *
+                                //                 .045),
+                                //       ),
+                                //       const SizedBox(height: 20),
+                                //       // Contact Name & Relation side-by-side
+                                //       Row(
+                                //         children: [
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Contact Name',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.emergencyContact?.name ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.name}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //           const Spacer(),
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text(
+                                //                     'Relation With Tenant',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.emergencyContact?.relation ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.relation}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       const SizedBox(height: 20),
+                                //       // Email & Phone side-by-side
+                                //       Row(
+                                //         children: [
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Emergency Email',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.emergencyContact?.email ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.email}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //           const Spacer(),
+                                //           Expanded(
+                                //             child: Column(
+                                //               crossAxisAlignment:
+                                //                   CrossAxisAlignment.start,
+                                //               children: [
+                                //                 const Text('Emergency Phone',
+                                //                     style: TextStyle(
+                                //                         fontWeight:
+                                //                             FontWeight.bold,
+                                //                         color:
+                                //                             Color(0xFF101828))),
+                                //                 const SizedBox(height: 4),
+                                //                 Text(
+                                //                   '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(widget.tenants?.emergencyContact!.phoneNumber ?? "")}',
+                                //                   style: const TextStyle(
+                                //                       fontWeight:
+                                //                           FontWeight.bold,
+                                //                       color: Colors.grey),
+                                //                 ),
+                                //               ],
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                                
+                                _buildTenantInfoSection(),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -1555,55 +1582,23 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           const Spacer(),
                                           GestureDetector(
                                             onTap: () async {
-                                              final tenantInsuranceData =
-                                                  await futurePropertyTypes
-                                                      .catchError((_) => []);
-                                              if (tenantInsuranceData.length >=
-                                                  1) {
-                                                _showAddInsuranceAlert(context,
-                                                    () async {
-                                                  final result =
-                                                      await Navigator.of(
-                                                              context)
-                                                          .push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AdminAddTenantInsurance(
-                                                        tenantid:
-                                                            widget.tenantId,
-                                                      ),
-                                                    ),
-                                                  );
-                                                  if (result == true) {
-                                                    setState(() {
-                                                      futurePropertyTypes =
-                                                          AdminTenantInsuranceRepository()
-                                                              .fetchTenantInsurance(
-                                                                  widget
-                                                                      .tenantId);
-                                                    });
-                                                  }
-                                                });
-                                              } else {
-                                                final result =
-                                                    await Navigator.of(context)
-                                                        .push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AdminAddTenantInsurance(
-                                                      tenantid: widget.tenantId,
-                                                    ),
+                                              final result =
+                                                  await Navigator.of(context)
+                                                      .push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AdminAddTenantInsurance(
+                                                    tenantid: widget.tenantId,
                                                   ),
-                                                );
-                                                if (result == true) {
-                                                  setState(() {
-                                                    futurePropertyTypes =
-                                                        AdminTenantInsuranceRepository()
-                                                            .fetchTenantInsurance(
-                                                                widget
-                                                                    .tenantId);
-                                                  });
-                                                }
+                                                ),
+                                              );
+                                              if (result == true) {
+                                                setState(() {
+                                                  futurePropertyTypes =
+                                                      AdminTenantInsuranceRepository()
+                                                          .fetchTenantInsurance(
+                                                              widget.tenantId);
+                                                });
                                               }
                                             },
                                             child: Container(
@@ -1674,11 +1669,33 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
-                                                return const Center(
-                                                    child: SpinKitFadingCircle(
-                                                  color: Colors.black,
-                                                  size: 40.0,
-                                                ));
+                                                return Container(
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          minHeight: 140),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 24),
+                                                  child: Center(
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SpinKitFadingCircle(
+                                                            color: blueColor,
+                                                            size: 36.0),
+                                                        const SizedBox(
+                                                            height: 12),
+                                                        Text(
+                                                            'Loading Renter\'s Insurance...',
+                                                            style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade600)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
                                               } else if (snapshot.hasError) {
                                                 return Center(
                                                     child: Text(
@@ -2217,10 +2234,31 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return const Center(
-                                                child: SpinKitFadingCircle(
-                                                  color: Colors.black,
-                                                  size: 55.0,
+                                              return Container(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minHeight: 160),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 32),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      SpinKitFadingCircle(
+                                                          color: blueColor,
+                                                          size: 40.0),
+                                                      const SizedBox(
+                                                          height: 14),
+                                                      Text(
+                                                          'Loading Renter\'s Insurance...',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.grey
+                                                                  .shade600)),
+                                                    ],
+                                                  ),
                                                 ),
                                               );
                                             } else if (snapshot.hasError) {
@@ -2378,6 +2416,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 10),
+                                _buildEmergencyContactSection(),
                                 const SizedBox(height: 10),
                                 Container(
                                   padding: const EdgeInsets.all(16),
@@ -2413,11 +2453,33 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return const Center(
-                                                  child: SpinKitFadingCircle(
-                                                color: Colors.black,
-                                                size: 40.0,
-                                              ));
+                                              return Container(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minHeight: 140),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 24),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      SpinKitFadingCircle(
+                                                          color: blueColor,
+                                                          size: 36.0),
+                                                      const SizedBox(
+                                                          height: 12),
+                                                      Text(
+                                                          'Loading Renter\'s Insurance...',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.grey
+                                                                  .shade600)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
                                             } else if (snapshot.hasError) {
                                               return Center(
                                                   child: Text(
@@ -2776,17 +2838,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     itemsPerPage: 10,
                                   ),
                                 ),
+                             
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  if (_selectedIndex == 1)
+                  if (_selectedIndex == 1) _buildLeaseTabContent(),
+                  if (_selectedIndex == 2)
                     Tenant_communication(
                       lease_id: widget.tenantId,
                     ),
-                  if (_selectedIndex == 2)
+                  if (_selectedIndex == 3)
                     FinancialTable(
                       leaseId: widget.tenantId,
                     ),
@@ -2820,6 +2884,830 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   }
 
   int _selectedIndex = 0;
+
+  /// Lease ID for API calls: use first lease's ID when available, else tenant ID as fallback.
+  String get _effectiveLeaseId {
+    final leaseId = widget.tenants?.leaseData?.isNotEmpty == true
+        ? widget.tenants!.leaseData!.first.leaseId
+        : null;
+    return leaseId ?? widget.tenantId;
+  }
+
+  /// True if lease is active (today between start and end). Used for lease tab.
+  bool _isLeaseActive(String? startDate, String? endDate) {
+    if (startDate == null ||
+        endDate == null ||
+        startDate.isEmpty ||
+        endDate.isEmpty) return false;
+    try {
+      final start = _parseLeaseDate(startDate);
+      final end = _parseLeaseDate(endDate);
+      final now = DateTime.now();
+      return !now.isBefore(start) && !now.isAfter(end);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  DateTime _parseLeaseDate(String dateStr) {
+    final formats = ['yyyy-MM-dd', 'dd-MM-yyyy', 'MM/dd/yyyy', 'M/d/yyyy'];
+    for (final f in formats) {
+      try {
+        return DateFormat(f).parse(dateStr);
+      } catch (_) {}
+    }
+    return DateTime.tryParse(dateStr) ?? DateTime.now();
+  }
+
+  /// First *active* lease's ID for lease summary. Null if no lease data or no active lease.
+  String? get _firstActiveLeaseId {
+    final list = widget.tenants?.leaseData;
+    if (list == null || list.isEmpty) return null;
+    for (final lease in list) {
+      if (_isLeaseActive(lease.startDate, lease.endDate) &&
+          (lease.leaseId ?? '').isNotEmpty) {
+        return lease.leaseId;
+      }
+    }
+    return null;
+  }
+
+  List<MergedEmergencyContact> get _combinedEmergencyContacts =>
+      getCombinedEmergencyContacts(_tenantDetails ?? widget.tenants);
+
+  Widget _buildEmergencyContactSection() {
+    final list = _combinedEmergencyContacts;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const SizedBox(width: 2),
+              Expanded(
+                child: Text(
+                  "Emergency Contact (${list.length})",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+              Material(
+                color: blueColor,
+                borderRadius: BorderRadius.circular(8),
+                child: InkWell(
+                  onTap: () => _showEmergencyContactDialog(context, null),
+                  borderRadius: BorderRadius.circular(8),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Icon(Icons.add, color: Colors.white, size: 22),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F8FF),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFDBE0E5)),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(width: MediaQuery.of(context).size.width * .02),
+                  Expanded(
+                    flex: 2,
+                    child: Text("     Contact Name",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.width * .04),
+                  Expanded(
+                    flex: 2,
+                    child: Text("Emergency Email",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  // Expanded(
+                  //   child: Text("Email",
+                  //       style: TextStyle(
+                  //           color: blueColor,
+                  //           fontSize: 13,
+                  //           fontWeight: FontWeight.bold)),
+                  // ),
+                  // Expanded(
+                  //   child: Text("Phone",
+                  //       style: TextStyle(
+                  //           color: blueColor,
+                  //           fontSize: 13,
+                  //           fontWeight: FontWeight.bold)),
+                  // ),
+
+                  const SizedBox(width: 25),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          if (list.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                  child: Text("No emergency contacts",
+                      style: TextStyle(color: Colors.grey.shade600))),
+            )
+          else
+            ...list.asMap().entries.map(
+                (entry) => _buildEmergencyContactRow(entry.key, entry.value)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmergencyContactRow(int index, MergedEmergencyContact c) {
+    final isExpanded = expandedEmergencyIndex == index;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (expandedEmergencyIndex == index) {
+                        expandedEmergencyIndex = null;
+                      } else {
+                        expandedEmergencyIndex = index;
+                      }
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 5),
+                    padding: !isExpanded
+                        ? const EdgeInsets.only(bottom: 10)
+                        : const EdgeInsets.only(top: 10),
+                    child: FaIcon(
+                      isExpanded
+                          ? FontAwesomeIcons.sortUp
+                          : FontAwesomeIcons.sortDown,
+                      size: 20,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        if (expandedEmergencyIndex == index) {
+                          expandedEmergencyIndex = null;
+                        } else {
+                          expandedEmergencyIndex = index;
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        c.name.isEmpty ? '—' : c.name,
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: MediaQuery.of(context).size.width * .01),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    c.email.isEmpty ? '—' : c.email,
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
+                  ),
+                ),
+                const SizedBox(width: 25),
+              ],
+            ),
+          ),
+          if (isExpanded)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width * .02),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Relation : ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 13), // Bold and black
+                            ),
+                            TextSpan(
+                              text: '${c.relation.isEmpty ? '—' : c.relation}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey,
+                                  fontSize: 13), // Light and grey
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width * .02),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Phone : ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 13), // Bold and black
+                            ),
+                            TextSpan(
+                              text:
+                                  '${c.phoneNumber.isEmpty ? '—' : formatPhoneNumber(c.phoneNumber)}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey,
+                                  fontSize: 13), // Light and grey
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _showEmergencyContactDialog(context, c),
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors
+                                  .green.shade50), // color:Colors.grey[100],
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.edit,
+                                size: 15,
+                                color: Colors.green,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () => _confirmDeleteEmergencyContact(c),
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.red.shade50),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.trashCan,
+                                size: 15,
+                                color: Colors.red,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTenantInfoSection() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final phone = formatPhoneNumber(widget.tenants?.tenantPhoneNumber ?? '');
+    final email = (widget.tenants?.tenantEmail ?? '').isEmpty
+        ? '—'
+        : (widget.tenants?.tenantEmail ?? '');
+    final birthDate = (widget.tenants?.tenantBirthDate ?? '').isEmpty
+        ? 'N/A'
+        : dateProvider.formatCurrentDate(widget.tenants?.tenantBirthDate ?? '');
+    final notes = (widget.tenants?.comments ?? '').isEmpty
+        ? 'N/A'
+        : (widget.tenants?.comments ?? '');
+    final isExpanded = expandedTenantInfo;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            const SizedBox(width: 2),
+            Expanded(
+                child: Text("Tenant Information",
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17)))
+          ]),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+                color: const Color(0xFFF4F8FF),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFDBE0E5))),
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  SizedBox(width: MediaQuery.of(context).size.width * .02),
+                  Expanded(
+                      flex: 2,
+                      child: Text("      Phone",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold))),
+                  SizedBox(width: MediaQuery.of(context).size.width * .07),
+                  Expanded(
+                      flex: 2,
+                      child: Text("Email",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold))),
+                  const SizedBox(width: 20),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+                color: const Color(0xFFF4F8FF),
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Row(
+                    children: [
+                      InkWell(
+                        onTap: () => setState(
+                            () => expandedTenantInfo = !expandedTenantInfo),
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 5),
+                          padding: !isExpanded
+                              ? const EdgeInsets.only(bottom: 10)
+                              : const EdgeInsets.only(top: 10),
+                          child: FaIcon(
+                              isExpanded
+                                  ? FontAwesomeIcons.sortUp
+                                  : FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: InkWell(
+                            onTap: () => setState(
+                                () => expandedTenantInfo = !expandedTenantInfo),
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Text(phone.isEmpty ? '—' : phone,
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13)))),
+                      ),
+                      SizedBox(width: MediaQuery.of(context).size.width * .02),
+                      Expanded(
+                          flex: 2,
+                          child: Text(email,
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12))),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                ),
+                if (isExpanded)
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * .02),
+                          Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: 'Birth Date : ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 13)),
+                            TextSpan(
+                                text: birthDate,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey,
+                                    fontSize: 13))
+                          ]))
+                        ]),
+                        const SizedBox(height: 10),
+                        Row(children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * .02),
+                          Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: 'Notes : ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 13)),
+                            TextSpan(
+                                text: notes,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey,
+                                    fontSize: 13))
+                          ]))
+                        ]),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteEmergencyContact(MergedEmergencyContact c) {
+    if (c.contactId == 'primary') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text("Primary emergency contact cannot be deleted from here.")));
+      return;
+    }
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Delete emergency contact?",
+      desc: "This contact will be removed from the list.",
+      style: const AlertStyle(backgroundColor: Colors.white),
+      buttons: [
+        DialogButton(
+          child: Text("Cancel",
+              style: TextStyle(
+                  color: blueColor, fontSize: 18, fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+        DialogButton(
+          child: const Text("Delete",
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () async {
+            Navigator.pop(context);
+            try {
+              await _tenantService.deleteEmergencyContact(
+                  widget.tenantId, c.contactId);
+              await _refreshTenantDetails();
+              if (mounted) setState(() {});
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Error: $e')));
+              }
+            }
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showEmergencyContactDialog(
+      BuildContext context, MergedEmergencyContact? editContact) {
+    final isEdit = editContact != null;
+    final initialName = editContact?.name.trim() ?? '';
+    final initialRelation = editContact?.relation.trim() ?? '';
+    final initialEmail = editContact?.email.trim() ?? '';
+    final initialPhoneDigits =
+        editContact?.phoneNumber.replaceAll(RegExp(r'\D'), '') ?? '';
+    final nameController = TextEditingController(text: editContact?.name ?? '');
+    final relationController =
+        TextEditingController(text: editContact?.relation ?? '');
+    final emailController =
+        TextEditingController(text: editContact?.email ?? '');
+    final phoneController = TextEditingController(
+        text: isEdit ? formatPhoneNumberedit(editContact.phoneNumber) : '');
+    final formKey = GlobalKey<FormState>();
+
+    String? validateName(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      return null;
+    }
+
+    String? validateRelation(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      return null;
+    }
+
+    String? validateEmail(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      if (!EmailValidator.validate(value.trim())) {
+        return "Enter a valid email";
+      }
+      return null;
+    }
+
+    String? validatePhone(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      final digits = value.replaceAll(RegExp(r'\D'), '');
+      if (digits.length != 10) return "Enter a valid 10-digit phone number";
+      return null;
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title:
+            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",style: TextStyle(color: blueColor, fontWeight: FontWeight.bold,fontSize: 18),),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Contact Name",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    hintText: "Enter contact name",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  validator: validateName,
+                ),
+                const SizedBox(height: 16),
+                const Text("Relationship to Tenant",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: relationController,
+                  decoration: const InputDecoration(
+                    hintText: "Enter relationship to tenant",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  validator: validateRelation,
+                ),
+                const SizedBox(height: 16),
+                const Text("Email",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: "Enter email",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  validator: validateEmail,
+                ),
+                const SizedBox(height: 16),
+                const Text("Phone Number",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [PhoneNumberFormatter()],
+                  decoration: const InputDecoration(
+                    hintText: "(xxx) xxx-xxxx",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  validator: validatePhone,
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("CANCEL",
+                style:
+                    TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+            onPressed: () async {
+              if (!(formKey.currentState?.validate() ?? false)) {
+                if (!isEdit && mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("All fields are required")),
+                  );
+                }
+                return;
+              }
+              final name = nameController.text.trim();
+              final relation = relationController.text.trim();
+              final email = emailController.text.trim();
+              final phoneDigits =
+                  phoneController.text.replaceAll(RegExp(r'\D'), '');
+              final phone = formatPhoneNumberedit(phoneDigits);
+              if (isEdit) {
+                if (name == initialName &&
+                    relation == initialRelation &&
+                    email == initialEmail &&
+                    phoneDigits == initialPhoneDigits) {
+                  Navigator.pop(ctx);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("No changes made")),
+                    );
+                  }
+                  return;
+                }
+              }
+              Navigator.pop(ctx);
+              try {
+                if (!isEdit) {
+                  await _tenantService.addEmergencyContact(widget.tenantId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                } else if (editContact.contactId == 'primary') {
+                  await _tenantService.updateEmergencyContactPrimary(
+                      widget.tenantId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                } else {
+                  await _tenantService.updateEmergencyContact(
+                      widget.tenantId, editContact.contactId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                }
+                await _refreshTenantDetails();
+                if (mounted) setState(() {});
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+              }
+            },
+            child: const Text("SAVE"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLeaseTabContent() {
+    final list = widget.tenants?.leaseData;
+    if (list == null || list.isEmpty) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height - 300,
+        child: const Center(
+          child: Text(
+            'No lease data available for this tenant.',
+            style: TextStyle(fontSize: 13),
+          ),
+        ),
+      );
+    }
+    final activeLeaseId = _firstActiveLeaseId;
+    if (activeLeaseId == null || activeLeaseId.isEmpty) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height - 300,
+        child: const Center(
+          child: Text(
+            'No active lease. All leases are expired or not yet started.',
+            style: TextStyle(fontSize: 13),
+          ),
+        ),
+      );
+    }
+    final activeLease = list.firstWhere((l) => l.leaseId == activeLeaseId);
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height - 300,
+      child: SummeryPageLease(
+        leaseId: activeLeaseId,
+        enddate: activeLease.endDate,
+        isredirectpayment: false,
+        embeddedInTenantSummary: true,
+      ),
+    );
+  }
+
   Widget _buildTabButton(String title, int index, int flex) {
     final isSelected = _selectedIndex == index;
     return Expanded(
@@ -3083,11 +3971,301 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  late Future<List<Tenant>> _futureTenantSummary;
+
   @override
   void initState() {
     super.initState();
+    _futureTenantSummary =
+        repo.fetchTenantsummery(widget.tenantId) ?? Future.value([]);
     futurePropertyTypes =
         AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
+  }
+
+  void _refreshTabletTenantSummary() {
+    setState(() {
+      _futureTenantSummary =
+          repo.fetchTenantsummery(widget.tenantId) ?? Future.value([]);
+    });
+  }
+
+  TableCell _tableCellLabel(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Text(text,
+            style: const TextStyle(
+                color: Color(0xFF8A95A8),
+                fontWeight: FontWeight.bold,
+                fontSize: 16)),
+      ),
+    );
+  }
+
+  TableCell _tableCellValue(String text) {
+    return TableCell(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Text(text,
+            style: TextStyle(
+                fontSize: 14, fontWeight: FontWeight.bold, color: blueColor)),
+      ),
+    );
+  }
+
+  void _confirmTabletDeleteEmergency(MergedEmergencyContact c) {
+    if (c.contactId == 'primary') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text("Primary emergency contact cannot be deleted from here.")));
+      return;
+    }
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Delete emergency contact?",
+      desc: "This contact will be removed from the list.",
+      style: const AlertStyle(backgroundColor: Colors.white),
+      buttons: [
+        DialogButton(
+          child: Text("Cancel",
+              style: TextStyle(
+                  color: blueColor, fontSize: 18, fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+        DialogButton(
+          child: const Text("Delete",
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () async {
+            Navigator.pop(context);
+            try {
+              await repo.deleteEmergencyContact(widget.tenantId, c.contactId);
+              _refreshTabletTenantSummary();
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Error: $e')));
+              }
+            }
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
+
+  void _showTabletEmergencyDialog(
+      BuildContext context, MergedEmergencyContact? editContact) {
+    final isEdit = editContact != null;
+    final initialName = editContact?.name.trim() ?? '';
+    final initialRelation = editContact?.relation.trim() ?? '';
+    final initialEmail = editContact?.email.trim() ?? '';
+    final initialPhoneDigits =
+        editContact?.phoneNumber.replaceAll(RegExp(r'\D'), '') ?? '';
+    final nameController = TextEditingController(text: editContact?.name ?? '');
+    final relationController =
+        TextEditingController(text: editContact?.relation ?? '');
+    final emailController =
+        TextEditingController(text: editContact?.email ?? '');
+    final phoneController = TextEditingController(
+        text: isEdit ? formatPhoneNumberedit(editContact.phoneNumber) : '');
+    final formKey = GlobalKey<FormState>();
+
+    String? validateName(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      return null;
+    }
+
+    String? validateRelation(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      return null;
+    }
+
+    String? validateEmail(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      if (!EmailValidator.validate(value.trim())) return "Enter a valid email";
+      return null;
+    }
+
+    String? validatePhone(String? value) {
+      if (value == null || value.toString().trim().isEmpty) {
+        return "This field is required";
+      }
+      if (value.replaceAll(RegExp(r'\D'), '').length != 10) {
+        return "Enter a valid 10-digit phone number";
+      }
+      return null;
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title:
+            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact"),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Contact Name",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    hintText: "Enter contact name",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  validator: validateName,
+                ),
+                const SizedBox(height: 16),
+                const Text("Relationship to Tenant",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: relationController,
+                  decoration: const InputDecoration(
+                    hintText: "Enter relationship to tenant",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  validator: validateRelation,
+                ),
+                const SizedBox(height: 16),
+                const Text("Email",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validateEmail,
+                  decoration: const InputDecoration(
+                    hintText: "Enter email",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text("Phone Number",
+                    style: TextStyle(
+                        color: Color(0xFF8A95A8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const SizedBox(height: 4),
+                TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [PhoneNumberFormatter()],
+                  validator: validatePhone,
+                  decoration: const InputDecoration(
+                    hintText: "(xxx) xxx-xxxx",
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("CANCEL",
+                style:
+                    TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+            onPressed: () async {
+              if (!(formKey.currentState?.validate() ?? false)) {
+                if (!isEdit && mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("All fields are required")),
+                  );
+                }
+                return;
+              }
+              final name = nameController.text.trim();
+              final relation = relationController.text.trim();
+              final email = emailController.text.trim();
+              final phoneDigits =
+                  phoneController.text.replaceAll(RegExp(r'\D'), '');
+              final phone = formatPhoneNumberedit(phoneDigits);
+              if (isEdit) {
+                if (name == initialName &&
+                    relation == initialRelation &&
+                    email == initialEmail &&
+                    phoneDigits == initialPhoneDigits) {
+                  Navigator.pop(ctx);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("No changes made")),
+                    );
+                  }
+                  return;
+                }
+              }
+              Navigator.pop(ctx);
+              try {
+                if (!isEdit) {
+                  await repo.addEmergencyContact(widget.tenantId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                } else if (editContact.contactId == 'primary') {
+                  await repo.updateEmergencyContactPrimary(widget.tenantId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                } else {
+                  await repo.updateEmergencyContact(
+                      widget.tenantId, editContact.contactId,
+                      name: name,
+                      relation: relation,
+                      email: email,
+                      phoneNumber: phone);
+                }
+                _refreshTabletTenantSummary();
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+              }
+            },
+            child: const Text("SAVE"),
+          ),
+        ],
+      ),
+    );
   }
 
   void handleEdit(AdminTenantInsuranceModel property) async {}
@@ -3356,15 +4534,14 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
       ),
       body: Center(
         child: FutureBuilder<List<Tenant>>(
-          future: TenantsRepository().fetchTenantsummery(widget.tenantId),
+          future: _futureTenantSummary,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: Center(
-                    child: SpinKitFadingCircle(
+                child: SpinKitFadingCircle(
                   color: Colors.black,
                   size: 40.0,
-                )),
+                ),
               );
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
@@ -3810,136 +4987,110 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           child: Column(
                             children: [
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
                                   Text(
-                                    "Emergency Contact",
+                                    "Emergency Contact (${getCombinedEmergencyContacts(tenantsummery.first).length})",
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
-                                        // fontSize: 18
                                         fontSize: 21),
+                                  ),
+                                  Material(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: InkWell(
+                                      onTap: () => _showTabletEmergencyDialog(
+                                          context, null),
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 8),
+                                        child: Icon(Icons.add,
+                                            color: Colors.white, size: 22),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Divider(
-                                color: blueColor,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              //first name
-                              Row(
+                              const SizedBox(height: 10),
+                              Divider(color: blueColor),
+                              const SizedBox(height: 10),
+                              Table(
+                                columnWidths: const {
+                                  0: FlexColumnWidth(2),
+                                  1: FlexColumnWidth(1),
+                                  2: FlexColumnWidth(2),
+                                  3: FlexColumnWidth(1),
+                                  4: FlexColumnWidth(0.5),
+                                },
                                 children: [
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Contact Name",
-                                        style: TextStyle(
-                                            color: Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        '${(tenantsummery.first.emergencyContact!.name ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.name}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 36,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Relation With Tenants",
-                                        style: TextStyle(
-                                            color: Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        '${(tenantsummery.first.emergencyContact!.relation ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.relation}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 36,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Emergency Email",
-                                        style: TextStyle(
-                                            color: Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        '${(tenantsummery.first.emergencyContact!.email ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.email}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 36,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Emergency Phone",
-                                        style: TextStyle(
-                                            color: Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        '${(tenantsummery.first.emergencyContact!.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(tenantsummery.first.emergencyContact!.phoneNumber!)}',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor),
-                                      ),
-                                    ],
-                                  ),
+                                  TableRow(
+                                      decoration: BoxDecoration(
+                                          color: blueColor.withOpacity(0.1)),
+                                      children: [
+                                        _tableCellLabel("Contact Name"),
+                                        _tableCellLabel(
+                                            "Relation With Tenants"),
+                                        _tableCellLabel("Emergency Email"),
+                                        _tableCellLabel("Emergency Phone"),
+                                        _tableCellLabel("Action"),
+                                      ]),
+                                  ...getCombinedEmergencyContacts(
+                                          tenantsummery.first)
+                                      .map((c) => TableRow(
+                                            children: [
+                                              _tableCellValue(c.name.isEmpty
+                                                  ? '—'
+                                                  : c.name),
+                                              _tableCellValue(c.relation.isEmpty
+                                                  ? '—'
+                                                  : c.relation),
+                                              _tableCellValue(c.email.isEmpty
+                                                  ? '—'
+                                                  : c.email),
+                                              _tableCellValue(
+                                                  c.phoneNumber.isEmpty
+                                                      ? '—'
+                                                      : formatPhoneNumber(
+                                                          c.phoneNumber)),
+                                              TableCell(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () =>
+                                                            _showTabletEmergencyDialog(
+                                                                context, c),
+                                                        child: const FaIcon(
+                                                            FontAwesomeIcons
+                                                                .pen,
+                                                            size: 18,
+                                                            color:
+                                                                Colors.green),
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      InkWell(
+                                                        onTap: () =>
+                                                            _confirmTabletDeleteEmergency(
+                                                                c),
+                                                        child: const FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
+                                                            size: 18,
+                                                            color: Colors.red),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )),
                                 ],
                               ),
                             ],
@@ -4048,10 +5199,26 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const Center(
-                                        child: SpinKitFadingCircle(
-                                          color: Colors.black,
-                                          size: 55.0,
+                                      return Container(
+                                        constraints: const BoxConstraints(
+                                            minHeight: 160),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 32),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SpinKitFadingCircle(
+                                                  color: blueColor, size: 40.0),
+                                              const SizedBox(height: 14),
+                                              Text(
+                                                  'Loading Renter\'s Insurance...',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors
+                                                          .grey.shade600)),
+                                            ],
+                                          ),
                                         ),
                                       );
                                     } else if (snapshot.hasError) {

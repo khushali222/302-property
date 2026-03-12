@@ -1,12 +1,18 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/bid_request.dart';
+import 'package:three_zero_two_property/StaffModule/repository/bid_room_repository.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
+    as staff_drawer;
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as widget_302_staff;
 import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
@@ -14,14 +20,17 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/screens/BidRoom/create_bid_room.dart';
 
 class BidRoomTable extends StatefulWidget {
-  const BidRoomTable({super.key});
+  /// When true, uses staff drawer, staff app bar, and staff repository.
+  final bool useStaffLayout;
+
+  const BidRoomTable({super.key, this.useStaffLayout = false});
 
   @override
   State<BidRoomTable> createState() => _BidRoomTableState();
 }
 
 class _BidRoomTableState extends State<BidRoomTable> {
-  final BidRequestRepository _repository = BidRequestRepository();
+  late final dynamic _repository;
   List<BidRequest> _bidRequests = [];
   List<BidRequest> _filteredBidRequests = [];
   bool _isLoading = false;
@@ -42,6 +51,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
   @override
   void initState() {
     super.initState();
+    _repository = widget.useStaffLayout
+        ? StaffBidRoomRepository()
+        : BidRequestRepository();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         _connectivityResult = result;
@@ -237,7 +249,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
     });
   }
 
-  Widget _buildHeaders() {
+   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
@@ -245,19 +257,34 @@ class _BidRoomTableState extends State<BidRoomTable> {
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+        contentPadding: EdgeInsets.zero,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text(
-              "#",
-              style: TextStyle(
-                color: blueColor,
-                fontWeight: FontWeight.bold,
-                fontSize: width < 400 ? 14 : 16,
+            Container(
+              child: const Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
               ),
             ),
             Expanded(
+              flex: 3,
+              child: InkWell(
+                 child: Row(
+                  children: [
+                    width < 400
+                        ? Text("  #",
+                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
+                        : Text("  #",
+                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                    
+                   
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -271,21 +298,14 @@ class _BidRoomTableState extends State<BidRoomTable> {
                   });
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    width < 400
-                        ? Text("Bid Room",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14))
-                        : Text("Bid Room",
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 3),
+                  
+                    Text("Bid Room",
+                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold )),
+                    const SizedBox(width: 5),
                     ascending1
                         ? Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -293,32 +313,41 @@ class _BidRoomTableState extends State<BidRoomTable> {
                             ),
                           )
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
                               color: blueColor,
                             ),
-                          )
+                          ),
                   ],
                 ),
               ),
             ),
+          
           ],
         ),
       ),
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.widget_302.App_Bar(context: context),
+      appBar: widget.useStaffLayout
+          ? widget_302_staff.widget_302_Staff.App_Bar(context: context)
+          : widget_302.widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Bid Room",
-        dropdown: false,
-      ),
+      drawer: widget.useStaffLayout
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Bid Room",
+              dropdown: false,
+            )
+          : CustomDrawer(
+              currentpage: "Bid Room",
+              dropdown: false,
+            ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
               child: Column(
@@ -350,7 +379,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                               onTap: () async {
                                 final result = await Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => const CreateBidRoom(),
+                                    builder: (context) => CreateBidRoom(
+                                        useStaffLayout: widget.useStaffLayout),
                                   ),
                                 );
                                 if (result == true) {
@@ -470,7 +500,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                     SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
-                                        'Select Trade Type',
+                                        'Trade Type',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
@@ -731,6 +761,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                             ),
                                                           ),
                                                           Expanded(
+                                                            flex: 3,
                                                             child: Text(
                                                               "BR",
                                                               style: TextStyle(
@@ -742,7 +773,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                       blueColor),
                                                             ),
                                                           ),
+
                                                           Expanded(
+                                                            flex: 3,
                                                             child: InkWell(
                                                               onTap: () {
                                                                 setState(() {
@@ -772,9 +805,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                               child: Text(
                                                                 _getBidRoomTitle(
                                                                     request),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                              
                                                                 style:
                                                                     TextStyle(
                                                                   color:
@@ -787,6 +818,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                               ),
                                                             ),
                                                           ),
+                                                         SizedBox(width: 5),
+                                                         
                                                           // Container(
                                                           //   height: 35,
                                                           //   width: 35,
@@ -946,11 +979,18 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             5),
                                                                     GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        // TODO: Navigate to edit bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Edit Bid Room feature coming soon');
+                                                                          () async {
+                                                                        final result = await Navigator.of(context).push(
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) => CreateBidRoom(
+                                                                              useStaffLayout: widget.useStaffLayout,
+                                                                              existingBidRequest: request,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                        if (result == true) {
+                                                                          setState(() => _fetchBidRequests());
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1430,11 +1470,18 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             5),
                                                                     GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        // TODO: Navigate to edit bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Edit Bid Room feature coming soon');
+                                                                          () async {
+                                                                        final result = await Navigator.of(context).push(
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) => CreateBidRoom(
+                                                                              useStaffLayout: widget.useStaffLayout,
+                                                                              existingBidRequest: request,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                        if (result == true) {
+                                                                          setState(() => _fetchBidRequests());
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1672,7 +1719,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Center(
-          child: CircularProgressIndicator(),
+          child: SpinKitFadingCircle(color: blueColor, size: 25),
         ),
       );
     }

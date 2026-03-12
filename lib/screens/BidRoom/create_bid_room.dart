@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -10,12 +11,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
+    as staff_drawer;
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as widget_302_staff;
 import '../../widgets/custom_drawer.dart';
 import '../../repository/fetch_allcategories.dart';
 import '../../Model/All_categories_model.dart';
+import 'package:three_zero_two_property/Model/bid_request.dart';
 
 class CreateBidRoom extends StatefulWidget {
-  const CreateBidRoom({super.key});
+  /// When true, uses staff drawer and staff app bar (for Staff module).
+  final bool useStaffLayout;
+
+  /// When provided, screen opens in edit mode and pre-fills form; submit calls PUT to update.
+  final BidRequest? existingBidRequest;
+
+  const CreateBidRoom({
+    super.key,
+    this.useStaffLayout = false,
+    this.existingBidRequest,
+  });
 
   @override
   State<CreateBidRoom> createState() => _CreateBidRoomState();
@@ -49,9 +65,27 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   List<String> _uploadedImageNames = [];
   bool _isUploading = false;
 
+  /// In edit mode, number of images that came from API (so we don't show same image twice when adding new).
+  int _initialExistingImageCount = 0;
+
+  /// Snapshot of payload when form was loaded in edit mode; used to skip API if unchanged.
+  Map<String, dynamic>? _initialPayload;
+
+  bool get _isEditMode => widget.existingBidRequest != null;
+
   @override
   void initState() {
     super.initState();
+    if (_isEditMode) {
+      final b = widget.existingBidRequest!;
+      _descriptionController.text = b.description ?? '';
+      _dueDateController.text = b.dueDate ?? '';
+      _selectedStatus = b.status ?? 'Open';
+      _selectedTradeType = b.workCategory;
+      _selectedVendorIds = List<String>.from(b.selectedVendorIds ?? []);
+      _uploadedImageNames = List<String>.from(b.bidRequestImages ?? []);
+      _initialExistingImageCount = _uploadedImageNames.length;
+    }
     _loadProperties();
     _loadVendors();
     _loadCategories();
@@ -100,6 +134,12 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           properties = sortedAddresses;
           _isLoadingProperties = false;
         });
+        if (_isEditMode && widget.existingBidRequest?.rentalId != null) {
+          final rentalId = widget.existingBidRequest!.rentalId!;
+          setState(() => _selectedPropertyId = rentalId);
+          await _loadUnits(rentalId);
+          if (_isEditMode) _setInitialPayloadForEdit();
+        }
       } else {
         throw Exception('Failed to load properties');
       }
@@ -109,6 +149,77 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       });
       Fluttertoast.showToast(msg: 'Failed to load properties: $e');
     }
+  }
+
+  void _setInitialPayloadForEdit() {
+    final b = widget.existingBidRequest!;
+    setState(() {
+      _selectedUnitId =
+          (b.unitId == null || b.unitId!.isEmpty) ? null : b.unitId;
+      _initialPayload = _buildPayload(
+        rentalId: b.rentalId,
+        unitId: b.unitId ?? '',
+        workCategory: b.workCategory,
+        description: b.description ?? '',
+        bidRequestImages: List<String>.from(b.bidRequestImages ?? []),
+        dueDate: b.dueDate ?? '',
+        status: b.status ?? 'Open',
+        selectedVendorIds: List<String>.from(b.selectedVendorIds ?? []),
+      );
+    });
+  }
+
+  Map<String, dynamic> _buildPayload({
+    required String? rentalId,
+    required String unitId,
+    required String? workCategory,
+    required String description,
+    required List<String> bidRequestImages,
+    required String dueDate,
+    required String status,
+    required List<String> selectedVendorIds,
+  }) {
+    return {
+      'rental_id': rentalId ?? '',
+      'unit_id': unitId,
+      'work_category': workCategory ?? '',
+      'description': description,
+      'bid_request_images': List<String>.from(bidRequestImages),
+      'due_date': dueDate,
+      'status': status,
+      'selected_vendor_ids': List<String>.from(selectedVendorIds),
+    };
+  }
+
+  Map<String, dynamic> _getCurrentPayload() {
+    return _buildPayload(
+      rentalId: _selectedPropertyId,
+      unitId: _selectedUnitId ?? '',
+      workCategory: _selectedTradeType,
+      description: _descriptionController.text,
+      bidRequestImages: _uploadedImageNames,
+      dueDate: _dueDateController.text,
+      status: _selectedStatus ?? 'Open',
+      selectedVendorIds: _selectedVendorIds,
+    );
+  }
+
+  bool _payloadEquals(Map<String, dynamic> a, Map<String, dynamic> b) {
+    if (a.length != b.length) return false;
+    for (final k in a.keys) {
+      if (!b.containsKey(k)) return false;
+      final va = a[k];
+      final vb = b[k];
+      if (va is List && vb is List) {
+        if (va.length != vb.length) return false;
+        for (int i = 0; i < va.length; i++) {
+          if (va[i] != vb[i]) return false;
+        }
+      } else if (va != vb) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<void> _loadUnits(String rentalId) async {
@@ -226,6 +337,24 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -237,34 +366,50 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
 
   Future<void> _pickImages() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowMultiple: true,
+      // Use image_picker (not file_picker) to avoid Android crash in FileUtils.compressImage
+      final ImagePicker picker = ImagePicker();
+      final List<XFile>? picked = await picker.pickMultiImage(
+        limit: 10 - _uploadedImageNames.length,
       );
 
-      if (result != null) {
-        List<File> newImages = result.paths
-            .where((path) => path != null)
-            .map((path) => File(path!))
-            .toList();
+      if (picked == null || picked.isEmpty) return;
 
-        // Check if adding these images would exceed the limit
-        if (_selectedImages.length + newImages.length > 10) {
-          Fluttertoast.showToast(
-            msg: 'Maximum of 10 images allowed',
-            toastLength: Toast.LENGTH_SHORT,
-          );
-          // Only add up to the limit
-          newImages = newImages.take(10 - _selectedImages.length).toList();
+      List<File> newImages = [];
+      for (final x in picked) {
+        File? file;
+        final path = x.path;
+        if (path.isNotEmpty) {
+          final f = File(path);
+          if (f.existsSync()) {
+            file = f;
+          }
         }
-
-        setState(() {
-          _selectedImages.addAll(newImages);
-        });
-
-        // Upload images immediately
-        await _uploadImages(newImages);
+        if (file == null) {
+          try {
+            final bytes = await x.readAsBytes();
+            if (bytes.isNotEmpty) {
+              final dir = Directory.systemTemp;
+              final temp = File('${dir.path}/bid_room_${DateTime.now().millisecondsSinceEpoch}_${newImages.length}.jpg');
+              await temp.writeAsBytes(bytes);
+              file = temp;
+            }
+          } catch (_) {}
+        }
+        if (file != null) {
+          newImages.add(file);
+        }
       }
+
+      if (newImages.isEmpty) {
+        Fluttertoast.showToast(msg: 'Could not read selected images');
+        return;
+      }
+
+      setState(() {
+        _selectedImages.addAll(newImages);
+      });
+
+      await _uploadImages(newImages);
     } catch (e) {
       Fluttertoast.showToast(msg: 'Failed to pick images: $e');
     }
@@ -313,9 +458,12 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
 
   void _removeImage(int index) {
     setState(() {
-      _selectedImages.removeAt(index);
-      if (index < _uploadedImageNames.length) {
+      if (index < _initialExistingImageCount) {
         _uploadedImageNames.removeAt(index);
+        _initialExistingImageCount--;
+      } else {
+        _uploadedImageNames.removeAt(index);
+        _selectedImages.removeAt(index - _initialExistingImageCount);
       }
     });
   }
@@ -335,6 +483,18 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       return;
     }
 
+    if (_isEditMode && _initialPayload != null) {
+      final current = _getCurrentPayload();
+      if (_payloadEquals(current, _initialPayload!)) {
+        Fluttertoast.showToast(
+          msg: 'No changes to save',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        Navigator.pop(context, false);
+        return;
+      }
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -344,52 +504,88 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     String? token = prefs.getString('token');
 
     try {
-      // Upload any remaining images
-      if (_selectedImages.length > _uploadedImageNames.length) {
-        List<File> remainingImages =
-            _selectedImages.sublist(_uploadedImageNames.length);
+      // Upload any remaining images (e.g. if an upload failed on pick)
+      final newUploadedCount = _uploadedImageNames.length - _initialExistingImageCount;
+      if (_selectedImages.length > newUploadedCount) {
+        final remainingImages = _selectedImages.sublist(newUploadedCount);
         await _uploadImages(remainingImages);
       }
 
-      final response = await http.post(
-        Uri.parse('${Api_url}/api/bid-request/bid-request'),
-        headers: {
-          "authorization": "CRM $token",
-          "id": "CRM $id",
-          "Content-Type": "application/json",
-        },
-        body: json.encode({
-          "bidRequest": {
-            "admin_id": id,
-            "rental_id": _selectedPropertyId,
-            "unit_id": _selectedUnitId ?? "",
-            "work_category": _selectedTradeType,
-            "description": _descriptionController.text,
-            "bid_request_images": _uploadedImageNames,
-            "due_date":
-                _dueDateController.text.isEmpty ? "" : _dueDateController.text,
-            "status": _selectedStatus,
-            "selected_vendor_ids": _selectedVendorIds,
-          }
-        }),
-      );
+      final body = {
+        "bidRequest": {
+          "admin_id": id,
+          "rental_id": _selectedPropertyId,
+          "unit_id": _selectedUnitId ?? "",
+          "work_category": _selectedTradeType,
+          "description": _descriptionController.text,
+          "bid_request_images": _uploadedImageNames,
+          "due_date":
+              _dueDateController.text.isEmpty ? "" : _dueDateController.text,
+          "status": _selectedStatus,
+          "selected_vendor_ids": _selectedVendorIds,
+        }
+      };
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Fluttertoast.showToast(
-          msg: 'Bid Room created successfully',
-          toastLength: Toast.LENGTH_SHORT,
+      if (_isEditMode) {
+        final bidRequestId = widget.existingBidRequest!.bidRequestId;
+        if (bidRequestId == null || bidRequestId.isEmpty) {
+          Fluttertoast.showToast(msg: 'Invalid bid request');
+          setState(() => _isLoading = false);
+          return;
+        }
+        final response = await http.put(
+          Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            "Content-Type": "application/json",
+          },
+          body: json.encode(body),
         );
-        Navigator.pop(context, true);
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          Fluttertoast.showToast(
+            msg: 'Bid Room updated successfully',
+            toastLength: Toast.LENGTH_SHORT,
+          );
+          Navigator.pop(context, true);
+        } else {
+          final errorBody = json.decode(response.body);
+          Fluttertoast.showToast(
+            msg: errorBody['message'] ?? 'Failed to update bid room',
+            toastLength: Toast.LENGTH_SHORT,
+          );
+        }
       } else {
-        final errorBody = json.decode(response.body);
-        Fluttertoast.showToast(
-          msg: errorBody['message'] ?? 'Failed to create bid room',
-          toastLength: Toast.LENGTH_SHORT,
+        final response = await http.post(
+          Uri.parse('${Api_url}/api/bid-request/bid-request'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            "Content-Type": "application/json",
+          },
+          body: json.encode(body),
         );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          Fluttertoast.showToast(
+            msg: 'Bid Room created successfully',
+            toastLength: Toast.LENGTH_SHORT,
+          );
+          Navigator.pop(context, true);
+        } else {
+          final errorBody = json.decode(response.body);
+          Fluttertoast.showToast(
+            msg: errorBody['message'] ?? 'Failed to create bid room',
+            toastLength: Toast.LENGTH_SHORT,
+          );
+        }
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error creating bid room: $e',
+        msg: _isEditMode
+            ? 'Error updating bid room: $e'
+            : 'Error creating bid room: $e',
         toastLength: Toast.LENGTH_SHORT,
       );
     } finally {
@@ -402,12 +598,19 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.widget_302.App_Bar(context: context),
+      appBar: widget.useStaffLayout
+          ? widget_302_staff.widget_302_Staff.App_Bar(context: context)
+          : widget_302.widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Bid Room",
-        dropdown: false,
-      ),
+      drawer: widget.useStaffLayout
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Bid Room",
+              dropdown: false,
+            )
+          : CustomDrawer(
+              currentpage: "Bid Room",
+              dropdown: false,
+            ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -426,7 +629,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                   ),
                   child: titleBar(
                     width: double.infinity,
-                    title: 'Create Bid Room',
+                    title: _isEditMode ? 'Update Bid Room' : 'Create Bid Room',
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -546,53 +749,59 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                 const SizedBox(height: 24),
 
                 // Action Buttons
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: blueColor,
+                          side: BorderSide(color: blueColor),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        )
-                      : const Text(
-                          'Create Bid Room',
+                        ),
+                        child: const Text(
+                          'Cancel',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blueColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: _isLoading
+                            ?  SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 20,
+                              )
+                            : Text(
+                                _isEditMode
+                                    ? 'Update Bid Room'
+                                    : 'Create Bid Room',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: blueColor,
-                    side: BorderSide(color: blueColor),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -633,94 +842,106 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
         const SizedBox(height: 8),
         Container(
           //   color: Colors.red,
-          child: DropdownButtonFormField2<String>(
-            value: value,
-            items: items,
-            onChanged: isLoading ? null : onChanged,
-            isExpanded: true,
-            hint: Text(
-              hint,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              border: InputBorder.none,
-              suffixIcon: isLoading
-                  ? const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : null,
-            ),
-            validator: isRequired
-                ? (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select $label';
-                    }
-                    return null;
-                  }
-                : null,
-            buttonStyleData: ButtonStyleData(
-              height: 50,
-              padding: const EdgeInsets.only(left: 16, right: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
-                border: Border.all(
-                  color: const Color(0xFFDBE0E5),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.05),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: const Offset(0, 1),
+          child: isLoading
+              ? Container(
+                  height: 50,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade50,
+                    border: Border.all(
+                      color: const Color(0xFFDBE0E5),
+                      width: 1,
+                    ),
                   ),
-                ],
-              ),
-              elevation: 0,
-            ),
-            iconStyleData: IconStyleData(
-              icon: Icon(
-                Icons.arrow_drop_down,
-                color: Colors.grey[600],
-              ),
-              iconSize: 24,
-            ),
-            dropdownStyleData: DropdownStyleData(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.grey[300]!,
-                  width: 1,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Loading...',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                )
+              : DropdownButtonFormField2<String>(
+                  value: value,
+                  items: items,
+                  onChanged: onChanged,
+                  isExpanded: true,
+                  hint: Text(
+                    hint,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    border: InputBorder.none,
+                  ),
+                  validator: isRequired
+                      ? (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select $label';
+                          }
+                          return null;
+                        }
+                      : null,
+                  buttonStyleData: ButtonStyleData(
+                    height: 50,
+                    padding: const EdgeInsets.only(left: 16, right: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      border: Border.all(
+                        color: const Color(0xFFDBE0E5),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.05),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    elevation: 0,
+                  ),
+                  iconStyleData: IconStyleData(
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey[600],
+                    ),
+                    iconSize: 24,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.grey[300]!,
+                        width: 1,
+                      ),
+                    ),
+                    maxHeight: 300,
+                    scrollbarTheme: ScrollbarThemeData(
+                      radius: const Radius.circular(6),
+                      thickness: MaterialStateProperty.all(6),
+                      thumbVisibility: MaterialStateProperty.all(true),
+                    ),
+                  ),
+                  menuItemStyleData: const MenuItemStyleData(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
                 ),
-              ),
-              maxHeight: 300,
-              scrollbarTheme: ScrollbarThemeData(
-                radius: const Radius.circular(6),
-                thickness: MaterialStateProperty.all(6),
-                thumbVisibility: MaterialStateProperty.all(true),
-              ),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-            ),
-          ),
         ),
       ],
     );
@@ -1032,7 +1253,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     );
   }
 
+  static const int _maxFilenameDisplayLength = 20;
+
+  String _truncateFilename(String name) {
+    if (name.length <= _maxFilenameDisplayLength) return name;
+    return '${name.substring(0, _maxFilenameDisplayLength - 3)}...';
+  }
+
   Widget _buildImageUploadField() {
+    final totalImages = _uploadedImageNames.length;
+    final canAdd = totalImages < 10;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1045,90 +1276,116 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           ),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: _selectedImages.length < 10 ? _pickImages : null,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.grey[50],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cloud_upload_outlined,
-                  size: 48,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Upload Pictures',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Empty state hint or pill-shaped tags for uploaded images
+              Padding(
+                padding: const EdgeInsets.only(right: 48),
+                child: totalImages == 0
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_photo_alternate_outlined, size: 28, color: Colors.grey[500]),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Tap + to add pictures (max 10)',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _uploadedImageNames.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final fileName = entry.value;
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _truncateFilename(fileName),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        GestureDetector(
+                          onTap: () => _removeImage(index),
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                      ),
+              ),
+              // Add button - top right, dark blue with white +
+              Positioned(
+                top: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: canAdd ? _pickImages : null,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: canAdd ? blueColor : Colors.grey[400],
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '(Maximum of 10)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Supported File Types: image/*',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        if (_selectedImages.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _selectedImages.asMap().entries.map((entry) {
-              int index = entry.key;
-              File image = entry.value;
-              return Stack(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: FileImage(image),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: -5,
-                    right: -5,
-                    child: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () => _removeImage(index),
-                      iconSize: 24,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        ],
         if (_isUploading)
           const Padding(
             padding: EdgeInsets.only(top: 8),

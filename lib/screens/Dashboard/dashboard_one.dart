@@ -22,6 +22,10 @@ import 'package:three_zero_two_property/screens/Dashboard/dashbordpolices_table.
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
+// Wizard not used for now: same Add Work Order screen as web/tablet (phone skill = easy access).
+// import 'package:three_zero_two_property/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart';
+import 'package:three_zero_two_property/screens/Maintenance/Workorder/Add_workorder.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/lease_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/Properties_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/widgets/pie_chart.dart';
@@ -288,6 +292,132 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  /// --- PHONE SKILL / IN-THE-FIELD FLOW (admin, no wizard) ---
+  /// Same idea as staff: on phone (width < 600), "In the field" quick actions at top.
+  /// Add Work Order → same form as web (ResponsiveAddWorkOrder). Take Payment → Leases → pick lease → Make payment. Work Orders → list.
+  /// Phone skill = 1-tap access from dashboard; same screens and flow as web.
+  Widget _buildQuickActionsForField(BuildContext context, double width) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 11),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F4FA),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: blueColor.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12, bottom: 10),
+            child: Text(
+              'In the field',
+              style: TextStyle(
+                color: blueColor,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.build_circle_outlined,
+                  label: 'Add Work Order',
+                  onTap: () async {
+                    // Use same Add Work Order screen as web (no wizard).
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ResponsiveAddWorkOrder(),
+                      ),
+                    );
+                    if (result == true) {
+                      fetchDatacount();
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.payment_outlined,
+                  label: 'Take Payment',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Lease_table(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _quickActionCard(
+                  context: context,
+                  icon: Icons.assignment_outlined,
+                  label: 'Work Orders',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Workorder_table(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(child: SizedBox()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickActionCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      elevation: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 28, color: blueColor),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: blueColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Map<String, dynamic>> data = [
     {"month": "Oct", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
     {"month": "Nov", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
@@ -343,6 +473,12 @@ class _DashboardState extends State<Dashboard> {
                               SizedBox(
                                   height: MediaQuery.of(context).size.height *
                                       0.012),
+                              // Phone skill: quick actions on phone. To enable, uncomment next 4 lines.
+                              // if (width < 600) _buildQuickActionsForField(context, width),
+                              // if (width < 600)
+                              //   SizedBox(
+                              //       height: MediaQuery.of(context).size.height *
+                              //           0.02),
                               DashboardAdminSample(
                                 countList: countList,
                                 currentMonthRentDue: currentMonthRentDue,

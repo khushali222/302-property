@@ -92,7 +92,19 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   "Properties",
                   widget.currentpage == "Properties",
                 ),
-
+              if (permissions != null && permissions.mortgageView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.handHoldingDollar,
+                    size: 20,
+                    color: widget.currentpage == "Mortgage"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Mortgage",
+                  widget.currentpage == "Mortgage",
+                ),
               // Tenants as top-level menu item (with permission check)
               if (permissions != null && permissions.tenantView == true)
                 buildListTile(
@@ -256,6 +268,19 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   ),
                   "Work Orders",
                   widget.currentpage == "Work Orders",
+                ),
+           
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.buildingUser,
+                    size: 20,
+                    color: widget.currentpage == "Bid Room"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Bid Room",
+                  widget.currentpage == "Bid Room",
                 ),
               // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
               // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Orders in future

@@ -534,7 +534,8 @@ class _send_emailState extends State<send_email> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Templates",
+        //currentpage: "Templates",
+        currentpage: "Send E-mail",
         dropdown: true,
       ),
       appBar: widget_302_Staff.App_Bar(context: context),
@@ -574,7 +575,7 @@ class _send_emailState extends State<send_email> {
                             ],
                           ),
                           child: const Text(
-                          'Send Email',
+                          'Send New Email',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,

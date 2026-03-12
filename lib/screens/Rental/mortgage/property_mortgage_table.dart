@@ -247,6 +247,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
       MaterialPageRoute(
         builder: (context) => AddMortgageScreen(
           propertyId: widget.propertyId,
+          drawerCurrentPage: 'Properties',
         ),
       ),
     ).then((_) {
@@ -297,6 +298,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
         builder: (context) => AddMortgageScreen(
           mortgageId: mortgage['_id'],
           mortgageData: mortgage,
+          drawerCurrentPage: 'Properties',
         ),
       ),
     ).then((_) {

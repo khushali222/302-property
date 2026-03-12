@@ -22,6 +22,7 @@ class WorkOrder {
   bool? isBillable;
   String? createdAt;
   String? updatedAt;
+  String? ticketNumber;
   bool? isDelete;
   int? v;
   UnitData? unitData;
@@ -52,6 +53,7 @@ class WorkOrder {
     this.createdAt,
     this.updatedAt,
     this.isDelete,
+    this.ticketNumber,
     this.v,
     this.unitData,
     this.rentalData,
@@ -76,6 +78,7 @@ class WorkOrder {
     priority = json['priority'];
     workChargeTo = json['work_charge_to'];
     status = json['status'];
+    ticketNumber = json['ticket_number'];
     date = json['date'];
 
     if (json['workorder_updates'] != null) {

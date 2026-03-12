@@ -15,6 +15,8 @@ class lease_renter_insurance {
   String? dateCreated;
   String? dateModified;
   List<TenantDetails>? tenantDetails;
+  /// Computed status: FUTURE, ACTIVE, or EXPIRED (set when fetching policies-by-tenant).
+  String? policyStatus;
 
   lease_renter_insurance(
       {this.sId,
@@ -32,13 +34,42 @@ class lease_renter_insurance {
       this.isDelete,
       this.dateCreated,
       this.dateModified,
-      this.tenantDetails});
+      this.tenantDetails,
+      this.policyStatus});
+
+  /// Compute policy status from effective and expiration dates (ISO or date-only strings).
+  static String computeStatus(String? effectiveDate, String? expirationDate) {
+    if (effectiveDate == null || effectiveDate.isEmpty || expirationDate == null || expirationDate.isEmpty) {
+      return 'EXPIRED';
+    }
+    final now = DateTime.now();
+    final effective = _parseDate(effectiveDate);
+    final expiration = _parseDate(expirationDate);
+    if (effective == null || expiration == null) return 'EXPIRED';
+    if (now.isBefore(effective)) return 'FUTURE';
+    if ((now.isAfter(effective) || now.isAtSameMomentAs(effective)) &&
+        (now.isBefore(expiration) || now.isAtSameMomentAs(expiration))) {
+      return 'ACTIVE';
+    }
+    return 'EXPIRED';
+  }
+
+  static DateTime? _parseDate(String? s) {
+    if (s == null || s.isEmpty) return null;
+    try {
+      return DateTime.tryParse(s.split('T').first);
+    } catch (_) {
+      return null;
+    }
+  }
 
   lease_renter_insurance.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     rentersInsuranceId = json['renters_insurance_id'];
     leaseId = json['lease_id'];
-    tenants = json['tenants'].cast<String>();
+    tenants = json['tenants'] != null
+        ? (json['tenants'] as List).map((e) => e.toString()).toList()
+        : null;
     insuranceCompany = json['insurance_company'];
     insuranceCompanyPhoneNumber = json['insurance_company_phone_number'];
     policyId = json['policy_id'];

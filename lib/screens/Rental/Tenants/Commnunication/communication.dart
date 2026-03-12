@@ -181,7 +181,7 @@ class _Tenant_communicationState extends State<Tenant_communication> {
                 },
                 child: Row(
                   children: [
-                    Text("            Sent",
+                    Text("         Sent",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),

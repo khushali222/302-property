@@ -30,6 +30,9 @@ class WorkOrderData_summery {
   StaffData? staffData;
   VendorData? vendorData;
   TenantData? tenantData;
+  /// From list-style API: top-level rental_adress / rental_unit
+  String? rentalAddressDisplay;
+  String? rentalUnitDisplay;
 
   WorkOrderData_summery(
       {this.id,
@@ -62,7 +65,9 @@ class WorkOrderData_summery {
         this.unitData,
         this.staffData,
         this.vendorData,
-        this.tenantData});
+        this.tenantData,
+        this.rentalAddressDisplay,
+        this.rentalUnitDisplay});
 
   WorkOrderData_summery.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
@@ -116,6 +121,8 @@ class WorkOrderData_summery {
     tenantData = json['tenant_data'] != null
         ? TenantData.fromJson(json['tenant_data'])
         : null;
+    rentalAddressDisplay = json['rental_adress'];
+    rentalUnitDisplay = json['rental_unit'];
   }
 
   Map<String, dynamic> toJson() {

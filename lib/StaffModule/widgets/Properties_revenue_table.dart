@@ -165,7 +165,7 @@ class _CustomAdminRevenueTableState extends State<CustomStaffRevenueTable> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Padding(
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.only(left: 10, right: 10,top: 5,bottom: 10),
       child: Column(
         children: [
           _buildHeaders(),

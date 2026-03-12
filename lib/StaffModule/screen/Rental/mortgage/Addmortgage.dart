@@ -54,10 +54,16 @@ class AddMortgageScreen extends StatefulWidget {
   final String? mortgageId; // For editing existing mortgages
   final String?
       propertyId; // Property ID from context (when adding from property page)
+  /// Which drawer item to highlight: "Mortgage" when opened from main Mortgage list, "Properties" when from property summary.
+  final String? drawerCurrentPage;
 
-  const AddMortgageScreen(
-      {Key? key, this.mortgageId, this.mortgageData, this.propertyId})
-      : super(key: key);
+  const AddMortgageScreen({
+    Key? key,
+    this.mortgageId,
+    this.mortgageData,
+    this.propertyId,
+    this.drawerCurrentPage,
+  }) : super(key: key);
 
   @override
   State<AddMortgageScreen> createState() => _AddMortgageScreenState();
@@ -95,6 +101,10 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   final _borrowerEmailController = TextEditingController();
   final _typeController = TextEditingController();
   final _amortizationPeriodController = TextEditingController();
+  // Principal, Interest, Monthly Payment (monthly payment = principal + interest, read-only)
+  final _principalController = TextEditingController();
+  final _interestController = TextEditingController();
+  final _monthlyPaymentDisplayController = TextEditingController();
   // Conditional fields for Fixed Rate Mortgage
   final _fixedInterestPeriodController = TextEditingController();
   final _fixedInterestExpirationDateController = TextEditingController();
@@ -145,11 +155,21 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   // Store original mortgage data for comparison
   Map<String, dynamic>? _originalMortgageData;
 
+  void _updateMonthlyPaymentDisplay() {
+    final p = double.tryParse(_principalController.text.trim()) ?? 0.0;
+    final i = double.tryParse(_interestController.text.trim()) ?? 0.0;
+    final sum = p + i;
+    _monthlyPaymentDisplayController.text =
+        sum == sum.truncate() ? sum.toInt().toString() : sum.toStringAsFixed(2);
+    if (mounted) setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     _loadProperties();
-
+    _principalController.addListener(_updateMonthlyPaymentDisplay);
+    _interestController.addListener(_updateMonthlyPaymentDisplay);
     if (widget.mortgageId != null) {}
   }
 
@@ -165,6 +185,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     _managerEmailController.dispose();
     _mortgageNumberController.dispose();
     _loanAmountController.dispose();
+    _principalController.dispose();
+    _interestController.dispose();
+    _monthlyPaymentDisplayController.dispose();
     _interestRateController.dispose();
     _startDateController.dispose();
     _endDateController.dispose();
@@ -370,13 +393,48 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   }
 
   String? _validateInterestRate(String? value) {
-    if (value != null && value.isNotEmpty) {
-      final rate = double.tryParse(value.replaceAll('%', ''));
-      if (rate == null || rate < 0 || rate > 100) {
-        return 'Interest rate must be between 0% and 100%';
-      }
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return 'Interest rate must be between 0 to 100';
+    }
+    final rate = double.tryParse(trimmed.replaceAll('%', ''));
+    if (rate == null || rate < 0 || rate > 100) {
+      return 'Interest rate must be between 0 to 100';
     }
     return null;
+  }
+
+  /// Returns true if another mortgage already uses this loan number (excluding current when editing).
+  Future<bool> _isDuplicateMortgageNo(String mortgageNo) async {
+    if (mortgageNo.isEmpty) return false;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final response = await http.get(
+        Uri.parse('$Api_url/api/mortgage/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(const Duration(seconds: 15));
+      if (response.statusCode != 200) return false;
+      final data = json.decode(response.body);
+      final list = data['data'] as List?;
+      if (list == null) return false;
+      final currentId = widget.mortgageId;
+      for (final m in list) {
+        final no = (m['mortgage_no'] ?? '').toString().trim();
+        if (no.isEmpty) continue;
+        if (no != mortgageNo) continue;
+        if (currentId != null && m['_id']?.toString() == currentId) continue;
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 
   String? _validateSSN(String? value) {
@@ -395,7 +453,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
 
       if (value.length < 2) {
-        return 'Account number must be at least 2 digits';
+        return 'Loan number must be at least 2 digits';
       }
     }
     return null;
@@ -625,9 +683,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           }
         }
         _mortgageNumberController.text = mortgageData['mortgage_no'] ?? '';
-        _loanAmountController.text = mortgageData['loan_amount'].toString();
+        _loanAmountController.text =
+            mortgageData['loan_amount']?.toString() ?? '';
         print(mortgageData['interest_rate']);
-        _interestRateController.text = mortgageData['interest_rate'].toString();
+        _interestRateController.text =
+            mortgageData['interest_rate']?.toString() ?? '';
 
         // Format dates properly for display using DateProvider
         if (mortgageData['start_date'] != null &&
@@ -680,7 +740,25 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _amortizationPeriodController.text =
             mortgageData['amortization_period']?.toString() ?? '';
         _remainingBalanceController.text =
-            mortgageData['remaining_balance'].toString();
+            mortgageData['remaining_balance']?.toString() ?? '0';
+
+        // Principal, Interest, Monthly Payment (from API or recalc)
+        _principalController.text =
+            mortgageData['monthly_principal']?.toString() ?? '';
+        _interestController.text =
+            mortgageData['monthly_interest']?.toString() ?? '';
+        _updateMonthlyPaymentDisplay();
+        // When API returns monthly_payment (e.g. create had only total, no principal/interest), show it in edit
+        if (mortgageData['monthly_payment'] != null) {
+          final v = mortgageData['monthly_payment'];
+          if (v is num) {
+            _monthlyPaymentDisplayController.text = v is int
+                ? v.toString()
+                : (v as double).toStringAsFixed(2);
+          } else {
+            _monthlyPaymentDisplayController.text = v.toString();
+          }
+        }
 
         // Set selected mortgage type for reactive UI
         _selectedMortgageType = _typeController.text;
@@ -852,6 +930,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         'status':
             _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
         'remaining_balance': _remainingBalanceController.text.trim(),
+        'monthly_principal':
+            double.tryParse(_principalController.text.trim()) ?? 0,
+        'monthly_interest':
+            double.tryParse(_interestController.text.trim()) ?? 0,
+        'monthly_payment': double.tryParse(
+                _monthlyPaymentDisplayController.text.trim()) ??
+            0,
         'last_payment_date':
             _lastPaymentDate != null ? _lastPaymentDate!.toIso8601String() : '',
         'next_payment_date':
@@ -920,6 +1005,12 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           _originalMortgageData!['status']?.toString() ?? '';
       originalData['remaining_balance'] =
           _originalMortgageData!['remaining_balance']?.toString() ?? '';
+      originalData['monthly_principal'] =
+          _originalMortgageData!['monthly_principal']?.toString() ?? '';
+      originalData['monthly_interest'] =
+          _originalMortgageData!['monthly_interest']?.toString() ?? '';
+      originalData['monthly_payment'] =
+          _originalMortgageData!['monthly_payment']?.toString() ?? '';
       originalData['last_payment_date'] =
           _originalMortgageData!['last_payment_date']?.toString() ?? '';
       originalData['next_payment_date'] =
@@ -1142,6 +1233,21 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
+      final mortgageNo = _mortgageNumberController.text.trim();
+      if (mortgageNo.isNotEmpty) {
+        final isDuplicate = await _isDuplicateMortgageNo(mortgageNo);
+        if (isDuplicate && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'This loan number is already in use. Please enter a unique loan number.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
+
       setState(() {
         _isLoading = true;
       });
@@ -1195,6 +1301,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           'status':
               _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
           'remaining_balance': _remainingBalanceController.text.trim(),
+          'monthly_principal':
+              double.tryParse(_principalController.text.trim()) ?? 0,
+          'monthly_interest':
+              double.tryParse(_interestController.text.trim()) ?? 0,
+          'monthly_payment': double.tryParse(
+                  _monthlyPaymentDisplayController.text.trim()) ??
+              0,
           'last_payment_date': _lastPaymentDate != null
               ? _lastPaymentDate!.toIso8601String()
               : '',
@@ -1311,7 +1424,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Properties",
+        currentpage: widget.drawerCurrentPage ?? "Mortgage",
         dropdown: true,
       ),
       body: Form(
@@ -1496,71 +1609,31 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
                     // Mortgage Details Section
                     _buildSectionHeader('Mortgage Details'),
-                    _buildDropdownField(
-                        controller: _typeController,
-                        label: 'Mortgage Type *',
-                        hint: 'Select mortgage type',
-                        validator: (value) =>
-                            _validateRequired(value, 'Mortgage type'),
-                        items: _typeOptions,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _typeController.text = newValue ?? '';
-                            _selectedMortgageType = newValue ?? '';
-                            // Clear conditional fields when type changes
-                            if (newValue == 'Fixed Rate Mortgage') {
-                              _spreadController.clear();
-                            } else if (newValue == 'Floating Rate Mortgage') {
-                              _fixedInterestPeriodController.clear();
-                              _fixedInterestExpirationDateController.clear();
-                              _fixedInterestExpirationDate = null;
-                              _spreadOnFloatingRateController.clear();
-                            }
-                          });
-                        }),
-                    const SizedBox(height: 16),
                     _buildTextField(
                       controller: _mortgageNumberController,
-                      label: 'Account Number *',
-                      hint: 'Enter account number',
+                      label: 'Loan Number  *',
+                      hint: 'Enter loan number',
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         String? requiredError =
-                            _validateRequired(value, 'Account number');
+                            _validateRequired(value, 'Loan number');
                         if (requiredError != null) return requiredError;
                         return _validateMortgageNumber(value);
                       },
                     ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _loanAmountController,
-                      label: 'Loan Amount (\$) *',
-                      hint: '\$Enter loan amount',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      validator: _validateAmount,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _interestRateController,
-                      label: 'Interest Rate (%) *',
-                      hint: 'Enter interest rate',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      validator: _validateInterestRate,
-                    ),
-                    const SizedBox(height: 16),
-                    Builder(
+                   
+                   const SizedBox(height: 16),
+                      Builder(
                       builder: (context) {
                         final dateProvider =
                             Provider.of<DateProvider>(context, listen: false);
                         final dateHint = _getDateHintText(dateProvider);
                         return _buildDateField(
                           controller: _startDateController,
-                          label: 'Origination Date *',
+                          label: 'Inception Date *',
                           hint: dateHint,
                           validator: (value) =>
-                              _validateRequired(value, 'Origination Date'),
+                              _validateRequired(value, 'Inception Date'),
                           onTap: () {
                             final DateTime now = DateTime.now();
                             final DateTime today =
@@ -1622,6 +1695,31 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
+                     _buildDropdownField(
+                        controller: _typeController,
+                        label: 'Term Type  *',
+                        hint: 'Select term type',
+                        validator: (value) =>
+                            _validateRequired(value, 'Term type'),
+                        items: _typeOptions,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _typeController.text = newValue ?? '';
+                            _selectedMortgageType = newValue ?? '';
+                            // Clear conditional fields when type changes
+                            if (newValue == 'Fixed Rate Mortgage') {
+                              _spreadController.clear();
+                            } else if (newValue == 'Floating Rate Mortgage') {
+                              _fixedInterestPeriodController.clear();
+                              _fixedInterestExpirationDateController.clear();
+                              _fixedInterestExpirationDate = null;
+                              _spreadOnFloatingRateController.clear();
+                            }
+                          });
+                        }),
+                    
+                    const SizedBox(height: 16),
+                   
                     _buildTextField(
                       controller: _amortizationPeriodController,
                       label: 'Amortization Period (months) *',
@@ -1630,6 +1728,57 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) =>
                           _validateRequired(value, 'Amortization period'),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _interestRateController,
+                      label: 'Interest Rate (%)',
+                      hint: 'Enter interest rate',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      validator: _validateInterestRate,
+                    ),
+                    const SizedBox(height: 16),
+                   _buildTextField(
+                      controller: _loanAmountController,
+                      label: 'Loan Amount (\$)',
+                      hint: '\$Enter loan amount',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      validator: _validateAmount,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _remainingBalanceController,
+                      label: 'Current Balance',
+                      hint: '\$ Enter current balance',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      validator: _validateAmount,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _principalController,
+                      label: 'Principal (\$)',
+                      hint: 'Enter principal',
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      validator: _validateAmount,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _interestController,
+                      label: 'Interest (\$)',
+                      hint: 'Enter interest',
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      validator: _validateAmount,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _monthlyPaymentDisplayController,
+                      label: 'Monthly Payment (\$)',
+                      hint: '0.00',
+                      readOnly: true,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     const SizedBox(height: 16),
                     // Conditional fields based on mortgage type
@@ -1765,23 +1914,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    _buildDropdownField(
-                      controller: _statusController,
-                      label: 'Status *',
-                      hint: 'Select status',
-                      validator: (value) => _validateRequired(value, 'Status'),
-                      items: _statusOptions,
-                    ),
+                    // _buildDropdownField(
+                    //   controller: _statusController,
+                    //   label: 'Status *',
+                    //   hint: 'Select status',
+                    //   validator: (value) => _validateRequired(value, 'Status'),
+                    //   items: _statusOptions,
+                    // ),
+                   
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _remainingBalanceController,
-                      label: 'Remaining Balance',
-                      hint: '\$ Enter remaining balance',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      validator: _validateAmount,
-                    ),
-                    const SizedBox(height: 16),
+              
                     Builder(
                       builder: (context) {
                         final dateProvider =
@@ -1881,9 +2023,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 24),
-                    _buildSectionHeader('Payoff History'),
-                    _buildPayoffHistorySection(),
-                    const SizedBox(height: 16),
+                    // _buildSectionHeader('Payoff History'),
+                    // _buildPayoffHistorySection(),
+                    // const SizedBox(height: 16),
 
                     Container(
                       child: Row(
@@ -1945,6 +2087,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     ),
                     const SizedBox(height: 32),
                   ],
+
+
+                  
                 ),
               ),
             ),
@@ -2048,6 +2193,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     String? Function(String?)? validator,
     int maxLines = 1,
     Widget? suffix,
+    bool readOnly = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2063,6 +2209,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
+          readOnly: readOnly,
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
@@ -2073,6 +2220,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               color: Colors.grey[400],
               fontSize: 14,
             ),
+            filled: readOnly,
+            fillColor: readOnly ? Colors.grey[200] : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey[300]!),

@@ -100,10 +100,14 @@ void main() {
     ]);
     runApp(
       DevicePreview(
-        enabled: kDebugMode ? false :  false,
-        tools: const [        
-          ...DevicePreview.defaultTools,
-        ],
+        enabled: kDebugMode ? false : false,
+        tools: kDebugMode
+            ? [
+                ...DevicePreview.defaultTools,
+              ]
+            : const [
+                ...DevicePreview.defaultTools,
+              ],
         builder: (context) => MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => OwnerDetailsProvider()),
@@ -142,7 +146,6 @@ void main() {
     );
   }, (error, stackTrace) {
     // Handle uncaught errors here if needed
-
   }, zoneSpecification: ZoneSpecification(
     print: (self, parent, zone, line) {
       if (kDebugMode) {
