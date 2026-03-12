@@ -1,6 +1,11 @@
+import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../StaffModule/model/staffpermission.dart';
 import '../../StaffModule/repository/staffpermission_provider.dart';
@@ -56,7 +61,8 @@ class DashboardMobileSimple extends StatelessWidget {
     } else if (label == 'Vendors') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TabBarExample(initialTab: 'Vendor')),
+        MaterialPageRoute(
+            builder: (context) => const TabBarExample(initialTab: 'Vendor')),
       );
     } else if (label == 'Work Orders') {
       Navigator.push(
@@ -236,15 +242,15 @@ class DashboardMobileSimple extends StatelessWidget {
         arrowIconColor = const Color.fromRGBO(90, 134, 213, 1);
       } else if (title.toLowerCase().contains('new')) {
         cardColor = Colors.white;
-        iconBgColor = blueColor ?? blueColor;
+        iconBgColor = blueColor;
         iconColor = Colors.white;
-        arrowBgColor = blueColor.withOpacity(0.1) ?? blueColor;
-        arrowIconColor = blueColor ?? blueColor;
+        arrowBgColor = blueColor.withOpacity(0.1);
+        arrowIconColor = blueColor;
       } else {
         cardColor = Colors.white;
-        iconBgColor = blueColor ?? blueColor;
+        iconBgColor = blueColor;
         iconColor = Colors.white;
-        arrowBgColor = blueColor ?? blueColor;
+        arrowBgColor = blueColor;
         arrowIconColor = blueColor;
       }
 
@@ -335,91 +341,29 @@ class DashboardMobileSimple extends StatelessWidget {
       );
     }
 
-    Widget analyticCard() {
-      final List<PieChartSectionData> pieChartData = [
-        PieChartSectionData(
-          color: blueColor,
-          value: newWorkOrder.toDouble(),
-          title: '',
-          radius: 50,
-        ),
-        PieChartSectionData(
-          color: Color.fromRGBO(90, 134, 213, 1),
-          value: overdueWorkOrder.toDouble(),
-          title: '',
-          radius: 50,
-        ),
-      ];
-
-      return Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: PieChart(
-                PieChartData(
-                  sections: pieChartData,
-                  centerSpaceRadius: 0,
-                  sectionsSpace: 2,
-                  borderData: FlBorderData(show: false),
-                ),
-              ),
-            ),
-            const SizedBox(width: 35),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Analytic', style: cardTextStyle.copyWith(fontSize: 20)),
-                Row(
-                  children: [
-                    CircleAvatar(
-                        radius: 7, backgroundColor: blueColor.withOpacity(.9)),
-                    const SizedBox(width: 6),
-                    Text('New Work Orders',
-                        style: subTextStyle.copyWith(
-                            fontSize: MediaQuery.of(context).size.width < 400
-                                ? 13
-                                : 16)),
-                  ],
-                ),
-                Row(
-                  children: [
-                    CircleAvatar(
-                        radius: 7,
-                        backgroundColor: Color.fromRGBO(90, 134, 213, 1)),
-                    const SizedBox(width: 6),
-                    Text('Overdue Work Orders',
-                        style: subTextStyle.copyWith(
-                            fontSize: MediaQuery.of(context).size.width < 400
-                                ? 13
-                                : 16)),
-                  ],
-                ),
-                Text('Total Work orders : $totalWorkOrders',
-                    style: subTextStyle.copyWith(
-                        fontSize:
-                            MediaQuery.of(context).size.width < 400 ? 14 : 16)),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
+    // --- Future use: work order chart (commented, do not remove) ---
+    // Widget analyticCard() {
+    //   final List<PieChartSectionData> pieChartData = [
+    //     PieChartSectionData(
+    //       color: blueColor,
+    //       value: newWorkOrder.toDouble(),
+    //       title: '',
+    //       radius: 50,
+    //     ),
+    //     PieChartSectionData(
+    //       color: Color.fromRGBO(90, 134, 213, 1),
+    //       value: overdueWorkOrder.toDouble(),
+    //       title: '',
+    //       radius: 50,
+    //     ),
+    //   ];
+    //   return Container(
+    //     margin: const EdgeInsets.symmetric(vertical: 8),
+    //     padding: const EdgeInsets.all(16),
+    //     decoration: BoxDecoration(...),
+    //     child: Row(children: [PieChart(...), Column(New Work Orders, Overdue Work Orders, Total Work orders)]),
+    //   );
+    // }
 
     StaffPermission? permissions;
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
@@ -449,23 +393,23 @@ class DashboardMobileSimple extends StatelessWidget {
                         permissions.vendorView != true &&
                         permissions.workorderView != true);
 
-                if (showAllCards || permissions?.propertyView == true) {
+                if (showAllCards || permissions.propertyView == true) {
                   cards.add(dashboardCard(
                       Icons.home, propertyCount.toString(), 'Properties'));
                 }
-                if (showAllCards || permissions?.tenantView == true) {
+                if (showAllCards || permissions.tenantView == true) {
                   cards.add(dashboardCard(
                       Icons.people, tenantCount.toString(), 'Tenants'));
                 }
-                if (showAllCards || permissions?.applicantView == true) {
+                if (showAllCards || permissions.applicantView == true) {
                   cards.add(dashboardCard(Icons.assignment_ind,
                       applicantCount.toString(), 'Applicants'));
                 }
-                if (showAllCards || permissions?.vendorView == true) {
+                if (showAllCards || permissions.vendorView == true) {
                   cards.add(dashboardCard(
                       Icons.store, vendorCount.toString(), 'Vendors'));
                 }
-                if (showAllCards || permissions?.workorderView == true) {
+                if (showAllCards || permissions.workorderView == true) {
                   cards.add(dashboardCard(
                       Icons.work, workOrderCount.toString(), 'Work Orders'));
                 }
@@ -505,7 +449,7 @@ class DashboardMobileSimple extends StatelessWidget {
             ),
             workOrderCard('New Work Order', newWorkOrder),
             workOrderCard('Overdue Work Order', overdueWorkOrder),
-            analyticCard(),
+            UnpaidRentChartCard(),
             const SizedBox(height: 16),
             Cronjob_payment_table(),
             SizedBox(
@@ -549,14 +493,344 @@ class DashboardMobileSimple extends StatelessWidget {
   }
 }
 
+/// Fetches admin_balance + rentals APIs and shows "Percentage of Unpaid Rent" pie chart and legend.
+class UnpaidRentChartCard extends StatefulWidget {
+  const UnpaidRentChartCard({Key? key}) : super(key: key);
+
+  @override
+  State<UnpaidRentChartCard> createState() => _UnpaidRentChartCardState();
+}
+
+class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
+  bool _loading = true;
+  int _totalProperties = 0;
+  double _totalUnpaidAmount = 0;
+  int _totalUnpaidRentLeases = 0;
+  double _percentage = 0;
+
+  /// Section index when user taps pie: 0 = Unpaid, 1 = Paid. Null when not touching.
+  int? _touchedSectionIndex;
+
+  /// Dashboard unpaid rent — data sources and summary lines:
+  ///
+  /// 1) Balance API (GET /api/payment/admin_balance/{adminId})
+  ///    - totalRentPastDue: fallback for Total Unpaid if late-letters API fails
+  ///    - totalUnpaidRentLeases: count of leases with unpaid rent → "Total Properties with Unpaid Rent"
+  ///    - totalActiveLeases: count of active leases → "Total Rental Property" and percentage denominator
+  ///
+  /// 2) Preview late letters API (GET /api/leases/preview-late-letters/{adminId})
+  ///    - total_past_due_amount: source of truth for past-due $ → "Total Unpaid"
+  ///    - data[]: list of late letter previews (tenant_name, rental_address, total_amount per lease)
+  ///
+  /// Summary lines on chart:
+  /// - Unpaid Rent: (totalUnpaidRentLeases / totalActiveLeases) * 100
+  /// - Total Unpaid: total_past_due_amount (from preview-late-letters)
+  /// - Total Properties with Unpaid Rent: totalUnpaidRentLeases
+  /// - Total Rental Property: totalActiveLeases
+  Future<void> _fetchUnpaidRentData() async {
+    // 1. Admin identifier required
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString('adminId');
+    String? staffId = prefs.getString('staff_id');
+    String? token = prefs.getString('token');
+    if (adminId == null || adminId.isEmpty) return;
+
+    try {
+      setState(() => _loading = true);
+      final headers = {
+        'authorization': 'CRM $token',
+        'id': 'CRM ${staffId ?? adminId}',
+        'Content-Type': 'application/json',
+      };
+
+      // 2. Call balance API + preview-late-letters API (Total Unpaid = total_past_due_amount)
+      final balanceFuture = http.get(
+        Uri.parse('${Api_url}/api/payment/admin_balance/$adminId'),
+        headers: headers,
+      );
+      final lateLettersFuture = http.get(
+        Uri.parse('${Api_url}/api/leases/preview-late-letters/$adminId'),
+        headers: headers,
+      );
+      final results = await Future.wait([balanceFuture, lateLettersFuture]);
+      final balanceResponse = results[0];
+      final lateLettersResponse = results[1];
+
+      if (balanceResponse.statusCode == 200) {
+        final balanceJson = json.decode(balanceResponse.body);
+        if (balanceJson['statusCode'] == 200) {
+          final balanceData =
+              balanceJson['data'] as Map<String, dynamic>? ?? {};
+          final totalRentPastDue = (balanceData['totalRentPastDue'] is num)
+              ? (balanceData['totalRentPastDue'] as num).toDouble()
+              : 0.0;
+          final totalUnpaidRentLeases =
+              balanceData['totalUnpaidRentLeases'] as int? ?? 0;
+          final totalActiveLeases =
+              balanceData['totalActiveLeases'] as int? ?? 0;
+
+          // Total Unpaid: use preview-late-letters API total_past_due_amount (source of truth for past-due $)
+          double totalUnpaidAmount = totalRentPastDue;
+          if (lateLettersResponse.statusCode == 200) {
+            try {
+              final lateJson = json.decode(lateLettersResponse.body);
+              if (lateJson['statusCode'] == 200 &&
+                  lateJson['total_past_due_amount'] != null) {
+                final t = lateJson['total_past_due_amount'];
+                if (t is num) {
+                  totalUnpaidAmount = t.toDouble();
+                } else if (t is String) {
+                  totalUnpaidAmount = double.tryParse(t) ?? totalRentPastDue;
+                }
+              }
+            } catch (_) {}
+          }
+
+          final percentage = totalActiveLeases > 0
+              ? ((totalUnpaidRentLeases / totalActiveLeases) * 100)
+              : 0.0;
+
+          final totalRentalPropertyForChart = totalActiveLeases;
+
+          // Summary for logs
+          debugPrint('[UnpaidRentChart] --- Summary ---');
+          debugPrint(
+              '[UnpaidRentChart] Balance API: totalRentPastDue=$totalRentPastDue, totalUnpaidRentLeases=$totalUnpaidRentLeases, totalActiveLeases=$totalActiveLeases');
+          debugPrint(
+              '[UnpaidRentChart] Preview-late-letters: total_past_due_amount → Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}');
+          debugPrint(
+              '[UnpaidRentChart] Chart: Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}, Total Rental Property=$totalRentalPropertyForChart, Total with Unpaid=$totalUnpaidRentLeases, percentage=${percentage.toStringAsFixed(1)}%');
+
+          if (mounted) {
+            setState(() {
+              _totalProperties = totalRentalPropertyForChart;
+              _totalUnpaidAmount = totalUnpaidAmount;
+              _totalUnpaidRentLeases = totalUnpaidRentLeases;
+              _percentage = percentage;
+              _loading = false;
+            });
+          }
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching unpaid rent data: $e');
+    }
+    if (mounted) {
+      setState(() {
+        _totalProperties = 0;
+        _totalUnpaidAmount = 0;
+        _totalUnpaidRentLeases = 0;
+        _percentage = 0;
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUnpaidRentData();
+  }
+
+  Widget _legendRow(Color bulletColor, String text, TextStyle subTextStyle) {
+    final isNarrow = MediaQuery.of(context).size.width < 400;
+    final fontSize = isNarrow ? 11.0 : 14.0;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3),
+      child: Row(
+       // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(radius: 5, backgroundColor: bulletColor),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Text(
+                text,
+                style: subTextStyle.copyWith(fontSize: fontSize),
+                softWrap: true,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardTextStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: blueColor,
+    );
+    final subTextStyle = TextStyle(
+      color: const Color.fromRGBO(16, 24, 40, 0.7),
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+    );
+
+    if (_loading) {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child:  SizedBox(
+          height: 120,
+          child: Center(child: SpinKitFadingCircle(
+            color: blueColor,
+            size: 30,
+          )),
+        ),
+      );
+    }
+
+    // Match web: unpaid (large) drawn first from top, then paid (small). Colors: unpaid = dark blue, paid = light blue.
+    final unpaidValue = _percentage.clamp(0.0, 100.0);
+    final paidValue = (100.0 - _percentage).clamp(0.0, 100.0);
+    final List<PieChartSectionData> pieChartData = [
+      PieChartSectionData(
+        color: const Color.fromRGBO(40, 60, 95, 1),
+        value: unpaidValue > 0 ? unpaidValue : 1,
+        title: '',
+        radius: 50,
+      ),
+      PieChartSectionData(
+        color: const Color.fromRGBO(90, 134, 213, 1),
+        value: paidValue > 0 ? paidValue : 1,
+        title: '',
+        radius: 50,
+      ),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const SizedBox(width: 16),
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PieChart(
+                  PieChartData(
+                    sections: pieChartData,
+                    centerSpaceRadius: 0,
+                    sectionsSpace: 2,
+                    borderData: FlBorderData(show: false),
+                    pieTouchData: PieTouchData(
+                      touchCallback:
+                          (FlTouchEvent event, PieTouchResponse? response) {
+                        setState(() {
+                          if (event.isInterestedForInteractions &&
+                              response?.touchedSection != null) {
+                            _touchedSectionIndex =
+                                response!.touchedSection!.touchedSectionIndex;
+                          } else {
+                            _touchedSectionIndex = null;
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                if (_touchedSectionIndex != null)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(40, 60, 95, 0.95),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      _touchedSectionIndex == 0
+                          ? 'Unpaid Rent: ${_percentage.toStringAsFixed(1)}%'
+                          : 'Paid: ${(100.0 - _percentage).clamp(0.0, 100.0).toStringAsFixed(1)}%',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 24),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Percentage of Unpaid Rent',
+                  style: cardTextStyle.copyWith(fontSize: 17),
+                ),
+                const SizedBox(height: 8),
+                _legendRow(
+                    const Color.fromRGBO(40, 60, 95, 1),
+                    'Unpaid Rent : ${_percentage.toStringAsFixed(1)} %',
+                    subTextStyle),
+                _legendRow(
+                    const Color.fromRGBO(40, 60, 95, 1),
+                    'Total Unpaid: \$${NumberFormat('#,##0.00').format(_totalUnpaidAmount)}',
+                    subTextStyle),
+                _legendRow(
+                    Colors.grey.shade700,
+                    'Total Properties with Unpaid Rent : $_totalUnpaidRentLeases',
+                    subTextStyle),
+                _legendRow(Colors.grey.shade400,
+                    'Total Rental Property : $_totalProperties', subTextStyle),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class PieChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint1 = Paint()
-      ..color = blueColor.withOpacity(.9)!
+      ..color = blueColor.withOpacity(.9)
       ..style = PaintingStyle.fill;
     final paint2 = Paint()
-      ..color = blueColor.withOpacity(0.3)!
+      ..color = blueColor.withOpacity(0.3)
       ..style = PaintingStyle.fill;
 
     canvas.drawArc(

@@ -695,7 +695,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        () {
+                                            () {
                                           final d = _getDueDateForSummery(summery);
                                           return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                         }(),
@@ -1653,7 +1653,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: blueColor),
+                    border: Border.all(color: blueColor.withOpacity(0.07)),
                     // color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1859,7 +1859,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    () {
+                                        () {
                                       final d = _getDueDateForSummery(summery);
                                       return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                     }(),
@@ -1996,7 +1996,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: blueColor),
+                        border: Border.all(color: blueColor.withOpacity(0.07)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.3),
@@ -2130,7 +2130,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(color: blueColor),
+                      border: Border.all(color: blueColor.withOpacity(0.07)),
                       // color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -2323,14 +2323,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   SizedBox(
                     height: 220,
                     child: Material(
-                      elevation: 7,
+                      //elevation: 7,
                       borderOnForeground: true,
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         height: 220,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(),
+                          border: Border.all(color: blueColor.withOpacity(0.07)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -2338,8 +2338,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             Expanded(
                               flex: 2, // 40%
                               child: Container(
-                                decoration: const BoxDecoration(
+                                decoration:  BoxDecoration(
                                   // color: Colors.blue,
+                                  border: Border.all(color: blueColor.withOpacity(0.07)),
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(10),
                                   ),
@@ -2353,7 +2354,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             ],*/
                                 ),
                                 child: Material(
-                                  elevation: 4,
+                                  // elevation: 4,
                                   color: Colors.white,
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(10),
@@ -2459,14 +2460,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   SizedBox(
                     height: 100,
                     child: Material(
-                      elevation: 7,
+                      // elevation: 7,
                       borderOnForeground: true,
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         height: 100,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(),
+                          border: Border.all(color: blueColor.withOpacity(0.07)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -2474,8 +2475,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             Expanded(
                               flex: 3, // 40%
                               child: Container(
-                                decoration: const BoxDecoration(
+                                decoration:  BoxDecoration(
                                   // color: Colors.blue,
+                                  border: Border.all(color: blueColor.withOpacity(0.07)),
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(10),
                                   ),
@@ -2489,10 +2491,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             ],*/
                                 ),
                                 child: Material(
-                                  elevation: 4,
+                                  //elevation: 4,
                                   color: Colors.white,
+
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(10),
+
                                   ),
                                   child: Center(
                                     child: Text(
@@ -2550,26 +2554,28 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   height: 10,
                 ),
                 Material(
-                  elevation: 7,
+                  //elevation: 7,
                   borderOnForeground: true,
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(),
+                      border: Border.all(color: blueColor.withOpacity(0.07)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       children: [
                         Container(
-                          decoration: const BoxDecoration(
+                          decoration:  BoxDecoration(
+                            border: Border.all(color: blueColor.withOpacity(0.07)),
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(10),
                             ),
                           ),
                           child: Material(
-                            elevation: 4,
+                            //elevation: 4,
                             color: Colors.white,
+
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(10),
                             ),
@@ -2947,7 +2953,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        () {
+                                            () {
                                           final d = _getDueDateForSummery(summery);
                                           return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                         }(),
@@ -3224,7 +3230,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: blueColor),
+                    color: Colors.white,
+                    border: Border.all(color: blueColor.withOpacity(0.07)),
                     // color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -3439,7 +3446,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    () {
+                                        () {
                                       final d = _getDueDateForSummery(summery);
                                       return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                     }(),
@@ -3556,28 +3563,34 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 ),
                 IntrinsicHeight(
                   child: Material(
-                    elevation: 7,
+                    //elevation: 7,
                     borderOnForeground: true,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(),
+                        border: Border.all(color: blueColor.withOpacity(0.07)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: [
                           Container(
-                            decoration: const BoxDecoration(
+                            decoration:  BoxDecoration(
+
                               borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(10),
                               ),
+                              color: Colors.white,
+                              border: Border.all(color: blueColor.withOpacity(0.07)),
                             ),
                             child: Material(
-                              elevation: 4,
+                              // elevation: 2,
                               color: Colors.white,
+
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(10),
+
                               ),
                               child: Center(
                                 child: Padding(
