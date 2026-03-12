@@ -2297,7 +2297,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 const SizedBox(width: 10),
                                 const Center(
                                   child: Text(
-                                    "No data Available",
+                                    "No data available",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF101828),
@@ -2439,452 +2439,452 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             ],
                           ),
 
-                        // Failed Payments Section
-                        const SizedBox(height: 30),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final isMobile = constraints.maxWidth < 600;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Header with Select All - No container
-                                Row(
-                                  children: [
-                                    // Only show checkbox if more than 1 payment
-                                    if (failedPageData.length > 1)
-                                      SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: Checkbox(
-                                          value: failedPageData.isNotEmpty &&
-                                              selectedFailedPayments.length ==
-                                                  failedPageData.length,
-                                          onChanged: failedPageData.isEmpty
-                                              ? null
-                                              : (bool? value) {
-                                                  setState(() {
-                                                    if (value == true) {
-                                                      selectedFailedPayments =
-                                                          failedPageData
-                                                              .where((p) =>
-                                                                  p.id != null)
-                                                              .map((p) => p.id!)
-                                                              .toSet()
-                                                              .cast<String>();
-                                                    } else {
-                                                      selectedFailedPayments
-                                                          .clear();
-                                                    }
-                                                  });
-                                                },
-                                          activeColor: blueColor,
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          visualDensity: VisualDensity.compact,
-                                        ),
-                                      ),
-                                    if (failedPageData.length > 1)
-                                      const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text("Failed Payments Last 7 Days",
-                                          style: TextStyle(
-                                              fontSize: isMobile ? 15 : 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor)),
-                                    ),
-                                  ],
-                                ),
-                                // Selection controls below title
-                                if (selectedFailedPayments.isNotEmpty) ...[
-                                  const SizedBox(height: 12),
-                                  Wrap(
-                                    spacing: isMobile ? 6 : 8,
-                                    runSpacing: 8,
-                                    alignment: WrapAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: isMobile ? 10 : 12,
-                                            vertical: isMobile ? 6 : 7),
-                                        decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(
-                                              Icons.check_circle,
-                                              color: Colors.white,
-                                              size: 16,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              "${selectedFailedPayments.length} selected",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: isMobile ? 13 : 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedFailedPayments.clear();
-                                          });
-                                        },
-                                        borderRadius: BorderRadius.circular(6),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: isMobile ? 10 : 12,
-                                              vertical: isMobile ? 6 : 7),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            border: Border.all(
-                                                color: Colors.grey.shade300,
-                                                width: 1),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.close,
-                                                color: Colors.grey.shade700,
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                "CLEAR",
-                                                style: TextStyle(
-                                                  color: Colors.grey.shade700,
-                                                  fontSize: isMobile ? 12 : 13,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      PopupMenuButton<String>(
-                                        offset: const Offset(0,
-                                            15), // Open downward with more space to show under button
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: isMobile ? 10 : 12,
-                                              vertical: isMobile ? 6 : 7),
-                                          decoration: BoxDecoration(
-                                            color: blueColor,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.more_vert,
-                                                color: Colors.white,
-                                                size: isMobile ? 16 : 18,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                "Bulk Actions",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: isMobile ? 13 : 14,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.white,
-                                                size: isMobile ? 18 : 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        itemBuilder: (BuildContext context) => [
-                                          PopupMenuItem<String>(
-                                            value: 'ignore',
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 12),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(4),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.red.shade50,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.close,
-                                                    color: Colors.red,
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 12),
-                                                const Text(
-                                                  'Ignore Selected',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          PopupMenuItem<String>(
-                                            value: 'reprocess',
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 12),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(4),
-                                                  decoration: BoxDecoration(
-                                                    color: blueColor
-                                                        .withOpacity(0.1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.recycling_outlined,
-                                                    color: blueColor,
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 12),
-                                                const Text(
-                                                  'Reprocess Selected',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                        onSelected: (String value) {
-                                          if (value == 'ignore') {
-                                            _handleBulkIgnore();
-                                          } else if (value == 'reprocess') {
-                                            _handleBulkReprocess();
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ],
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        if (failedPageData.isEmpty)
-                          Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border:
-                                    Border.all(color: const Color(0xFFDBE0E5))),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/icons/Nodata.png',
-                                  height: 20,
-                                  width: 20,
-                                  color: const Color(0xFF101828),
-                                ),
-                                const SizedBox(width: 10),
-                                const Center(
-                                  child: Text(
-                                    "No failed payments",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF101828),
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          Column(
-                            children:
-                                failedPageData.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              bool isExpanded = expandedFailedIndex == index;
-                              LeaseDatacronjob Propertytype = entry.value;
-                              // Only show checkbox if more than 1 payment
-                              bool isSelected = failedPageData.length > 1 &&
-                                  Propertytype.id != null &&
-                                  selectedFailedPayments
-                                      .contains(Propertytype.id);
-
-                              return failedPaymentCard(
-                                  Propertytype.tenant?.tenantName ??
-                                      "Unknown Tenant",
-                                  Propertytype.rentalAddress ??
-                                      "Unknown Address",
-                                  Propertytype.totalAmount
-                                          ?.toStringAsFixed(2) ??
-                                      "0.00",
-                                  isExpanded, () {
-                                setState(() {
-                                  expandedFailedIndex =
-                                      isExpanded ? null : index;
-                                });
-                              },
-                                  Propertytype,
-                                  // Only pass checkbox params if more than 1 payment
-                                  failedPageData.length > 1 ? isSelected : null,
-                                  failedPageData.length > 1
-                                      ? () {
-                                          setState(() {
-                                            if (Propertytype.id != null) {
-                                              if (isSelected) {
-                                                selectedFailedPayments
-                                                    .remove(Propertytype.id!);
-                                              } else {
-                                                selectedFailedPayments
-                                                    .add(Propertytype.id!);
-                                              }
-                                            }
-                                          });
-                                        }
-                                      : null);
-                            }).toList(),
-                          ),
-                        // Pagination for Failed Payments
-                        if (failedData.isNotEmpty &&
-                            failedData.length >= 5) ...[
-                          const SizedBox(height: 20),
-                          // Pagination - Side by side layout
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              // Left side: Rows per page dropdown
-                              Material(
-                                elevation: 2,
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.white,
-                                child: Container(
-                                  height: 40,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<int>(
-                                      value: failedItemsPerPage,
-                                      isExpanded: false,
-                                      items:
-                                          itemsPerPageOptions.map((int value) {
-                                        return DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text(
-                                            value.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: failedData.length >= 5
-                                          ? (newValue) {
-                                              setState(() {
-                                                failedItemsPerPage = newValue ??
-                                                    failedItemsPerPage;
-                                                failedCurrentPage = 1;
-                                              });
-                                            }
-                                          : null,
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: blueColor,
-                                        size: 24,
-                                      ),
-                                      style: const TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                      dropdownColor: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              // Page navigation
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: failedCurrentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
-                                    ),
-                                    onPressed: failedCurrentPage == 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              failedCurrentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
-                                    child: Text(
-                                      'Page ${failedCurrentPage} of $failedTotalPages',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color:
-                                          failedCurrentPage < failedTotalPages
-                                              ? blueColor
-                                              : Colors.grey,
-                                    ),
-                                    onPressed:
-                                        failedCurrentPage < failedTotalPages
-                                            ? () {
-                                                setState(() {
-                                                  failedCurrentPage++;
-                                                });
-                                              }
-                                            : null,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                        // // Failed Payments Section
+                        // const SizedBox(height: 30),
+                        // LayoutBuilder(
+                        //   builder: (context, constraints) {
+                        //     final isMobile = constraints.maxWidth < 600;
+                        //     return Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         // Header with Select All - No container
+                        //         Row(
+                        //           children: [
+                        //             // Only show checkbox if more than 1 payment
+                        //             if (failedPageData.length > 1)
+                        //               SizedBox(
+                        //                 width: 18,
+                        //                 height: 18,
+                        //                 child: Checkbox(
+                        //                   value: failedPageData.isNotEmpty &&
+                        //                       selectedFailedPayments.length ==
+                        //                           failedPageData.length,
+                        //                   onChanged: failedPageData.isEmpty
+                        //                       ? null
+                        //                       : (bool? value) {
+                        //                           setState(() {
+                        //                             if (value == true) {
+                        //                               selectedFailedPayments =
+                        //                                   failedPageData
+                        //                                       .where((p) =>
+                        //                                           p.id != null)
+                        //                                       .map((p) => p.id!)
+                        //                                       .toSet()
+                        //                                       .cast<String>();
+                        //                             } else {
+                        //                               selectedFailedPayments
+                        //                                   .clear();
+                        //                             }
+                        //                           });
+                        //                         },
+                        //                   activeColor: blueColor,
+                        //                   materialTapTargetSize:
+                        //                       MaterialTapTargetSize.shrinkWrap,
+                        //                   visualDensity: VisualDensity.compact,
+                        //                 ),
+                        //               ),
+                        //             if (failedPageData.length > 1)
+                        //               const SizedBox(width: 10),
+                        //             Expanded(
+                        //               child: Text("Failed Payments Last 7 Days",
+                        //                   style: TextStyle(
+                        //                       fontSize: isMobile ? 15 : 18,
+                        //                       fontWeight: FontWeight.bold,
+                        //                       color: blueColor)),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //         // Selection controls below title
+                        //         if (selectedFailedPayments.isNotEmpty) ...[
+                        //           const SizedBox(height: 12),
+                        //           Wrap(
+                        //             spacing: isMobile ? 6 : 8,
+                        //             runSpacing: 8,
+                        //             alignment: WrapAlignment.start,
+                        //             children: [
+                        //               Container(
+                        //                 padding: EdgeInsets.symmetric(
+                        //                     horizontal: isMobile ? 10 : 12,
+                        //                     vertical: isMobile ? 6 : 7),
+                        //                 decoration: BoxDecoration(
+                        //                   color: blueColor,
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(6),
+                        //                 ),
+                        //                 child: Row(
+                        //                   mainAxisSize: MainAxisSize.min,
+                        //                   children: [
+                        //                     const Icon(
+                        //                       Icons.check_circle,
+                        //                       color: Colors.white,
+                        //                       size: 16,
+                        //                     ),
+                        //                     const SizedBox(width: 6),
+                        //                     Text(
+                        //                       "${selectedFailedPayments.length} selected",
+                        //                       style: TextStyle(
+                        //                         color: Colors.white,
+                        //                         fontSize: isMobile ? 13 : 14,
+                        //                         fontWeight: FontWeight.w600,
+                        //                       ),
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //               ),
+                        //               InkWell(
+                        //                 onTap: () {
+                        //                   setState(() {
+                        //                     selectedFailedPayments.clear();
+                        //                   });
+                        //                 },
+                        //                 borderRadius: BorderRadius.circular(6),
+                        //                 child: Container(
+                        //                   padding: EdgeInsets.symmetric(
+                        //                       horizontal: isMobile ? 10 : 12,
+                        //                       vertical: isMobile ? 6 : 7),
+                        //                   decoration: BoxDecoration(
+                        //                     color: Colors.grey.shade100,
+                        //                     borderRadius:
+                        //                         BorderRadius.circular(6),
+                        //                     border: Border.all(
+                        //                         color: Colors.grey.shade300,
+                        //                         width: 1),
+                        //                   ),
+                        //                   child: Row(
+                        //                     mainAxisSize: MainAxisSize.min,
+                        //                     children: [
+                        //                       Icon(
+                        //                         Icons.close,
+                        //                         color: Colors.grey.shade700,
+                        //                         size: 16,
+                        //                       ),
+                        //                       const SizedBox(width: 6),
+                        //                       Text(
+                        //                         "CLEAR",
+                        //                         style: TextStyle(
+                        //                           color: Colors.grey.shade700,
+                        //                           fontSize: isMobile ? 12 : 13,
+                        //                           fontWeight: FontWeight.w600,
+                        //                         ),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //               PopupMenuButton<String>(
+                        //                 offset: const Offset(0,
+                        //                     15), // Open downward with more space to show under button
+                        //                 shape: RoundedRectangleBorder(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(8),
+                        //                 ),
+                        //                 clipBehavior: Clip.antiAlias,
+                        //                 child: Container(
+                        //                   padding: EdgeInsets.symmetric(
+                        //                       horizontal: isMobile ? 10 : 12,
+                        //                       vertical: isMobile ? 6 : 7),
+                        //                   decoration: BoxDecoration(
+                        //                     color: blueColor,
+                        //                     borderRadius:
+                        //                         BorderRadius.circular(6),
+                        //                   ),
+                        //                   child: Row(
+                        //                     mainAxisSize: MainAxisSize.min,
+                        //                     children: [
+                        //                       Icon(
+                        //                         Icons.more_vert,
+                        //                         color: Colors.white,
+                        //                         size: isMobile ? 16 : 18,
+                        //                       ),
+                        //                       const SizedBox(width: 6),
+                        //                       Text(
+                        //                         "Bulk Actions",
+                        //                         style: TextStyle(
+                        //                           color: Colors.white,
+                        //                           fontSize: isMobile ? 13 : 14,
+                        //                           fontWeight: FontWeight.w600,
+                        //                         ),
+                        //                       ),
+                        //                       const SizedBox(width: 4),
+                        //                       Icon(
+                        //                         Icons.arrow_drop_down,
+                        //                         color: Colors.white,
+                        //                         size: isMobile ? 18 : 20,
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //                 itemBuilder: (BuildContext context) => [
+                        //                   PopupMenuItem<String>(
+                        //                     value: 'ignore',
+                        //                     padding: const EdgeInsets.symmetric(
+                        //                         horizontal: 16, vertical: 12),
+                        //                     child: Row(
+                        //                       children: [
+                        //                         Container(
+                        //                           padding:
+                        //                               const EdgeInsets.all(4),
+                        //                           decoration: BoxDecoration(
+                        //                             color: Colors.red.shade50,
+                        //                             borderRadius:
+                        //                                 BorderRadius.circular(
+                        //                                     4),
+                        //                           ),
+                        //                           child: const Icon(
+                        //                             Icons.close,
+                        //                             color: Colors.red,
+                        //                             size: 18,
+                        //                           ),
+                        //                         ),
+                        //                         const SizedBox(width: 12),
+                        //                         const Text(
+                        //                           'Ignore Selected',
+                        //                           style: TextStyle(
+                        //                             fontSize: 14,
+                        //                             fontWeight: FontWeight.w500,
+                        //                           ),
+                        //                         ),
+                        //                       ],
+                        //                     ),
+                        //                   ),
+                        //                   PopupMenuItem<String>(
+                        //                     value: 'reprocess',
+                        //                     padding: const EdgeInsets.symmetric(
+                        //                         horizontal: 16, vertical: 12),
+                        //                     child: Row(
+                        //                       children: [
+                        //                         Container(
+                        //                           padding:
+                        //                               const EdgeInsets.all(4),
+                        //                           decoration: BoxDecoration(
+                        //                             color: blueColor
+                        //                                 .withOpacity(0.1),
+                        //                             borderRadius:
+                        //                                 BorderRadius.circular(
+                        //                                     4),
+                        //                           ),
+                        //                           child: Icon(
+                        //                             Icons.recycling_outlined,
+                        //                             color: blueColor,
+                        //                             size: 18,
+                        //                           ),
+                        //                         ),
+                        //                         const SizedBox(width: 12),
+                        //                         const Text(
+                        //                           'Reprocess Selected',
+                        //                           style: TextStyle(
+                        //                             fontSize: 14,
+                        //                             fontWeight: FontWeight.w500,
+                        //                           ),
+                        //                         ),
+                        //                       ],
+                        //                     ),
+                        //                   ),
+                        //                 ],
+                        //                 onSelected: (String value) {
+                        //                   if (value == 'ignore') {
+                        //                     _handleBulkIgnore();
+                        //                   } else if (value == 'reprocess') {
+                        //                     _handleBulkReprocess();
+                        //                   }
+                        //                 },
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ],
+                        //     );
+                        //   },
+                        // ),
+                        // const SizedBox(height: 10),
+                        // if (failedPageData.isEmpty)
+                        //   Container(
+                        //     height: 100,
+                        //     decoration: BoxDecoration(
+                        //         color: Colors.white,
+                        //         borderRadius: BorderRadius.circular(20),
+                        //         border:
+                        //             Border.all(color: const Color(0xFFDBE0E5))),
+                        //     child: Row(
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       children: [
+                        //         Image.asset(
+                        //           'assets/icons/Nodata.png',
+                        //           height: 20,
+                        //           width: 20,
+                        //           color: const Color(0xFF101828),
+                        //         ),
+                        //         const SizedBox(width: 10),
+                        //         const Center(
+                        //           child: Text(
+                        //             "No failed payments",
+                        //             style: TextStyle(
+                        //               fontWeight: FontWeight.bold,
+                        //               color: Color(0xFF101828),
+                        //               fontSize: 15,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   )
+                        // else
+                        //   Column(
+                        //     children:
+                        //         failedPageData.asMap().entries.map((entry) {
+                        //       int index = entry.key;
+                        //       bool isExpanded = expandedFailedIndex == index;
+                        //       LeaseDatacronjob Propertytype = entry.value;
+                        //       // Only show checkbox if more than 1 payment
+                        //       bool isSelected = failedPageData.length > 1 &&
+                        //           Propertytype.id != null &&
+                        //           selectedFailedPayments
+                        //               .contains(Propertytype.id);
+                        //
+                        //       return failedPaymentCard(
+                        //           Propertytype.tenant?.tenantName ??
+                        //               "Unknown Tenant",
+                        //           Propertytype.rentalAddress ??
+                        //               "Unknown Address",
+                        //           Propertytype.totalAmount
+                        //                   ?.toStringAsFixed(2) ??
+                        //               "0.00",
+                        //           isExpanded, () {
+                        //         setState(() {
+                        //           expandedFailedIndex =
+                        //               isExpanded ? null : index;
+                        //         });
+                        //       },
+                        //           Propertytype,
+                        //           // Only pass checkbox params if more than 1 payment
+                        //           failedPageData.length > 1 ? isSelected : null,
+                        //           failedPageData.length > 1
+                        //               ? () {
+                        //                   setState(() {
+                        //                     if (Propertytype.id != null) {
+                        //                       if (isSelected) {
+                        //                         selectedFailedPayments
+                        //                             .remove(Propertytype.id!);
+                        //                       } else {
+                        //                         selectedFailedPayments
+                        //                             .add(Propertytype.id!);
+                        //                       }
+                        //                     }
+                        //                   });
+                        //                 }
+                        //               : null);
+                        //     }).toList(),
+                        //   ),
+                        // // Pagination for Failed Payments
+                        // if (failedData.isNotEmpty &&
+                        //     failedData.length >= 5) ...[
+                        //   const SizedBox(height: 20),
+                        //   // Pagination - Side by side layout
+                        //   Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       // Left side: Rows per page dropdown
+                        //       Material(
+                        //         elevation: 2,
+                        //         borderRadius: BorderRadius.circular(8),
+                        //         color: Colors.white,
+                        //         child: Container(
+                        //           height: 40,
+                        //           padding: const EdgeInsets.symmetric(
+                        //               horizontal: 12.0),
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(8),
+                        //             border:
+                        //                 Border.all(color: Colors.grey.shade300),
+                        //           ),
+                        //           child: DropdownButtonHideUnderline(
+                        //             child: DropdownButton<int>(
+                        //               value: failedItemsPerPage,
+                        //               isExpanded: false,
+                        //               items:
+                        //                   itemsPerPageOptions.map((int value) {
+                        //                 return DropdownMenuItem<int>(
+                        //                   value: value,
+                        //                   child: Text(
+                        //                     value.toString(),
+                        //                     style: const TextStyle(
+                        //                         fontSize: 14,
+                        //                         color: Colors.black),
+                        //                   ),
+                        //                 );
+                        //               }).toList(),
+                        //               onChanged: failedData.length >= 5
+                        //                   ? (newValue) {
+                        //                       setState(() {
+                        //                         failedItemsPerPage = newValue ??
+                        //                             failedItemsPerPage;
+                        //                         failedCurrentPage = 1;
+                        //                       });
+                        //                     }
+                        //                   : null,
+                        //               icon: Icon(
+                        //                 Icons.arrow_drop_down,
+                        //                 color: blueColor,
+                        //                 size: 24,
+                        //               ),
+                        //               style: const TextStyle(
+                        //                   fontSize: 14, color: Colors.black),
+                        //               dropdownColor: Colors.white,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       const SizedBox(width: 16),
+                        //       // Page navigation
+                        //       Row(
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //           IconButton(
+                        //             icon: FaIcon(
+                        //               FontAwesomeIcons.circleChevronLeft,
+                        //               color: failedCurrentPage == 1
+                        //                   ? Colors.grey
+                        //                   : blueColor,
+                        //             ),
+                        //             onPressed: failedCurrentPage == 1
+                        //                 ? null
+                        //                 : () {
+                        //                     setState(() {
+                        //                       failedCurrentPage--;
+                        //                     });
+                        //                   },
+                        //           ),
+                        //           Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 horizontal: 12.0),
+                        //             child: Text(
+                        //               'Page ${failedCurrentPage} of $failedTotalPages',
+                        //               style: TextStyle(fontSize: 14),
+                        //             ),
+                        //           ),
+                        //           IconButton(
+                        //             icon: FaIcon(
+                        //               FontAwesomeIcons.circleChevronRight,
+                        //               color:
+                        //                   failedCurrentPage < failedTotalPages
+                        //                       ? blueColor
+                        //                       : Colors.grey,
+                        //             ),
+                        //             onPressed:
+                        //                 failedCurrentPage < failedTotalPages
+                        //                     ? () {
+                        //                         setState(() {
+                        //                           failedCurrentPage++;
+                        //                         });
+                        //                       }
+                        //                     : null,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ],
                       ],
                     ),
                   );
@@ -2917,7 +2917,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //                   height: 10,
           //                 ),
           //                 Text(
-          //                   "No Data Available",
+          //                   "No Data available",
           //                   style: TextStyle(
           //                       fontWeight: FontWeight.bold,
           //                       color: blueColor,

@@ -695,7 +695,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        () {
+                                            () {
                                           final d = _getDueDateForSummery(summery);
                                           return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                         }(),
@@ -1859,7 +1859,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    () {
+                                        () {
                                       final d = _getDueDateForSummery(summery);
                                       return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                     }(),
@@ -2354,7 +2354,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             ],*/
                                 ),
                                 child: Material(
-                                 // elevation: 4,
+                                  // elevation: 4,
                                   color: Colors.white,
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(10),
@@ -2460,7 +2460,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   SizedBox(
                     height: 100,
                     child: Material(
-                     // elevation: 7,
+                      // elevation: 7,
                       borderOnForeground: true,
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
@@ -2953,7 +2953,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        () {
+                                            () {
                                           final d = _getDueDateForSummery(summery);
                                           return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                         }(),
@@ -3446,7 +3446,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    () {
+                                        () {
                                       final d = _getDueDateForSummery(summery);
                                       return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
                                     }(),
@@ -3585,7 +3585,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               border: Border.all(color: blueColor.withOpacity(0.07)),
                             ),
                             child: Material(
-                             // elevation: 2,
+                              // elevation: 2,
                               color: Colors.white,
 
                               borderRadius: const BorderRadius.vertical(

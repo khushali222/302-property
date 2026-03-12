@@ -46,8 +46,6 @@ import '../../../../model/workordr.dart';
 import '../screen/Maintenance/Workorder/workorder_summery.dart';
 import 'profile.dart';
 
-
-
 class DashboardData {
   // int tenantCount = 0;
   // int rentalCount = 0;
@@ -117,6 +115,25 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   List<Data> nearestPropertyWorkOrders = [];
   StaffPermission? permissions;
   int totalWorkOrders = 0;
+
+  /// True when at least one nearby/nearest property has an open (non-Completed) work order.
+  /// When false, show normal dashboard; when true, show 5 miles dashboard.
+  bool get hasNearbyPropertiesWithOpenWorkOrders {
+    final nearbyRentalIds = <String>{};
+    for (var r in properties) {
+      if (r.rentalId != null) nearbyRentalIds.add(r.rentalId!);
+    }
+    if (nearstProperty?.rentalId != null) {
+      nearbyRentalIds.add(nearstProperty!.rentalId!);
+    }
+    return nearestWorkOrders.any((wo) {
+      final rid = wo.rentalAddress?.rentalId;
+      if (rid == null || !nearbyRentalIds.contains(rid)) return false;
+      final status = wo.workOrderData?.status ?? '';
+      return status != 'Completed';
+    });
+  }
+
   Future<void> fetchDatacount() async {
     /*setState(() {
       loading = true;
@@ -199,10 +216,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             final coords = await getCoordinatesFromAddress(rental);
             if (coords != null) {
               double distanceInMeters = Geolocator.distanceBetween(
-                // userLocation.latitude,
-                // userLocation.longitude,
-                39.6613845,
-                -75.6339627,
+                userLocation.latitude,
+                userLocation.longitude,
+                // 39.6613845,
+                // -75.6339627,
                 coords.latitude,
                 coords.longitude,
               );
@@ -681,14 +698,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 child: Row(
                   children: [
                     width < 400
-                        ?  Text("  Work Order ",
+                        ? Text("  Work Order ",
                             style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold))
-                        :  Text("  Work Order",
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("  Work Order",
                             style: TextStyle(
-                                color:blueColor,
-                                fontWeight: FontWeight.bold)),
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -698,7 +713,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child:  Row(
+                child: Row(
                   children: [
                     Text("Status",
                         style: TextStyle(
@@ -754,7 +769,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                     child: Lottie.asset('assets/images/loader.json',
                         height: 150, width: 100),
                   )
-                : properties.length > 0 || nearstProperty != null
+                : (properties.length > 0 || nearstProperty != null) &&
+                        hasNearbyPropertiesWithOpenWorkOrders
                     ? SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 11, right: 11),
@@ -938,13 +954,16 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                               "data id 1 ${workOrder.workOrderData?.workOrderId}");
                                           //return CustomExpansionTile(data: Data, index: index);
                                           return Container(
-                                            margin: EdgeInsets.symmetric(vertical: 6),
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 6),
                                             decoration: BoxDecoration(
                                               color: index % 2 != 0
                                                   ? Color(0xFFF4F8FF)
                                                   : Colors.white,
-                                              border: Border.all(color: Color(0xFFDBE0E5)),
-                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(
+                                                  color: Color(0xFFDBE0E5)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: Column(
                                               children: <Widget>[
@@ -1156,14 +1175,14 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                     //     ''
                                                                     // ),
 
-                                                                    _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
-                                                                          ?.isNotEmpty ==
-                                                                          true
-                                                                          ? dateProvider.formatCurrentDate(
-                                                                          '${workOrder.workOrderData!.createdAt}')
-                                                                          : 'N/A',
-                                                                          '', '')
-
+                                                                    _buildTableRow(
+                                                                        ' Created On : ',
+                                                                        workOrder.workOrderData!.createdAt?.isNotEmpty ==
+                                                                                true
+                                                                            ? dateProvider.formatCurrentDate('${workOrder.workOrderData!.createdAt}')
+                                                                            : 'N/A',
+                                                                        '',
+                                                                        '')
                                                                   ],
                                                                 ),
                                                               ),
@@ -1252,27 +1271,28 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   ],
                                 ),
 
-                              if (properties.length > 0)
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 5,
+                              // Always show "Properties Within 5 Miles" section with default state when empty
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 2),
+                                    child: Text(
+                                      "Properties Within 5 Miles",
+                                      style: TextStyle(
+                                          color: Color(0xFF101828),
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 2),
-                                      child: Text(
-                                        "Properties Within 5 Miles",
-                                        style: TextStyle(
-                                            color: Color(0xFF101828),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  if (properties.isNotEmpty)
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 0.0, vertical: 0.0),
@@ -1291,8 +1311,20 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                             );
                                           }).toList(),
                                         )),
-                                  ],
-                                ),
+                                  if (properties.isEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 4.0),
+                                      child: Text(
+                                        "No properties within 5 miles of your location.",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
 
                               // Dynamically build Column items from properties list
                             ],
@@ -1412,13 +1444,15 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey,fontSize: 13),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),
@@ -1601,374 +1635,375 @@ class _PropertyCardState extends State<PropertyCard> {
     bool hasWorkOrders = matchingWorkOrders.isNotEmpty;
     final rental = widget.rental;
 
-    return hasWorkOrders
-        ? Container(
-            margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-            decoration: BoxDecoration(
-              color: widget.index % 2 != 0
-                  ? const Color(0xFFF4F8FF)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              border:
-                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              // border: Border.all(color: Colors.grey.shade300),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black12,
-              //     blurRadius: 4,
-              //     offset: Offset(0, 2),
-              //   ),
-              //],
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: () {
-                setState(() {
-                  _isExpanded = !_isExpanded;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    // Always show the property card (with or without work orders)
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+      decoration: BoxDecoration(
+        color: widget.index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+        // border: Border.all(color: Colors.grey.shade300),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black12,
+        //     blurRadius: 4,
+        //     offset: Offset(0, 2),
+        //   ),
+        //],
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: () {
+          if (hasWorkOrders) {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header row
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Header row
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              rental.rentalAddress ?? 'No Address',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF3A4A57),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            _isExpanded ? Icons.expand_less : Icons.expand_more,
-                            color: Colors.grey[700],
-                          ),
-                        ],
+                    Expanded(
+                      child: Text(
+                        rental.rentalAddress ?? 'No Address',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF3A4A57),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-
-                    // Expanded section
-                    if (_isExpanded) ...[
-                      if (hasWorkOrders)
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // const SizedBox(height: 5),
-                            const Divider(),
-                            const SizedBox(height: 10),
-                            _buildHeaders(),
-                            // const SizedBox(height: 10),
-                            Container(
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(
-                              //         color:
-                              //             Colors.green)),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
-                              child: Column(
-                                children: widget.nearestPropertyWorkOrders
-                                    .where((workOrder) =>
-                                        workOrder!.rentalAddress!.rentalId ==
-                                            widget.rental!.rentalId &&
-                                        (workOrder.workOrderData?.status ??
-                                                "") !=
-                                            "Completed")
-                                    .toList()
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndexrow == index;
-                                  Data workOrder = entry.value;
-                                  //return CustomExpansionTile(data: Data, index: index);
-                                  print(
-                                      "workorder id ${workOrder.workOrderData?.workOrderId}");
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: const Color(0xFFDBE0E5)),
-                                    ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          onTap: () {
-                                            setState(() {
-                                              if (expandedIndexrow == index) {
-                                                expandedIndexrow = null;
-                                              } else {
-                                                expandedIndexrow = index;
-                                              }
-                                            });
-                                          },
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndexrow ==
-                                                          index) {
-                                                        expandedIndexrow = null;
-                                                      } else {
-                                                        expandedIndexrow =
-                                                            index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 5, right: 8),
-                                                    padding: !isExpanded
-                                                        ? const EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Text(
-                                                    '${workOrder.workOrderData!.workSubject}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Text(
-                                                    '${workOrder.workOrderData?.status ?? "N/A"}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 2),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 1),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 30,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Table(
-                                                          columnWidths: {
-                                                            0: const FlexColumnWidth(), // Distribute columns equally
-                                                            1: const FlexColumnWidth(),
-                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                            // 1: FlexColumnWidth(),
-                                                          },
-                                                          children: [
-                                                            // _buildTableRow(
-                                                            //     'Property :',
-                                                            //     _getDisplayValue(
-                                                            //         workOrder
-                                                            //             .rentalAddress!
-                                                            //             .rentalAdress),
-                                                            //     'Assign :',
-                                                            //     _getDisplayValue(workOrder
-                                                            //         .staffMember
-                                                            //         ?.staffmemberName)),
-                                                            // _buildTableRow(
-                                                            //     'Created On:',
-                                                            //     workOrder.workOrderData!.createdAt
-                                                            //         ?.isNotEmpty ==
-                                                            //         true
-                                                            //         ? dateProvider.formatCurrentDate(
-                                                            //         '${workOrder.workOrderData!.createdAt}')
-                                                            //         : 'N/A',
-                                                            //     '',
-                                                            //     ''),
-                                                            _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
-                                                                ?.isNotEmpty ==
-                                                                true
-                                                                ? dateProvider.formatCurrentDate(
-                                                                '${workOrder.workOrderData!.createdAt}')
-                                                                : 'N/A','',''
-                                                                )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    children: [
-                                                      // if(permissions!.workorderView!)
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Workorder_summery(
-                                                                            workorder_id: workOrder.workOrderData?.workOrderId,
-                                                                          )));
-                                                        },
-                                                        child:
-                                                        Container(
-                                                          height: 40,
-                                                          // width: 35,
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                            children: [
-                                                              const FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .eye,
-                                                                size:
-                                                                15,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              // SizedBox(
-                                                              //     width:
-                                                              //     2),
-                                                              const SizedBox(
-                                                                width:
-                                                                8,
-                                                              ),
-                                                              Text(
-                                                                "View Summary",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                    11,
-                                                                    color:
-                                                                    blueColor,
-                                                                    fontWeight:
-                                                                    FontWeight.bold),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        //SizedBox(height: 13,),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                          ],
+                    if (hasWorkOrders)
+                      Icon(
+                        _isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Colors.grey[700],
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          'No open work orders',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      if (!hasWorkOrders)
-                        const Column(
-                          children: [
-                            SizedBox(height: 5),
-                            Divider(),
-                            SizedBox(height: 10),
-                            Text("No Work Orders",
-                                style: TextStyle(color: Colors.blueGrey)),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      // Add more fields if needed
-                    ]
+                      ),
                   ],
                 ),
               ),
-            ),
-          )
-        : Container();
+
+              // Expanded section (only when there are work orders)
+              if (_isExpanded && hasWorkOrders) ...[
+                if (hasWorkOrders)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // const SizedBox(height: 5),
+                      const Divider(),
+                      const SizedBox(height: 10),
+                      _buildHeaders(),
+                      // const SizedBox(height: 10),
+                      Container(
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(
+                        //         color:
+                        //             Colors.green)),
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(color: blueColor)),
+                        child: Column(
+                          children: widget.nearestPropertyWorkOrders
+                              .where((workOrder) =>
+                                  workOrder!.rentalAddress!.rentalId ==
+                                      widget.rental!.rentalId &&
+                                  (workOrder.workOrderData?.status ?? "") !=
+                                      "Completed")
+                              .toList()
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            int index = entry.key;
+                            bool isExpanded = expandedIndexrow == index;
+                            Data workOrder = entry.value;
+                            //return CustomExpansionTile(data: Data, index: index);
+                            print(
+                                "workorder id ${workOrder.workOrderData?.workOrderId}");
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: index % 2 != 0
+                                    ? Colors.white
+                                    : blueColor.withOpacity(0.09),
+                                border:
+                                    Border.all(color: const Color(0xFFDBE0E5)),
+                              ),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(color: blueColor),
+                              // ),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        if (expandedIndexrow == index) {
+                                          expandedIndexrow = null;
+                                        } else {
+                                          expandedIndexrow = index;
+                                        }
+                                      });
+                                    },
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          InkWell(
+                                            onTap: () {
+                                              // setState(() {
+                                              //    isExpanded = !isExpanded;
+                                              // //  expandedIndex = !expandedIndex;
+                                              //
+                                              // });
+                                              // setState(() {
+                                              //   if (isExpanded) {
+                                              //     expandedIndex = null;
+                                              //     isExpanded = !isExpanded;
+                                              //   } else {
+                                              //     expandedIndex = index;
+                                              //   }
+                                              // });
+                                              setState(() {
+                                                if (expandedIndexrow == index) {
+                                                  expandedIndexrow = null;
+                                                } else {
+                                                  expandedIndexrow = index;
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 5, right: 8),
+                                              padding: !isExpanded
+                                                  ? const EdgeInsets.only(
+                                                      bottom: 10)
+                                                  : const EdgeInsets.only(
+                                                      top: 10),
+                                              child: FaIcon(
+                                                isExpanded
+                                                    ? FontAwesomeIcons.sortUp
+                                                    : FontAwesomeIcons.sortDown,
+                                                size: 20,
+                                                color: blueColor,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 4,
+                                            child: Text(
+                                              '${workOrder.workOrderData!.workSubject}',
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .02),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              '${workOrder.workOrderData?.status ?? "N/A"}',
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  if (isExpanded)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 2),
+                                      margin: const EdgeInsets.only(bottom: 1),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                FaIcon(
+                                                  isExpanded
+                                                      ? FontAwesomeIcons.sortUp
+                                                      : FontAwesomeIcons
+                                                          .sortDown,
+                                                  size: 30,
+                                                  color: Colors.transparent,
+                                                ),
+                                                Expanded(
+                                                  child: Table(
+                                                    columnWidths: {
+                                                      0: const FlexColumnWidth(), // Distribute columns equally
+                                                      1: const FlexColumnWidth(),
+                                                      // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                      // 1: FlexColumnWidth(),
+                                                    },
+                                                    children: [
+                                                      // _buildTableRow(
+                                                      //     'Property :',
+                                                      //     _getDisplayValue(
+                                                      //         workOrder
+                                                      //             .rentalAddress!
+                                                      //             .rentalAdress),
+                                                      //     'Assign :',
+                                                      //     _getDisplayValue(workOrder
+                                                      //         .staffMember
+                                                      //         ?.staffmemberName)),
+                                                      // _buildTableRow(
+                                                      //     'Created On:',
+                                                      //     workOrder.workOrderData!.createdAt
+                                                      //         ?.isNotEmpty ==
+                                                      //         true
+                                                      //         ? dateProvider.formatCurrentDate(
+                                                      //         '${workOrder.workOrderData!.createdAt}')
+                                                      //         : 'N/A',
+                                                      //     '',
+                                                      //     ''),
+                                                      _buildTableRow(
+                                                          ' Created On : ',
+                                                          workOrder
+                                                                      .workOrderData!
+                                                                      .createdAt
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? dateProvider
+                                                                  .formatCurrentDate(
+                                                                      '${workOrder.workOrderData!.createdAt}')
+                                                              : 'N/A',
+                                                          '',
+                                                          '')
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                // if(permissions!.workorderView!)
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Workorder_summery(
+                                                                  workorder_id:
+                                                                      workOrder
+                                                                          .workOrderData
+                                                                          ?.workOrderId,
+                                                                )));
+                                                  },
+                                                  child: Container(
+                                                    height: 40,
+                                                    // width: 35,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        const FaIcon(
+                                                          FontAwesomeIcons.eye,
+                                                          size: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                        // SizedBox(
+                                                        //     width:
+                                                        //     2),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
+                                                        Text(
+                                                          "View Summary",
+                                                          style: TextStyle(
+                                                              fontSize: 11,
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  //SizedBox(height: 13,),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    ],
+                  ),
+                if (!hasWorkOrders)
+                  const Column(
+                    children: [
+                      SizedBox(height: 5),
+                      Divider(),
+                      SizedBox(height: 10),
+                      Text("No Work Orders",
+                          style: TextStyle(color: Colors.blueGrey)),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                // Add more fields if needed
+              ]
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
@@ -1983,13 +2018,15 @@ class _PropertyCardState extends State<PropertyCard> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey,fontSize: 13),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),

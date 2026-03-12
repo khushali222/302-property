@@ -515,8 +515,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: blueColor)),
-                        
-                        Column(
+
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DropdownButtonHideUnderline(
@@ -591,7 +591,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
                                       border: Border.all(color: Color(0xFFb0b6c3)),
-                                     
+
                                     ),
                                     elevation: 0,
                                   ),
@@ -804,7 +804,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                           color: Colors.white,
                                           border: Border.all(
                                               color: Color(0xFFb0b6c3)),
-                                          
+
                                         ),
                                         elevation: 0,
                                       ),
@@ -1059,7 +1059,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text('Photos (Maximum of 10)',
+        Text('Photos (Maximum of 10)',
             style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -1077,35 +1077,35 @@ class _Add_WorkorderState extends State<Add_Workorder> {
               ),
               child: Column(
                 children: [
-                 Image.asset(
-                                      'assets/icons/Upload.png',
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Upload your Photo here',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    const Text(
-                                      'Maximum File Size is 20MB',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                    const Text(
-                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                 
+                  Image.asset(
+                    'assets/icons/Upload.png',
+                    height: 50,
+                    width: 50,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Upload your Photo here',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Maximum File Size is 20MB',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.grey),
+                  ),
+                  const Text(
+                    'Supported File Types are .png, .jpeg, .pdf, .csv',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.grey),
+                  ),
+
                 ],
               ),
             ),
@@ -1174,25 +1174,25 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             borderRadius: BorderRadius.circular(6),
                             child: isMp4
                                 ? GestureDetector(
-                                    onTap: () => _showVideoDialog('$image_url$imageUrl'),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        VideoItem(url: '$image_url$imageUrl'),
-                                        const Icon(Icons.play_circle_fill,
-                                            color: Colors.white, size: 40),
-                                      ],
-                                    ),
-                                  )
+                              onTap: () => _showVideoDialog('$image_url$imageUrl'),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  VideoItem(url: '$image_url$imageUrl'),
+                                  const Icon(Icons.play_circle_fill,
+                                      color: Colors.white, size: 40),
+                                ],
+                              ),
+                            )
                                 : Image.network(
-                                    '$image_url$imageUrl',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) =>
-                                        const Icon(Icons.error, size: 32),
-                                  ),
+                              '$image_url$imageUrl',
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.error, size: 32),
+                            ),
                           ),
                         ),
-                        
+
                       ],
                     );
                   }).toList(),
