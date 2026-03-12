@@ -46,8 +46,6 @@ import '../../../../model/workordr.dart';
 import '../screen/Maintenance/Workorder/workorder_summery.dart';
 import 'profile.dart';
 
-
-
 class DashboardData {
   // int tenantCount = 0;
   // int rentalCount = 0;
@@ -117,6 +115,25 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   List<Data> nearestPropertyWorkOrders = [];
   StaffPermission? permissions;
   int totalWorkOrders = 0;
+
+  /// True when at least one nearby/nearest property has an open (non-Completed) work order.
+  /// When false, show normal dashboard; when true, show 5 miles dashboard.
+  bool get hasNearbyPropertiesWithOpenWorkOrders {
+    final nearbyRentalIds = <String>{};
+    for (var r in properties) {
+      if (r.rentalId != null) nearbyRentalIds.add(r.rentalId!);
+    }
+    if (nearstProperty?.rentalId != null) {
+      nearbyRentalIds.add(nearstProperty!.rentalId!);
+    }
+    return nearestWorkOrders.any((wo) {
+      final rid = wo.rentalAddress?.rentalId;
+      if (rid == null || !nearbyRentalIds.contains(rid)) return false;
+      final status = wo.workOrderData?.status ?? '';
+      return status != 'Completed';
+    });
+  }
+
   Future<void> fetchDatacount() async {
     /*setState(() {
       loading = true;
@@ -681,14 +698,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 child: Row(
                   children: [
                     width < 400
-                        ?  Text("  Work Order ",
+                        ? Text("  Work Order ",
                         style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold))
-                        :  Text("  Work Order",
+                            color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("  Work Order",
                         style: TextStyle(
-                            color:blueColor,
-                            fontWeight: FontWeight.bold)),
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -698,7 +713,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child:  Row(
+                child: Row(
                   children: [
                     Text("Status",
                         style: TextStyle(
@@ -754,7 +769,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           child: Lottie.asset('assets/images/loader.json',
               height: 150, width: 100),
         )
-            : properties.length > 0 || nearstProperty != null
+            : (properties.length > 0 || nearstProperty != null) &&
+            hasNearbyPropertiesWithOpenWorkOrders
             ? SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
@@ -938,13 +954,16 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                 "data id 1 ${workOrder.workOrderData?.workOrderId}");
                             //return CustomExpansionTile(data: Data, index: index);
                             return Container(
-                              margin: EdgeInsets.symmetric(vertical: 6),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 6),
                               decoration: BoxDecoration(
                                 color: index % 2 != 0
                                     ? Color(0xFFF4F8FF)
                                     : Colors.white,
-                                border: Border.all(color: Color(0xFFDBE0E5)),
-                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Color(0xFFDBE0E5)),
+                                borderRadius:
+                                BorderRadius.circular(10),
                               ),
                               child: Column(
                                 children: <Widget>[
@@ -1156,14 +1175,14 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                       //     ''
                                                       // ),
 
-                                                      _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
-                                                          ?.isNotEmpty ==
-                                                          true
-                                                          ? dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData!.createdAt}')
-                                                          : 'N/A',
-                                                          '', '')
-
+                                                      _buildTableRow(
+                                                          ' Created On : ',
+                                                          workOrder.workOrderData!.createdAt?.isNotEmpty ==
+                                                              true
+                                                              ? dateProvider.formatCurrentDate('${workOrder.workOrderData!.createdAt}')
+                                                              : 'N/A',
+                                                          '',
+                                                          '')
                                                     ],
                                                   ),
                                                 ),
@@ -1252,27 +1271,28 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                     ],
                   ),
 
-                if (properties.length > 0)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 5,
+                // Always show "Properties Within 5 Miles" section with default state when empty
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 2),
+                      child: Text(
+                        "Properties Within 5 Miles",
+                        style: TextStyle(
+                            color: Color(0xFF101828),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 2),
-                        child: Text(
-                          "Properties Within 5 Miles",
-                          style: TextStyle(
-                              color: Color(0xFF101828),
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    if (properties.isNotEmpty)
                       Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0.0, vertical: 0.0),
@@ -1291,8 +1311,20 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                               );
                             }).toList(),
                           )),
-                    ],
-                  ),
+                    if (properties.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12.0, horizontal: 4.0),
+                        child: Text(
+                          "No properties within 5 miles of your location.",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
 
                 // Dynamically build Column items from properties list
               ],
@@ -1412,13 +1444,15 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey,fontSize: 13),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),
@@ -1601,16 +1635,13 @@ class _PropertyCardState extends State<PropertyCard> {
     bool hasWorkOrders = matchingWorkOrders.isNotEmpty;
     final rental = widget.rental;
 
-    return hasWorkOrders
-        ? Container(
+    // Always show the property card (with or without work orders)
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
       decoration: BoxDecoration(
-        color: widget.index % 2 != 0
-            ? const Color(0xFFF4F8FF)
-            : Colors.white,
+        color: widget.index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
         borderRadius: BorderRadius.circular(6),
-        border:
-        Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+        border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
         // border: Border.all(color: Colors.grey.shade300),
         // boxShadow: [
         //   BoxShadow(
@@ -1623,9 +1654,11 @@ class _PropertyCardState extends State<PropertyCard> {
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
         onTap: () {
-          setState(() {
-            _isExpanded = !_isExpanded;
-          });
+          if (hasWorkOrders) {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(5.0),
@@ -1648,16 +1681,28 @@ class _PropertyCardState extends State<PropertyCard> {
                         ),
                       ),
                     ),
-                    Icon(
-                      _isExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.grey[700],
-                    ),
+                    if (hasWorkOrders)
+                      Icon(
+                        _isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Colors.grey[700],
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          'No open work orders',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
 
-              // Expanded section
-              if (_isExpanded) ...[
+              // Expanded section (only when there are work orders)
+              if (_isExpanded && hasWorkOrders) ...[
                 if (hasWorkOrders)
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1680,8 +1725,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               .where((workOrder) =>
                           workOrder!.rentalAddress!.rentalId ==
                               widget.rental!.rentalId &&
-                              (workOrder.workOrderData?.status ??
-                                  "") !=
+                              (workOrder.workOrderData?.status ?? "") !=
                                   "Completed")
                               .toList()
                               .asMap()
@@ -1698,8 +1742,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                 color: index % 2 != 0
                                     ? Colors.white
                                     : blueColor.withOpacity(0.09),
-                                border: Border.all(
-                                    color: const Color(0xFFDBE0E5)),
+                                border:
+                                Border.all(color: const Color(0xFFDBE0E5)),
                               ),
                               // decoration: BoxDecoration(
                               //   border: Border.all(color: blueColor),
@@ -1741,18 +1785,15 @@ class _PropertyCardState extends State<PropertyCard> {
                                               //   }
                                               // });
                                               setState(() {
-                                                if (expandedIndexrow ==
-                                                    index) {
+                                                if (expandedIndexrow == index) {
                                                   expandedIndexrow = null;
                                                 } else {
-                                                  expandedIndexrow =
-                                                      index;
+                                                  expandedIndexrow = index;
                                                 }
                                               });
                                             },
                                             child: Container(
-                                              margin:
-                                              const EdgeInsets.only(
+                                              margin: const EdgeInsets.only(
                                                   left: 5, right: 8),
                                               padding: !isExpanded
                                                   ? const EdgeInsets.only(
@@ -1761,10 +1802,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                                   top: 10),
                                               child: FaIcon(
                                                 isExpanded
-                                                    ? FontAwesomeIcons
-                                                    .sortUp
-                                                    : FontAwesomeIcons
-                                                    .sortDown,
+                                                    ? FontAwesomeIcons.sortUp
+                                                    : FontAwesomeIcons.sortDown,
                                                 size: 20,
                                                 color: blueColor,
                                               ),
@@ -1776,15 +1815,13 @@ class _PropertyCardState extends State<PropertyCard> {
                                               '${workOrder.workOrderData!.workSubject}',
                                               style: TextStyle(
                                                 color: blueColor,
-                                                fontWeight:
-                                                FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 13,
                                               ),
                                             ),
                                           ),
                                           SizedBox(
-                                              width:
-                                              MediaQuery.of(context)
+                                              width: MediaQuery.of(context)
                                                   .size
                                                   .width *
                                                   .02),
@@ -1794,8 +1831,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                               '${workOrder.workOrderData?.status ?? "N/A"}',
                                               style: TextStyle(
                                                 color: blueColor,
-                                                fontWeight:
-                                                FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 13,
                                               ),
                                             ),
@@ -1808,8 +1844,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 2),
-                                      margin: const EdgeInsets.only(
-                                          bottom: 1),
+                                      margin: const EdgeInsets.only(bottom: 1),
                                       child: SingleChildScrollView(
                                         child: Column(
                                           children: [
@@ -1817,13 +1852,11 @@ class _PropertyCardState extends State<PropertyCard> {
                                               children: [
                                                 FaIcon(
                                                   isExpanded
-                                                      ? FontAwesomeIcons
-                                                      .sortUp
+                                                      ? FontAwesomeIcons.sortUp
                                                       : FontAwesomeIcons
                                                       .sortDown,
                                                   size: 30,
-                                                  color:
-                                                  Colors.transparent,
+                                                  color: Colors.transparent,
                                                 ),
                                                 Expanded(
                                                   child: Table(
@@ -1854,13 +1887,19 @@ class _PropertyCardState extends State<PropertyCard> {
                                                       //         : 'N/A',
                                                       //     '',
                                                       //     ''),
-                                                      _buildTableRow(' Created On : ', workOrder.workOrderData!.createdAt
-                                                          ?.isNotEmpty ==
-                                                          true
-                                                          ? dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData!.createdAt}')
-                                                          : 'N/A','',''
-                                                      )
+                                                      _buildTableRow(
+                                                          ' Created On : ',
+                                                          workOrder
+                                                              .workOrderData!
+                                                              .createdAt
+                                                              ?.isNotEmpty ==
+                                                              true
+                                                              ? dateProvider
+                                                              .formatCurrentDate(
+                                                              '${workOrder.workOrderData!.createdAt}')
+                                                              : 'N/A',
+                                                          '',
+                                                          '')
                                                     ],
                                                   ),
                                                 ),
@@ -1874,7 +1913,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                             ),
                                             Row(
                                               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                               children: [
                                                 // if(permissions!.workorderView!)
                                                 GestureDetector(
@@ -1882,14 +1922,15 @@ class _PropertyCardState extends State<PropertyCard> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
+                                                            builder: (context) =>
                                                                 Workorder_summery(
-                                                                  workorder_id: workOrder.workOrderData?.workOrderId,
+                                                                  workorder_id:
+                                                                  workOrder
+                                                                      .workOrderData
+                                                                      ?.workOrderId,
                                                                 )));
                                                   },
-                                                  child:
-                                                  Container(
+                                                  child: Container(
                                                     height: 40,
                                                     // width: 35,
                                                     child: Row(
@@ -1901,29 +1942,24 @@ class _PropertyCardState extends State<PropertyCard> {
                                                           .center,
                                                       children: [
                                                         const FaIcon(
-                                                          FontAwesomeIcons
-                                                              .eye,
-                                                          size:
-                                                          15,
-                                                          color: Colors
-                                                              .black,
+                                                          FontAwesomeIcons.eye,
+                                                          size: 15,
+                                                          color: Colors.black,
                                                         ),
                                                         // SizedBox(
                                                         //     width:
                                                         //     2),
                                                         const SizedBox(
-                                                          width:
-                                                          8,
+                                                          width: 8,
                                                         ),
                                                         Text(
                                                           "View Summary",
                                                           style: TextStyle(
-                                                              fontSize:
-                                                              11,
-                                                              color:
-                                                              blueColor,
+                                                              fontSize: 11,
+                                                              color: blueColor,
                                                               fontWeight:
-                                                              FontWeight.bold),
+                                                              FontWeight
+                                                                  .bold),
                                                         )
                                                       ],
                                                     ),
@@ -1967,8 +2003,7 @@ class _PropertyCardState extends State<PropertyCard> {
           ),
         ),
       ),
-    )
-        : Container();
+    );
   }
 
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
@@ -1983,13 +2018,15 @@ class _PropertyCardState extends State<PropertyCard> {
               children: [
                 Text(
                   leftLabel,
-                  style:
-                  TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 13),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey,fontSize: 13),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),
