@@ -228,7 +228,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: 24,
                 color: _selectedIndex == 2 ? blueColor : grey,
               ),
-              label: 'Work Order',
+              label: 'Work Orders',
             ),
             BottomNavigationBarItem(
               icon: FaIcon(
