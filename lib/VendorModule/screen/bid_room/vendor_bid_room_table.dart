@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/VendorModule/repository/vendor_bid_repo.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
+import 'package:three_zero_two_property/VendorModule/widgets/appbar.dart'
+    as vendor_appbar;
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 // import 'package:three_zero_two_property/widgets/custom_drawer.dart'; // Depending on if we use the same drawer
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -300,7 +301,10 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.widget_302.App_Bar(context: context),
+      appBar: vendor_appbar.widget_302.App_Bar(
+        context: context,
+        onDrawerIconPressed: () {},
+      ),
       backgroundColor: Colors.white,
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(

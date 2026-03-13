@@ -535,7 +535,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                 ),
                                 Center(
                                   child: Text(
-                                    "No data Available",
+                                    "No data available",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF101828),
@@ -593,7 +593,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                           ),
                           if (currentPageData.isEmpty)
                             Container(
-                              child: Text("No Data Available"),
+                              child: Text("No data available"),
                             ),
                           // Card-based expandable list
                           Column(
@@ -727,7 +727,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           //                   height: 10,
           //                 ),
           //                 Text(
-          //                   "No Data Available",
+          //                   "No data available",
           //                   style: TextStyle(
           //                       fontWeight: FontWeight.bold,
           //                       color: blueColor,

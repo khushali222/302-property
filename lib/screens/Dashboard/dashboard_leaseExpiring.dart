@@ -819,7 +819,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                                 ),
                                 Center(
                                   child: Text(
-                                    "No data Available",
+                                    "No data available",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF101828),
@@ -1008,7 +1008,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
           //                   height: 10,
           //                 ),
           //                 Text(
-          //                   "No Data Available",
+          //                   "No Data available",
           //                   style: TextStyle(
           //                       fontWeight: FontWeight.bold,
           //                       color: blueColor,

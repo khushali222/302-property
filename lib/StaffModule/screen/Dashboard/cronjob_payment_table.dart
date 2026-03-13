@@ -2297,7 +2297,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 const SizedBox(width: 10),
                                 const Center(
                                   child: Text(
-                                    "No data Available",
+                                    "No data available",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF101828),
@@ -2917,7 +2917,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //                   height: 10,
           //                 ),
           //                 Text(
-          //                   "No Data Available",
+          //                   "No Data available",
           //                   style: TextStyle(
           //                       fontWeight: FontWeight.bold,
           //                       color: blueColor,

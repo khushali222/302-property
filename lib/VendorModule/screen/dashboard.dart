@@ -508,6 +508,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
             // Scaffold.of(context).openDrawer();
           },
         ),
+        drawer: Icon(Icons.menu,color: Colors.white,),
         body: loading
             ? Center(
                 child: Lottie.asset('assets/images/loader.json',
@@ -1207,7 +1208,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                       dashboardData.icons[1],
                                                   count:
                                                       countList[1].toString(),
-                                                  label: "Overdue Orders",
+                                                  label: "Overdue Ordersg",
                                                   buttonLabel: "View All",
                                                   buttonColor:
                                                       const Color.fromRGBO(
