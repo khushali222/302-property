@@ -863,8 +863,8 @@ class _Profile_screenState extends State<Profile_screen> {
                               setState(() => _contacts.add(_ContactEntry())),
                           child: 
                           Container(
-                            height: 50,
-                            width: 50,
+                            height: 40,
+                            width: 40,
                             decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -875,7 +875,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               children: [
                                 FaIcon(
                                   FontAwesomeIcons.add,
-                                  size: 20,
+                                  size: 15,
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 2),
@@ -884,6 +884,9 @@ class _Profile_screenState extends State<Profile_screen> {
                           ),
                         
                         ),
+                        const SizedBox(height: 15),
+                        Divider(color: Colors.grey.shade400,height: 1,),
+                        SizedBox(height: 8),
                         // OutlinedButton.icon(
                         //   onPressed: () =>
                         //       setState(() => _contacts.add(_ContactEntry())),
@@ -1057,8 +1060,8 @@ class _Profile_screenState extends State<Profile_screen> {
                         GestureDetector(onTap: () => setState(() => _zipDistancePairs.add(_ZipDistanceEntry())),
                          child:
                           Container(
-                            height: 50,
-                            width: 50,
+                            height: 40,
+                            width: 40,
                             decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -1069,7 +1072,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               children: [
                                 FaIcon(
                                   FontAwesomeIcons.add,
-                                  size: 20,
+                                  size: 15,
                                   color: Colors.green,
                                 ),
                                 SizedBox(width: 2),
@@ -1093,7 +1096,10 @@ class _Profile_screenState extends State<Profile_screen> {
                         //     ),
                         //   ),
                         // ),
-                        
+                         const SizedBox(height: 15),
+                         Divider(color: Colors.grey.shade400,height: 1,),
+                         SizedBox(height: 8),
+
                         _sectionTitle('Compliance & Legal'),
                         _buildTextField(
                           label: 'Licenses/Permits *',
@@ -1111,6 +1117,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                   color: Colors.red, fontSize: 13),
                             ),
                           ),
+
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
