@@ -44,6 +44,7 @@ class BidRequest {
   Rental? rental;
   Unit? unit;
   int? submissionCount;
+  bool? hasSubmitted;
 
   BidRequest({
     this.id,
@@ -65,6 +66,7 @@ class BidRequest {
     this.rental,
     this.unit,
     this.submissionCount,
+    this.hasSubmitted,
   });
 
   factory BidRequest.fromJson(Map<String, dynamic> json) {
@@ -92,6 +94,7 @@ class BidRequest {
       rental: json['rental'] != null ? Rental.fromJson(json['rental']) : null,
       unit: json['unit'] != null ? Unit.fromJson(json['unit']) : null,
       submissionCount: json['submission_count'],
+      hasSubmitted: json['has_submitted'],
     );
   }
 }

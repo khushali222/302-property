@@ -1007,7 +1007,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                       dashboardData.icons[1],
                                                   count:
                                                       countList[1].toString(),
-                                                  label: "Overdue Orders",
+                                                  label: "Overdue Work Orders",
                                                   buttonLabel: "View All",
                                                   buttonColor:
                                                       const Color.fromRGBO(
@@ -1136,7 +1136,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                               width: 10,
                                                             ),
                                                             const Text(
-                                                              "OverDue Work Orders",
+                                                              "Overdue Work Orders",
                                                               style: TextStyle(
                                                                   fontSize: 18,
                                                                   fontWeight:
@@ -1208,7 +1208,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                       dashboardData.icons[1],
                                                   count:
                                                       countList[1].toString(),
-                                                  label: "Overdue Ordersg",
+                                                  label: "Overdue Work Orders",
                                                   buttonLabel: "View All",
                                                   buttonColor:
                                                       const Color.fromRGBO(
@@ -1328,7 +1328,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                             width: 10,
                                                           ),
                                                           const Text(
-                                                            "OverDue Work Orders",
+                                                            "Overdue Work Orders",
                                                             style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -3095,7 +3095,7 @@ class _VendorDashboardSummaryCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
             const SizedBox(height: 10),
