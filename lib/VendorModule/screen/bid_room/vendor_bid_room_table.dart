@@ -483,7 +483,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                 hint: const Padding(
                                   padding: EdgeInsets.only(left: 10),
                                   child: Text(
-                                    'Select Status',
+                                    'Status',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -670,7 +670,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                                       blueColor),
                                                             ),
                                                           ),
-                                                         
+                                                        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                                                     Expanded(
                                                       flex: 4,
                                                       child: Text(

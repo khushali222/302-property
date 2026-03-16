@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,6 +94,10 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? vendorId = prefs.getString('vendor_id');
     String? token = prefs.getString('token');
+    String? firstName = prefs.getString('first_name');
+    String? lastName = prefs.getString('last_name');
+    String vendorName = [firstName, lastName].where((s) => s != null && s.isNotEmpty).join(' ').trim();
+    if (vendorName.isEmpty) vendorName = 'Vendor';
 
     if (vendorId == null || token == null) {
       setState(() => _isSubmitting = false);
@@ -122,16 +127,24 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
     }
 
     try {
-      final body = <String, dynamic>{
+      // Match web API: payload under "submission" + is_web
+      final submission = <String, dynamic>{
         'bid_request_id': bidRequestId,
         'vendor_id': vendorId,
+        'vendor_name': vendorName,
         'admin_id': adminId ?? '',
         'price_breakdown': priceBreakdown,
         'total_price': totalPrice,
       };
       if (submissionFile != null && submissionFile.isNotEmpty) {
-        body['submission_file'] = submissionFile;
+        submission['submission_file'] = submissionFile;
       }
+
+      final body = <String, dynamic>{
+        'submission': submission,
+        'is_web': false,
+        'user_active_recently': true,
+      };
 
       final response = await http.post(
         Uri.parse('$Api_url/api/bid-request/bid-submission'),
@@ -142,9 +155,8 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
         },
         body: json.encode(body),
       );
-
       if (mounted) {
-        setState(() => _isSubmitting = false);
+        setState(() => _isSubmitting   = false);
         final resp = json.decode(response.body);
         if (response.statusCode == 200 && resp['statusCode'] == 200) {
           Fluttertoast.showToast(msg: resp['message'] ?? 'Bid submitted successfully');
@@ -390,7 +402,7 @@ titleBar(title: 'Submit Bid',width: MediaQuery.of(context).size.width > 500
               ),
               const SizedBox(height: 8),
               Text(
-                'Supported: .pdf, .doc, .docx',
+                'Supported : .pdf, .doc, .docx',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
@@ -432,15 +444,10 @@ titleBar(title: 'Submit Bid',width: MediaQuery.of(context).size.width > 500
                         ),
                       ),
                       child: _isSubmitting
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white),
-                              ),
-                            )
+                          ? Center(child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 25.0,
+                              ))  
                           : const Text(
                               'Submit Bid',
                               style: TextStyle(
