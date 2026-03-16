@@ -447,8 +447,8 @@ class DashboardMobileSimple extends StatelessWidget {
                 );
               },
             ),
-            workOrderCard('New Work Order', newWorkOrder),
-            workOrderCard('Overdue Work Order', overdueWorkOrder),
+            workOrderCard('New Work Orders', newWorkOrder),
+            workOrderCard('Overdue Work Orders', overdueWorkOrder),
             UnpaidRentChartCard(),
             const SizedBox(height: 16),
             Cronjob_payment_table(),

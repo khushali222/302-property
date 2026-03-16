@@ -36,6 +36,17 @@ import '../../repository/workorder.dart';
 import '../../model/workorder_summery_model.dart';
 import 'Edit_workorders.dart';
 
+/// Due date: top-level date or first workorder_update that has a date (web shows first/any available).
+String? _getDueDateForSummery(WorkOrderData_summery summery) {
+  if (summery.date != null && summery.date!.isNotEmpty) return summery.date;
+  final updates = summery.workorderUpdates;
+  if (updates == null || updates.isEmpty) return null;
+  for (var u in updates) {
+    if (u.date != null && u.date!.isNotEmpty) return u.date;
+  }
+  return null;
+}
+
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
   Workorder_summery({super.key, this.workorder_id});
@@ -326,9 +337,22 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             // _selectedValue = snapshot.data!.applicantStatus!.last!.status;
                             return Column(
                               children: <Widget>[
-                                const SizedBox(
-                                  height: 10,
+                                const SizedBox(height: 15),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Work Order : #${snapshot.data!.ticketNumber ?? 'N/A'}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                                const SizedBox(height: 10),
                                 Container(
                                   margin: const EdgeInsets.symmetric(horizontal: 5),
                                   height: 50,
@@ -418,6 +442,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return LayoutBuilder(builder: (context, constraints) {
@@ -430,15 +455,162 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 const SizedBox(
                   height: 10,
                 ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Billing Information",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: summery.isBillable == 'Yes' ||
+                                  summery.isBillable == true,
+                              onChanged: null,
+                              activeColor: blueColor,
+                            ),
+                            const SizedBox(width: 2),
+                            const Text(
+                              'Billable to Tenant',
+                              style: TextStyle(
+                                color: Color(0xFF2E3743),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Contacts",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person),
+                            const SizedBox(width: 2),
+                            Text('${summery.vendorData?.companyName ?? "N/A"}'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Property",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on),
+                            const SizedBox(width: 2),
+                            Text(
+                                '${summery.propertyData?.rentaladress ?? "N/A"}'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: <Widget>[
                     Container(
                       width: MediaQuery.of(context).size.width * .48,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color: blueColor),
-                        // color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: blueColor.withOpacity(0.15)),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         children: [
@@ -450,7 +622,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 decoration: BoxDecoration(
                                   color: blueColor,
                                   border: Border.all(color: blueColor),
-                                  // color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Icon(
@@ -465,21 +636,55 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
+                                  SizedBox(
+                                    width:
+                                    MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                    '${summery.workSubject}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        '${summery.workSubject ?? "N/A"}',
+                                        maxLines: 5,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  Container(
+                                  SizedBox(
+                                    width:
+                                    MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 180,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                    '${summery.propertyData?.rentaladress}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                        '${summery.propertyData?.rentaladress ?? "N/A"}',
+                                        maxLines: 5,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 13
+                                                : 18,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               )
                             ],
@@ -498,18 +703,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 children: [
                                   Container(
                                       child: Text(
-                                    'Description',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        'Description',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      )),
                                   const SizedBox(
                                     height: 8,
                                   ),
                                   Container(
-                                      width: 150,
                                       child: Text(
-                                        '${summery.workPerformed}',
+                                        '${summery.workPerformed ?? "N/A"}',
                                         style: TextStyle(color: blueColor),
                                       )),
                                 ],
@@ -523,8 +727,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   border: Border.all(color: Colors.grey),
                                 ),
                                 child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const SizedBox(
                                       height: 10,
@@ -538,7 +740,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     const SizedBox(
                                       height: 4,
                                     ),
-                                    Text('${summery.status}',
+                                    Text('${summery.status ?? "N/A"}',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -564,19 +766,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 children: [
                                   Container(
                                       child: Text(
-                                    'Permission to enter',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        'Permission To Enter',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      )),
                                   const SizedBox(
                                     height: 8,
                                   ),
                                   Container(
                                       child: Text(
-                                    '${summery.entryAllowed! ? "Yes" : "No"}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                        '${summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A"}',
+                                        style: TextStyle(color: blueColor),
+                                      )),
                                 ],
                               ),
                               const Spacer(),
@@ -588,8 +790,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   border: Border.all(color: Colors.grey),
                                 ),
                                 child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const SizedBox(
                                       height: 10,
@@ -604,7 +804,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : summery.workorderUpdates?.last.date?.toString()}',
+                                            () {
+                                          final d = _getDueDateForSummery(summery);
+                                          return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                                        }(),
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -633,19 +836,19 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 children: [
                                   Container(
                                       child: Text(
-                                    'Vendors Notes',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor),
-                                  )),
+                                        'Vendors Note',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
+                                      )),
                                   const SizedBox(
                                     height: 8,
                                   ),
                                   Container(
                                       child: Text(
-                                    '${summery.vendorNotes}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                        '${summery.vendorNotes ?? "N/A"}',
+                                        style: TextStyle(color: blueColor),
+                                      )),
                                 ],
                               ),
                               const Spacer(),
@@ -657,8 +860,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   border: Border.all(color: Colors.grey),
                                 ),
                                 child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const SizedBox(
                                       height: 10,
@@ -674,14 +875,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     ),
                                     summery.staffData != null
                                         ? Text(
-                                            '${summery.staffData?.firstname}',
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold))
+                                        '${summery.staffData?.firstname ?? "N/A"}',
+                                        style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold))
                                         : Text('N/A',
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold)),
+                                        style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -991,8 +1192,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      if (summery.propertyData!.rental_image !=
-                                          null)
+                                      if (summery.propertyData?.rental_image !=
+                                          null &&
+                                          summery.propertyData!.rental_image!
+                                              .isNotEmpty)
                                         Column(
                                           children: [
                                             const SizedBox(
@@ -1006,17 +1209,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                               errorWidget:
                                                   (context, url, error) =>
                                                       const Icon(Icons.error),
-                                              /*  imageBuilder: (context, imageProvider) => Container(
-                                      width: 40.0,
-                                      height: 40.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),*/
                                             ),
                                           ],
                                         ),
@@ -1024,7 +1216,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         height: 10,
                                       ),
                                       Text(
-                                        "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
+                                        "${summery.propertyData?.rentaladress ?? "N/A"}${summery.unitData?.unitName != null ? ' (${summery.unitData!.unitName})' : ''}",
                                         textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(
@@ -1035,13 +1227,13 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                              "${summery.propertyData!.rental_city}, "),
+                                              "${summery.propertyData?.rental_city ?? ""}, "),
                                           Text(
-                                              "${summery.propertyData!.rental_state}, "),
+                                              "${summery.propertyData?.rental_state ?? ""}, "),
                                           Text(
-                                              "${summery.propertyData!.rental_country}, "),
+                                              "${summery.propertyData?.rental_country ?? ""}, "),
                                           Text(
-                                              "${summery.propertyData!.rental_postcode} "),
+                                              "${summery.propertyData?.rental_postcode ?? ""} "),
                                         ],
                                       ),
                                       const SizedBox(
@@ -1085,7 +1277,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 const SizedBox(
                   height: 10,
                 ),
-                if (summery.partsandchargeData!.length > 0)
+                if (summery.partsandchargeData != null && summery.partsandchargeData!.length > 0)
                   IntrinsicHeight(
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -1320,54 +1512,68 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     ),
                   ),
                 Container(
-                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(color: blueColor),
-                      // color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: blueColor.withOpacity(0.15)),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: 10,
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: blueColor.withOpacity(0.07),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
                             ),
-                            Text("Updates",
+                          ),
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Updates",
                                 style: TextStyle(
-                                    color: blueColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                showUpdateDialog(context);
-                              },
-                              child: Material(
-                                elevation: 4,
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                child: Container(
-                                  height: 40,
-                                  width: 70,
-                                  child: const Center(child: Text("Update")),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.black87,
                                 ),
                               ),
-                            )
-                          ],
+                              const SizedBox(width: 20),
+                              InkWell(
+                                onTap: () {
+                                  showUpdateDialog(context);
+                                },
+                                child: Material(
+                                  elevation: 2,
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: blueColor,
+                                  child: Container(
+                                    height: 36,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    alignment: Alignment.center,
+                                    child: const Text("Update",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: summery.workorderUpdates!.map((entry) {
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: (summery.workorderUpdates ?? []).map((entry) {
                             final update = entry;
+                            final dateStr = update.date != null && update.date!.isNotEmpty
+                                ? dateProvider.formatCurrentDate(update.date!)
+                                : 'N/A';
                             return Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Column(
@@ -1375,7 +1581,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                    '${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)',
                                     style:
                                         const TextStyle(fontWeight: FontWeight.bold),
                                   ),
@@ -1386,6 +1592,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             );
                           }).toList(),
                         ),
+                      ),
                       ],
                     )),
                 const SizedBox(
@@ -1405,11 +1612,158 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   height: 10,
                 ),
                 Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Billing Information",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: summery.isBillable == 'Yes' ||
+                                  summery.isBillable == true,
+                              onChanged: null,
+                              activeColor: blueColor,
+                            ),
+                            const SizedBox(width: 2),
+                            const Text(
+                              'Billable to Tenant',
+                              style: TextStyle(
+                                color: Color(0xFF2E3743),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Contacts",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person),
+                            const SizedBox(width: 2),
+                            Text('${summery.vendorData?.companyName ?? "N/A"}'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: blueColor.withOpacity(0.07),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Property",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 12, top: 15, bottom: 13),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on),
+                            const SizedBox(width: 2),
+                            Text(
+                                '${summery.propertyData?.rentaladress ?? "N/A"}'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: blueColor),
-                    // color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: blueColor.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     children: [
@@ -1421,7 +1775,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             decoration: BoxDecoration(
                               color: blueColor,
                               border: Border.all(color: blueColor),
-                              // color: Colors.blue,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -1444,7 +1797,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
-                                      '${summery.workSubject}',
+                                      '${summery.workSubject ?? "N/A"}',
                                       maxLines:
                                           5, // Set maximum number of lines
                                       overflow: TextOverflow
@@ -1461,14 +1814,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     ),
                                   ),
                                 ),
-                                // Container(
-                                //     child: Text(
-                                //       '${summery.workSubject}',
-                                //       maxLines: 5,
-                                //       textAlign: TextAlign.justify,
-                                //       style: TextStyle(
-                                //           fontWeight: FontWeight.bold, color: blueColor),
-                                //     )),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -1479,7 +1824,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
-                                      '${summery.propertyData?.rentaladress}',
+                                      '${summery.propertyData?.rentaladress ?? "N/A"} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}',
                                       maxLines:
                                           5, // Set maximum number of lines
                                       overflow: TextOverflow
@@ -1530,9 +1875,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 8,
                               ),
                               Container(
-                                  width: 150,
+                                  width: 180,
                                   child: Text(
-                                    '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
+                                    '${(summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed : "N/A"}',
                                     style: TextStyle(color: blueColor),
                                   )),
                             ],
@@ -1546,8 +1891,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               border: Border.all(color: Colors.grey),
                             ),
                             child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              // mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const SizedBox(
                                   height: 10,
@@ -1561,7 +1904,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 const SizedBox(
                                   height: 4,
                                 ),
-                                Text('${summery.status}',
+                                Text('${summery.status ?? "N/A"}',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -1587,7 +1930,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             children: [
                               Container(
                                   child: Text(
-                                'Permission to enter',
+                                'Permission To Enter',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: blueColor),
@@ -1597,7 +1940,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                               Container(
                                   child: Text(
-                                '${summery.entryAllowed! ? "Yes" : "No"}',
+                                '${summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A"}',
                                 style: TextStyle(color: blueColor),
                               )),
                             ],
@@ -1611,8 +1954,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               border: Border.all(color: Colors.grey),
                             ),
                             child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              // mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const SizedBox(
                                   height: 10,
@@ -1627,7 +1968,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : summery.workorderUpdates?.last.date?.toString()}',
+                                        () {
+                                      final d = _getDueDateForSummery(summery);
+                                      return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                                    }(),
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -1656,7 +2000,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             children: [
                               Container(
                                   child: Text(
-                                'Vendors Notes',
+                                'Vendors Note',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: blueColor),
@@ -1664,24 +2008,34 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               const SizedBox(
                                 height: 8,
                               ),
-                              Container(
-                                  child: Text(
-                                '${summery.vendorNotes!.isNotEmpty ? summery.vendorNotes : "N/A"}',
-                                style: TextStyle(color: blueColor),
-                              )),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 150,
+                                child: Text(
+                                  '${(summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes : "N/A"}',
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                           const Spacer(),
                           Container(
-                            //height: 70,
                             width: MediaQuery.of(context).size.width * .3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: Colors.grey),
                             ),
                             child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              // mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const SizedBox(
                                   height: 10,
@@ -1702,7 +2056,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         children: [
                                           Expanded(
                                             child: Text(
-                                                '${summery.staffData?.firstname}',
+                                                '${summery.staffData?.firstname ?? "N/A"}',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     color: blueColor,
@@ -1739,7 +2093,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 const SizedBox(
                   height: 10,
                 ),
-                if (summery.partsandchargeData!.length > 0)
+                if (summery.partsandchargeData != null && summery.partsandchargeData!.length > 0)
                   IntrinsicHeight(
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -1877,39 +2231,40 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     ),
                   ),
                 Container(
-                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      border: Border.all(color: blueColor),
-                      // color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: blueColor.withOpacity(0.15)),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const SizedBox(
-                              width: 2,
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: blueColor.withOpacity(0.07),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
                             ),
-                            Text("Updates",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(
-                              width: 20,
+                          ),
+                          child: const Text(
+                            "Updates",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black87,
                             ),
-                          ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Display the updates
-                            ...summery.workorderUpdates!
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ...(summery.workorderUpdates ?? [])
                                 .take(visibleCount)
                                 .map((entry) {
                                   final update = entry;
@@ -1995,6 +2350,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                           ],
                         ),
+                      ),
                         // Column(
                         //   mainAxisAlignment: MainAxisAlignment.start,
                         //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2023,365 +2379,366 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 const SizedBox(
                   height: 10,
                 ),
-                if (summery.tenantData != null)
-                  SizedBox(
-                    height: 220,
-                    child: Material(
-                      elevation: 7,
-                      borderOnForeground: true,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        height: 220,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 2, // 40%
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  // color: Colors.blue,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  /*   boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],*/
-                                ),
-                                child: Material(
-                                  elevation: 4,
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Contacts',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 7, // 60%
-                              child: Column(
-                                children: [
-                                  Container(
-                                      decoration: const BoxDecoration(
-                                        //  color: Colors.green,
-                                        borderRadius: BorderRadius.vertical(
-                                          bottom: Radius.circular(10),
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        title: Text(
-                                          "Vendor",
-                                          style: TextStyle(
-                                              color: blueColor,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        subtitle: summery.vendorData != null
-                                            ? Text(
-                                                summery.vendorData!
-                                                        .companyName ??
-                                                    "N/A",
-                                                style:
-                                                    TextStyle(color: blueColor),
-                                              )
-                                            : Text(
-                                                "N/A",
-                                                style:
-                                                    TextStyle(color: blueColor),
-                                              ),
-                                        leading: Container(
-                                          padding: const EdgeInsets.only(top: 3),
-                                          child: const Icon(
-                                            Icons.person,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      )),
-                                  const Divider(
-                                    thickness: 3,
-                                  ),
-                                  Container(
-                                      decoration: const BoxDecoration(
-                                        //  color: Colors.green,
-                                        borderRadius: BorderRadius.vertical(
-                                          bottom: Radius.circular(10),
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        title: Text(
-                                          "Tenant",
-                                          style: TextStyle(
-                                              color: blueColor,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        subtitle: summery.tenantData != null
-                                            ? Text(
-                                                "${summery.tenantData!.firstname ?? "N/A"} ${summery.tenantData!.lastname ?? "N/A"}",
-                                                style:
-                                                    TextStyle(color: blueColor),
-                                              )
-                                            : Text(
-                                                "N/A",
-                                                style:
-                                                    TextStyle(color: blueColor),
-                                              ),
-                                        leading: Container(
-                                          padding: const EdgeInsets.only(top: 3),
-                                          child: const Icon(
-                                            Icons.person,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                if (summery.tenantData == null)
-                  SizedBox(
-                    height: 100,
-                    child: Material(
-                      elevation: 7,
-                      borderOnForeground: true,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 3, // 40%
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  // color: Colors.blue,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  /*   boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],*/
-                                ),
-                                child: Material(
-                                  elevation: 4,
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Contacts',
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 7, // 60%
-                              child: Container(
-                                  decoration: const BoxDecoration(
-                                    //  color: Colors.green,
-                                    borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: ListTile(
-                                    title: Text(
-                                      "Vendor",
-                                      style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    subtitle: summery.vendorData != null
-                                        ? Text(
-                                            summery.vendorData!.companyName ??
-                                                "N/A",
-                                            style: TextStyle(color: blueColor),
-                                          )
-                                        : Text(
-                                            "N/A",
-                                            style: TextStyle(color: blueColor),
-                                          ),
-                                    leading: Container(
-                                      padding: const EdgeInsets.only(top: 3),
-                                      child: const Icon(
-                                        Icons.person,
-                                        size: 30,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Material(
-                  elevation: 7,
-                  borderOnForeground: true,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(10),
-                            ),
-                          ),
-                          child: Material(
-                            elevation: 4,
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(10),
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Property',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (summery.propertyData!.rental_image != null &&
-                                summery.propertyData!.rental_image!.isNotEmpty)
-                              Column(
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        "$image_url${summery.propertyData!.rental_image}",
-                                    placeholder: (context, url) => Text(
-                                        "${summery.propertyData!.rental_image}"),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                    /*  imageBuilder: (context, imageProvider) => Container(
-                                    width: 40.0,
-                                    height: 40.0,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),*/
-                                  ),
-                                ],
-                              ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}",
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            SizedBox(
-                              width: 300,
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                spacing:
-                                    4.0, // Space between texts horizontally
-                                runSpacing:
-                                    4.0, // Space between lines when wrapping
-                                children: [
-                                  Text(
-                                      "${summery.propertyData!.rental_city}, "),
-                                  Text(
-                                      "${summery.propertyData!.rental_state}, "),
-                                  Text(
-                                      "${summery.propertyData!.rental_country}, "),
-                                  Text(
-                                      "${summery.propertyData!.rental_postcode}"),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        )
-                        /*  ListTile(
-                          title: Text(
-                            "Vendor",
-                            style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          subtitle: Text(
-                            "Vendor Company Name",
-                            style: TextStyle(color: blueColor),
-                          ),
-                          leading: Container(
-                            padding: EdgeInsets.only(top: 3),
-                            child: Icon(
-                              Icons.person,
-                              size: 30,
-                            ),
-                          )
+//                 if (summery.tenantData != null)
+//                   SizedBox(
+//                     height: 220,
+//                     child: Material(
+//                       elevation: 7,
+//                       borderOnForeground: true,
+//                       borderRadius: BorderRadius.circular(10),
+//                       child: Container(
+//                         height: 220,
+//                         decoration: BoxDecoration(
+//                           color: Colors.white,
+//                           border: Border.all(),
+//                           borderRadius: BorderRadius.circular(10),
+//                         ),
+//                         child: Column(
+//                           children: [
+//                             Expanded(
+//                               flex: 2, // 40%
+//                               child: Container(
+//                                 decoration: const BoxDecoration(
+//                                   // color: Colors.blue,
+//                                   borderRadius: BorderRadius.vertical(
+//                                     top: Radius.circular(10),
+//                                   ),
+//                                   /*   boxShadow: [
+//                               BoxShadow(
+//                                 color: Colors.black.withOpacity(0.5),
+//                                 spreadRadius: 1,
+//                                 blurRadius: 5,
+//                                 offset: Offset(0, 3), // changes position of shadow
+//                               ),
+//                             ],*/
+//                                 ),
+//                                 child: Material(
+//                                   elevation: 4,
+//                                   color: Colors.white,
+//                                   borderRadius: const BorderRadius.vertical(
+//                                     top: Radius.circular(10),
+//                                   ),
+//                                   child: Center(
+//                                     child: Text(
+//                                       'Contacts',
+//                                       style: TextStyle(
+//                                           color: blueColor,
+//                                           fontSize: 16,
+//                                           fontWeight: FontWeight.bold),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 7, // 60%
+//                               child: Column(
+//                                 children: [
+//                                   Container(
+//                                       decoration: const BoxDecoration(
+//                                         //  color: Colors.green,
+//                                         borderRadius: BorderRadius.vertical(
+//                                           bottom: Radius.circular(10),
+//                                         ),
+//                                       ),
+//                                       child: ListTile(
+//                                         title: Text(
+//                                           "Vendor",
+//                                           style: TextStyle(
+//                                               color: blueColor,
+//                                               fontWeight: FontWeight.w500),
+//                                         ),
+//                                         subtitle: summery.vendorData != null
+//                                             ? Text(
+//                                                 summery.vendorData!
+//                                                         .companyName ??
+//                                                     "N/A",
+//                                                 style:
+//                                                     TextStyle(color: blueColor),
+//                                               )
+//                                             : Text(
+//                                                 "N/A",
+//                                                 style:
+//                                                     TextStyle(color: blueColor),
+//                                               ),
+//                                         leading: Container(
+//                                           padding: const EdgeInsets.only(top: 3),
+//                                           child: const Icon(
+//                                             Icons.person,
+//                                             size: 30,
+//                                           ),
+//                                         ),
+//                                       )),
+//                                   const Divider(
+//                                     thickness: 3,
+//                                   ),
+//                                   Container(
+//                                       decoration: const BoxDecoration(
+//                                         //  color: Colors.green,
+//                                         borderRadius: BorderRadius.vertical(
+//                                           bottom: Radius.circular(10),
+//                                         ),
+//                                       ),
+//                                       child: ListTile(
+//                                         title: Text(
+//                                           "Tenant",
+//                                           style: TextStyle(
+//                                               color: blueColor,
+//                                               fontWeight: FontWeight.w500),
+//                                         ),
+//                                         subtitle: summery.tenantData != null
+//                                             ? Text(
+//                                                 "${summery.tenantData!.firstname ?? "N/A"} ${summery.tenantData!.lastname ?? "N/A"}",
+//                                                 style:
+//                                                     TextStyle(color: blueColor),
+//                                               )
+//                                             : Text(
+//                                                 "N/A",
+//                                                 style:
+//                                                     TextStyle(color: blueColor),
+//                                               ),
+//                                         leading: Container(
+//                                           padding: const EdgeInsets.only(top: 3),
+//                                           child: const Icon(
+//                                             Icons.person,
+//                                             size: 30,
+//                                           ),
+//                                         ),
+//                                       )),
+//                                 ],
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 if (summery.tenantData == null)
+//                   SizedBox(
+//                     height: 100,
+//                     child: Material(
+//                       elevation: 7,
+//                       borderOnForeground: true,
+//                       borderRadius: BorderRadius.circular(10),
+//                       child: Container(
+//                         height: 100,
+//                         decoration: BoxDecoration(
+//                           color: Colors.white,
+//                           border: Border.all(),
+//                           borderRadius: BorderRadius.circular(10),
+//                         ),
+//                         child: Column(
+//                           children: [
+//                             Expanded(
+//                               flex: 3, // 40%
+//                               child: Container(
+//                                 decoration: const BoxDecoration(
+//                                   // color: Colors.blue,
+//                                   borderRadius: BorderRadius.vertical(
+//                                     top: Radius.circular(10),
+//                                   ),
+//                                   /*   boxShadow: [
+//                               BoxShadow(
+//                                 color: Colors.black.withOpacity(0.5),
+//                                 spreadRadius: 1,
+//                                 blurRadius: 5,
+//                                 offset: Offset(0, 3), // changes position of shadow
+//                               ),
+//                             ],*/
+//                                 ),
+//                                 child: Material(
+//                                   elevation: 4,
+//                                   color: Colors.white,
+//                                   borderRadius: const BorderRadius.vertical(
+//                                     top: Radius.circular(10),
+//                                   ),
+//                                   child: Center(
+//                                     child: Text(
+//                                       'Contacts',
+//                                       style: TextStyle(
+//                                           color: blueColor,
+//                                           fontSize: 16,
+//                                           fontWeight: FontWeight.bold),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 7, // 60%
+//                               child: Container(
+//                                   decoration: const BoxDecoration(
+//                                     //  color: Colors.green,
+//                                     borderRadius: BorderRadius.vertical(
+//                                       bottom: Radius.circular(10),
+//                                     ),
+//                                   ),
+//                                   child: ListTile(
+//                                     title: Text(
+//                                       "Vendor",
+//                                       style: TextStyle(
+//                                           color: blueColor,
+//                                           fontWeight: FontWeight.w500),
+//                                     ),
+//                                     subtitle: summery.vendorData != null
+//                                         ? Text(
+//                                             summery.vendorData!.companyName ??
+//                                                 "N/A",
+//                                             style: TextStyle(color: blueColor),
+//                                           )
+//                                         : Text(
+//                                             "N/A",
+//                                             style: TextStyle(color: blueColor),
+//                                           ),
+//                                     leading: Container(
+//                                       padding: const EdgeInsets.only(top: 3),
+//                                       child: const Icon(
+//                                         Icons.person,
+//                                         size: 30,
+//                                       ),
+//                                     ),
+//                                   )),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 const SizedBox(
+//                   height: 10,
+//                 ),
+//                 Material(
+//                   elevation: 7,
+//                   borderOnForeground: true,
+//                   borderRadius: BorderRadius.circular(10),
+//                   child: Container(
+//                     decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       border: Border.all(),
+//                       borderRadius: BorderRadius.circular(10),
+//                     ),
+//                     child: Column(
+//                       children: [
+//                         Container(
+//                           decoration: const BoxDecoration(
+//                             borderRadius: BorderRadius.vertical(
+//                               top: Radius.circular(10),
+//                             ),
+//                           ),
+//                           child: Material(
+//                             elevation: 4,
+//                             color: Colors.white,
+//                             borderRadius: const BorderRadius.vertical(
+//                               top: Radius.circular(10),
+//                             ),
+//                             child: Center(
+//                               child: Padding(
+//                                 padding: const EdgeInsets.all(8.0),
+//                                 child: Text(
+//                                   'Property',
+//                                   style: TextStyle(
+//                                     color: blueColor,
+//                                     fontSize: 16,
+//                                     fontWeight: FontWeight.bold,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                         Column(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             if (summery.propertyData?.rental_image != null &&
+//                                 summery.propertyData!.rental_image!.isNotEmpty)
+//                               Column(
+//                                 children: [
+//                                   const SizedBox(
+//                                     height: 10,
+//                                   ),
+//                                   CachedNetworkImage(
+//                                     imageUrl:
+//                                         "$image_url${summery.propertyData!.rental_image}",
+//                                     placeholder: (context, url) => Text(
+//                                         "${summery.propertyData!.rental_image}"),
+//                                     errorWidget: (context, url, error) =>
+//                                         const Icon(Icons.error),
+//                                     /*  imageBuilder: (context, imageProvider) => Container(
+//                                     width: 40.0,
+//                                     height: 40.0,
+//                                     decoration: BoxDecoration(
+//                                       shape: BoxShape.circle,
+//                                       image: DecorationImage(
+//                                         image: imageProvider,
+//                                         fit: BoxFit.cover,
+//                                       ),
+//                                     ),
+//                                   ),*/
+//                                   ),
+//                                 ],
+//                               ),
+//                             const SizedBox(
+//                               height: 10,
+//                             ),
+//                             Text(
+//                               "${summery.propertyData?.rentaladress ?? "N/A"} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}",
+//                               textAlign: TextAlign.center,
+//                             ),
+//                             const SizedBox(
+//                               height: 10,
+//                             ),
+//                             SizedBox(
+//                               width: 300,
+//                               child: Wrap(
+//                                 alignment: WrapAlignment.center,
+//                                 spacing:
+//                                     4.0, // Space between texts horizontally
+//                                 runSpacing:
+//                                     4.0, // Space between lines when wrapping
+//                                 children: [
+// Text(
+//                                               "${summery.propertyData?.rental_city ?? ""}, "),
+//                                           Text(
+//                                               "${summery.propertyData?.rental_state ?? ""}, "),
+//                                           Text(
+//                                               "${summery.propertyData?.rental_country ?? ""}, "),
+//                                           Text(
+//                                               "${summery.propertyData?.rental_postcode ?? ""}"),
+//                                 ],
+//                               ),
+//                             ),
+//                             const SizedBox(
+//                               height: 10,
+//                             ),
+//                           ],
+//                         )
+//                         /*  ListTile(
+//                           title: Text(
+//                             "Vendor",
+//                             style: TextStyle(
+//                               color: blueColor,
+//                               fontWeight: FontWeight.w500,
+//                             ),
+//                           ),
+//                           subtitle: Text(
+//                             "Vendor Company Name",
+//                             style: TextStyle(color: blueColor),
+//                           ),
+//                           leading: Container(
+//                             padding: EdgeInsets.only(top: 3),
+//                             child: Icon(
+//                               Icons.person,
+//                               size: 30,
+//                             ),
+//                           )
 
-                        ),*/
-                      ],
-                    ),
-                  ),
-                ),
+//                         ),*/
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+                
                 const SizedBox(
                   height: 30,
                 ),
@@ -2420,9 +2777,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           width: MediaQuery.of(context).size.width * .5,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            border: Border.all(color:blueColor),
-                            // color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: blueColor.withOpacity(0.15)),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Column(
                             children: [
@@ -2434,8 +2790,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     decoration: BoxDecoration(
                                       color: blueColor,
                                       border: Border.all(
-                                          color:blueColor),
-                                      // color: Colors.blue,
+                                          color: blueColor),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: const Icon(
@@ -2451,11 +2806,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                          width:150,
-
+                                          width: 150,
                                           child: Text(
-                                            '${summery.workSubject}',
-
+                                            '${summery.workSubject ?? "N/A"}',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold, color: blueColor),
                                           )),
@@ -2464,7 +2817,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                       Container(
                                           child: Text(
-                                            '${summery.propertyData?.rentaladress}',
+                                            '${summery.propertyData?.rentaladress ?? "N/A"}',
                                             style: TextStyle(color: blueColor),
                                           )),
                                     ],
@@ -2537,7 +2890,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                       Container(
                                           child: Text(
-                                            '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
+                                            '${(summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed : "N/A"}',
                                             style: TextStyle(color: blueColor),
                                           )),
                                     ],
@@ -2566,7 +2919,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         const SizedBox(
                                           height: 4,
                                         ),
-                                        Text('${summery.status}',
+                                        Text('${summery.status ?? "N/A"}',
                                             style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold)),
@@ -2592,7 +2945,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     children: [
                                       Container(
                                           child: Text(
-                                            'Permission to enter',
+                                            'Permission To Enter',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold, color: blueColor),
                                           )),
@@ -2601,7 +2954,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                       Container(
                                           child: Text(
-                                            '${summery.entryAllowed}',
+                                            '${summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A"}',
                                             style: TextStyle(color: blueColor),
                                           )),
                                     ],
@@ -2630,8 +2983,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         const SizedBox(
                                           height: 4,
                                         ),
-                                        Text( summery.workorderUpdates!.last.date!.isEmpty == true ?
-                                        "N/A" : dateProvider.formatCurrentDate(summery.workorderUpdates!.last.date!.toString()),
+                                        Text(
+                                        () {
+                                          final d = _getDueDateForSummery(summery);
+                                          return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                                        }(),
                                             style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold)),
@@ -2670,7 +3026,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       Container(
                                           width: 150,
                                           child: Text(
-                                            '${summery.vendorNotes!.isNotEmpty ? summery.vendorNotes : "N/A"}',
+                                            '${(summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes : "N/A"}',
                                             style: TextStyle(color: blueColor),
                                           )),
                                     ],
@@ -2684,8 +3040,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       border: Border.all(color: Colors.grey),
                                     ),
                                     child: Column(
-                                      // crossAxisAlignment: CrossAxisAlignment.center,
-                                      // mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         const SizedBox(
                                           height: 10,
@@ -2822,7 +3176,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    Text("${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",textAlign: TextAlign.center,),
+                                    Text("${summery.propertyData?.rentaladress ?? "N/A"}${summery.unitData?.unitName != null ? ' (${summery.unitData!.unitName})' : ''}", textAlign: TextAlign.center),
 
                                     const SizedBox(
                                       height: 10,
@@ -2834,10 +3188,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         spacing: 4.0, // Space between texts horizontally
                                         runSpacing: 4.0, // Space between lines when wrapping
                                         children: [
-                                          Text("${summery.propertyData!.rental_city}, "),
-                                          Text("${summery.propertyData!.rental_state}, "),
-                                          Text("${summery.propertyData!.rental_country}, "),
-                                          Text("${summery.propertyData!.rental_postcode}"),
+                                          Text("${summery.propertyData?.rental_city ?? ""}, "),
+                                          Text("${summery.propertyData?.rental_state ?? ""}, "),
+                                          Text("${summery.propertyData?.rental_country ?? ""}, "),
+                                          Text("${summery.propertyData?.rental_postcode ?? ""}"),
                                         ],
                                       ),
                                     ),
@@ -2890,9 +3244,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color:blueColor),
-                        // color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: blueColor.withOpacity(0.15)),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         children: [
@@ -2904,8 +3257,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 decoration: BoxDecoration(
                                   color: blueColor,
                                   border: Border.all(
-                                      color:blueColor),
-                                  // color: Colors.blue,
+                                      color: blueColor),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Icon(
@@ -2927,7 +3279,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 1),
                                       child: Text(
-                                        '${summery.workSubject}',
+                                        '${summery.workSubject ?? "N/A"}',
                                         maxLines: 5, // Set maximum number of lines
                                         overflow: TextOverflow
                                             .ellipsis, // Handle overflow with ellipsis
@@ -2953,7 +3305,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 0),
                                       child: Text(
-                                        '${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}',
+                                        '${summery.propertyData?.rentaladress ?? "N/A"} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}',
                                         maxLines: 5, // Set maximum number of lines
                                         overflow: TextOverflow
                                             .ellipsis, // Handle overflow with ellipsis
@@ -3039,7 +3391,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Container(
                                       width: 250,
                                       child: Text(
-                                        '${summery.workPerformed!.isNotEmpty ? summery.workPerformed : "N/A"}',
+                                        '${(summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed : "N/A"}',
                                         style: TextStyle(color: blueColor),
                                       )),
                                 ],
@@ -3075,7 +3427,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   const SizedBox(
                                     height: 4,
                                   ),
-                                  Text('${summery.status}',
+                                  Text('${summery.status ?? "N/A"}',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
@@ -3090,8 +3442,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   border: Border.all(color: Colors.grey),
                                 ),
                                 child: Column(
-                                  // crossAxisAlignment: CrossAxisAlignment.center,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     const SizedBox(
                                       height: 10,
@@ -3105,9 +3455,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     const SizedBox(
                                       height: 4,
                                     ),
-                                    Text( '${summery.workorderUpdates!.last.date!.isEmpty == true ?
-                                    "N/A" : dateProvider.formatCurrentDate(summery.workorderUpdates!.last.date!.toString())
-                                    }',
+                                    Text(
+                                        () {
+                                          final d = _getDueDateForSummery(summery);
+                                          return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                                        }(),
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -3136,7 +3488,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 children: [
                                   Container(
                                       child: Text(
-                                        'Permission to enter',
+                                        'Permission To Enter',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold, color: blueColor),
                                       )),
@@ -3145,7 +3497,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                   Container(
                                       child: Text(
-                                        '${summery.entryAllowed! ? "Yes": "No" }',
+                                        '${summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A"}',
                                         style: TextStyle(color: blueColor),
                                       )),
                                 ],
@@ -3217,26 +3569,28 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     ),
                     IntrinsicHeight(
                       child: Material(
-                        elevation: 7,
+                       // elevation: 7,
                         borderOnForeground: true,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(),
+                            border: Border.all(color: blueColor.withOpacity(0.15)),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
                             children: [
                               Container(
-                                decoration: const BoxDecoration(
+                                decoration:  BoxDecoration(
+                                  border: Border.all(color: blueColor.withOpacity(0.15)),
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(10),
                                   ),
                                 ),
                                 child: Material(
-                                  elevation: 4,
+                                //  elevation: 4,
                                   color: Colors.white,
+                                  
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(10),
                                   ),
@@ -3331,7 +3685,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  Text("${summery.propertyData!.rentaladress} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' :''}",textAlign: TextAlign.center,),
+                                  Text("${summery.propertyData?.rentaladress ?? "N/A"} ${summery.unitData?.rental_unit != null ? '(${summery.unitData?.rental_unit})' : ''}", textAlign: TextAlign.center),
 
                                   const SizedBox(
                                     height: 10,
@@ -3339,10 +3693,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("${summery.propertyData!.rental_city}, "),
-                                      Text("${summery.propertyData!.rental_state}, "),
-                                      Text("${summery.propertyData!.rental_country}, "),
-                                      Text("${summery.propertyData!.rental_postcode} "),
+                                      Text("${summery.propertyData?.rental_city ?? ""}, "),
+                                      Text("${summery.propertyData?.rental_state ?? ""}, "),
+                                      Text("${summery.propertyData?.rental_country ?? ""}, "),
+                                      Text("${summery.propertyData?.rental_postcode ?? ""} "),
                                     ],
                                   ),
                                   const SizedBox(

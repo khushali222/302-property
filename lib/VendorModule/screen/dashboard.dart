@@ -12,9 +12,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constant/geolocation_data_filter.dart';
+import '../../provider/dateProvider.dart';
 import '../screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
 import '../widgets/pie_chart.dart';
@@ -235,13 +237,17 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: const BorderRadius.only(
+      //     topLeft: Radius.circular(10),
+      //     topRight: Radius.circular(10),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -266,10 +272,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Work Order ",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Work Order",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("  Work Order ",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("  Work Order",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -279,44 +287,29 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: const Row(
+                child: Row(
                   children: [
-                    Text("Status", style: TextStyle(color: Colors.white)),
+                    Text("Status",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {},
-                child: const Row(
-                  children: [
-                    Text("      Billable ",
-                        style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    /*ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
-                  ],
-                ),
-              ),
-            ),
+            // Expanded(
+            //   flex: 3,
+            //   child: InkWell(
+            //     onTap: () {},
+            //     child: Row(
+            //       children: [
+            //         const Text("      Billable ",
+            //             style: TextStyle(color: Colors.white)),
+            //         const SizedBox(width: 5),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -358,10 +351,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
         final coords = await getCoordinatesFromAddressforvendor(rental);
         if (coords != null) {
           double distanceInMeters = Geolocator.distanceBetween(
-            39.6613845,
-            -75.6339627,
-            // userLocation.latitude,
-            // userLocation.longitude,
+            // 39.6613845,
+            // -75.6339627,
+            userLocation.latitude,
+            userLocation.longitude,
             coords.latitude,
             coords.longitude,
           );
@@ -493,6 +486,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    final dateProvider = Provider.of<DateProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         return await _showExitPopup(context);
@@ -508,6 +502,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
             // Scaffold.of(context).openDrawer();
           },
         ),
+        drawer: Icon(Icons.menu,color: Colors.white,),
         body: loading
             ? Center(
                 child: Lottie.asset('assets/images/loader.json',
@@ -604,12 +599,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 ),
                                 const SizedBox(height: 5),
                                 _buildHeaders(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromRGBO(
-                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: const Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
@@ -623,17 +618,17 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                       WorkOrder workOrder = entry.value;
                                       //return CustomExpansionTile(data: Data, index: index);
                                       return Container(
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 6),
                                         decoration: BoxDecoration(
                                           color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                              ? Color(0xFFF4F8FF)
+                                              : Colors.white,
                                           border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                              color: Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                          BorderRadius.circular(10),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(
@@ -708,10 +703,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                     ),
                                                     SizedBox(
                                                         width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .03),
+                                                            context)
+                                                            .size
+                                                            .width *
+                                                            .06),
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
@@ -724,6 +719,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                         ),
                                                       ),
                                                     ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width *
+                                                            .03),
                                                   ],
                                                 ),
                                               ),
@@ -759,13 +760,21 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                                 // 1: FlexColumnWidth(),
                                                               },
                                                               children: [
+                                                                // _buildTableRow(
+                                                                //     'Created At:',
+                                                                //     formatDate(
+                                                                //         '${workOrder!.createdAt}'),
+                                                                //     'Updated At:',
+                                                                //     formatDate(
+                                                                //         '${workOrder!.updatedAt}}')),
                                                                 _buildTableRow(
-                                                                    'Created At:',
-                                                                    formatDate(
-                                                                        '${workOrder!.createdAt}'),
-                                                                    'Updated At:',
-                                                                    formatDate(
-                                                                        '${workOrder!.updatedAt}}')),
+                                                                    ' Created On : ',
+                                                                    workOrder.createdAt?.isNotEmpty ==
+                                                                        true
+                                                                        ? dateProvider.formatCurrentDate('${workOrder.createdAt}')
+                                                                        : 'N/A',
+                                                                    '',
+                                                                    '')
                                                               ],
                                                             ),
                                                           ),
@@ -1006,7 +1015,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                       dashboardData.icons[1],
                                                   count:
                                                       countList[1].toString(),
-                                                  label: "Overdue Orders",
+                                                  label: "Overdue Work Orders",
                                                   buttonLabel: "View All",
                                                   buttonColor:
                                                       const Color.fromRGBO(
@@ -1135,7 +1144,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                               width: 10,
                                                             ),
                                                             const Text(
-                                                              "OverDue Work Orders",
+                                                              "Overdue Work Orders",
                                                               style: TextStyle(
                                                                   fontSize: 18,
                                                                   fontWeight:
@@ -1207,7 +1216,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                       dashboardData.icons[1],
                                                   count:
                                                       countList[1].toString(),
-                                                  label: "Overdue Orders",
+                                                  label: "Overdue Work Orders",
                                                   buttonLabel: "View All",
                                                   buttonColor:
                                                       const Color.fromRGBO(
@@ -1223,7 +1232,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         const SizedBox(height: 20),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                              left: 10, right: 8),
+                                              left: 5, right: 8),
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -1232,7 +1241,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                             children: [
                                               const Padding(
                                                 padding: EdgeInsets.only(
-                                                    left: 8.0, bottom: 10),
+                                                    left: 12, bottom: 10),
                                                 child: Text(
                                                   "Statistics",
                                                   style: TextStyle(
@@ -1244,7 +1253,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 5.0),
+                                                        horizontal: 12),
                                                 child: Wrap(
                                                   spacing:
                                                       10.0, // Horizontal space between children
@@ -1253,7 +1262,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                   children: [
                                                     Container(
                                                       height: 40,
-                                                      width: 160,
+                                                      width: 162,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -1295,7 +1304,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                     ),
                                                     Container(
                                                       height: 40,
-                                                      width: 190,
+                                                      width: 192,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -1327,7 +1336,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                             width: 10,
                                                           ),
                                                           const Text(
-                                                            "OverDue Work Orders",
+                                                            "Overdue Work Orders",
                                                             style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -2389,43 +2398,48 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
         TableCell(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),
           ),
         ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // TableCell(
+        //   child: Padding(
+        //     padding: EdgeInsets.only(left: 25),
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: [
+        //           Text(
+        //             rightLabel,
+        //             style:
+        //                 TextStyle(fontWeight: FontWeight.bold, color: blueColor,fontSize: 14),
+        //           ),
+        //           const SizedBox(height: 2.0), // Space between label and value
+        //           Text(
+        //             rightValue,
+        //             style: TextStyle(color: grey,fontSize: 13),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -2500,9 +2514,9 @@ class _PropertyCardState extends State<PropertyCard> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       //  height: 50,
-      decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(5),
           topRight: Radius.circular(5),
         ),
@@ -2531,10 +2545,12 @@ class _PropertyCardState extends State<PropertyCard> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Work Order ",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Work Order",
-                            style: TextStyle(color: Colors.white)),
+                        ? Text("Work Order ",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Work Order",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                   ],
                 ),
@@ -2544,40 +2560,12 @@ class _PropertyCardState extends State<PropertyCard> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: const Row(
+                child: Row(
                   children: [
-                    Text("Status", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {},
-                child: const Row(
-                  children: [
-                    Text("      Billable ",
-                        style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    /*ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
+                    Text("Status",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -2596,6 +2584,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final matchingWorkOrders = widget.nearestPropertyWorkOrders
         .where((workOrder) =>
             workOrder != null &&
@@ -2610,7 +2599,7 @@ class _PropertyCardState extends State<PropertyCard> {
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       decoration: BoxDecoration(
         color:
-            widget.index % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+            widget.index % 2 != 0 ? Colors.white : Color(0xFFF4F8FF),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
         // border: Border.all(color: Colors.grey.shade300),
@@ -2670,10 +2659,10 @@ class _PropertyCardState extends State<PropertyCard> {
                       _buildHeaders(),
                       const SizedBox(height: 10),
                       Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color:
-                                    const Color.fromRGBO(152, 162, 179, .5))),
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(
+                        //         color:
+                        //             const Color.fromRGBO(152, 162, 179, .5))),
                         // decoration: BoxDecoration(
                         //     border: Border.all(color: blueColor)),
                         child: Column(
@@ -2695,9 +2684,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                 color: index % 2 != 0
                                     ? Colors.white
                                     : blueColor.withOpacity(0.09),
-                                border: Border.all(
-                                    color: const Color.fromRGBO(
-                                        152, 162, 179, .5)),
+                                border:
+                                Border.all(color: const Color(0xFFDBE0E5)),
                               ),
                               // decoration: BoxDecoration(
                               //   border: Border.all(color: blueColor),
@@ -2776,9 +2764,9 @@ class _PropertyCardState extends State<PropertyCard> {
                                           ),
                                           SizedBox(
                                               width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .03),
+                                                  .size
+                                                  .width *
+                                                  .02),
                                           Expanded(
                                             flex: 3,
                                             child: Text(
@@ -2790,39 +2778,39 @@ class _PropertyCardState extends State<PropertyCard> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .03),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                if (workOrder!.isBillable ==
-                                                    true)
-                                                  Icon(
-                                                    Icons.check,
-                                                    color: blueColor,
-                                                  ),
-                                                if (workOrder!.isBillable ==
-                                                    false)
-                                                  Icon(
-                                                    Icons.close,
-                                                    color: blueColor,
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .02),
+                                          // SizedBox(
+                                          //     width: MediaQuery.of(context)
+                                          //             .size
+                                          //             .width *
+                                          //         .03),
+                                          // Expanded(
+                                          //   flex: 3,
+                                          //   child: Row(
+                                          //     mainAxisAlignment:
+                                          //         MainAxisAlignment.center,
+                                          //     crossAxisAlignment:
+                                          //         CrossAxisAlignment.center,
+                                          //     children: [
+                                          //       if (workOrder!.isBillable ==
+                                          //           true)
+                                          //         Icon(
+                                          //           Icons.check,
+                                          //           color: blueColor,
+                                          //         ),
+                                          //       if (workOrder!.isBillable ==
+                                          //           false)
+                                          //         Icon(
+                                          //           Icons.close,
+                                          //           color: blueColor,
+                                          //         ),
+                                          //     ],
+                                          //   ),
+                                          // ),
+                                          // SizedBox(
+                                          //     width: MediaQuery.of(context)
+                                          //             .size
+                                          //             .width *
+                                          //         .02),
                                         ],
                                       ),
                                     ),
@@ -2854,13 +2842,24 @@ class _PropertyCardState extends State<PropertyCard> {
                                                       // 1: FlexColumnWidth(),
                                                     },
                                                     children: [
+                                                      // _buildTableRow(
+                                                      //     'Created At:',
+                                                      //     formatDate(
+                                                      //         '${workOrder!.createdAt}'),
+                                                      //     'Updated At:',
+                                                      //     formatDate(
+                                                      //         '${workOrder!.updatedAt}}')),
                                                       _buildTableRow(
-                                                          'Created At:',
-                                                          formatDate(
-                                                              '${workOrder!.createdAt}'),
-                                                          'Updated At:',
-                                                          formatDate(
-                                                              '${workOrder!.updatedAt}}')),
+                                                          ' Created On : ',
+                                                          workOrder.createdAt
+                                                              ?.isNotEmpty ==
+                                                              true
+                                                              ? dateProvider
+                                                              .formatCurrentDate(
+                                                              '${workOrder.createdAt}')
+                                                              : 'N/A',
+                                                          '',
+                                                          '')
                                                     ],
                                                   ),
                                                 ),
@@ -2873,65 +2872,61 @@ class _PropertyCardState extends State<PropertyCard> {
                                               height: 10,
                                             ),
                                             Row(
-                                              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                               children: [
                                                 // if(permissions!.workorderView!)
-                                                Expanded(
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      // Navigator.push(
-                                                      //     context,
-                                                      //     MaterialPageRoute(
-                                                      //         builder: (context) =>
-                                                      //             Workorder_summery(
-                                                      //               workorder_id:
-                                                      //               workOrder
-                                                      //                   .workOrderData
-                                                      //                   ?.workOrderId,
-                                                      //             )));
-                                                    },
-                                                    child: Container(
-                                                      height: 40,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.grey[350]),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          const SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Image.asset(
-                                                            'assets/icons/view.png',
-                                                            color: blueColor,
-                                                          ),
-                                                          // FaIcon(
-                                                          //   FontAwesomeIcons.trashCan,
-                                                          //   size: 15,
-                                                          //   color:blueColor,
-                                                          // ),
-                                                          const SizedBox(
-                                                            width: 8,
-                                                          ),
-                                                          Text(
-                                                            "View Summery",
-                                                            style: TextStyle(
-                                                                fontSize: 11,
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          )
-                                                        ],
-                                                      ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    // Navigator.push(
+                                                    //     context,
+                                                    //     MaterialPageRoute(
+                                                    //         builder: (context) =>
+                                                    //             Workorder_summery(
+                                                    //               workorder_id:
+                                                    //               workOrder
+                                                    //                   .workOrderData
+                                                    //                   ?.workOrderId,
+                                                    //             )));
+                                                  },
+                                                  child:
+                                                  Container(
+                                                    height: 40,
+                                                    // width: 35,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .center,
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .center,
+                                                      children: [
+                                                        const FaIcon(
+                                                          FontAwesomeIcons.eye,
+                                                          size: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                        // SizedBox(
+                                                        //     width:
+                                                        //     2),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
+                                                        Text(
+                                                          "View Summary",
+                                                          style: TextStyle(
+                                                              fontSize: 11,
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                        )
+                                                      ],
                                                     ),
                                                   ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
                                                 ),
                                               ],
                                             ),
@@ -2978,43 +2973,45 @@ class _PropertyCardState extends State<PropertyCard> {
         TableCell(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 13),
                 ),
                 const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
-                  style: TextStyle(color: grey),
+                  style: TextStyle(color: grey, fontSize: 13),
                 ),
               ],
             ),
           ),
         ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                const SizedBox(height: 2.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // TableCell(
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(4.0),
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         Text(
+        //           rightLabel,
+        //           style:
+        //               TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+        //         ),
+        //         const SizedBox(height: 2.0), // Space between label and value
+        //         Text(
+        //           rightValue,
+        //           style: TextStyle(color: grey),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -3094,7 +3091,7 @@ class _VendorDashboardSummaryCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
             const SizedBox(height: 10),

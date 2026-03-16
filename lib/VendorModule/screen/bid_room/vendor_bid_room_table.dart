@@ -8,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/VendorModule/repository/vendor_bid_repo.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
+import 'package:three_zero_two_property/VendorModule/screen/bid_room/vendor_submit_bid_screen.dart';
+import 'package:three_zero_two_property/VendorModule/widgets/appbar.dart'
+    as vendor_appbar;
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 // import 'package:three_zero_two_property/widgets/custom_drawer.dart'; // Depending on if we use the same drawer
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -171,14 +173,79 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
     }
   }
 
-  String _formatDateTime(String? dateStr) {
+  String _formatTime(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
       DateTime date = DateTime.parse(dateStr);
-      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
+      return DateFormat('HH:mm:ss').format(date);
     } catch (e) {
-      return dateStr;
+      return '';
     }
+  }
+
+  Widget _buildCreatedOnDueDateRow(BidRequest request) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Column(
+     
+        children: [
+        Row(
+          children: [
+            SizedBox(
+            width: 120,
+            child: Text(
+              "Created On :",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+            
+              children: [
+                Text(
+                  _formatDate(request.createdAt),
+                  style: TextStyle(color: Colors.black, fontSize: 13),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  _formatTime(request.createdAt),
+                  style: TextStyle(
+                  color: Colors.black, fontSize: 13
+                  ),
+                ),
+              ],
+            ),
+          ),
+         
+          ],
+        ),
+        SizedBox(height: 4),
+         Row(
+          children: [
+            SizedBox(
+            width: 120,
+            child: Text(
+              "Due Date :",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              _formatDate(request.dueDate),
+              style: TextStyle(color: Colors.black, fontSize: 13),
+            ),
+          ),
+          ],
+         ),
+        ],
+      ),
+    );
   }
 
   List<BidRequest> get _pagedData {
@@ -201,30 +268,42 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
     return _filteredBidRequests.sublist(startIndex, endIndex);
   }
 
-  Widget _buildHeaders() {
+   Widget _buildHeaders() {
+    var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
           color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+        contentPadding: EdgeInsets.zero,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              width: 30, // Fixed width for #
-              child: Text(
-                "#",
-                style: TextStyle(
-                  color: blueColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+            Container(
+              child: const Icon(
+                Icons.expand_less,
+                color: Colors.transparent,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: InkWell(
+                 child: Row(
+                  children: [
+                    width < 400
+                        ? Text("  #",
+                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
+                        : Text("  #",
+                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                    
+                   
+                  ],
                 ),
               ),
             ),
             Expanded(
-              flex: 4, // Increased flex for Description
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -238,56 +317,52 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                   });
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Flexible(
-                        child: Text("Bid Room",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14))),
-                    const SizedBox(width: 3),
+                  
+                    Text("Bid Room",
+                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold )),
+                    const SizedBox(width: 5),
                     ascending1
                         ? Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
-                              FontAwesomeIcons.caretUp,
-                              size: 16,
+                              FontAwesomeIcons.sortUp,
+                              size: 15,
                               color: blueColor,
                             ),
                           )
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
-                              FontAwesomeIcons.caretDown,
-                              size: 16,
+                              FontAwesomeIcons.sortDown,
+                              size: 15,
                               color: blueColor,
                             ),
-                          )
+                          ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              flex: 3, // Increased flex for Status
-              child: Text(
-                "Status",
-                style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14),
-              ),
-            ),
-            SizedBox(
-              width: 50,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "Action",
-                  style: TextStyle(
-                      color: blueColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
+           Expanded(
+              flex: 2,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      ascending1 = !ascending1;
+                    } else {
+                      sorting1 = true;
+                      ascending1 = false;
+                    }
+                    _applyFilters();
+                  });
+                },
+                child: Row(
+                  children: [
+                  Text("Status",
+                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold )),
+                  
+                  ],
                 ),
               ),
             ),
@@ -297,10 +372,14 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget_302.widget_302.App_Bar(context: context),
+      appBar: vendor_appbar.widget_302.App_Bar(
+        context: context,
+        onDrawerIconPressed: () {},
+      ),
       backgroundColor: Colors.white,
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
@@ -402,9 +481,9 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                               child: DropdownButton2<String>(
                                 isExpanded: true,
                                 hint: const Padding(
-                                  padding: EdgeInsets.only(left: 16),
+                                  padding: EdgeInsets.only(left: 10),
                                   child: Text(
-                                    'Select Status',
+                                    'Status',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -444,7 +523,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                   height: 50,
                                   padding: const EdgeInsets.only(
                                     left: 0,
-                                    right: 0,
+                                    right: 10,
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
@@ -456,7 +535,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                   icon: const Icon(
                                     Icons.keyboard_arrow_down,
                                     color: Color(0xFF8A95A8),
-                                    size: 24,
+                                    size: 20,
                                   ),
                                 ),
                                 dropdownStyleData: DropdownStyleData(
@@ -484,15 +563,15 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                   const SizedBox(height: 25),
                   _isLoading
                       ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: ColabShimmerLoadingWidget(),
-                      )
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: ColabShimmerLoadingWidget(),
+                        )
                       : _filteredBidRequests.isEmpty
                           ? Container(
                               height: 300,
                               child: Center(
                                 child: Text(
-                                  "No Data Available",
+                                  "No data available",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,
@@ -578,18 +657,20 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width:
-                                                          30, // Fixed width match header
-                                                      child: Text(
-                                                        "BR",
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: blueColor),
-                                                      ),
-                                                    ),
+                                                  Expanded(
+                                                            flex: 2,
+                                                            child: Text(
+                                                              "BR",
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor),
+                                                            ),
+                                                          ),
+                                                       SizedBox(width: MediaQuery.of(context).size.width * 0.01,),
                                                     Expanded(
                                                       flex: 4,
                                                       child: Text(
@@ -602,45 +683,17 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                             fontSize: 13),
                                                       ),
                                                     ),
+                                                    SizedBox(width: MediaQuery.of(context).size.width * 0.08),
                                                     Expanded(
-                                                      flex: 3,
+                                                      flex: 2,
                                                       child: Text(
                                                         request.status ?? "N/A",
                                                         style: TextStyle(
                                                             color: Colors
-                                                                .green, // Color based on status?
+                                                                .green,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 50,
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: const Color(
-                                                                0xFF0F1B31),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                          ),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      12,
-                                                                  vertical: 8),
-                                                          child: Icon(
-                                                              FontAwesomeIcons
-                                                                  .chevronRight,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 12),
-                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -661,40 +714,35 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      Text("Details",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 16)),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 18),
+                                                        child: Text("Details",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 15)),
+                                                      ),
                                                       SizedBox(height: 10),
-                                                      _buildDetailRow(
-                                                          "Description",
-                                                          request.description ??
-                                                              "N/A"),
-                                                      _buildDetailRow(
-                                                          "Category",
-                                                          request.workCategory ??
-                                                              "N/A"),
-                                                      _buildDetailRow(
-                                                          "Due Date",
-                                                          _formatDate(
-                                                              request.dueDate)),
-                                                      _buildDetailRow(
-                                                          "Full Address",
+                                                     _buildDetailRow(
+                                                          "Property :",
                                                           request.rental
                                                                   ?.rentalAddress ??
                                                               "N/A"),
                                                       _buildDetailRow(
-                                                          "Unit",
-                                                          request.unit
-                                                                  ?.rentalUnit ??
+                                                          "Category :",
+                                                          request.workCategory ??
                                                               "N/A"),
-                                                      _buildDetailRow(
-                                                          "Created On",
-                                                          _formatDateTime(
-                                                              request
-                                                                  .createdAt)),
+                                                     _buildCreatedOnDueDateRow(request),
+                                                      SizedBox(height: 10),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.end,
+                                                        children: [
+                                                          _buildActionButton(request, index),
+                                                        ],
+                                                      ),
+                                                                 
+                                                    
                                                     ],
                                                   ),
                                                 ),
@@ -716,7 +764,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0,horizontal: 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -724,9 +772,56 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
               width: 120,
               child: Text(label,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey[700]))),
+                      fontWeight: FontWeight.bold, color: blueColor))),
           Expanded(child: Text(value, style: TextStyle(color: Colors.black))),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(BidRequest request, int index) {
+    final bool hasSubmitted = request.hasSubmitted == true;
+    return GestureDetector(
+      onTap: () {
+        if (hasSubmitted) return;
+        Navigator.of(context).push<bool>(
+          MaterialPageRoute<bool>(
+            builder: (context) => VendorSubmitBidScreen(bidRequest: request),
+          ),
+        ).then((refreshed) {
+          if (refreshed == true) _fetchBidRequests();
+        });
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: hasSubmitted
+            ? Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(child: FaIcon(
+                  FontAwesomeIcons.check,
+                  size: 15,
+                  color: Colors.white,
+                ),),
+              )
+            : Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(child: FaIcon(
+                  Icons.send_rounded,
+                  size: 18,
+                  color: Colors.white,
+                ),),
+              ),
       ),
     );
   }

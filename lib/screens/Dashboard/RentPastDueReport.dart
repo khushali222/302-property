@@ -1332,7 +1332,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             if (currentPageData.length == 0)
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Text("No data Available"),
+                child: Text("No data available"),
               ),
             if (currentPageData.length > 0)
               Container(

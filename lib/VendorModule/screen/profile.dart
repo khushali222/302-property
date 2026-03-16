@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../constant/constant.dart';
 import '../widgets/drawer_tiles.dart';
@@ -88,6 +92,10 @@ class _Profile_screenState extends State<Profile_screen> {
       TextEditingController();
 
   bool _showValidationError = false;
+
+  /// Snapshot of profile data after load; used to skip API when nothing changed.
+  Map<String, dynamic>? _initialProfileBody;
+
   @override
   void initState() {
     super.initState();
@@ -127,8 +135,21 @@ class _Profile_screenState extends State<Profile_screen> {
         profiledata['vendor_email']?.toString() ?? '';
     _cellPhoneController.text =
         profiledata['vendor_phoneNumber']?.toString() ?? '';
-    _contactCellController.text =
-        profiledata['contact_cell_number']?.toString() ?? '';
+    // Contact Cell in Vendor Info: backend contact_cell_number, or first contact's number from contact_info
+    final contactCellFromApi = profiledata['contact_cell_number']?.toString().trim();
+    if (contactCellFromApi != null && contactCellFromApi.isNotEmpty) {
+      _contactCellController.text = contactCellFromApi;
+    } else {
+      final contactsList =
+          (profiledata['contact_info'] ?? profiledata['contacts']) as List?;
+      if (contactsList != null && contactsList.isNotEmpty) {
+        final first = contactsList[0] is Map ? contactsList[0] as Map : null;
+        _contactCellController.text =
+            first?['contact_number']?.toString().trim() ?? '';
+      } else {
+        _contactCellController.text = '';
+      }
+    }
 
     // Address Details
     _streetAddressController.text =
@@ -263,6 +284,7 @@ class _Profile_screenState extends State<Profile_screen> {
         profiledata = response_Data["data"] ?? {};
         _isLoading = false;
         _populateFromProfile();
+        _saveInitialProfileBody();
       });
     } else {
       setState(() {
@@ -284,10 +306,55 @@ class _Profile_screenState extends State<Profile_screen> {
     }
   }
 
+  Map<String, dynamic> _getCurrentProfileBody() {
+    return {
+      'vendor_name': _companyNameController.text.trim(),
+      'vendor_email': _companyEmailController.text.trim(),
+      'vendor_phoneNumber': _cellPhoneController.text.trim(),
+      'vendor_address': _streetAddressController.text.trim(),
+      'vendor_city': _cityController.text.trim(),
+      'vendor_state': _stateController.text.trim(),
+      'vendor_zip': _zipCodeController.text.trim(),
+      'vendor_country': _countryController.text.trim(),
+      'contact_cell_number': _contactCellController.text.trim(),
+      'contact_info': _contacts
+          .map((c) => {
+                'contact_name': c.name.text.trim(),
+                'contact_number': c.number.text.trim(),
+                'contact_email': c.email.text.trim(),
+              })
+          .toList(),
+      'trade': _selectedTradeType != null
+          ? (_tradeToApiValue[_selectedTradeType!] ??
+              _selectedTradeType!.toLowerCase().replaceAll(' ', '_'))
+          : null,
+      'region_covered': _zipDistancePairs
+          .map((z) => {
+                'zip_code': z.zipCode.text.trim(),
+                'distance_miles': z.distanceMiles.text.trim(),
+              })
+          .toList(),
+      'licenses_permits': _licensesPermitsController.text.trim(),
+    };
+  }
+
+  void _saveInitialProfileBody() {
+    _initialProfileBody = _getCurrentProfileBody();
+  }
+
   Future<void> _updateProfile() async {
     setState(() => _showValidationError = false);
     if (!(_formKey.currentState?.validate() ?? false)) {
       setState(() => _showValidationError = true);
+      return;
+    }
+    if (_initialProfileBody != null &&
+        jsonEncode(_getCurrentProfileBody()) == jsonEncode(_initialProfileBody)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No changes to update')),
+        );
+      }
       return;
     }
     setState(() => _isLoading = true);
@@ -299,6 +366,7 @@ class _Profile_screenState extends State<Profile_screen> {
         'vendor_name': _companyNameController.text.trim(),
         'vendor_email': _companyEmailController.text.trim(),
         'vendor_phoneNumber': _cellPhoneController.text.trim(),
+        'contact_cell_number': _contactCellController.text.trim(),
         'vendor_address': _streetAddressController.text.trim(),
         'vendor_city': _cityController.text.trim(),
         'vendor_state': _stateController.text.trim(),
@@ -359,16 +427,44 @@ class _Profile_screenState extends State<Profile_screen> {
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 12),
+      padding: const EdgeInsets.only(top: 10, bottom: 12, left: 2),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
           color: blueColor,
         ),
       ),
     );
+  }
+
+  static String? _validatePhone(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Required';
+    final digits = v.replaceAll(RegExp(r'\D'), '');
+    if (digits.length != 10) return 'Phone number must be 10 digits';
+    return null;
+  }
+
+  static String? _validateEmail(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Required';
+    if (!EmailValidator.validate(v.trim())) return 'Enter a valid email address';
+    return null;
+  }
+
+  static String? _validateZipUS(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Required';
+    final trimmed = v.trim();
+    if (!RegExp(r'^\d{5}(-\d{4})?$').hasMatch(trimmed)) {
+      return 'Enter valid US zip (e.g. 12345 or 12345-6789)';
+    }
+    return null;
+  }
+
+  static String? _validateDistance(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Required';
+    if (RegExp(r'[a-zA-Z]').hasMatch(v)) return 'Numbers only';
+    return null;
   }
 
   Widget _buildTextField({
@@ -378,6 +474,8 @@ class _Profile_screenState extends State<Profile_screen> {
     bool required = true,
     int maxLines = 1,
     TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -397,6 +495,7 @@ class _Profile_screenState extends State<Profile_screen> {
             controller: controller,
             maxLines: maxLines,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hint ?? 'Enter $label',
               border: OutlineInputBorder(
@@ -418,9 +517,10 @@ class _Profile_screenState extends State<Profile_screen> {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
-            validator: required
-                ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
-                : null,
+            validator: validator ??
+                (required
+                    ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
+                    : null),
           ),
         ],
       ),
@@ -547,66 +647,136 @@ class _Profile_screenState extends State<Profile_screen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Vendor Profile',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: blueColor,
+                        // Text(
+                        //   'Vendor Profile',
+                        //   style: TextStyle(
+                        //     fontSize: 22,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: blueColor,
+                        //   ),
+                        // ),
+                        titleBar(
+                          width: MediaQuery.of(context).size.width > 500
+                              ? MediaQuery.of(context).size.width * .88
+                              : MediaQuery.of(context).size.width * .91,
+                          title: 'Vendor Profile',
+                        ),
+                        const SizedBox(height: 10),
+                        _sectionTitle('Vendor Information'),
+
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildTextField(
+                                label: 'Company Name *',
+                                controller: _companyNameController,
+                                hint: 'Enter company name',
+                              ),
+                              _buildTextField(
+                                label: 'Company Email *',
+                                controller: _companyEmailController,
+                                hint: 'Enter company email',
+                                keyboardType: TextInputType.emailAddress,
+                                validator: _validateEmail,
+                              ),
+                              _buildTextField(
+                                label: 'Cell Phone Number *',
+                                controller: _cellPhoneController,
+                                hint: '(xxx) xxx-xxxx',
+                                keyboardType: TextInputType.phone,
+                                validator: _validatePhone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
+                              ),
+                              _buildTextField(
+                                label: 'Contact Cell Number *',
+                                controller: _contactCellController,
+                                hint: '(xxx) xxx-xxxx',
+                                keyboardType: TextInputType.phone,
+                                required: true,
+                                validator: _validatePhone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        _sectionTitle('Vendor Information'),
-                        _buildTextField(
-                          label: 'Company Name',
-                          controller: _companyNameController,
-                          hint: 'Enter company name',
-                        ),
-                        _buildTextField(
-                          label: 'Company Email',
-                          controller: _companyEmailController,
-                          hint: 'Enter company email',
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        _buildTextField(
-                          label: 'Cell Phone Number',
-                          controller: _cellPhoneController,
-                          hint: '(xxx) xxx-xxxx',
-                          keyboardType: TextInputType.phone,
-                        ),
-                        _buildTextField(
-                          label: 'Contact Cell Number',
-                          controller: _contactCellController,
-                          hint: '(xxx) xxx-xxxx',
-                          keyboardType: TextInputType.phone,
-                          required: false,
-                        ),
+
                         _sectionTitle('Address Details'),
-                        _buildTextField(
-                          label: 'Street Address',
-                          controller: _streetAddressController,
-                          hint: 'Start typing your address...',
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildTextField(
+                                  label: 'Street Address *',
+                                  controller: _streetAddressController,
+                                  hint: 'Start typing your address...',
+                                ),
+                                _buildTextField(
+                                  label: 'City *',
+                                  controller: _cityController,
+                                  hint: 'Enter city',
+                                ),
+                                _buildTextField(
+                                  label: 'State *',
+                                  controller: _stateController,
+                                  hint: 'Enter state',
+                                ),
+                                _buildTextField(
+                                  label: 'Zip Code *',
+                                  controller: _zipCodeController,
+                                  hint: 'e.g. 12345 or 12345-6789',
+                                  keyboardType: TextInputType.number,
+                                  validator: _validateZipUS,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[\d-]')),
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
+                                ),
+                                _buildTextField(
+                                  label: 'Country *',
+                                  controller: _countryController,
+                                  hint: 'Enter country',
+                                ),
+                              ]),
                         ),
-                        _buildTextField(
-                          label: 'City',
-                          controller: _cityController,
-                          hint: 'Enter city',
-                        ),
-                        _buildTextField(
-                          label: 'State',
-                          controller: _stateController,
-                          hint: 'Enter state',
-                        ),
-                        _buildTextField(
-                          label: 'Zip Code',
-                          controller: _zipCodeController,
-                          hint: 'Enter zip code',
-                          keyboardType: TextInputType.number,
-                        ),
-                        _buildTextField(
-                          label: 'Country',
-                          controller: _countryController,
-                          hint: 'Enter country',
-                        ),
+
                         _sectionTitle('Contact Information *'),
                         ...List.generate(_contacts.length, (i) {
                           return Container(
@@ -646,23 +816,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ),
                                         ),
                                       _buildTextField(
-                                        label: 'Contact Name',
+                                        label: 'Contact Name *',
                                         controller: _contacts[i].name,
                                         hint: 'Enter contact name',
                                       ),
                                       _buildTextField(
-                                        label: 'Contact Number',
-                                        controller: _contacts[i].number,
-                                        hint: '(xxx) xxx-xxxx',
-                                        keyboardType: TextInputType.phone,
-                                        required: false,
-                                      ),
-                                      _buildTextField(
-                                        label: 'Contact Email',
+                                        label: 'Contact Email *',
                                         controller: _contacts[i].email,
                                         hint: 'Enter contact email',
                                         keyboardType:
                                             TextInputType.emailAddress,
+                                        validator: _validateEmail,
                                       ),
                                     ],
                                   ),
@@ -694,22 +858,52 @@ class _Profile_screenState extends State<Profile_screen> {
                           );
                         }),
                         const SizedBox(height: 8),
-                        OutlinedButton.icon(
-                          onPressed: () =>
+                        GestureDetector(
+                          onTap: () =>
                               setState(() => _contacts.add(_ContactEntry())),
-                          icon: const Icon(Icons.add, size: 20),
-                          label: const Text('Add contact'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: blueColor,
-                            side: BorderSide(color: blueColor),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          child: 
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.add,
+                                  size: 15,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(width: 2),
+                              ],
                             ),
                           ),
+                        
                         ),
-                        _sectionTitle('Trade & Service Area *'),
+                        const SizedBox(height: 15),
+                        Divider(color: Colors.grey.shade400,height: 1,),
+                        SizedBox(height: 8),
+                        // OutlinedButton.icon(
+                        //   onPressed: () =>
+                        //       setState(() => _contacts.add(_ContactEntry())),
+                        //   icon:  Icon(Icons.add, size: 20,color: Colors.green),
+                        //   label: const Text(''),
+                        //   style: OutlinedButton.styleFrom(
+                        //     backgroundColor: Colors.green.withOpacity(0.1),
+
+                        //  // side: BorderSide(color: blueColor),
+                        //     padding: const EdgeInsets.symmetric(
+                        //         vertical: 14, horizontal: 14),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        // ),
+                        _sectionTitle('Trade & Service Area'),
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
@@ -766,15 +960,15 @@ class _Profile_screenState extends State<Profile_screen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Service areas (zip code & distance)',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
+                        const SizedBox(height: 10),
+                        // Text(
+                        //   'Service areas (zip code & distance)',
+                        //   style: TextStyle(
+                        //     fontSize: 13,
+                        //     fontWeight: FontWeight.w600,
+                        //     color: Colors.grey.shade700,
+                        //   ),
+                        // ),
                         const SizedBox(height: 10),
                         ...List.generate(_zipDistancePairs.length, (i) {
                           return Container(
@@ -805,8 +999,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                           label: 'Zip Code *',
                                           controller:
                                               _zipDistancePairs[i].zipCode,
-                                          hint: 'Enter zip code',
+                                          hint: 'e.g. 12345 or 12345-6789',
                                           keyboardType: TextInputType.number,
+                                          validator: _validateZipUS,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[\d-]')),
+                                            LengthLimitingTextInputFormatter(10),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(width: 12),
@@ -817,6 +1017,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                               .distanceMiles,
                                           hint: 'Enter distance',
                                           keyboardType: TextInputType.number,
+                                          validator: _validateDistance,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -852,24 +1057,52 @@ class _Profile_screenState extends State<Profile_screen> {
                           );
                         }),
                         const SizedBox(height: 8),
-                        OutlinedButton.icon(
-                          onPressed: () => setState(
-                              () => _zipDistancePairs.add(_ZipDistanceEntry())),
-                          icon: const Icon(Icons.add, size: 20),
-                          label: const Text('Add service area'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: blueColor,
-                            side: BorderSide(color: blueColor),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        GestureDetector(onTap: () => setState(() => _zipDistancePairs.add(_ZipDistanceEntry())),
+                         child:
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.add,
+                                  size: 15,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(width: 2),
+                              ],
                             ),
                           ),
+                        
                         ),
+                        // OutlinedButton.icon(
+                        //   onPressed: () => setState(
+                        //       () => _zipDistancePairs.add(_ZipDistanceEntry())),
+                        //   icon: const Icon(Icons.add, size: 20),
+                        //   label: const Text('Add service area'),
+                        //   style: OutlinedButton.styleFrom(
+                        //     foregroundColor: blueColor,
+                        //     side: BorderSide(color: blueColor),
+                        //     padding: const EdgeInsets.symmetric(
+                        //         vertical: 14, horizontal: 20),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        // ),
+                         const SizedBox(height: 15),
+                         Divider(color: Colors.grey.shade400,height: 1,),
+                         SizedBox(height: 8),
+
                         _sectionTitle('Compliance & Legal'),
                         _buildTextField(
-                          label: 'Licenses/Permits',
+                          label: 'Licenses/Permits *',
                           controller: _licensesPermitsController,
                           hint:
                               'Please provide details of your licenses and permits...',
@@ -884,6 +1117,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                   color: Colors.red, fontSize: 13),
                             ),
                           ),
+
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
@@ -898,7 +1133,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text('Update Profile'),
+                                  child: const Text('Update Profile',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                                 ),
                               ),
                             ),
@@ -916,7 +1151,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text('Cancel'),
+                                  child: const Text('Cancel',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                                 ),
                               ),
                             ),

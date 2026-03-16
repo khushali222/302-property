@@ -1103,7 +1103,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                             _buildTableRow(
                                                               'Property :',
                                                               workorder.rentalData?.rentalAddress != null
-                                                                  ? '${workorder.rentalData!.rentalAddress!}${workorder.unitId != null ? ' - ${workorder.unitId}' : ''}'
+                                                                  ? '${workorder.rentalData!.rentalAddress!}'
                                                                   : '',
                                                               'Category :',
                                                               workorder.workCategory ?? '-',

@@ -39,65 +39,88 @@ class widget_302 {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       centerTitle: false,
-      titleSpacing: 0,
+      titleSpacing: 8,
       automaticallyImplyLeading: false,
       toolbarHeight: 56,
-      title: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Image.asset(
-          'assets/images/logo.png',
-          height: 32,
-          fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => Image.asset(
-            'assets/images/applogo.png',
-            height: 32,
-            fit: BoxFit.contain,
-          ),
-        ),
+      // Title = logo only (like Staff): AppBar handles spacing, no overflow on small screens
+      title: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+
+          if (constraints.maxWidth < 50) {
+            return Image.asset(
+              'assets/images/applogo.png',
+              height: 35,
+              width: 35,
+            );
+          } else {
+            return Padding(padding: const EdgeInsets.only(right: 8,left: 5), child: Image.asset(
+                'assets/images/logo.png',
+               
+              ),
+            );
+          }
+          //   Image.asset(
+          //   'assets/images/logo.png',
+          //   height: 32,
+          //   fit: BoxFit.contain,
+          //   errorBuilder: (_, __, ___) => Image.asset(
+          //     'assets/images/applogo.png',
+          //     height: 32,
+          //     fit: BoxFit.contain,
+          //   ),
+          // );
+        },
       ),
       actions: [
+        const SizedBox(width: 10),
         Consumer<NotificationProvider>(
           builder: (context, notificationProvider, child) {
-            Widget icon = FaIcon(
-              FontAwesomeIcons.bell,
-              size: 22,
-              color: blueColor,
-            );
             if (notificationProvider.notifications.isNotEmpty) {
-              icon = badges.Badge(
-                position: badges.BadgePosition.topEnd(top: -2, end: -2),
-                badgeStyle: badges.BadgeStyle(
-                  badgeColor: Colors.red,
-                  padding: const EdgeInsets.all(4),
-                ),
-                child: icon,
-              );
-            }
-            return Material(
-              color: Colors.transparent,
-              child: InkWell(
+              return GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const notifications(),
                   ));
                 },
-                borderRadius: BorderRadius.circular(24),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  child: icon,
+                child: Center(
+                  child: badges.Badge(
+                    position: badges.BadgePosition.topEnd(top: -4, end: -3),
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Colors.red,
+                      padding: const EdgeInsets.all(4),
+                    ),
+                    child: FaIcon(
+                      FontAwesomeIcons.bell,
+                      size: 20,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              );
+            }
+            return Center(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const notifications(),
+                  ));
+                },
+                child: FaIcon(
+                  FontAwesomeIcons.bell,
+                  size: 20,
+                  color: blueColor,
                 ),
               ),
             );
           },
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 10),
         FutureBuilder<String>(
           future: _getNameFromSharedPreferences(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 12, top: 8, bottom: 8),
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 12),
                 child: PopupMenuButton<String>(
                   color: Colors.white,
                   surfaceTintColor: Colors.transparent,
@@ -200,6 +223,7 @@ class widget_302 {
             return const SizedBox.shrink();
           },
         ),
+        const SizedBox(width: 10),
       ],
     );
   }
