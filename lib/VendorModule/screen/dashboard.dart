@@ -583,20 +583,32 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0),
-                        child: Text(
-                          "You are at ${nearestProperty!.rentalAddress!}.  Here are the current open work orders:",
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontSize: MediaQuery.of(context)
-                                .size
-                                .width >
-                                500
-                                ? MediaQuery.of(context).size.width *
-                                0.03
-                                : 14,
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: MediaQuery.of(context).size.width > 500
+                                  ? MediaQuery.of(context).size.width * 0.03
+                                  : 14,
+                            ),
+                            children: [
+                              const TextSpan(text: "You are at "),
+                              TextSpan(
+                                text: nearestProperty!.rentalAddress!,
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: MediaQuery.of(context).size.width > 500
+                                      ? MediaQuery.of(context).size.width * 0.03
+                                      : 14,
+                                ),
+                              ),
+                              const TextSpan(text: ".  Here are the current open work orders:"),
+                            ],
                           ),
                         ),
                       ),
+                      
                       const SizedBox(height: 5),
                       _buildHeaders(),
                       const SizedBox(height: 10),
@@ -847,6 +859,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                       ),
                     ],
                   ),
+               
                 if (nearbyProperties.length > 0)
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,

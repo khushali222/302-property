@@ -539,6 +539,7 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
                     ),
                     iconStyleData: IconStyleData(
                       icon: const Icon(Icons.keyboard_arrow_down),
+
                       iconSize: 24,
                       iconEnabledColor: Colors.grey.shade700,
                       iconDisabledColor: Colors.grey,
