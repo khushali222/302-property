@@ -527,8 +527,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                     isWide ? width * 0.028 : 15.0;
                     return Padding(
                       padding: EdgeInsets.only(
-                        left: width * 0.03,
-                        right: width * 0.03,
+                        left: width * 0.01,
+                        right: width * 0.01,
                         top: MediaQuery.of(context).size.height *
                             0.012,
                         bottom: 4,
@@ -580,33 +580,48 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 if (nearestPropertyWorkOrders.length > 0)
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0),
-                        child: RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontSize: MediaQuery.of(context).size.width > 500
-                                  ? MediaQuery.of(context).size.width * 0.03
-                                  : 14,
-                            ),
-                            children: [
-                              const TextSpan(text: "You are at "),
-                              TextSpan(
-                                text: nearestProperty!.rentalAddress!,
+                      const SizedBox(height: 6),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF7F9FC),
+                          border: Border.all(
+                              color: const Color(0xFF8A95A8)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                            child: RichText(
+                              text: TextSpan(
                                 style: TextStyle(
                                   color: blueColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: MediaQuery.of(context).size.width > 500
-                                      ? MediaQuery.of(context).size.width * 0.03
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width >
+                                      500
+                                      ? MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.03
                                       : 14,
                                 ),
+                                children: [
+                                  TextSpan(
+                                    text:
+                                    "${nearestProperty!.rentalAddress!} ",
+                                    style: const TextStyle(
+                                        fontWeight:
+                                        FontWeight.bold),
+                                  ),
+                                  const TextSpan(
+                                    text:
+                                    "is your current property. See open work orders below.",
+                                    style: TextStyle(
+                                        fontWeight:
+                                        FontWeight.normal),
+                                  ),
+                                ],
                               ),
-                              const TextSpan(text: ".  Here are the current open work orders:"),
-                            ],
-                          ),
-                        ),
+                            )),
                       ),
                       
                       const SizedBox(height: 5),
@@ -865,12 +880,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           "Open Work Orders At Nearby Properties",
                           style: TextStyle(
-                              color: Colors.orange, fontSize: 16),
+                              color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
                         ),
                       ),
                       Padding(
