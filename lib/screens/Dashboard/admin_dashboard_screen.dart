@@ -192,7 +192,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                       },
                     ),
                     _dashboardCard(
-                      "assets/icons/Frame (1).svg",
+                      "assets/icons/Frame1.svg",
                       _formatCount(widget.countList[4]),
                       'Work Orders ->',
                       () {
