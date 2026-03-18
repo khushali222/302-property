@@ -115,8 +115,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     if (dateTimeString.isEmpty) return '';
 
     try {
-      print('🔵 [LEASE HISTORY] Formatting date: "$dateTimeString"');
-      print('🔵 [LEASE HISTORY] History Type: ${widget.historyType}');
+      // print('🔵 [LEASE HISTORY] Formatting date: "$dateTimeString"');
+      // print('🔵 [LEASE HISTORY] History Type: ${widget.historyType}');
 
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       DateTime? parsedDate;
@@ -125,7 +125,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       // Step 1: Handle verbose JavaScript date format FIRST
       // Format: "Mon Dec 08 2025 08:00:03 GMT+0000 (Coordinated Universal Time)"
       if (dateTimeString.contains('GMT') && dateTimeString.contains('(')) {
-        print('🔵 [LEASE HISTORY] Detected verbose GMT format');
+        //print('🔵 [LEASE HISTORY] Detected verbose GMT format');
         try {
           // Extract the date part before the parentheses: "Mon Dec 08 2025 08:00:03 GMT+0000"
           String datePart = dateTimeString.split('(')[0].trim();
@@ -133,10 +133,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           try {
             final verboseFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
             parsedDate = verboseFormat.parse(datePart);
-            print('🔵 [LEASE HISTORY] Parsed verbose format: $parsedDate');
+         //   print('🔵 [LEASE HISTORY] Parsed verbose format: $parsedDate');
           } catch (e) {
-            print(
-                '🔵 [LEASE HISTORY] Verbose format parse failed, trying alternative: $e');
+            // print(
+            //     '🔵 [LEASE HISTORY] Verbose format parse failed, trying alternative: $e');
             // Alternative: Extract components manually
             final altPattern = RegExp(
                 r'(\w{3})\s+(\w{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}:\d{2}:\d{2})');
@@ -148,18 +148,18 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               final time = match.group(5)!;
               final altFormat = DateFormat("MMM dd yyyy HH:mm:ss");
               parsedDate = altFormat.parse("$month $day $year $time");
-              print(
-                  '🔵 [LEASE HISTORY] Parsed with alternative method: $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed with alternative method: $parsedDate');
             }
           }
         } catch (e) {
-          print('🔴 [LEASE HISTORY] Failed to parse verbose date format: $e');
+          // print('🔴 [LEASE HISTORY] Failed to parse verbose date format: $e');
         }
       }
 
       // Step 2: If not verbose format, parse using common formats
       if (parsedDate == null) {
-        print('🔵 [LEASE HISTORY] Trying common format parsing');
+        // print('🔵 [LEASE HISTORY] Trying common format parsing');
 
         // Check if it's ISO format with Z (UTC) - e.g., "2026-01-07T04:51:59.000Z"
         // For lease history, if date has Z, convert UTC to local time (like web does)
@@ -167,16 +167,16 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             dateTimeString.toUpperCase().endsWith('Z');
 
         if (isISOWithZ && widget.historyType == HistoryType.lease) {
-          print(
-              '🔵 [LEASE HISTORY] Detected ISO format with Z (UTC): "$dateTimeString"');
+          // print(
+          //     '🔵 [LEASE HISTORY] Detected ISO format with Z (UTC): "$dateTimeString"');
           try {
             // Parse as UTC and convert to local time (matching web behavior)
             parsedDate = DateTime.parse(dateTimeString).toLocal();
             isAlreadyLocalTime = true; // Already converted to local time
-            print(
-                '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
+            // print(
+            //     '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
           } catch (e) {
-            print('🔵 [LEASE HISTORY] Failed to parse ISO with Z: $e');
+            // print('🔵 [LEASE HISTORY] Failed to parse ISO with Z: $e');
           }
         }
 
@@ -190,23 +190,23 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               parsedDate =
                   DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
               isAlreadyLocalTime = true; // Already in local time format
-              print(
-                  '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
             } else if (RegExp(r'^\d{4}-\d{2}-\d{2}$')
                 .hasMatch(dateTimeString)) {
               // Date only format "yyyy-MM-dd" - parse and set to midnight
               parsedDate = DateFormat('yyyy-MM-dd').parse(dateTimeString);
-              print(
-                  '🔵 [LEASE HISTORY] Parsed as date-only (yyyy-MM-dd): $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed as date-only (yyyy-MM-dd): $parsedDate');
             } else if (!isISOWithZ) {
               // Try DateTime.parse for ISO formats (but not if we already handled Z format)
               parsedDate = DateTime.parse(dateTimeString);
-              print(
-                  '🔵 [LEASE HISTORY] Parsed with DateTime.parse: $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed with DateTime.parse: $parsedDate');
             }
           } catch (e) {
-            print(
-                '🔵 [LEASE HISTORY] Common format parse failed, trying format list: $e');
+            // print(
+            //     '🔵 [LEASE HISTORY] Common format parse failed, trying format list: $e');
             // Try other common formats
             List<String> dateTimeFormats = [
               'yyyy-MM-dd HH:mm:ss', // "2026-01-01 08:00:04"
@@ -223,8 +223,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             for (String format in dateTimeFormats) {
               try {
                 parsedDate = DateFormat(format).parse(dateTimeString);
-                print(
-                    '🔵 [LEASE HISTORY] Parsed with format "$format": $parsedDate');
+                // print(
+                //     '🔵 [LEASE HISTORY] Parsed with format "$format": $parsedDate');
                 break;
               } catch (e2) {
                 continue;
@@ -236,10 +236,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       // Step 3: If still not parsed, use DateProvider as fallback
       if (parsedDate == null) {
-        print('🔵 [LEASE HISTORY] Using DateProvider fallback');
+        // print('🔵 [LEASE HISTORY] Using DateProvider fallback');
         // Try DateProvider first
         String formatted = dateProvider.formatCurrentDateTime(dateTimeString);
-        print('🔵 [LEASE HISTORY] DateProvider formatted: "$formatted"');
+        // print('🔵 [LEASE HISTORY] DateProvider formatted: "$formatted"');
 
         // ALWAYS ensure seconds are included - check and fix if missing
         // Check for patterns like "8:00 AM" or "08:00 AM" (without seconds)
@@ -255,37 +255,37 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             formatted
                 .contains(RegExp(r':\d{2}\s+(AM|PM)', caseSensitive: false));
 
-        print('🔵 [LEASE HISTORY] Has seconds? $hasSeconds');
+        // print('🔵 [LEASE HISTORY] Has seconds? $hasSeconds');
 
         if (!hasSeconds) {
-          print('🔵 [LEASE HISTORY] Adding seconds...');
+          // print('🔵 [LEASE HISTORY] Adding seconds...');
           // Seconds are missing - add them
           if (timePattern12h.hasMatch(formatted)) {
             // 12-hour format without seconds - add :00 before AM/PM
             formatted = formatted.replaceAllMapped(timePattern12h, (match) {
               final result = '${match.group(1)}:00 ${match.group(2)}';
-              print(
-                  '🔵 [LEASE HISTORY] Replaced 12h: "${match.group(0)}" -> "$result"');
+              // print(
+              //     '🔵 [LEASE HISTORY] Replaced 12h: "${match.group(0)}" -> "$result"');
               return result;
             });
           } else if (timePattern24h.hasMatch(formatted)) {
             // 24-hour format without seconds - add :00
             formatted = formatted.replaceAllMapped(timePattern24h, (match) {
               final result = '${match.group(1)}:00';
-              print(
-                  '🔵 [LEASE HISTORY] Replaced 24h: "${match.group(0)}" -> "$result"');
+              // print(
+              //     '🔵 [LEASE HISTORY] Replaced 24h: "${match.group(0)}" -> "$result"');
               return result;
             });
           }
         }
 
-        print(
-            '🔵 [LEASE HISTORY] Final formatted result (Step 3): "$formatted"');
+        // print(
+        //     '🔵 [LEASE HISTORY] Final formatted result (Step 3): "$formatted"');
         return formatted;
       }
 
       // Step 4: Format parsed date
-      print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
+      // print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
 
       // Apply timezone offset only if date is not already in local time
       // For lease history with "yyyy-MM-dd HH:mm:ss" or ISO Z (converted to local),
@@ -294,12 +294,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (widget.historyType == HistoryType.lease && isAlreadyLocalTime) {
         // For lease history that's already in local time, use as-is
         dateToFormat = parsedDate;
-        print(
-            '🔵 [LEASE HISTORY] Using date as-is (already local time): $dateToFormat');
+        // print(
+        //     '🔵 [LEASE HISTORY] Using date as-is (already local time): $dateToFormat');
       } else {
         // For other history types or dates that need conversion, apply timezone offset
         dateToFormat = parsedDate.add(Duration(hours: 5, minutes: 30));
-        print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
+        // print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
       }
 
       // Use user's date format preferences for all history types including lease
@@ -310,10 +310,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           dateProvider.timeFormat == '24' ? 'HH:mm:ss' : 'h:mm:ss a';
       String dateTimeFormat = '$dateFormat $timeFormatPattern';
 
-      print('🔵 [LEASE HISTORY] Date format: "$dateFormat"');
-      print(
-          '🔵 [LEASE HISTORY] Time format: "${dateProvider.timeFormat}" -> "$timeFormatPattern"');
-      print('🔵 [LEASE HISTORY] Combined format: "$dateTimeFormat"');
+      // print('🔵 [LEASE HISTORY] Date format: "$dateFormat"');
+      // print(
+      //     '🔵 [LEASE HISTORY] Time format: "${dateProvider.timeFormat}" -> "$timeFormatPattern"');
+      // print('🔵 [LEASE HISTORY] Combined format: "$dateTimeFormat"');
 
       // Format the date with seconds ALWAYS included
       String formattedResult = DateFormat(dateTimeFormat).format(dateToFormat);

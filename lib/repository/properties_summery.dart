@@ -431,6 +431,110 @@ class Properies_summery_Repo {
     }
   }
 
+  Future<Rentals> addPropertyValue({
+    required String rentalId,
+    required num estimatedValue,
+    required String valueSource,
+    required String valueAsOfDate,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    final response = await http.post(
+      Uri.parse('$Api_url/api/rentals/rental/$rentalId/property_values'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        'estimatedValue': estimatedValue,
+        'valueSource': valueSource,
+        'valueAsOfDate': valueAsOfDate,
+        'user_active_recently': true,
+        'is_web': true,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final data = jsonResponse['data'];
+      if (data != null && data is Map<String, dynamic>) {
+        return Rentals.fromJson(data);
+      }
+      throw Exception('Invalid response');
+    } else {
+      final err = json.decode(response.body);
+      throw Exception(err['message'] ?? 'Failed to add property value');
+    }
+  }
+
+  Future<Rentals> updatePropertyValue({
+    required String rentalId,
+    required String propertyValueId,
+    required num estimatedValue,
+    required String valueSource,
+    required String valueAsOfDate,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    final response = await http.put(
+      Uri.parse(
+          '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        'estimatedValue': estimatedValue,
+        'valueSource': valueSource,
+        'valueAsOfDate': valueAsOfDate,
+        'user_active_recently': true,
+        'is_web': true,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final data = jsonResponse['data'];
+      if (data != null && data is Map<String, dynamic>) {
+        return Rentals.fromJson(data);
+      }
+      throw Exception('Invalid response');
+    } else {
+      final err = json.decode(response.body);
+      throw Exception(err['message'] ?? 'Failed to update property value');
+    }
+  }
+
+  Future<Rentals> deletePropertyValue({
+    required String rentalId,
+    required String propertyValueId,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    final response = await http.delete(
+      Uri.parse(
+          '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final data = jsonResponse['data'];
+      if (data != null && data is Map<String, dynamic>) {
+        return Rentals.fromJson(data);
+      }
+      throw Exception('Invalid response');
+    } else {
+      final err = json.decode(response.body);
+      throw Exception(err['message'] ?? 'Failed to delete property value');
+    }
+  }
+
   Future<List<Properties_lease_model>> fetchrLeaseDetails(String unitId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
