@@ -15722,20 +15722,6 @@ class _Summery_pageState extends State<Summery_page>
                     Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(ctx).pop(),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: blueColor,
-                              side: BorderSide(color: blueColor),
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                            ),
-                            child: Text('Cancel'),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
@@ -15794,6 +15780,23 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text('Save'),
                           ),
                         ),
+                      
+                   
+                        SizedBox(width: 12),
+                             Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: blueColor,
+                              side: BorderSide(color: blueColor),
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: Text('Cancel'),
+                          ),
+                        ),
+                        
                       ],
                     ),
                   ],
@@ -15984,21 +15987,7 @@ class _Summery_pageState extends State<Summery_page>
                     SizedBox(height: 24),
                     Row(
                       children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(ctx).pop(),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: blueColor,
-                              side: BorderSide(color: blueColor),
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                            ),
-                            child: Text('Cancel'),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
+                      Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
@@ -16067,6 +16056,22 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text('Save'),
                           ),
                         ),
+                     
+                        SizedBox(width: 12),
+                          Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: blueColor,
+                              side: BorderSide(color: blueColor),
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: Text('Cancel'),
+                          ),
+                        ),
+                        
                       ],
                     ),
                   ],
