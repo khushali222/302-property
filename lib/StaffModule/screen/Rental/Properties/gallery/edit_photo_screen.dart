@@ -4,23 +4,29 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
-import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart' as staff_appbar;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart' as staff_drawer;
+import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../Model/gallery_photo_model.dart';
 import '../../../../../services/gallery_service.dart';
+import '../../../../../widgets/appbar.dart';
+import '../../../../../widgets/custom_drawer.dart';
 
 /// Full-screen Edit Photo: update description and/or replace image.
 class EditPhotoScreen extends StatefulWidget {
   final String rentalId;
   final GalleryPhoto photo;
   final VoidCallback? onSaved;
+  /// When true, use Staff AppBar and drawer; when false, use Admin AppBar and drawer.
+  final bool isStaffModule;
 
   const EditPhotoScreen({
     Key? key,
     required this.rentalId,
     required this.photo,
     this.onSaved,
+    this.isStaffModule = true,
   }) : super(key: key);
 
   @override
@@ -69,13 +75,20 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Future<void> _save() async {
     final desc = _descController.text.trim();
+    final descriptionChanged = desc != widget.photo.description;
+    final imageChanged = _currentImageFilename != null &&
+        _currentImageFilename != widget.photo.image;
+    if (!descriptionChanged && !imageChanged) {
+      Navigator.of(context).pop(false);
+      return;
+    }
     setState(() => _loading = true);
     try {
       await GalleryService.updatePhoto(
         widget.rentalId,
         widget.photo.id,
         description: desc,
-        image: _currentImageFilename != widget.photo.image ? _currentImageFilename : null,
+        image: imageChanged ? _currentImageFilename : null,
       );
       if (!mounted) return;
       Fluttertoast.showToast(msg: 'Photo updated successfully');
@@ -102,30 +115,35 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
             : '$image_url$_currentImageFilename')
         : null;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Edit Photo'),
-        backgroundColor: blueColor,
-        foregroundColor: Colors.white,
-      ),
+      appBar: widget.isStaffModule
+          ? staff_appbar.widget_302_Staff.App_Bar(context: context)
+          : widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawerStaff(
-        currentpage: "Properties",
-        dropdown: true,
-      ),
+      drawer: widget.isStaffModule
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Properties",
+              dropdown: true,
+            )
+          : CustomDrawer(
+              currentpage: "Properties",
+              dropdown: true,
+            ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+           
+            titleBar(
+              width: MediaQuery.of(context).size.width * .90,
+              title: 'Edit Photo',
+            ),
+            const SizedBox(height: 14),
             const Text(
               'Update photo details.',
               style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             const Text('Photo', style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             InkWell(
@@ -156,47 +174,64 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: showImage != null
-                        ? Image.file(showImage!, fit: BoxFit.cover)
-                        : (imageUrl != null
-                            ? Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    const Icon(Icons.broken_image, size: 48),
-                              )
-                            : const Icon(Icons.image, size: 48)),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Description',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: _descController,
-                        maxLines: 3,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter photo description (optional)',
-                          border: OutlineInputBorder(),
+            const SizedBox(height: 20),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final blockHeight = (constraints.maxWidth * 0.28).clamp(90.0, 140.0).toDouble();
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        width: blockHeight,
+                        height: blockHeight,
+                        child: showImage != null
+                            ? Image.file(showImage, fit: BoxFit.cover)
+                            : (imageUrl != null
+                                ? Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        const Icon(Icons.broken_image, size: 48),
+                                  )
+                                : const Icon(Icons.image, size: 48)),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          const Text(
+                            'Description',
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: blockHeight,
+                            width: double.infinity,
+                            child: TextField(
+                          controller: _descController,
+                          maxLines: 3,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter photo description (optional)',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            isDense: true,
+                            alignLabelWithHint: true,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ],
+            );
+              },
             ),
             const SizedBox(height: 32),
             Row(
@@ -209,7 +244,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                       minimumSize: const Size(double.infinity, 48),
                     ),
                     onPressed: _loading ? null : () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -230,7 +265,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                               size: 28,
                             )
                         )
-                        : const Text('Update'),
+                        : const Text('Update', style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
                 ),
               ],

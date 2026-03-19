@@ -4,20 +4,27 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
-import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
+
 import '../../../../../constant/constant.dart';
 import '../../../../../services/gallery_service.dart';
+import '../../../../../widgets/appbar.dart';
+import '../../../../../widgets/custom_drawer.dart';
+import '../../../../../widgets/titleBar.dart';
+import '../../../../widgets/appbar.dart' as staff_appbar;
+import '../../../../widgets/custom_drawer.dart' as staff_drawer;
 
 /// Full-screen Add Photos: pick images, add descriptions, upload then POST to gallery + history.
 class AddPhotoScreen extends StatefulWidget {
   final String rentalId;
   final VoidCallback? onAdded;
+  /// When true, use Staff AppBar and drawer; when false, use Admin AppBar and drawer.
+  final bool isStaffModule;
 
   const AddPhotoScreen({
     Key? key,
     required this.rentalId,
     this.onAdded,
+    this.isStaffModule = true,
   }) : super(key: key);
 
   @override
@@ -91,27 +98,33 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
   Widget build(BuildContext context) {
     final hasPhotos = _files.isNotEmpty;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Add Photos'),
-        backgroundColor: blueColor,
-        foregroundColor: Colors.white,
-      ),
+      appBar: widget.isStaffModule
+          ? staff_appbar.widget_302_Staff.App_Bar(context: context)
+          : widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawerStaff(
-        currentpage: "Properties",
-        dropdown: true,
-      ),
+      drawer: widget.isStaffModule
+          ? staff_drawer.CustomDrawerStaff(
+              currentpage: "Properties",
+              dropdown: true,
+            )
+          : CustomDrawer(
+              currentpage: "Properties",
+              dropdown: true,
+            ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
+          titleBar(
+            width: MediaQuery.of(context).size.width * .90,
+            title: 'Add Photos',
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+              
+          
                 Text(
                   'Add multiple photos to the gallery.',
                   style: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -248,7 +261,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
           ),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            padding: const EdgeInsets.fromLTRB(28, 20, 28, 28),
             child: Row(
               children: [
                 Expanded(
@@ -259,7 +272,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                       minimumSize: const Size(double.infinity, 48),
                     ),
                     onPressed: _loading ? null : () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -273,7 +286,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                     onPressed: _loading || _files.isEmpty ? null : _submit,
                     child: _loading
                           ? SpinKitFadingCircle(color: Colors.white, size: 28)
-                        : const Text('Add Photo'),
+                        : const Text('Add Photo', style: TextStyle(fontWeight: FontWeight.bold),),
                   ),
                 ),
               ],

@@ -6549,9 +6549,9 @@ class _Summery_pageState extends State<Summery_page>
                   const SizedBox(
                     height: 20,
                   ),
-                  // _buildGallerySection(context, rentalDetails),
-                  // const SizedBox(height: 20),
-                  // Property History Table (key forces refetch after e.g. purchase edit)
+                  _buildGallerySection(context, rentalDetails),
+                  const SizedBox(height: 20),
+                 // Property History Table (key forces refetch after e.g. purchase edit)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: CustomHistoryTable(

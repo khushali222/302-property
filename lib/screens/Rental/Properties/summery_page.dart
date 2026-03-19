@@ -419,6 +419,7 @@ class _Summery_pageState extends State<Summery_page>
                         builder: (ctx) => AddPhotoScreen(
                           rentalId: rentalId,
                           onAdded: () => setState(() => _galleryRefreshKey++),
+                          isStaffModule: false,
                         ),
                       ),
                     ).then((_) => setState(() => _galleryRefreshKey++));
@@ -548,6 +549,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 rentalId: rentalId,
                                                 photo: photo,
                                                 onSaved: () => setState(() => _galleryRefreshKey++),
+                                                isStaffModule: false,
                                               ),
                                             ),
                                           );
@@ -5730,8 +5732,8 @@ class _Summery_pageState extends State<Summery_page>
                   const SizedBox(
                     height: 20,
                   ),
-                  // _buildGallerySection(context, rentalDetails),
-                  // const SizedBox(height: 20),
+                  _buildGallerySection(context, rentalDetails),
+                  const SizedBox(height: 20),
                   // Property History Table (key forces refetch after e.g. purchase edit)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
