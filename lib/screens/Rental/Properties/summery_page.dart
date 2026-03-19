@@ -58,6 +58,11 @@ import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_admin_lease_table.dart';
 import '../../../widgets/custom_history_table.dart';
 import '../../../enums/history_type.dart';
+import '../../../StaffModule/screen/Rental/Properties/gallery/add_photo_screen.dart';
+import '../../../StaffModule/screen/Rental/Properties/gallery/edit_photo_screen.dart';
+import '../../../StaffModule/screen/Rental/Properties/gallery/photo_preview_screen.dart';
+import '../../../Model/gallery_photo_model.dart';
+import '../../../services/gallery_service.dart';
 
 class Summery_page extends StatefulWidget {
   Rentals properties;
@@ -118,6 +123,10 @@ class _Summery_pageState extends State<Summery_page>
   bool _ltvViewMoreExpanded = false;
   int? _propertyValueExpandedIndex;
   Rentals? _propertyValuesRentalOverride;
+  Rentals? _purchaseInfoRentalOverride;
+  int _historyRefreshKey = 0;
+  int _galleryRefreshKey = 0;
+  bool _galleryViewMore = false;
 
   //late Future<List<RentalSummary>> futuresummery;
 
@@ -290,6 +299,7 @@ class _Summery_pageState extends State<Summery_page>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.properties.rentalId != widget.properties.rentalId) {
       _propertyValuesRentalOverride = null;
+      _purchaseInfoRentalOverride = null;
     }
   }
 
@@ -360,6 +370,425 @@ class _Summery_pageState extends State<Summery_page>
     final rental = await futureRentalDetails;
     final financial = await _fetchFinancialSummary();
     return (rental, financial);
+  }
+
+  static const int _galleryPreviewCount = 4;
+
+  Widget _buildGallerySection(BuildContext context, Rentals rentalDetails) {
+    final rentalId = rentalDetails.rentalId ?? widget.properties.rentalId ?? '';
+    if (rentalId.isEmpty) return const SizedBox.shrink();
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Gallery',
+                  style: TextStyle(
+                    color: blueColor,
+                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) => AddPhotoScreen(
+                          rentalId: rentalId,
+                          onAdded: () => setState(() => _galleryRefreshKey++),
+                        ),
+                      ),
+                    ).then((_) => setState(() => _galleryRefreshKey++));
+                  },
+                  child: const Text('+ Add Photo'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            FutureBuilder<GalleryResponse>(
+              key: ValueKey('gallery_${rentalId}_$_galleryRefreshKey'),
+              future: GalleryService.getGallery(rentalId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child:
+                  SpinKitFadingCircle(
+                    color: blueColor,
+                    size: 28,
+                  )
+                    ),
+                  );
+                }
+                if (snapshot.hasError || !snapshot.hasData) {
+                  return const SizedBox.shrink();
+                }
+                final response = snapshot.data!;
+                final photos = response.photos;
+                if (photos.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                final showCount = _galleryViewMore ? photos.length : _galleryPreviewCount.clamp(0, photos.length);
+                final displayPhotos = photos.take(showCount).toList();
+                final hasMore = photos.length > _galleryPreviewCount;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).size.width < 500 ? 2 : 4,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 1,
+                      ),
+                      itemCount: displayPhotos.length,
+                      itemBuilder: (context, index) {
+                        final photo = displayPhotos[index];
+                        final imageUrl = photo.image.startsWith('http')
+                            ? photo.image
+                            : '$image_url${photo.image}';
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: photo.isCover
+                                ? Border.all(color: blueColor, width: 3)
+                                : null,
+                            boxShadow: photo.isCover
+                                ? [BoxShadow(color: blueColor.withOpacity(0.3), blurRadius: 4, offset: const Offset(0, 1))]
+                                : null,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => PhotoPreviewScreen(
+                                          imageUrl: imageUrl,
+                                          description: photo.description.isNotEmpty ? photo.description : null,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => Container(
+                                      color: Colors.grey[200],
+                                      child: Center(child: SpinKitFadingCircle(color: blueColor, size: 32)),
+                                    ),
+                                    errorWidget: (_, __, ___) => const Icon(Icons.broken_image, size: 32),
+                                  ),
+                                ),
+                                if (photo.isCover)
+                                  Positioned(
+                                    top: 4,
+                                    left: 4,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: const Text(
+                                        'COVER',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 9,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _galleryActionIcon(
+                                        context,
+                                        FontAwesomeIcons.pen,
+                                        Colors.green,
+                                        const Color(0xFFE8F5E9),
+                                        () async {
+                                          final updated = await Navigator.push<bool>(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (ctx) => EditPhotoScreen(
+                                                rentalId: rentalId,
+                                                photo: photo,
+                                                onSaved: () => setState(() => _galleryRefreshKey++),
+                                              ),
+                                            ),
+                                          );
+                                          if (updated == true && mounted) setState(() => _galleryRefreshKey++);
+                                        },
+                                      ),
+                                      const SizedBox(width: 4),
+                                      _galleryActionIcon(
+                                        context,
+                                        FontAwesomeIcons.trashCan,
+                                        Colors.red,
+                                        const Color(0xFFFFEBEE),
+                                        () async {
+                                          final confirm = await _showGalleryDeleteDialog(context);
+                                          if (confirm != true) return;
+                                          try {
+                                            await GalleryService.deletePhoto(rentalId, photo.id);
+                                            if (mounted) {
+                                              Fluttertoast.showToast(msg: 'Photo deleted');
+                                              setState(() => _galleryRefreshKey++);
+                                            }
+                                          } catch (e) {
+                                            if (mounted) Fluttertoast.showToast(msg: 'Failed to delete: $e');
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (photo.description.isNotEmpty)
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                          colors: [Colors.black54, Colors.transparent],
+                                        ),
+                                      ),
+                                      child: Text(
+                                        photo.description,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                if (!photo.isCover)
+                                  Positioned(
+                                    bottom: 4,
+                                    right: 4,
+                                    child: _galleryStarButton(
+                                      context,
+                                      () async {
+                                        try {
+                                          await GalleryService.setCover(rentalId, photo.id);
+                                          if (mounted) {
+                                            Fluttertoast.showToast(msg: 'Cover photo set');
+                                            setState(() => _galleryRefreshKey++);
+                                          }
+                                        } catch (e) {
+                                          if (mounted) Fluttertoast.showToast(msg: 'Failed to set cover: $e');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    if (hasMore) ...[
+                      const SizedBox(height: 8),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => setState(() => _galleryViewMore = !_galleryViewMore),
+                          child: Text(
+                            _galleryViewMore ? 'View less' : 'View more',
+                            style: TextStyle(color: blueColor, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _galleryActionIcon(
+    BuildContext context,
+    IconData icon,
+    Color iconColor,
+    Color backgroundColor,
+    VoidCallback onTap,
+  ) {
+    return Material(
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: FaIcon(icon, size: 16, color: iconColor),
+        ),
+      ),
+    );
+  }
+
+  Widget _galleryStarButton(BuildContext context, VoidCallback onTap) {
+    return Material(
+      color: Colors.grey.withOpacity(0.6),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: FaIcon(FontAwesomeIcons.solidStar, size: 16, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Future<bool?> _showGalleryDeleteDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFFFFF3E0),
+                            border: Border.all(color: const Color(0xFFFF9800), width: 2),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '!',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFF9800),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Are you sure?',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Do you want to delete this photo from the gallery?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(ctx, false),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          '×',
+                          style: TextStyle(fontSize: 22, color: blueColor, fontWeight: FontWeight.w300),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blueColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 44),
+                      ),
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text('Delete'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor),
+                        minimumSize: const Size(double.infinity, 44),
+                      ),
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildFinancialSummarySection(
@@ -3206,6 +3635,7 @@ class _Summery_pageState extends State<Summery_page>
         }
         final pair = snapshot.data!;
         final rentalDetails = pair.$1;
+        final purchaseRental = _purchaseInfoRentalOverride ?? rentalDetails;
         final financialData = pair.$2;
         currentImage = "${rentalDetails.rentalImage}";
         print("property data summery with api ${rentalDetails.rentalAddress}");
@@ -4337,12 +4767,11 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                             onPressed: () {
                               // Initialize with current values
-                              // Get dateProvider to format the date according to user's preference
                               final dateProvider = Provider.of<DateProvider>(
                                   context,
                                   listen: false);
                               String purchaseDate =
-                                  rentalDetails.purchaseDate ?? '';
+                                  purchaseRental.purchaseDate ?? '';
                               if (purchaseDate.isNotEmpty &&
                                   purchaseDate != 'N/A') {
                                 purchaseDateController.text = dateProvider
@@ -4351,15 +4780,15 @@ class _Summery_pageState extends State<Summery_page>
                                 purchaseDateController.text = '';
                               }
                               purchasePriceController.text =
-                                  rentalDetails.purchasePrice?.toString() ?? '';
+                                  purchaseRental.purchasePrice?.toString() ?? '';
                               parcelNumberController.text =
-                                  rentalDetails.parcelNumber ?? '';
-                              selectedDate = (rentalDetails.purchaseDate !=
+                                  purchaseRental.parcelNumber ?? '';
+                              selectedDate = (purchaseRental.purchaseDate !=
                                           null &&
-                                      rentalDetails.purchaseDate != 'N/A' &&
-                                      rentalDetails.purchaseDate!.isNotEmpty)
+                                      purchaseRental.purchaseDate != 'N/A' &&
+                                      purchaseRental.purchaseDate!.isNotEmpty)
                                   ? DateTime.tryParse(
-                                          rentalDetails.purchaseDate!) ??
+                                          purchaseRental.purchaseDate!) ??
                                       null
                                   : null;
 
@@ -4388,7 +4817,9 @@ class _Summery_pageState extends State<Summery_page>
                                                     color: blueColor),
                                               ),
                                               const SizedBox(height: 6),
-                                              InkWell(
+                                              SizedBox(
+                                                height: 45,
+                                                child: InkWell(
                                                 onTap: () async {
                                                   final DateTime? picked =
                                                       await showDatePicker(
@@ -4452,6 +4883,10 @@ class _Summery_pageState extends State<Summery_page>
                                                     controller:
                                                         purchaseDateController,
                                                     decoration: InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 12),
                                                       hintText:
                                                           'Enter purchase date',
                                                       suffixIcon: const Icon(
@@ -4466,6 +4901,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                 ),
                                               ),
+                                            ),
                                               const SizedBox(height: 16),
                                               Text(
                                                 "Purchase Price",
@@ -4474,12 +4910,24 @@ class _Summery_pageState extends State<Summery_page>
                                                     color: blueColor),
                                               ),
                                               const SizedBox(height: 6),
-                                              TextField(
+                                              SizedBox(
+                                                height: 45,
+                                                child: TextField(
                                                 controller:
                                                     purchasePriceController,
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .allow(
+                                                          RegExp(r'^\d*\.?\d*')),
+                                                ],
                                                 decoration: InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 12),
                                                   hintText:
                                                       'Enter purchase price',
                                                   border: OutlineInputBorder(
@@ -4489,6 +4937,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                 ),
                                               ),
+                                            ),
                                               const SizedBox(height: 16),
                                               Text(
                                                 "Parcel Number",
@@ -4497,10 +4946,22 @@ class _Summery_pageState extends State<Summery_page>
                                                     color: blueColor),
                                               ),
                                               const SizedBox(height: 6),
-                                              TextField(
+                                              SizedBox(
+                                                height: 45,
+                                                child: TextField(
                                                 controller:
                                                     parcelNumberController,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                ],
                                                 decoration: InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 12),
                                                   hintText:
                                                       'Enter parcel number',
                                                   border: OutlineInputBorder(
@@ -4510,20 +4971,25 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                 ),
                                               ),
+                                            ),
+                                            SizedBox(height: 20),
                                             ],
                                           ),
                                         ),
+                                        contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+                                        actionsPadding: EdgeInsets.fromLTRB(24, 0, 24, 24),
                                         actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: blueColor,
-                                            ),
-                                            onPressed: () async {
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(right: 8),
+                                                  child: ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: blueColor,
+                                                      minimumSize: Size(double.infinity, 45),
+                                                    ),
+                                                    onPressed: () async {
                                               SharedPreferences prefs =
                                                   await SharedPreferences
                                                       .getInstance();
@@ -4533,6 +4999,14 @@ class _Summery_pageState extends State<Summery_page>
                                                   prefs.getString('adminId');
 
                                               try {
+                                                // Pass date as yyyy-MM-dd: use selectedDate when set to avoid display-format parsing issues
+                                                final purchaseDateApi =
+                                                    selectedDate != null
+                                                        ? DateFormat('yyyy-MM-dd')
+                                                            .format(selectedDate!)
+                                                        : _convertToApiFormat(
+                                                            purchaseDateController
+                                                                .text);
                                                 final response = await http.put(
                                                   Uri.parse(
                                                       '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
@@ -4545,17 +5019,17 @@ class _Summery_pageState extends State<Summery_page>
                                                   },
                                                   body: json.encode({
                                                     "purchase_date":
-                                                        _convertToApiFormat(
-                                                            purchaseDateController
-                                                                .text),
+                                                        purchaseDateApi,
                                                     "purchase_price":
                                                         double.tryParse(
                                                                 purchasePriceController
-                                                                    .text) ??
+                                                                    .text
+                                                                    .trim()) ??
                                                             0,
                                                     "parcel_number":
                                                         parcelNumberController
-                                                            .text,
+                                                            .text
+                                                            .trim(),
                                                   }),
                                                 );
 
@@ -4570,14 +5044,47 @@ class _Summery_pageState extends State<Summery_page>
                                                         Toast.LENGTH_LONG,
                                                   );
                                                   if (mounted) {
-                                                    setState(() {
-                                                      futureRentalDetails =
-                                                          Properies_summery_Repo()
-                                                              .fetchrentalDetails(
-                                                                  widget
-                                                                      .properties
-                                                                      .rentalId!);
-                                                    });
+                                                    try {
+                                                      final body = json.decode(
+                                                          response.body);
+                                                      final data =
+                                                          body['data'];
+                                                      if (data != null &&
+                                                          data is Map<String,
+                                                              dynamic>) {
+                                                        final updatedRental =
+                                                            Rentals.fromJson(
+                                                                data);
+                                                        setState(() {
+                                                          _purchaseInfoRentalOverride =
+                                                              updatedRental;
+                                                          futureRentalDetails =
+                                                              Future.value(
+                                                                  updatedRental);
+                                                          _historyRefreshKey++;
+                                                        });
+                                                      } else {
+                                                        setState(() {
+                                                          futureRentalDetails =
+                                                              Properies_summery_Repo()
+                                                                  .fetchrentalDetails(
+                                                                      widget
+                                                                          .properties
+                                                                          .rentalId!);
+                                                          _historyRefreshKey++;
+                                                        });
+                                                      }
+                                                    } catch (_) {
+                                                      setState(() {
+                                                        futureRentalDetails =
+                                                            Properies_summery_Repo()
+                                                                .fetchrentalDetails(
+                                                                    widget
+                                                                        .properties
+                                                                        .rentalId!);
+                                                        _historyRefreshKey++;
+                                                      });
+                                                    }
                                                   }
                                                 } else {
                                                   Fluttertoast.showToast(
@@ -4598,11 +5105,30 @@ class _Summery_pageState extends State<Summery_page>
                                                 );
                                               }
                                             },
-                                            child: const Text(
-                                              'Save',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
+                                                    child: const Text(
+                                                      'Save',
+                                                      style: TextStyle(
+                                                          color: Colors.white,fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 8),
+                                                  child: OutlinedButton(
+                                                    style: OutlinedButton.styleFrom(
+                                                      foregroundColor: blueColor,
+                                                      side: BorderSide(color: blueColor),
+                                                      minimumSize: Size(double.infinity, 45),
+                                                    ),
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: const Text('Cancel',style: TextStyle(fontWeight: FontWeight.bold),),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       );
@@ -4691,7 +5217,7 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ],
                             ),
-                            // Data Row
+                            // Data Row (date in provider format)
                             TableRow(
                               decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -4700,11 +5226,11 @@ class _Summery_pageState extends State<Summery_page>
                                 Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
-                                    (rentalDetails.purchaseDate == null ||
-                                            rentalDetails.purchaseDate!.isEmpty)
+                                    (purchaseRental.purchaseDate == null ||
+                                            purchaseRental.purchaseDate!.isEmpty)
                                         ? "N/A"
                                         : dateProvider.formatCurrentDate(
-                                            '${rentalDetails.purchaseDate!}'),
+                                            '${purchaseRental.purchaseDate!}'),
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.black),
                                   ),
@@ -4712,10 +5238,10 @@ class _Summery_pageState extends State<Summery_page>
                                 Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
-                                    (rentalDetails.parcelNumber == null ||
-                                            rentalDetails.parcelNumber!.isEmpty)
+                                    (purchaseRental.parcelNumber == null ||
+                                            purchaseRental.parcelNumber!.isEmpty)
                                         ? "N/A"
-                                        : rentalDetails.parcelNumber!,
+                                        : purchaseRental.parcelNumber!,
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.black),
                                   ),
@@ -4723,10 +5249,10 @@ class _Summery_pageState extends State<Summery_page>
                                 Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
-                                    (rentalDetails.purchasePrice == null ||
-                                            rentalDetails.purchasePrice == 0)
+                                    (purchaseRental.purchasePrice == null ||
+                                            purchaseRental.purchasePrice == 0)
                                         ? "N/A"
-                                        : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
+                                        : "\$${purchaseRental.purchasePrice!.toStringAsFixed(0)}",
                                     textAlign: TextAlign.right,
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.black),
@@ -5204,10 +5730,14 @@ class _Summery_pageState extends State<Summery_page>
                   const SizedBox(
                     height: 20,
                   ),
-                  // Property History Table
+                  // _buildGallerySection(context, rentalDetails),
+                  // const SizedBox(height: 20),
+                  // Property History Table (key forces refetch after e.g. purchase edit)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     child: CustomHistoryTable(
+                      key: ValueKey(
+                          'property_history_${widget.properties.rentalId}_$_historyRefreshKey'),
                       historyType: HistoryType.property,
                       entityId: widget.properties.rentalId ?? "",
                       title: 'History',

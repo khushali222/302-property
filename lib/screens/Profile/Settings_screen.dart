@@ -938,7 +938,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (hasError) {
         setState(() {});
         print("Please fill all required fields.");
-       // _showTwilioSnackBar("Please fill all required fields.");
+        // _showTwilioSnackBar("Please fill all required fields.");
         return;
       }
     }
@@ -1216,20 +1216,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-        DialogButton(
           child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
@@ -1242,6 +1228,20 @@ class _TabBarExampleState extends State<TabBarExample> {
             Navigator.pop(context);
           },
           color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -2129,7 +2129,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     'Property Type',
     'Surcharge',
     'Vendor',
- //   'Twilio',
+    //   'Twilio',
   ];
 
   String _getCurrentSettingsTab() {
@@ -8265,11 +8265,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                     ),
                                   ),
-                                 
                                 ],
                               ),
-                             Row(children: [
-                               Switch(
+                              Row(
+                                children: [
+                                  Switch(
                                     value: twilioSmsEnabled,
                                     onChanged: (value) {
                                       setState(() {
@@ -8278,8 +8278,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     },
                                     activeColor: blueColor,
                                   ),
-                               
-                             ],),
+                                ],
+                              ),
                               const SizedBox(height: 10),
                               Row(children: [
                                 Text(
@@ -8303,7 +8303,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioAccountSidError!,
                                         style: const TextStyle(
@@ -8338,7 +8339,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioAuthTokenError!,
                                         style: const TextStyle(
@@ -8372,7 +8374,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioPhoneNumberError!,
                                         style: const TextStyle(
@@ -8397,7 +8400,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Center(
                                       child: Text(
                                         'Save Settings',
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
                                       ),
                                     ),
                                   ),
@@ -8678,6 +8684,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter account name',
                     controller: accountname,
+                    showElevation: false,
+                    
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8704,6 +8714,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         _selectedAccounttype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8730,6 +8742,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         _selectedFundtype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8751,6 +8765,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter notes',
                     controller: note,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -8810,7 +8827,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     )
                                   : const Text(
                                       'Add',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                                     ),
                             ),
                           ),
@@ -8832,7 +8849,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Center(
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: blueColor),
+                                style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -8911,6 +8928,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter account name',
                     controller: editAccountName,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8937,6 +8957,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         editSelectedAccounttype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8963,6 +8985,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         editSelectedFundtype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8984,6 +9008,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter notes',
                     controller: editNote,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 30),
                   Row(
@@ -9058,7 +9085,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     )
                                   : const Text(
                                       'Update',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                                     ),
                             ),
                           ),
@@ -9080,7 +9107,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Center(
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: blueColor),
+                                style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

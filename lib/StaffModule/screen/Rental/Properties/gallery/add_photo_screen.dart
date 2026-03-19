@@ -1,0 +1,286 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
+import '../../../../../constant/constant.dart';
+import '../../../../../services/gallery_service.dart';
+
+/// Full-screen Add Photos: pick images, add descriptions, upload then POST to gallery + history.
+class AddPhotoScreen extends StatefulWidget {
+  final String rentalId;
+  final VoidCallback? onAdded;
+
+  const AddPhotoScreen({
+    Key? key,
+    required this.rentalId,
+    this.onAdded,
+  }) : super(key: key);
+
+  @override
+  State<AddPhotoScreen> createState() => _AddPhotoScreenState();
+}
+
+class _AddPhotoScreenState extends State<AddPhotoScreen> {
+  final List<File> _files = [];
+  final List<TextEditingController> _descControllers = [];
+  bool _loading = false;
+  static const int _maxSizeMb = 10;
+
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final list = await picker.pickMultiImage();
+    if (list.isEmpty) return;
+    setState(() {
+      for (final x in list) {
+        _files.add(File(x.path));
+        _descControllers.add(TextEditingController());
+      }
+    });
+  }
+
+  void _removeAt(int index) {
+    setState(() {
+      _descControllers[index].dispose();
+      _files.removeAt(index);
+      _descControllers.removeAt(index);
+    });
+  }
+
+  Future<void> _submit() async {
+    if (_files.isEmpty) {
+      Fluttertoast.showToast(msg: 'Select at least one photo');
+      return;
+    }
+    setState(() => _loading = true);
+    try {
+      final filenames = await GalleryService.uploadImages(_files);
+      for (var i = 0; i < filenames.length; i++) {
+        final desc = _descControllers[i].text.trim();
+        await GalleryService.addPhotoToGallery(
+          widget.rentalId,
+          image: filenames[i],
+          description: desc,
+        );
+        await GalleryService.postGalleryHistory(
+          widget.rentalId,
+          description: desc.isEmpty ? 'Photo' : desc,
+        );
+      }
+      if (!mounted) return;
+      Fluttertoast.showToast(msg: 'Photos added successfully');
+      widget.onAdded?.call();
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (mounted) Fluttertoast.showToast(msg: 'Failed: $e');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final c in _descControllers) c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPhotos = _files.isNotEmpty;
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text('Add Photos'),
+        backgroundColor: blueColor,
+        foregroundColor: Colors.white,
+      ),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawerStaff(
+        currentpage: "Properties",
+        dropdown: true,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add multiple photos to the gallery.',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+                if (!hasPhotos) ...[
+                  const Text(
+                    'Photos *',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  ),
+                  const SizedBox(height: 10),
+                  InkWell(
+                    onTap: _loading ? null : _pickImages,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFDEE2E6), width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.images,
+                            size: 48,
+                            color: Colors.grey[500],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Click to upload images (multiple selection allowed)',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Maximum file size: ${_maxSizeMb}MB per image',
+                            style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+                if (hasPhotos) ...[
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _files.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      return Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFDEE2E6)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    _files[index],
+                                    width: 88,
+                                    height: 88,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: GestureDetector(
+                                    onTap: () => _removeAt(index),
+                                    child: const CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: Colors.red,
+                                      child: FaIcon(FontAwesomeIcons.xmark, color: Colors.white, size: 14),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Description ${index + 1}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  TextField(
+                                    controller: _descControllers[index],
+                                    maxLines: 2,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter photo description (optional)',
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: _loading ? null : _pickImages,
+                      icon: const FaIcon(FontAwesomeIcons.plus, size: 18),
+                      label: const Text('Add More Photos'),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: blueColor,
+                      side: BorderSide(color: blueColor),
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                    onPressed: _loading ? null : () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                    onPressed: _loading || _files.isEmpty ? null : _submit,
+                    child: _loading
+                          ? SpinKitFadingCircle(color: Colors.white, size: 28)
+                        : const Text('Add Photo'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
