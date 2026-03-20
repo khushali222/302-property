@@ -4,37 +4,46 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../../../../constant/constant.dart';
 
 /// Full-screen image preview when user taps a gallery photo.
+/// Image is shown at ~50% of screen height (pinch to zoom). No description overlay.
 class PhotoPreviewScreen extends StatelessWidget {
   final String imageUrl;
-  final String? description;
 
   const PhotoPreviewScreen({
     Key? key,
     required this.imageUrl,
-    this.description,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final fullUrl = imageUrl.startsWith('http') ? imageUrl : '$image_url$imageUrl';
+    final size = MediaQuery.sizeOf(context);
+    final previewHeight = size.height * 0.5;
+    final previewWidth = size.width;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           Center(
-            child: InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 4.0,
-              child: CachedNetworkImage(
-                imageUrl: fullUrl,
-                fit: BoxFit.contain,
-                placeholder: (_, __) =>  Center(
-                  child: SpinKitFadingCircle(color: Colors.white, size: 28),
-                ),
-                errorWidget: (_, __, ___) => const Icon(
-                  Icons.broken_image,
-                  color: Colors.white,
-                  size: 64,
+            child: SizedBox(
+              width: previewWidth,
+              height: previewHeight,
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: CachedNetworkImage(
+                  imageUrl: fullUrl,
+                  fit: BoxFit.contain,
+                  width: previewWidth,
+                  height: previewHeight,
+                  placeholder: (_, __) => const Center(
+                    child: SpinKitFadingCircle(color: Colors.white, size: 28),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 64,
+                  ),
                 ),
               ),
             ),
@@ -54,26 +63,6 @@ class PhotoPreviewScreen extends StatelessWidget {
               ),
             ),
           ),
-          if (description != null && description!.isNotEmpty)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Colors.black87, Colors.transparent],
-                  ),
-                ),
-                child: Text(
-                  description!,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                ),
-              ),
-            ),
         ],
       ),
     );

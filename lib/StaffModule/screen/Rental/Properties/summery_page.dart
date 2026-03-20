@@ -421,9 +421,10 @@ class _Summery_pageState extends State<Summery_page>
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -496,14 +497,15 @@ class _Summery_pageState extends State<Summery_page>
                 final hasMore = photos.length > _galleryPreviewCount;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: MediaQuery.of(context).size.width < 500 ? 2 : 4,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                         childAspectRatio: 1,
                       ),
                       itemCount: displayPhotos.length,
@@ -532,10 +534,7 @@ class _Summery_pageState extends State<Summery_page>
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) => PhotoPreviewScreen(
-                                          imageUrl: imageUrl,
-                                          description: photo.description.isNotEmpty ? photo.description : null,
-                                        ),
+                                        builder: (ctx) => PhotoPreviewScreen(imageUrl: imageUrl),
                                       ),
                                     );
                                   },
@@ -664,10 +663,19 @@ class _Summery_pageState extends State<Summery_page>
                         );
                       },
                     ),
-                    if (hasMore) ...[
-                      const SizedBox(height: 8),
-                      Center(
+                    SizedBox(
+                        height : 8
+                    ),
+
+                    if (hasMore)
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
                           onPressed: () => setState(() => _galleryViewMore = !_galleryViewMore),
                           child: Text(
                             _galleryViewMore ? 'View less' : 'View more',
@@ -675,7 +683,6 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                         ),
                       ),
-                    ],
                   ],
                 );
               },

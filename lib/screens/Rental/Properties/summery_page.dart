@@ -391,9 +391,10 @@ class _Summery_pageState extends State<Summery_page>
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -410,7 +411,8 @@ class _Summery_pageState extends State<Summery_page>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blueColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -424,7 +426,10 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ).then((_) => setState(() => _galleryRefreshKey++));
                   },
-                  child: const Text('Add Photo', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                  child: const Text(
+                    'Add Photo',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
@@ -434,14 +439,13 @@ class _Summery_pageState extends State<Summery_page>
               future: GalleryService.getGallery(rentalId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return  Padding(
+                  return Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child:
-                  SpinKitFadingCircle(
-                    color: blueColor,
-                    size: 28,
-                  )
-                    ),
+                    child: Center(
+                        child: SpinKitFadingCircle(
+                      color: blueColor,
+                      size: 28,
+                    )),
                   );
                 }
                 if (snapshot.hasError || !snapshot.hasData) {
@@ -451,10 +455,11 @@ class _Summery_pageState extends State<Summery_page>
                 final photos = response.photos;
                 if (photos.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 28, horizontal: 8),
                     child: Center(
                       child: Text(
-                        "No photos in gallery. Click  ''Add Photo''  to get started.",
+                        "No photos in gallery. Click 'Add Photo' to get started.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.grey[600],
@@ -465,19 +470,23 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   );
                 }
-                final showCount = _galleryViewMore ? photos.length : _galleryPreviewCount.clamp(0, photos.length);
+                final showCount = _galleryViewMore
+                    ? photos.length
+                    : _galleryPreviewCount.clamp(0, photos.length);
                 final displayPhotos = photos.take(showCount).toList();
                 final hasMore = photos.length > _galleryPreviewCount;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: MediaQuery.of(context).size.width < 500 ? 2 : 4,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+                        crossAxisCount:
+                            MediaQuery.of(context).size.width < 500 ? 2 : 4,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                         childAspectRatio: 1,
                       ),
                       itemCount: displayPhotos.length,
@@ -493,7 +502,12 @@ class _Summery_pageState extends State<Summery_page>
                                 ? Border.all(color: blueColor, width: 3)
                                 : null,
                             boxShadow: photo.isCover
-                                ? [BoxShadow(color: blueColor.withOpacity(0.3), blurRadius: 4, offset: const Offset(0, 1))]
+                                ? [
+                                    BoxShadow(
+                                        color: blueColor.withOpacity(0.3),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1))
+                                  ]
                                 : null,
                           ),
                           child: ClipRRect(
@@ -506,10 +520,7 @@ class _Summery_pageState extends State<Summery_page>
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) => PhotoPreviewScreen(
-                                          imageUrl: imageUrl,
-                                          description: photo.description.isNotEmpty ? photo.description : null,
-                                        ),
+                                        builder: (ctx) => PhotoPreviewScreen(imageUrl: imageUrl),
                                       ),
                                     );
                                   },
@@ -518,9 +529,13 @@ class _Summery_pageState extends State<Summery_page>
                                     fit: BoxFit.cover,
                                     placeholder: (_, __) => Container(
                                       color: Colors.grey[200],
-                                      child: Center(child: SpinKitFadingCircle(color: blueColor, size: 32)),
+                                      child: Center(
+                                          child: SpinKitFadingCircle(
+                                              color: blueColor, size: 32)),
                                     ),
-                                    errorWidget: (_, __, ___) => const Icon(Icons.broken_image, size: 32),
+                                    errorWidget: (_, __, ___) => const Icon(
+                                        Icons.broken_image,
+                                        size: 32),
                                   ),
                                 ),
                                 if (photo.isCover)
@@ -528,7 +543,8 @@ class _Summery_pageState extends State<Summery_page>
                                     top: 4,
                                     left: 4,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
                                         color: blueColor,
                                         borderRadius: BorderRadius.circular(4),
@@ -555,18 +571,22 @@ class _Summery_pageState extends State<Summery_page>
                                         Colors.green,
                                         const Color(0xFFE8F5E9),
                                         () async {
-                                          final updated = await Navigator.push<bool>(
+                                          final updated =
+                                              await Navigator.push<bool>(
                                             context,
                                             MaterialPageRoute(
                                               builder: (ctx) => EditPhotoScreen(
                                                 rentalId: rentalId,
                                                 photo: photo,
-                                                onSaved: () => setState(() => _galleryRefreshKey++),
+                                                onSaved: () => setState(
+                                                    () => _galleryRefreshKey++),
                                                 isStaffModule: false,
                                               ),
                                             ),
                                           );
-                                          if (updated == true && mounted) setState(() => _galleryRefreshKey++);
+                                          if (updated == true && mounted)
+                                            setState(
+                                                () => _galleryRefreshKey++);
                                         },
                                       ),
                                       const SizedBox(width: 4),
@@ -576,16 +596,23 @@ class _Summery_pageState extends State<Summery_page>
                                         Colors.red,
                                         const Color(0xFFFFEBEE),
                                         () async {
-                                          final confirm = await _showGalleryDeleteDialog(context);
+                                          final confirm =
+                                              await _showGalleryDeleteDialog(
+                                                  context);
                                           if (confirm != true) return;
                                           try {
-                                            await GalleryService.deletePhoto(rentalId, photo.id);
+                                            await GalleryService.deletePhoto(
+                                                rentalId, photo.id);
                                             if (mounted) {
-                                              Fluttertoast.showToast(msg: 'Photo deleted');
-                                              setState(() => _galleryRefreshKey++);
+                                              Fluttertoast.showToast(
+                                                  msg: 'Photo deleted');
+                                              setState(
+                                                  () => _galleryRefreshKey++);
                                             }
                                           } catch (e) {
-                                            if (mounted) Fluttertoast.showToast(msg: 'Failed to delete: $e');
+                                            if (mounted)
+                                              Fluttertoast.showToast(
+                                                  msg: 'Failed to delete: $e');
                                           }
                                         },
                                       ),
@@ -598,19 +625,26 @@ class _Summery_pageState extends State<Summery_page>
                                     right: 0,
                                     bottom: 0,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 4),
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           begin: Alignment.bottomCenter,
                                           end: Alignment.topCenter,
-                                          colors: [Colors.black54, Colors.transparent],
+                                          colors: [
+                                            Colors.black54,
+                                            Colors.transparent
+                                          ],
                                         ),
                                       ),
                                       child: Text(
                                         photo.description,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ),
@@ -622,13 +656,18 @@ class _Summery_pageState extends State<Summery_page>
                                       context,
                                       () async {
                                         try {
-                                          await GalleryService.setCover(rentalId, photo.id);
+                                          await GalleryService.setCover(
+                                              rentalId, photo.id);
                                           if (mounted) {
-                                            Fluttertoast.showToast(msg: 'Cover photo set');
-                                            setState(() => _galleryRefreshKey++);
+                                            Fluttertoast.showToast(
+                                                msg: 'Cover photo set');
+                                            setState(
+                                                () => _galleryRefreshKey++);
                                           }
                                         } catch (e) {
-                                          if (mounted) Fluttertoast.showToast(msg: 'Failed to set cover: $e');
+                                          if (mounted)
+                                            Fluttertoast.showToast(
+                                                msg: 'Failed to set cover: $e');
                                         }
                                       },
                                     ),
@@ -639,18 +678,28 @@ class _Summery_pageState extends State<Summery_page>
                         );
                       },
                     ),
-                    if (hasMore) ...[
-                      const SizedBox(height: 8),
-                      Center(
+
+                   SizedBox(height: 8,),
+
+                    if (hasMore)
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: TextButton(
-                          onPressed: () => setState(() => _galleryViewMore = !_galleryViewMore),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () => setState(
+                              () => _galleryViewMore = !_galleryViewMore),
                           child: Text(
                             _galleryViewMore ? 'View less' : 'View more',
-                            style: TextStyle(color: blueColor, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
-                    ],
                   ],
                 );
               },
@@ -691,7 +740,8 @@ class _Summery_pageState extends State<Summery_page>
         customBorder: const CircleBorder(),
         child: Padding(
           padding: const EdgeInsets.all(6),
-          child: FaIcon(FontAwesomeIcons.solidStar, size: 16, color: Colors.white),
+          child:
+              FaIcon(FontAwesomeIcons.solidStar, size: 16, color: Colors.white),
         ),
       ),
     );
@@ -724,7 +774,8 @@ class _Summery_pageState extends State<Summery_page>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: const Color(0xFFFFF3E0),
-                            border: Border.all(color: const Color(0xFFFF9800), width: 2),
+                            border: Border.all(
+                                color: const Color(0xFFFF9800), width: 2),
                           ),
                           child: const Center(
                             child: Text(
@@ -764,7 +815,10 @@ class _Summery_pageState extends State<Summery_page>
                         padding: const EdgeInsets.all(8),
                         child: Text(
                           '×',
-                          style: TextStyle(fontSize: 22, color: blueColor, fontWeight: FontWeight.w300),
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: blueColor,
+                              fontWeight: FontWeight.w300),
                         ),
                       ),
                     ),
@@ -4795,7 +4849,8 @@ class _Summery_pageState extends State<Summery_page>
                                 purchaseDateController.text = '';
                               }
                               purchasePriceController.text =
-                                  purchaseRental.purchasePrice?.toString() ?? '';
+                                  purchaseRental.purchasePrice?.toString() ??
+                                      '';
                               parcelNumberController.text =
                                   purchaseRental.parcelNumber ?? '';
                               selectedDate = (purchaseRental.purchaseDate !=
@@ -4835,88 +4890,96 @@ class _Summery_pageState extends State<Summery_page>
                                               SizedBox(
                                                 height: 45,
                                                 child: InkWell(
-                                                onTap: () async {
-                                                  final DateTime? picked =
-                                                      await showDatePicker(
-                                                    context: context,
-                                                    initialDate: selectedDate ??
-                                                        DateTime.now(),
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2100),
-                                                    builder:
-                                                        (BuildContext context,
-                                                            Widget? child) {
-                                                      return Theme(
-                                                        data: ThemeData.light()
-                                                            .copyWith(
-                                                          primaryColor:
-                                                              blueColor, // Header background color
-                                                          // accentColor: Colors.white, // Button text color
-                                                          colorScheme:
-                                                              ColorScheme.light(
-                                                            primary:
-                                                                blueColor, // Selection color
-                                                            onPrimary: Colors
-                                                                .white, // Text color
-                                                            surface: Colors
-                                                                .white, // Calendar background color
-                                                            onSurface: Colors
-                                                                .black, // Calendar text color
+                                                  onTap: () async {
+                                                    final DateTime? picked =
+                                                        await showDatePicker(
+                                                      context: context,
+                                                      initialDate:
+                                                          selectedDate ??
+                                                              DateTime.now(),
+                                                      firstDate: DateTime(2000),
+                                                      lastDate: DateTime(2100),
+                                                      builder:
+                                                          (BuildContext context,
+                                                              Widget? child) {
+                                                        return Theme(
+                                                          data:
+                                                              ThemeData.light()
+                                                                  .copyWith(
+                                                            primaryColor:
+                                                                blueColor, // Header background color
+                                                            // accentColor: Colors.white, // Button text color
+                                                            colorScheme:
+                                                                ColorScheme
+                                                                    .light(
+                                                              primary:
+                                                                  blueColor, // Selection color
+                                                              onPrimary: Colors
+                                                                  .white, // Text color
+                                                              surface: Colors
+                                                                  .white, // Calendar background color
+                                                              onSurface: Colors
+                                                                  .black, // Calendar text color
+                                                            ),
+                                                            dialogBackgroundColor:
+                                                                Colors
+                                                                    .white, // Background color
                                                           ),
-                                                          dialogBackgroundColor:
-                                                              Colors
-                                                                  .white, // Background color
+                                                          child: child!,
+                                                        );
+                                                      },
+                                                    );
+                                                    if (picked != null) {
+                                                      setState(() {
+                                                        selectedDate = picked;
+                                                        // Get dateProvider to format the date according to user's preference
+                                                        final dateProvider =
+                                                            Provider.of<
+                                                                    DateProvider>(
+                                                                context,
+                                                                listen: false);
+                                                        // Display format: Use provider's format for user display
+                                                        String apiFormatDate =
+                                                            DateFormat(
+                                                                    'yyyy-MM-dd')
+                                                                .format(picked);
+                                                        purchaseDateController
+                                                                .text =
+                                                            dateProvider
+                                                                .formatCurrentDate(
+                                                                    apiFormatDate);
+                                                      });
+                                                    }
+                                                  },
+                                                  child: AbsorbPointer(
+                                                    child: TextField(
+                                                      controller:
+                                                          purchaseDateController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical:
+                                                                        12),
+                                                        hintText:
+                                                            'Enter purchase date',
+                                                        suffixIcon: const Icon(
+                                                            Icons
+                                                                .calendar_today),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
                                                         ),
-                                                        child: child!,
-                                                      );
-                                                    },
-                                                  );
-                                                  if (picked != null) {
-                                                    setState(() {
-                                                      selectedDate = picked;
-                                                      // Get dateProvider to format the date according to user's preference
-                                                      final dateProvider =
-                                                          Provider.of<
-                                                                  DateProvider>(
-                                                              context,
-                                                              listen: false);
-                                                      // Display format: Use provider's format for user display
-                                                      String apiFormatDate =
-                                                          DateFormat(
-                                                                  'yyyy-MM-dd')
-                                                              .format(picked);
-                                                      purchaseDateController
-                                                              .text =
-                                                          dateProvider
-                                                              .formatCurrentDate(
-                                                                  apiFormatDate);
-                                                    });
-                                                  }
-                                                },
-                                                child: AbsorbPointer(
-                                                  child: TextField(
-                                                    controller:
-                                                        purchaseDateController,
-                                                    decoration: InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 12),
-                                                      hintText:
-                                                          'Enter purchase date',
-                                                      suffixIcon: const Icon(
-                                                          Icons.calendar_today),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
                                               const SizedBox(height: 16),
                                               Text(
                                                 "Purchase Price",
@@ -4928,31 +4991,32 @@ class _Summery_pageState extends State<Summery_page>
                                               SizedBox(
                                                 height: 45,
                                                 child: TextField(
-                                                controller:
-                                                    purchasePriceController,
-                                                keyboardType: const TextInputType
-                                                    .numberWithOptions(
-                                                        decimal: true),
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .allow(
-                                                          RegExp(r'^\d*\.?\d*')),
-                                                ],
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                          vertical: 12),
-                                                  hintText:
-                                                      'Enter purchase price',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
+                                                  controller:
+                                                      purchasePriceController,
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'^\d*\.?\d*')),
+                                                  ],
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 12),
+                                                    hintText:
+                                                        'Enter purchase price',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
                                               const SizedBox(height: 16),
                                               Text(
                                                 "Parcel Number",
@@ -4964,182 +5028,210 @@ class _Summery_pageState extends State<Summery_page>
                                               SizedBox(
                                                 height: 45,
                                                 child: TextField(
-                                                controller:
-                                                    parcelNumberController,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly,
-                                                ],
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                          vertical: 12),
-                                                  hintText:
-                                                      'Enter parcel number',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
+                                                  controller:
+                                                      parcelNumberController,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 12),
+                                                    hintText:
+                                                        'Enter parcel number',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(height: 20),
+                                              SizedBox(height: 20),
                                             ],
                                           ),
                                         ),
-                                        contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
-                                        actionsPadding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(24, 20, 24, 0),
+                                        actionsPadding:
+                                            EdgeInsets.fromLTRB(24, 0, 24, 24),
                                         actions: [
                                           Row(
                                             children: [
                                               Expanded(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.only(right: 8),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8),
                                                   child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: blueColor,
-                                                      minimumSize: Size(double.infinity, 45),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          blueColor,
+                                                      minimumSize: Size(
+                                                          double.infinity, 45),
                                                     ),
                                                     onPressed: () async {
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              String? token =
-                                                  prefs.getString('token');
-                                              String? id =
-                                                  prefs.getString('adminId');
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      String? token = prefs
+                                                          .getString('token');
+                                                      String? id = prefs
+                                                          .getString('adminId');
 
-                                              try {
-                                                // Pass date as yyyy-MM-dd: use selectedDate when set to avoid display-format parsing issues
-                                                final purchaseDateApi =
-                                                    selectedDate != null
-                                                        ? DateFormat('yyyy-MM-dd')
-                                                            .format(selectedDate!)
-                                                        : _convertToApiFormat(
-                                                            purchaseDateController
-                                                                .text);
-                                                final response = await http.put(
-                                                  Uri.parse(
-                                                      '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
-                                                  headers: {
-                                                    "authorization":
-                                                        "CRM $token",
-                                                    "id": "CRM $id",
-                                                    "Content-Type":
-                                                        "application/json",
-                                                  },
-                                                  body: json.encode({
-                                                    "purchase_date":
-                                                        purchaseDateApi,
-                                                    "purchase_price":
-                                                        double.tryParse(
-                                                                purchasePriceController
+                                                      try {
+                                                        // Pass date as yyyy-MM-dd: use selectedDate when set to avoid display-format parsing issues
+                                                        final purchaseDateApi = selectedDate !=
+                                                                null
+                                                            ? DateFormat(
+                                                                    'yyyy-MM-dd')
+                                                                .format(
+                                                                    selectedDate!)
+                                                            : _convertToApiFormat(
+                                                                purchaseDateController
+                                                                    .text);
+                                                        final response =
+                                                            await http.put(
+                                                          Uri.parse(
+                                                              '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
+                                                          headers: {
+                                                            "authorization":
+                                                                "CRM $token",
+                                                            "id": "CRM $id",
+                                                            "Content-Type":
+                                                                "application/json",
+                                                          },
+                                                          body: json.encode({
+                                                            "purchase_date":
+                                                                purchaseDateApi,
+                                                            "purchase_price":
+                                                                double.tryParse(
+                                                                        purchasePriceController
+                                                                            .text
+                                                                            .trim()) ??
+                                                                    0,
+                                                            "parcel_number":
+                                                                parcelNumberController
                                                                     .text
-                                                                    .trim()) ??
-                                                            0,
-                                                    "parcel_number":
-                                                        parcelNumberController
-                                                            .text
-                                                            .trim(),
-                                                  }),
-                                                );
+                                                                    .trim(),
+                                                          }),
+                                                        );
 
-                                                if (response.statusCode ==
-                                                    200) {
-                                                  reload_Screen();
-                                                  Navigator.pop(context);
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        "Purchase information updated successfully",
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                  );
-                                                  if (mounted) {
-                                                    try {
-                                                      final body = json.decode(
-                                                          response.body);
-                                                      final data =
-                                                          body['data'];
-                                                      if (data != null &&
-                                                          data is Map<String,
-                                                              dynamic>) {
-                                                        final updatedRental =
-                                                            Rentals.fromJson(
-                                                                data);
-                                                        setState(() {
-                                                          _purchaseInfoRentalOverride =
-                                                              updatedRental;
-                                                          futureRentalDetails =
-                                                              Future.value(
-                                                                  updatedRental);
-                                                          _historyRefreshKey++;
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          futureRentalDetails =
-                                                              Properies_summery_Repo()
-                                                                  .fetchrentalDetails(
-                                                                      widget
+                                                        if (response
+                                                                .statusCode ==
+                                                            200) {
+                                                          reload_Screen();
+                                                          Navigator.pop(
+                                                              context);
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Purchase information updated successfully",
+                                                            toastLength: Toast
+                                                                .LENGTH_LONG,
+                                                          );
+                                                          if (mounted) {
+                                                            try {
+                                                              final body =
+                                                                  json.decode(
+                                                                      response
+                                                                          .body);
+                                                              final data =
+                                                                  body['data'];
+                                                              if (data !=
+                                                                      null &&
+                                                                  data is Map<
+                                                                      String,
+                                                                      dynamic>) {
+                                                                final updatedRental =
+                                                                    Rentals
+                                                                        .fromJson(
+                                                                            data);
+                                                                setState(() {
+                                                                  _purchaseInfoRentalOverride =
+                                                                      updatedRental;
+                                                                  futureRentalDetails =
+                                                                      Future.value(
+                                                                          updatedRental);
+                                                                  _historyRefreshKey++;
+                                                                });
+                                                              } else {
+                                                                setState(() {
+                                                                  futureRentalDetails =
+                                                                      Properies_summery_Repo().fetchrentalDetails(widget
                                                                           .properties
                                                                           .rentalId!);
-                                                          _historyRefreshKey++;
-                                                        });
-                                                      }
-                                                    } catch (_) {
-                                                      setState(() {
-                                                        futureRentalDetails =
-                                                            Properies_summery_Repo()
-                                                                .fetchrentalDetails(
-                                                                    widget
+                                                                  _historyRefreshKey++;
+                                                                });
+                                                              }
+                                                            } catch (_) {
+                                                              setState(() {
+                                                                futureRentalDetails =
+                                                                    Properies_summery_Repo().fetchrentalDetails(widget
                                                                         .properties
                                                                         .rentalId!);
-                                                        _historyRefreshKey++;
-                                                      });
-                                                    }
-                                                  }
-                                                } else {
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        "Failed to update purchase information",
-                                                    toastLength:
-                                                        Toast.LENGTH_LONG,
-                                                  );
-                                                }
-                                              } catch (e) {
-                                                print(
-                                                    'Error updating purchase info: $e');
-                                                Fluttertoast.showToast(
-                                                  msg:
-                                                      "Error updating purchase information",
-                                                  toastLength:
-                                                      Toast.LENGTH_LONG,
-                                                );
-                                              }
-                                            },
+                                                                _historyRefreshKey++;
+                                                              });
+                                                            }
+                                                          }
+                                                        } else {
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Failed to update purchase information",
+                                                            toastLength: Toast
+                                                                .LENGTH_LONG,
+                                                          );
+                                                        }
+                                                      } catch (e) {
+                                                        print(
+                                                            'Error updating purchase info: $e');
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "Error updating purchase information",
+                                                          toastLength:
+                                                              Toast.LENGTH_LONG,
+                                                        );
+                                                      }
+                                                    },
                                                     child: const Text(
                                                       'Save',
                                                       style: TextStyle(
-                                                          color: Colors.white,fontWeight: FontWeight.bold),
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.only(left: 8),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8),
                                                   child: OutlinedButton(
-                                                    style: OutlinedButton.styleFrom(
-                                                      foregroundColor: blueColor,
-                                                      side: BorderSide(color: blueColor),
-                                                      minimumSize: Size(double.infinity, 45),
+                                                    style: OutlinedButton
+                                                        .styleFrom(
+                                                      foregroundColor:
+                                                          blueColor,
+                                                      side: BorderSide(
+                                                          color: blueColor),
+                                                      minimumSize: Size(
+                                                          double.infinity, 45),
                                                     ),
                                                     onPressed: () =>
                                                         Navigator.pop(context),
-                                                    child: const Text('Cancel',style: TextStyle(fontWeight: FontWeight.bold),),
+                                                    child: const Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -5192,8 +5284,7 @@ class _Summery_pageState extends State<Summery_page>
                             // Header Row
                             TableRow(
                               decoration: BoxDecoration(
-                                color:
-                                   Color(0xFFF4F8FF),
+                                color: Color(0xFFF4F8FF),
                               ),
                               children: [
                                 const Padding(
@@ -5242,7 +5333,8 @@ class _Summery_pageState extends State<Summery_page>
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
                                     (purchaseRental.purchaseDate == null ||
-                                            purchaseRental.purchaseDate!.isEmpty)
+                                            purchaseRental
+                                                .purchaseDate!.isEmpty)
                                         ? "N/A"
                                         : dateProvider.formatCurrentDate(
                                             '${purchaseRental.purchaseDate!}'),
@@ -5254,7 +5346,8 @@ class _Summery_pageState extends State<Summery_page>
                                   padding: const EdgeInsets.all(12.0),
                                   child: Text(
                                     (purchaseRental.parcelNumber == null ||
-                                            purchaseRental.parcelNumber!.isEmpty)
+                                            purchaseRental
+                                                .parcelNumber!.isEmpty)
                                         ? "N/A"
                                         : purchaseRental.parcelNumber!,
                                     style: const TextStyle(
@@ -5468,8 +5561,7 @@ class _Summery_pageState extends State<Summery_page>
                             // Header Row
                             TableRow(
                               decoration: BoxDecoration(
-                                color:
-                                    Color(0xFFF4F8FF),
+                                color: Color(0xFFF4F8FF),
                               ),
                               children: [
                                 const Padding(
@@ -15997,7 +16089,7 @@ class _Summery_pageState extends State<Summery_page>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                SizedBox(width: 10),
+                                  SizedBox(width: 10),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -16169,13 +16261,23 @@ class _Summery_pageState extends State<Summery_page>
                               suffixIcon: Icon(Icons.calendar_today, size: 20),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : Colors.grey)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : Colors.grey)),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : Colors.grey)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : Colors.grey)),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : blueColor, width: 1.5)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : blueColor,
+                                      width: 1.5)),
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                             ),
@@ -16186,7 +16288,8 @@ class _Summery_pageState extends State<Summery_page>
                     if (asOfError != null)
                       Padding(
                         padding: EdgeInsets.only(top: 6),
-                        child: Text(asOfError!, style: TextStyle(color: Colors.red, fontSize: 12)),
+                        child: Text(asOfError!,
+                            style: TextStyle(color: Colors.red, fontSize: 12)),
                       ),
                     SizedBox(height: 16),
                     Text('Source *',
@@ -16199,7 +16302,8 @@ class _Summery_pageState extends State<Summery_page>
                       underline: SizedBox(),
                       buttonStyleData: ButtonStyleData(
                         height: 45,
-                        padding: EdgeInsets.symmetric(horizontal: 0,vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: sourceError != null
@@ -16207,7 +16311,6 @@ class _Summery_pageState extends State<Summery_page>
                                     : Colors.grey),
                             borderRadius: BorderRadius.circular(8)),
                       ),
-
                       dropdownStyleData: DropdownStyleData(maxHeight: 200),
                       items: ['manual', 'zillow', 'appraisal', 'other']
                           .map((v) => DropdownMenuItem<String>(
@@ -16244,13 +16347,23 @@ class _Summery_pageState extends State<Summery_page>
                           hintText: 'Enter value',
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : Colors.grey)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : Colors.grey)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : Colors.grey)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : blueColor, width: 1.5)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : blueColor,
+                                  width: 1.5)),
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 12, vertical: 12),
                         ),
@@ -16261,7 +16374,8 @@ class _Summery_pageState extends State<Summery_page>
                     if (estimatedError != null)
                       Padding(
                         padding: EdgeInsets.only(top: 6),
-                        child: Text(estimatedError!, style: TextStyle(color: Colors.red, fontSize: 12)),
+                        child: Text(estimatedError!,
+                            style: TextStyle(color: Colors.red, fontSize: 12)),
                       ),
                     SizedBox(height: 24),
                     Row(
@@ -16280,7 +16394,8 @@ class _Summery_pageState extends State<Summery_page>
                               sourceError = null;
                               estimatedError = null;
                               if (selectedDate == null) asOfError = 'Required';
-                              if (selectedSource == null || selectedSource!.isEmpty)
+                              if (selectedSource == null ||
+                                  selectedSource!.isEmpty)
                                 sourceError = 'Required';
                               final estStr = estimatedController.text.trim();
                               if (estStr.isEmpty)
@@ -16294,24 +16409,27 @@ class _Summery_pageState extends State<Summery_page>
                               if (asOfError != null ||
                                   sourceError != null ||
                                   estimatedError != null) return;
-                              final apiDate =
-                                  DateFormat('yyyy-MM-dd').format(selectedDate!);
-                              final est =
-                                  num.tryParse(estimatedController.text.trim()) ?? 0;
+                              final apiDate = DateFormat('yyyy-MM-dd')
+                                  .format(selectedDate!);
+                              final est = num.tryParse(
+                                      estimatedController.text.trim()) ??
+                                  0;
                               try {
-                                final updatedRental = await Properies_summery_Repo()
-                                    .addPropertyValue(
-                                        rentalId: rentalId,
-                                        estimatedValue: est,
-                                        valueSource: selectedSource!,
-                                        valueAsOfDate: apiDate);
+                                final updatedRental =
+                                    await Properies_summery_Repo()
+                                        .addPropertyValue(
+                                            rentalId: rentalId,
+                                            estimatedValue: est,
+                                            valueSource: selectedSource!,
+                                            valueAsOfDate: apiDate);
                                 if (!mounted) return;
                                 setState(() {
                                   _propertyValuesRentalOverride = updatedRental;
                                   futureSummaryWithFinancial =
                                       _loadSummaryWithFinancial();
                                   futureRentalDetails = Properies_summery_Repo()
-                                      .fetchrentalDetails(widget.properties.rentalId!);
+                                      .fetchrentalDetails(
+                                          widget.properties.rentalId!);
                                 });
                                 Navigator.of(ctx).pop();
                                 Fluttertoast.showToast(
@@ -16319,16 +16437,16 @@ class _Summery_pageState extends State<Summery_page>
                               } catch (e) {
                                 if (ctx.mounted)
                                   Fluttertoast.showToast(
-                                      msg: e.toString().replaceFirst('Exception: ', ''));
+                                      msg: e
+                                          .toString()
+                                          .replaceFirst('Exception: ', ''));
                               }
                             },
                             child: Text('Save'),
                           ),
                         ),
-                      
-                   
                         SizedBox(width: 12),
-                             Expanded(
+                        Expanded(
                           child: OutlinedButton(
                             onPressed: () => Navigator.of(ctx).pop(),
                             style: OutlinedButton.styleFrom(
@@ -16341,7 +16459,6 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text('Cancel'),
                           ),
                         ),
-                        
                       ],
                     ),
                   ],
@@ -16436,13 +16553,23 @@ class _Summery_pageState extends State<Summery_page>
                               suffixIcon: Icon(Icons.calendar_today, size: 20),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : Colors.grey)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : Colors.grey)),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : Colors.grey)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : Colors.grey)),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: asOfError != null ? Colors.red : blueColor, width: 1.5)),
+                                  borderSide: BorderSide(
+                                      color: asOfError != null
+                                          ? Colors.red
+                                          : blueColor,
+                                      width: 1.5)),
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                             ),
@@ -16453,7 +16580,8 @@ class _Summery_pageState extends State<Summery_page>
                     if (asOfError != null)
                       Padding(
                         padding: EdgeInsets.only(top: 6),
-                        child: Text(asOfError!, style: TextStyle(color: Colors.red, fontSize: 12)),
+                        child: Text(asOfError!,
+                            style: TextStyle(color: Colors.red, fontSize: 12)),
                       ),
                     SizedBox(height: 16),
                     Text('Source *',
@@ -16466,7 +16594,8 @@ class _Summery_pageState extends State<Summery_page>
                       underline: SizedBox(),
                       buttonStyleData: ButtonStyleData(
                         height: 45,
-                        padding: EdgeInsets.symmetric(horizontal: 0,vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color: sourceError != null
@@ -16510,13 +16639,23 @@ class _Summery_pageState extends State<Summery_page>
                           hintText: 'Enter value',
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : Colors.grey)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : Colors.grey)),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : Colors.grey)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : Colors.grey)),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: estimatedError != null ? Colors.red : blueColor, width: 1.5)),
+                              borderSide: BorderSide(
+                                  color: estimatedError != null
+                                      ? Colors.red
+                                      : blueColor,
+                                  width: 1.5)),
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 12, vertical: 12),
                         ),
@@ -16527,12 +16666,13 @@ class _Summery_pageState extends State<Summery_page>
                     if (estimatedError != null)
                       Padding(
                         padding: EdgeInsets.only(top: 6),
-                        child: Text(estimatedError!, style: TextStyle(color: Colors.red, fontSize: 12)),
+                        child: Text(estimatedError!,
+                            style: TextStyle(color: Colors.red, fontSize: 12)),
                       ),
                     SizedBox(height: 24),
                     Row(
                       children: [
-                      Expanded(
+                        Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
@@ -16546,7 +16686,8 @@ class _Summery_pageState extends State<Summery_page>
                               sourceError = null;
                               estimatedError = null;
                               if (selectedDate == null) asOfError = 'Required';
-                              if (selectedSource == null || selectedSource!.isEmpty)
+                              if (selectedSource == null ||
+                                  selectedSource!.isEmpty)
                                 sourceError = 'Required';
                               final estStr = estimatedController.text.trim();
                               if (estStr.isEmpty)
@@ -16560,10 +16701,11 @@ class _Summery_pageState extends State<Summery_page>
                               if (asOfError != null ||
                                   sourceError != null ||
                                   estimatedError != null) return;
-                              final apiDate =
-                                  DateFormat('yyyy-MM-dd').format(selectedDate!);
-                              final est =
-                                  num.tryParse(estimatedController.text.trim()) ?? 0;
+                              final apiDate = DateFormat('yyyy-MM-dd')
+                                  .format(selectedDate!);
+                              final est = num.tryParse(
+                                      estimatedController.text.trim()) ??
+                                  0;
                               final noChange = apiDate == initialApiDate &&
                                   selectedSource == initialSource &&
                                   initialEst == est;
@@ -16573,20 +16715,22 @@ class _Summery_pageState extends State<Summery_page>
                                 return;
                               }
                               try {
-                                final updatedRental = await Properies_summery_Repo()
-                                    .updatePropertyValue(
-                                        rentalId: rentalId,
-                                        propertyValueId: pv.id!,
-                                        estimatedValue: est,
-                                        valueSource: selectedSource!,
-                                        valueAsOfDate: apiDate);
+                                final updatedRental =
+                                    await Properies_summery_Repo()
+                                        .updatePropertyValue(
+                                            rentalId: rentalId,
+                                            propertyValueId: pv.id!,
+                                            estimatedValue: est,
+                                            valueSource: selectedSource!,
+                                            valueAsOfDate: apiDate);
                                 if (!mounted) return;
                                 setState(() {
                                   _propertyValuesRentalOverride = updatedRental;
                                   futureSummaryWithFinancial =
                                       _loadSummaryWithFinancial();
                                   futureRentalDetails = Properies_summery_Repo()
-                                      .fetchrentalDetails(widget.properties.rentalId!);
+                                      .fetchrentalDetails(
+                                          widget.properties.rentalId!);
                                   _propertyValueExpandedIndex = null;
                                 });
                                 Navigator.of(ctx).pop();
@@ -16595,15 +16739,16 @@ class _Summery_pageState extends State<Summery_page>
                               } catch (e) {
                                 if (ctx.mounted)
                                   Fluttertoast.showToast(
-                                      msg: e.toString().replaceFirst('Exception: ', ''));
+                                      msg: e
+                                          .toString()
+                                          .replaceFirst('Exception: ', ''));
                               }
                             },
                             child: Text('Save'),
                           ),
                         ),
-                     
                         SizedBox(width: 12),
-                          Expanded(
+                        Expanded(
                           child: OutlinedButton(
                             onPressed: () => Navigator.of(ctx).pop(),
                             style: OutlinedButton.styleFrom(
@@ -16616,7 +16761,6 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text('Cancel'),
                           ),
                         ),
-                        
                       ],
                     ),
                   ],

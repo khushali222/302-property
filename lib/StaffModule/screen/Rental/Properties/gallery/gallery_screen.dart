@@ -238,10 +238,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (ctx) => PhotoPreviewScreen(
-          imageUrl: url,
-          description: photo.description.isNotEmpty ? photo.description : null,
-        ),
+        builder: (ctx) => PhotoPreviewScreen(imageUrl: url),
       ),
     );
   }
