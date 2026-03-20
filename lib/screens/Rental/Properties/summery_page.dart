@@ -679,24 +679,41 @@ class _Summery_pageState extends State<Summery_page>
                       },
                     ),
 
-                   SizedBox(height: 8,),
-
+                    const SizedBox(height: 6),
                     if (hasMore)
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: TextButton(
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                            foregroundColor: blueColor,
+                            backgroundColor: const Color(0xFFF4F8FF),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              side: BorderSide(color: blueColor.withOpacity(0.35), width: 1),
+                            ),
                           ),
                           onPressed: () => setState(
                               () => _galleryViewMore = !_galleryViewMore),
-                          child: Text(
-                            _galleryViewMore ? 'View less' : 'View more',
-                            style: TextStyle(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _galleryViewMore ? 'View less' : 'View more',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                _galleryViewMore ? Icons.expand_less : Icons.chevron_right,
+                                size: 20,
                                 color: blueColor,
-                                fontWeight: FontWeight.w600),
+                              ),
+                            ],
                           ),
                         ),
                       ),

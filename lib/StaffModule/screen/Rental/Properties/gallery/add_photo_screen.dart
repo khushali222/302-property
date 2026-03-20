@@ -155,7 +155,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Click to upload images (multiple selection allowed)',
+                            'Click to upload images',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey[600], fontSize: 14),
                           ),
