@@ -453,7 +453,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ).then((_) => setState(() => _galleryRefreshKey++));
                   },
-                  child: const Text('+ Add Photo'),
+                  child: const Text('Add Photo',style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                 ),
               ],
             ),
@@ -476,7 +476,20 @@ class _Summery_pageState extends State<Summery_page>
                 final response = snapshot.data!;
                 final photos = response.photos;
                 if (photos.isEmpty) {
-                  return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 8),
+                    child: Center(
+                      child: Text(
+                        "No photos in gallery. Click 'Add Photo' to get started.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  );
                 }
                 final showCount = _galleryViewMore ? photos.length : _galleryPreviewCount.clamp(0, photos.length);
                 final displayPhotos = photos.take(showCount).toList();

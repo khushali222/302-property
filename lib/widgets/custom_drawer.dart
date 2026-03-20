@@ -329,6 +329,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Bid Room",
                 widget.currentpage == "Bid Room",
               ),
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.solidCircleUser,
+                  size: 20,
+                  color: widget.currentpage == "Vendors"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Vendors",
+                widget.currentpage == "Vendors",
+              ),
               buildDropdownListTile(
                 context,
                 FaIcon(

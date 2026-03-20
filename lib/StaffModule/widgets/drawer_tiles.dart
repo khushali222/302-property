@@ -91,6 +91,12 @@ Widget buildListTile(
             (context) => Tenants_table(),
             "Tenants",
           );
+        } else if (title == "Vendors" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Vendor_table(),
+            "Vendors",
+          );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -118,8 +124,8 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Mortgage": (context) => MortgageTable(),
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
-    "Vendor": (context) =>
-        Vendor_table(), // Vendor accessible through Settings, not sidebar
+    "Vendors": (context) => Vendor_table(),
+    "Vendor": (context) => Vendor_table(),
     "Work Orders": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),

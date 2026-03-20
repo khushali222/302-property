@@ -48,7 +48,7 @@ import '../../../widgets/custom_drawer.dart';
 //       appBar: widget_302_Staff.App_Bar(context: context),
 //       backgroundColor: Colors.white,
 //       drawer: CustomDrawerStaff(
-//         currentpage: "Vendor",
+//         currentpage: "Vendors",
 //         dropdown: true,
 //       ),
 //       body: LayoutBuilder(
@@ -962,7 +962,7 @@ class _Add_vendorState extends State<Add_vendor> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Vendor",
+        currentpage: "Vendors",
         dropdown: true,
       ),
       body: LayoutBuilder(

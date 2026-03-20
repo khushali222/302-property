@@ -610,10 +610,14 @@ class _Vendor_tableState extends State<Vendor_table> {
         const SizedBox(height: 20),
         // Header Section with Title and Add Button
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isEmbedded ? 0 : 18,
+            vertical: 0,
+          ),
           child: Row(
             children: [
-              if (MediaQuery.of(context).size.width > 500)
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width > 500)
                 SizedBox(
                   width: 13,
                 ),
@@ -634,7 +638,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                         )
                       : titleBar(
                           width: double.infinity,
-                          title: 'Vendor',
+                          title: 'Vendors',
                         ),
                 ),
               ),
@@ -676,20 +680,28 @@ class _Vendor_tableState extends State<Vendor_table> {
                     ),
                   ),
                 ),
-              if (MediaQuery.of(context).size.width < 500) SizedBox(width: 3),
-              if (MediaQuery.of(context).size.width > 500) SizedBox(width: 18),
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width < 500)
+                SizedBox(width: 3),
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width > 500)
+                SizedBox(width: 18),
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         //search
         Padding(
-          padding: const EdgeInsets.only(left: 0, right: 0),
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isEmbedded ? 0 : 18,
+          ),
           child: Row(
             children: [
-              if (MediaQuery.of(context).size.width < 500)
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width < 500)
                 const SizedBox(width: 2),
-              if (MediaQuery.of(context).size.width > 500)
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width > 500)
                 const SizedBox(width: 18),
               Material(
                 elevation: 3,
@@ -777,9 +789,11 @@ class _Vendor_tableState extends State<Vendor_table> {
               //     ),
               //   ],
               // ),
-              if (MediaQuery.of(context).size.width < 500)
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width < 500)
                 const SizedBox(width: 5),
-              if (MediaQuery.of(context).size.width > 500)
+              if (widget.isEmbedded &&
+                  MediaQuery.of(context).size.width > 500)
                 const SizedBox(width: 25),
             ],
           ),
@@ -789,8 +803,9 @@ class _Vendor_tableState extends State<Vendor_table> {
         // if (MediaQuery.of(context).size.width < 500)
         SizedBox(height: 10),
         Padding(
-          padding:
-              EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 0 : 0),
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isEmbedded ? 0 : 18,
+          ),
           child: FutureBuilder<List<Vendor>>(
             future: futurePropertyTypes,
             builder: (context, snapshot) {
@@ -1392,7 +1407,7 @@ class _Vendor_tableState extends State<Vendor_table> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Vendor",
+        currentpage: "Vendors",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none

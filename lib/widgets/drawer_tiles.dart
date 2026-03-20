@@ -15,7 +15,7 @@ import '../screens/Leasing/Applicants/Applicants_table.dart';
 import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
-// import '../screens/Maintenance/Vendor/Vendor_table.dart'; // Vendor moved to Settings
+import '../screens/Maintenance/Vendor/Vendor_table.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
@@ -104,6 +104,12 @@ Widget buildListTile(
               );
             }
           });
+        } else if (title == "Vendors" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Vendor_table(),
+            "Vendors",
+          );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -131,14 +137,14 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Tenants": (context) => Tenants_table(),
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
-    // "Vendor": (context) => Vendor_table(), // Vendor moved to Settings
+    "Vendors": (context) => Vendor_table(),
     "Work Orders": (context) => Workorder_table(),
     "Bid Room": (context) => BidRoomTable(),
     "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
-   // "E-mail Logs": (context) => Email_log_tablee(),
+    // "E-mail Logs": (context) => Email_log_tablee(),
     "E-mail Logs": (context) => Send_Email_table(),
-    "Send E-mail": (context) => send_email(),//Send_Email_table(),
+    "Send E-mail": (context) => send_email(), //Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),

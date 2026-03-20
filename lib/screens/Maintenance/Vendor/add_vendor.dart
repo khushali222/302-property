@@ -50,7 +50,7 @@ class _Add_vendorState extends State<Add_vendor> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Vendor",
+        currentpage: "Vendors",
         dropdown: true,
       ),
       body: LayoutBuilder(

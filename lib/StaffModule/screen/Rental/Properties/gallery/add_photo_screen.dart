@@ -111,7 +111,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
               currentpage: "Properties",
               dropdown: true,
             ),
-      body: Column(
+      body: SingleChildScrollView(child: Column(
         children: [
           const SizedBox(height: 20),
           titleBar(
@@ -201,10 +201,11 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                                   right: 0,
                                   child: GestureDetector(
                                     onTap: () => _removeAt(index),
-                                    child: const CircleAvatar(
-                                      radius: 14,
-                                      backgroundColor: Colors.red,
-                                      child: FaIcon(FontAwesomeIcons.xmark, color: Colors.white, size: 14),
+                                    child:  Padding(padding: const EdgeInsets.all(2.0), child: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Colors.white,
+                                      child: FaIcon(FontAwesomeIcons.xmark, color: Colors.black, size: 10),
+                                    ),
                                     ),
                                   ),
                                 ),
@@ -228,6 +229,9 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                                     maxLines: 2,
                                     decoration: const InputDecoration(
                                       hintText: 'Enter photo description (optional)',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13,
+                                      ),
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                       border: OutlineInputBorder(),
@@ -241,25 +245,26 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
                   SizedBox(
-                    width: double.infinity,
+                    width: MediaQuery.of(context).size.width * 0.45,
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: blueColor,
+                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         side: BorderSide(color: blueColor),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       onPressed: _loading ? null : _pickImages,
-                      icon: const FaIcon(FontAwesomeIcons.plus, size: 18),
-                      label: const Text('Add More Photos'),
+                      icon: const FaIcon(FontAwesomeIcons.plus, size: 15),
+                      label: const Text('Add More Photos', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),),
                     ),
                   ),
                 ],
               ],
             ),
           ),
-          const Spacer(),
+         SizedBox(height: MediaQuery.of(context).size.height * 0.15),
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 20, 28, 28),
             child: Row(
@@ -293,6 +298,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

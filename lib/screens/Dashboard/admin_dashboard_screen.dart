@@ -188,7 +188,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TabBarExample(initialTab: 'Vendor')));
+                                    const TabBarExample(initialTab: 'Vendors')));
                       },
                     ),
                     _dashboardCard(

@@ -282,6 +282,19 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   "Bid Room",
                   widget.currentpage == "Bid Room",
                 ),
+              if (permissions != null && permissions.vendorView == true)
+                buildListTile(
+                  context,
+                  FaIcon(
+                    FontAwesomeIcons.solidCircleUser,
+                    size: 20,
+                    color: widget.currentpage == "Vendors"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  "Vendors",
+                  widget.currentpage == "Vendors",
+                ),
               // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
               // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Orders in future
               // if (permissions != null &&

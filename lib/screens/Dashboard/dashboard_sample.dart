@@ -63,7 +63,7 @@ class DashboardMobileSimple extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const TabBarExample(initialTab: 'Vendor')),
+            builder: (context) => const TabBarExample(initialTab: 'Vendors')),
       );
     } else if (label == 'Unpaid Properties') {
       Navigator.push(

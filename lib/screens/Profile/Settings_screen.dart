@@ -184,7 +184,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       dateProvider.loadDateFormat();
 
       // Set initial tab if specified
-      if (widget.initialTab == 'Vendor') {
+      if (widget.initialTab == 'Vendors' || widget.initialTab == 'Vendor') {
         setState(() {
           issurge = false;
           ismail = false;
@@ -2128,7 +2128,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     'Property Owners',
     'Property Type',
     'Surcharge',
-    'Vendor',
+    'Vendors',
     //   'Twilio',
   ];
 
@@ -2144,7 +2144,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (ispropertyowner) return 'Property Owners';
     if (ispropertytype) return 'Property Type';
     if (issurge) return 'Surcharge';
-    if (isvendor) return 'Vendor';
+    if (isvendor) return 'Vendors';
     if (istwilio) return 'Twilio';
 
     return 'Accounts';
@@ -2161,7 +2161,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ismanagetemplate = value == 'Manage Template';
       ischargesetting = value == 'Charges';
       iscategories = value == 'Categories';
-      isvendor = value == 'Vendor';
+      isvendor = value == 'Vendors' || value == 'Vendor';
       istwilio = value == 'Twilio';
       ispropertyowner = value == 'Property Owners';
       ispropertytype = value == 'Property Type';
@@ -2215,6 +2215,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.home;
       case 'Surcharge':
         return Icons.receipt;
+      case 'Vendors':
       case 'Vendor':
         return Icons.store;
       case 'Twilio':
