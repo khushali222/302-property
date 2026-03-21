@@ -24,6 +24,9 @@ import 'edit_vendor.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../widgets/custom_drawer.dart';
+import '../../../../Model/All_categories_model.dart';
+import '../../../../repository/fetch_allcategories.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class Vendor_table extends StatefulWidget {
   final bool
@@ -50,6 +53,10 @@ class _Vendor_tableState extends State<Vendor_table> {
     50,
     100,
   ]; // Options for items per page
+
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
 
   void sortData(List<Vendor> data) {
     if (sorting1) {
@@ -257,6 +264,31 @@ class _Vendor_tableState extends State<Vendor_table> {
     Provider.of<StaffPermissionProvider>(context, listen: false)
         .fetchPermissions();
     fetchvendoradded();
+    _loadDropdownCategories();
+  }
+
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
   }
 
   ConnectivityResult? _connectivityResult;
@@ -703,92 +735,136 @@ class _Vendor_tableState extends State<Vendor_table> {
               if (widget.isEmbedded &&
                   MediaQuery.of(context).size.width > 500)
                 const SizedBox(width: 18),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  // height: 40,
-                  height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                  width: MediaQuery.of(context).size.width < 500
-                      ? MediaQuery.of(context).size.width * .52
-                      : MediaQuery.of(context).size.width * .49,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      // border: Border.all(color: Colors.grey),
-                      border: Border.all(color: const Color(0xFF8A95A8))),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: TextField(
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 12
-                                  : 14),
-                          // onChanged: (value) {
-                          //   setState(() {
-                          //     cvverror = false;
-                          //   });
-                          // },
-                          // controller: cvv,
-                          onChanged: (value) {
-                            setState(() {
-                              searchvalue = value;
-                              if (currentPage != 0) currentPage = 0;
-                            });
-                          },
-                          cursorColor: blueColor,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search here...",
-                              hintStyle: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 18,
-                                // fontWeight: FontWeight.bold,
-                                color: const Color(0xFF8A95A8),
-                              ),
-                              contentPadding: const EdgeInsets.only(
-                                  left: 5, bottom: 10, top: 4)),
+              Expanded(
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF8A95A8))),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.width < 500
+                                    ? 12
+                                    : 14),
+                            onChanged: (value) {
+                              setState(() {
+                                searchvalue = value;
+                                if (currentPage != 0) currentPage = 0;
+                              });
+                            },
+                            cursorColor: blueColor,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search here...",
+                                hintStyle: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18,
+                                  color: const Color(0xFF8A95A8),
+                                ),
+                                contentPadding: const EdgeInsets.only(
+                                    left: 5, bottom: 10, top: 4)),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-              // Spacer(),
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   crossAxisAlignment: CrossAxisAlignment.end,
-              //   children: [
-              //     Text(
-              //       'Added : ${vendorCount.toString()}',
-              //       // 'Added : 5',
-              //       style: TextStyle(
-              //         fontWeight: FontWeight.bold,
-              //         color: const Color(0xFF8A95A8),
-              //         fontSize:
-              //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-              //       ),
-              //     ),
-              //     const SizedBox(
-              //       width: 5,
-              //     ),
-              //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-              //     Text(
-              //       'Total: ${vendorCountLimit.toString()}',
-              //       // 'Total: 10',
-              //       style: TextStyle(
-              //         fontWeight: FontWeight.bold,
-              //         color: const Color(0xFF8A95A8),
-              //         fontSize:
-              //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              if (!widget.isEmbedded) ...[
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF8A95A8)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<allcategories_model>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Filter by Trade Type',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 12
+                                  : 14,
+                              color: const Color(0xFF8A95A8),
+                            ),
+                          ),
+                          items: [
+                            DropdownMenuItem<allcategories_model>(
+                              value: null,
+                              child: Text(
+                                'All Trade Types',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14,
+                                  color: const Color(0xFF8A95A8),
+                                ),
+                              ),
+                            ),
+                            ..._dropdownCategories
+                                .map((allcategories_model item) {
+                              return DropdownMenuItem<allcategories_model>(
+                                value: item,
+                                child: Text(
+                                  item.name ?? '',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 14,
+                                    color: Colors.black, // Selected item color
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                          value: _selectedDropdownCategory,
+                          onChanged: (allcategories_model? value) {
+                            setState(() {
+                              _selectedDropdownCategory = value;
+                              currentPage = 0;
+                            });
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.zero,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .5
+                                : 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               if (widget.isEmbedded &&
                   MediaQuery.of(context).size.width < 500)
                 const SizedBox(width: 5),
@@ -798,9 +874,6 @@ class _Vendor_tableState extends State<Vendor_table> {
             ],
           ),
         ),
-        // if (MediaQuery.of(context).size.width > 500)
-        //   const SizedBox(height: 25),
-        // if (MediaQuery.of(context).size.width < 500)
         SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.symmetric(
@@ -856,6 +929,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                               .contains(searchvalue!.toLowerCase()))
                       .toList();
                 }
+                if (_selectedDropdownCategory != null) {
+                  data = data
+                      .where((property) =>
+                          property.trade?.toLowerCase() ==
+                          _selectedDropdownCategory!.name?.toLowerCase())
+                      .toList();
+                }
                 sortData(data);
                 final totalPages = (data.length / itemsPerPage).ceil();
                 final currentPageData = data
@@ -898,19 +978,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       children: <Widget>[
                                         InkWell(
                                           onTap: () {
-                                            // setState(() {
-                                            //    isExpanded = !isExpanded;
-                                            // //  expandedIndex = !expandedIndex;
-                                            //
-                                            // });
-                                            // setState(() {
-                                            //   if (isExpanded) {
-                                            //     expandedIndex = null;
-                                            //     isExpanded = !isExpanded;
-                                            //   } else {
-                                            //     expandedIndex = index;
-                                            //   }
-                                            // });
                                             setState(() {
                                               if (expandedIndex == index) {
                                                 expandedIndex = null;
@@ -978,83 +1045,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             ),
                                           ),
                                         ),
-                                        // SizedBox(
-                                        //     width:
-                                        //         MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width *
-                                        //             .08),
-                                        // Expanded(
-                                        //   child: Container(
-                                        //     child: Row(
-                                        //       children: [
-                                        //         SizedBox(
-                                        //           width: 20,
-                                        //         ),
-                                        //         InkWell(
-                                        //           onTap: () async {
-                                        //             var check = await Navigator
-                                        //                 .push(
-                                        //                     context,
-                                        //                     MaterialPageRoute(
-                                        //                         builder: (context) =>
-                                        //                             edit_vendor(
-                                        //                               vender_id: Propertytype.vendorId,
-                                        //                             )));
-                                        //             if (check == true) {
-                                        //               setState(() {
-                                        //                 futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
-                                        //               });
-                                        //             }
-                                        //           },
-                                        //           child: Container(
-                                        //             child: FaIcon(
-                                        //               FontAwesomeIcons
-                                        //                   .edit,
-                                        //               size: 20,
-                                        //               color: Color
-                                        //                   .fromRGBO(
-                                        //                       21,
-                                        //                       43,
-                                        //                       83,
-                                        //                       1),
-                                        //             ),
-                                        //           ),
-                                        //         ),
-                                        //         SizedBox(
-                                        //           width: 10,
-                                        //         ),
-                                        //         InkWell(
-                                        //           onTap: () {
-                                        //             _showAlert(
-                                        //                 context,
-                                        //                 Propertytype
-                                        //                     .vendorId!);
-                                        //           },
-                                        //           child: Container(
-                                        //             child: FaIcon(
-                                        //               FontAwesomeIcons
-                                        //                   .trashCan,
-                                        //               size: 20,
-                                        //               color: Color
-                                        //                   .fromRGBO(
-                                        //                       21,
-                                        //                       43,
-                                        //                       83,
-                                        //                       1),
-                                        //             ),
-                                        //           ),
-                                        //         ),
-                                        //       ],
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        // SizedBox(
-                                        //     width:
-                                        //         MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width *
-                                        //             .02),
                                       ],
                                     ),
                                   ),
@@ -1108,18 +1098,38 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         ],
                                                       ),
                                                     ),
+                                                    if (!widget.isEmbedded) ...[
+                                                      const SizedBox(
+                                                          height: 5),
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  'Trade Type : ',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                                  '${Propertytype.trade ?? '---'}',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  color: grey),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ],
                                                 ),
                                               ),
-
-                                              /* Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-
-                                                          ],
-                                                        ),
-                                                      ),*/
                                             ],
                                           ),
                                           const SizedBox(
@@ -1253,7 +1263,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       ),
                                     ),
                                   ),
-                                //SizedBox(height: 13,),
                               ],
                             ),
                           );
@@ -1266,7 +1275,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                       children: [
                         Row(
                           children: [
-                            // Text('Rows per page:'),
                             const SizedBox(width: 10),
                             Material(
                               elevation: 3,
@@ -1319,27 +1327,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       });
                                     },
                             ),
-                            // IconButton(
-                            //   icon: Icon(Icons.arrow_back),
-                            //   onPressed: currentPage > 0
-                            //       ? () {
-                            //     setState(() {
-                            //       currentPage--;
-                            //     });
-                            //   }
-                            //       : null,
-                            // ),
                             Text('Page ${currentPage + 1} of $totalPages'),
-                            // IconButton(
-                            //   icon: Icon(Icons.arrow_forward),
-                            //   onPressed: currentPage < totalPages - 1
-                            //       ? () {
-                            //     setState(() {
-                            //       currentPage++;
-                            //     });
-                            //   }
-                            //       : null,
-                            // ),
                             IconButton(
                               icon: FaIcon(
                                 FontAwesomeIcons.circleChevronRight,

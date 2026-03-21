@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../screens/Communications/Send E-mail/send_mail.dart';
 import '../screens/Rental/mortgage/mortgageTable.dart';
@@ -7,7 +8,6 @@ import 'navigation_helper.dart';
 import 'package:three_zero_two_property/screens/Leasing/upcoming_renewal/upcoming_renewal.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
-import '../screens/Communications/E-mail Logs/email_log_table.dart';
 import '../screens/Communications/Send E-mail/Send_email_table.dart';
 import '../screens/Communications/Templates/Templet_table.dart';
 import '../screens/Leasing/Applicants/Applicants_table.dart';
@@ -140,7 +140,27 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Vendors": (context) => Vendor_table(),
     "Work Orders": (context) => Workorder_table(),
     "Bid Room": (context) => BidRoomTable(),
-    "Leases": (context) => Lease_table(),
+    " 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
     // "E-mail Logs": (context) => Email_log_tablee(),
     "E-mail Logs": (context) => Send_Email_table(),
@@ -190,6 +210,233 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
       option,
     );
   }
+}
+
+const _kCommLeafPages = ['Send E-mail', 'E-mail Logs', 'Templates'];
+const _kCommEmailPages = ['Send E-mail', 'E-mail Logs'];
+
+/// Communications → Email (nested) → Send E-mail / E-mail Logs; SMS (placeholder); Templates.
+Widget buildCommunicationsSection(
+  BuildContext context, {
+  required String currentpage,
+  required bool dropdown,
+}) {
+  final String? selected = dropdown ? currentpage : null;
+  final bool commOpen =
+      selected != null && _kCommLeafPages.contains(currentpage);
+  final bool emailOpen =
+      selected != null && _kCommEmailPages.contains(currentpage);
+
+  Widget iconForPage(String page, bool active) {
+    final Color c = active ? Colors.white : blueColor;
+    switch (page) {
+      case 'Send E-mail':
+        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 18, color: c);
+      case 'E-mail Logs':
+        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 18, color: c);
+      case 'Templates':
+        return FaIcon(FontAwesomeIcons.fileLines, size: 18, color: c);
+      default:
+        return FaIcon(FontAwesomeIcons.circle, size: 18, color: c);
+    }
+  }
+
+  /// Same visual column as other drawer icons (matches [buildDropdownListTile] / [buildListTile]).
+  Widget drawerLeadingIcon(IconData icon, {double size = 18}) {
+    return SizedBox(
+      width: 36,
+      height: 36,
+      child: Center(
+        child: FaIcon(icon, size: size, color: blueColor),
+      ),
+    );
+  }
+
+  Widget emailLeafTile(String title) {
+    final bool active = currentpage == title;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      child: Container(
+        decoration: BoxDecoration(
+          color: active ? blueColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ListTile(
+          dense: true,
+          visualDensity: VisualDensity.compact,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+          minLeadingWidth: 36,
+          horizontalTitleGap: 10,
+          leading: SizedBox(
+            width: 36,
+            child: Center(child: iconForPage(title, active)),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              color: active ? Colors.white : blueColor,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            navigateToOption(context, title, active);
+          },
+        ),
+      ),
+    );
+  }
+
+  final ThemeData innerTheme = Theme.of(context).copyWith(
+    dividerColor: Colors.transparent,
+    listTileTheme: const ListTileThemeData(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      minLeadingWidth: 36,
+      horizontalTitleGap: 10,
+    ),
+  );
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 14),
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: commOpen,
+        maintainState: true,
+        childrenPadding: EdgeInsets.zero,
+        leading: drawerLeadingIcon(FontAwesomeIcons.comments,),
+        title: Text(
+          'Communications',
+          style: TextStyle(color: blueColor),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F2F5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Theme(
+                data: innerTheme,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ExpansionTile(
+                      initiallyExpanded: emailOpen,
+                      tilePadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 0,
+                      ),
+                      childrenPadding: EdgeInsets.zero,
+                      leading: drawerLeadingIcon(FontAwesomeIcons.envelope),
+                      title: Text(
+                        'Email',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(6, 0, 6, 2),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF7F8FA),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                emailLeafTile('Send E-mail'),
+                                emailLeafTile('E-mail Logs'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ExpansionTile(
+                      initiallyExpanded: false,
+                      tilePadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 0,
+                      ),
+                      childrenPadding: EdgeInsets.zero,
+                      leading: drawerLeadingIcon(FontAwesomeIcons.comment),
+                      title: Text(
+                        'SMS',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(14, 0, 14, 4),
+                          child: Text(
+                            'Coming soon',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+                      child: () {
+                        final bool active = currentpage == 'Templates';
+                        return Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: active ? blueColor : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: ListTile(
+                              dense: true,
+                              visualDensity: VisualDensity.compact,
+                              contentPadding: EdgeInsets.zero,
+                              minLeadingWidth: 36,
+                              horizontalTitleGap: 10,
+                              leading: SizedBox(
+                                width: 36,
+                                child: Center(
+                                  child: iconForPage('Templates', active),
+                                ),
+                              ),
+                              title: Text(
+                                'Templates',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: active ? Colors.white : blueColor,
+                                ),
+                              ),
+                              trailing: const SizedBox(
+                                width: 24,
+                                height: 24,
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                navigateToOption(context, 'Templates', active);
+                              },
+                            ),
+                          ),
+                        );
+                      }(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget buildDropdownListTile(

@@ -19,6 +19,9 @@ import 'add_vendor.dart';
 import 'edit_vendor.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/custom_drawer.dart';
+import '../../../Model/All_categories_model.dart';
+import '../../../repository/fetch_allcategories.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class Vendor_table extends StatefulWidget {
   final bool
@@ -45,6 +48,10 @@ class _Vendor_tableState extends State<Vendor_table> {
     50,
     100,
   ]; // Options for items per page
+
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  bool _isLoadingCategories = false;
 
   void sortData(List<Vendor> data) {
     if (sorting1) {
@@ -255,6 +262,31 @@ class _Vendor_tableState extends State<Vendor_table> {
     futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
     fetchvendoradded();
     checkInternet();
+    _loadDropdownCategories();
+  }
+
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      // Sort categories alphabetically by name
+      cats.sort((a, b) {
+        final nameA = (a.name ?? '').toLowerCase();
+        final nameB = (b.name ?? '').toLowerCase();
+        return nameA.compareTo(nameB);
+      });
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
   }
 
   void checkInternet() async {
@@ -737,61 +769,136 @@ class _Vendor_tableState extends State<Vendor_table> {
               if (widget.isEmbedded &&
                   MediaQuery.of(context).size.width > 500)
                 const SizedBox(width: 18),
-              Material(
-                elevation: 3,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  // height: 40,
-                  height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                  width: MediaQuery.of(context).size.width < 500
-                      ? MediaQuery.of(context).size.width * .52
-                      : MediaQuery.of(context).size.width * .49,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      // border: Border.all(color: Colors.grey),
-                      border: Border.all(color: const Color(0xFF8A95A8))),
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: TextField(
-                          style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 12
-                                  : 14),
-                          // onChanged: (value) {
-                          //   setState(() {
-                          //     cvverror = false;
-                          //   });
-                          // },
-                          // controller: cvv,
-                          onChanged: (value) {
-                            setState(() {
-                              searchvalue = value;
-                              if (currentPage != 0) currentPage = 0;
-                            });
-                          },
-                          cursorColor: blueColor,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search here...",
-                              hintStyle: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 18,
-                                // fontWeight: FontWeight.bold,
-                                color: const Color(0xFF8A95A8),
-                              ),
-                              contentPadding: const EdgeInsets.only(
-                                  left: 5, bottom: 10, top: 4)),
+              Expanded(
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF8A95A8))),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.width < 500
+                                    ? 12
+                                    : 14),
+                            onChanged: (value) {
+                              setState(() {
+                                searchvalue = value;
+                                if (currentPage != 0) currentPage = 0;
+                              });
+                            },
+                            cursorColor: blueColor,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search here...",
+                                hintStyle: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18,
+                                  color: const Color(0xFF8A95A8),
+                                ),
+                                contentPadding: const EdgeInsets.only(
+                                    left: 5, bottom: 10, top: 4)),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
+              if (!widget.isEmbedded) ...[
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF8A95A8)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<allcategories_model>(
+                          isExpanded: true,
+                          hint: Text(
+                            'Filter by Trade Type',
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 12
+                                  : 14,
+                              color: const Color(0xFF8A95A8),
+                            ),
+                          ),
+                          items: [
+                            DropdownMenuItem<allcategories_model>(
+                              value: null,
+                              child: Text(
+                                'All Trade Types',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14,
+                                  color: const Color(0xFF8A95A8),
+                                ),
+                              ),
+                            ),
+                            ..._dropdownCategories
+                                .map((allcategories_model item) {
+                              return DropdownMenuItem<allcategories_model>(
+                                value: item,
+                                child: Text(
+                                  item.name ?? '',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 14,
+                                    color: Colors.black, // Selected item color
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                          value: _selectedDropdownCategory,
+                          onChanged: (allcategories_model? value) {
+                            setState(() {
+                              _selectedDropdownCategory = value;
+                              currentPage = 0;
+                            });
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.zero,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .5
+                                : 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               // Spacer(),
               // Column(
               //   mainAxisAlignment: MainAxisAlignment.end,
@@ -888,6 +995,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                           property.vendorEmail!
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()))
+                      .toList();
+                }
+                if (_selectedDropdownCategory != null) {
+                  data = data
+                      .where((property) =>
+                          property.trade?.toLowerCase() ==
+                          _selectedDropdownCategory!.name?.toLowerCase())
                       .toList();
                 }
                 sortData(data);
@@ -1171,6 +1285,35 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                           ],
                                                         ),
                                                       ),
+                                                      if (!widget.isEmbedded) ...[
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Trade Type : ',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${Propertytype.trade ?? '---'}',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color: grey),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ],
                                                   ),
                                                 ),

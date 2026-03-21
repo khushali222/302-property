@@ -341,45 +341,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Vendors",
                 widget.currentpage == "Vendors",
               ),
-              buildDropdownListTile(
+              buildCommunicationsSection(
                 context,
-                FaIcon(
-                  FontAwesomeIcons.comments,
-                  size: 20,
-                  color: blueColor,
-                ),
-                "Communications",
-                [
-                  "Send E-mail",
-                  "E-mail Logs",
-                  "Templates",
-                ],
-                [
-                  FaIcon(
-                    FontAwesomeIcons.envelopeCircleCheck,
-                    size: 18,
-                    color: widget.currentpage == "Send E-mail"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for Properties
-                  FaIcon(
-                    FontAwesomeIcons.envelopeOpenText,
-                    size: 18,
-                    color: widget.currentpage == "E-mail Logs"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-
-                  FaIcon(
-                    FontAwesomeIcons.wallet,
-                    size: 18,
-                    color: widget.currentpage == "Templates"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for RentalOwner
-                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-                ],
-                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+                currentpage: widget.currentpage,
+                dropdown: widget.dropdown,
               ),
               buildListTile(
                 context,
